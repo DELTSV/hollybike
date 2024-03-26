@@ -1,6 +1,7 @@
-package com.example
+package hollybike.api
 
 import com.example.plugins.*
+import hollybike.api.plugins.configureRouting
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

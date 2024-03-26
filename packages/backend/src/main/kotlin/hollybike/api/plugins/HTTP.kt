@@ -1,4 +1,4 @@
-package com.example.plugins
+package hollybike.api.plugins
 
 import io.ktor.http.*
 import io.ktor.http.content.*

@@ -1,4 +1,4 @@
-package com.example.plugins
+package hollybike.api.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm

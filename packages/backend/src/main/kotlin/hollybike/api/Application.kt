@@ -1,6 +1,6 @@
-package com.example
+package hollybike.api
 
-import com.example.plugins.*
+import hollybike.api.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
