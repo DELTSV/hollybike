@@ -1,1 +1,1 @@
-rootProject.name = "com.example.hollybike"
+rootProject.name = "hollybike.api"

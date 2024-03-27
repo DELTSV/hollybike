@@ -4,8 +4,7 @@ info:
   description: "hollybike API"
   version: "1.0.0"
 servers:
-- url: "http://localhost:8080"
-  description: "Local server"
+- url: "https://hollybike"
 paths:
   /metrics-micrometer:
     get:

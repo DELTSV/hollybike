@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="backend" type="JetRunConfigurationType">
     <option name="MAIN_CLASS_NAME" value="hollybike.api.ApplicationKt" />
-    <module name="com.example.hollybike.main" />
+    <module name="hollybike.api.main" />
     <shortenClasspath name="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />
