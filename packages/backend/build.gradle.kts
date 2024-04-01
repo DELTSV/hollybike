@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.idea.proto.generated.kpm.ideaKpmModuleProto
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
