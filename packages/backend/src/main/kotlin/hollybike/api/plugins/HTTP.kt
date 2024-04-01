@@ -11,7 +11,9 @@ import io.ktor.server.routing.*
 
 fun Application.configureHTTP() {
 	routing {
-		swaggerUI(path = "openapi")
+		if(System.getProperty("org.graalvm.nativeimage.imagecode") != "runtime") {
+			swaggerUI(path = "openapi")
+		}
 	}
 	install(CORS) {
 		allowMethod(HttpMethod.Options)
