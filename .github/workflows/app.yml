@@ -1,0 +1,44 @@
+name: Flutter App CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/app/**'
+      - '.github/workflows/app.yml'
+
+env:
+  CI: true
+
+defaults:
+  run:
+    working-directory: packages/app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign

@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'backend/**'
+      - 'packages/backend/**'
       - '.github/workflows/backend.yml'
 
 env:
@@ -22,12 +22,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-#      - name: Set up JDK 20
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: 'adopt'
-#          java-version: '20'
 
       - name: Setup gradle
         uses: gradle/actions/setup-gradle@v3
