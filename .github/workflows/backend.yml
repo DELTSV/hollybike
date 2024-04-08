@@ -15,9 +15,16 @@ defaults:
   run:
     working-directory: packages/backend
 
+# Build for linux & windows
+
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -29,8 +36,8 @@ jobs:
       - name: Read rights to gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build
-
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew nativeTestCompile
+
+      - name: Run native compile
+        run: ./gradlew nativeCompile

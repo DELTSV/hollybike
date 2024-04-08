@@ -39,6 +39,9 @@ dependencies {
     implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
+    testImplementation("io.ktor:ktor-server-tests-jvm")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
 }
 
 graalvmNative {
@@ -58,7 +61,7 @@ graalvmNative {
             buildArgs.add("-H:+InstallExitHandlers")
             buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
             buildArgs.add("-H:+ReportExceptionStackTraces")
-            buildArgs.add("-H:ReflectionConfigurationFiles=/home/DATA/KOTLIN/hollybike/packages/backend/src/main/resources/META-INF/native-image/reflect-config.json")
+            buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/src/main/resources/META-INF/native-image/reflect-config.json")
 //            buildArgs.add("-H:IncludeResources=\".*/openapi/documentation.yaml\"")
 
             imageName.set("hollybike-server")
