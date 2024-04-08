@@ -46,15 +46,18 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-      - name: Run native compile
-        run: ./gradlew nativeCompile
-
       - name: Get Project Version
         id: get_version
         run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
 
       - id: executable
         run: echo "executable_name=hollybike-${{ runner.os }}-${{ steps.get_version.outputs.version }}-x86_64" >> $GITHUB_OUTPUT
+
+      - id: version_full_name
+        run: echo "version_full_name=hollybike_server-${{ steps.get_version.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Run native compile
+        run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
 
       - name: Archive binary
         uses: actions/upload-artifact@v4
@@ -63,6 +66,6 @@ jobs:
           path: build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
 
       - name: Upload release
-        run: gh release upload hollybike-${{ steps.get_version.outputs.version }} build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+        run: gh release upload ${{ steps.get_version.outputs.version_full_name }} build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

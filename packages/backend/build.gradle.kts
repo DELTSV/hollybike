@@ -13,6 +13,14 @@ plugins {
 group = "hollybike.api"
 version = getV()
 
+fun getIN(): String {
+    if (hasProperty("image_name")) {
+        return project.findProperty("image_name") as String
+    }
+
+    return "hollybike_server"
+}
+
 
 fun getV(): String {
     if (hasProperty("project_version")) {
@@ -72,7 +80,7 @@ graalvmNative {
             buildArgs.add("-H:+ReportExceptionStackTraces")
             buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/src/main/resources/META-INF/native-image/reflect-config.json")
 
-            imageName.set("hollybike-server")
+            imageName.set(getIN())
         }
     }
 }
