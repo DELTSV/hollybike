@@ -7,6 +7,9 @@ on:
     paths:
       - 'packages/backend/**'
       - '.github/workflows/backend.yml'
+  workflow_dispatch:
+  release:
+    types: [published]
 
 env:
   CI: true
