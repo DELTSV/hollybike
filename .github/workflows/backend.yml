@@ -14,6 +14,7 @@ env:
 defaults:
   run:
     working-directory: packages/backend
+    shell: bash
 
 permissions:
   contents: write
@@ -54,11 +55,6 @@ jobs:
         run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
 
       - id: executable
-        if: runner.os == 'Linux'
-        run: echo "executable_name=hollybike-${{ runner.os }}-${{ steps.get_version.outputs.version }}-x86_64" >> $GITHUB_OUTPUT
-
-      - id: executable
-        if: runner.os == 'Windows'
         run: echo "executable_name=hollybike-${{ runner.os }}-${{ steps.get_version.outputs.version }}-x86_64" >> $GITHUB_OUTPUT
 
       - id: version_full_name
