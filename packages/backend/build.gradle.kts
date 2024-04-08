@@ -11,7 +11,16 @@ plugins {
 }
 
 group = "hollybike.api"
-version = "0.0.1"
+version = getV()
+
+
+fun getV(): String {
+    if (hasProperty("project_version")) {
+        return project.findProperty("project_version") as String
+    }
+
+    return "0.0.1"
+}
 
 application {
     mainClass.set("hollybike.api.ApplicationKt")
@@ -48,8 +57,8 @@ graalvmNative {
     binaries {
         all {
             javaLauncher.set(javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(22))
-                vendor.set(JvmVendorSpec.GRAAL_VM)
+                languageVersion.set(JavaLanguageVersion.of(21))
+                vendor.set(JvmVendorSpec.ORACLE)
             })
         }
         named("main") {
@@ -62,9 +71,14 @@ graalvmNative {
             buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
             buildArgs.add("-H:+ReportExceptionStackTraces")
             buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/src/main/resources/META-INF/native-image/reflect-config.json")
-//            buildArgs.add("-H:IncludeResources=\".*/openapi/documentation.yaml\"")
 
             imageName.set("hollybike-server")
         }
+    }
+}
+
+tasks.register("printVersion") {
+    doLast {
+        println(project.version)
     }
 }

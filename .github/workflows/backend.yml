@@ -15,14 +15,17 @@ defaults:
   run:
     working-directory: packages/backend
 
-# Build for linux & windows
-
-
 jobs:
   build:
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest ]
+        java-version: [ '21' ]
+        include:
+          - os: ubuntu-latest
+            executable-suffix: ''
+#          - os: windows-latest
+#            executable-suffix: '.exe'
 
     runs-on: ${{ matrix.os }}
 
@@ -30,14 +33,36 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Set up GraalVM (Java ${{ matrix.java-version }})
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: '${{ matrix.graalvm-version }}'
+          java-version: '${{ matrix.java-version }}'
+          cache: 'gradle'
 
       - name: Read rights to gradlew
         run: chmod +x gradlew
 
       - name: Run tests
-        run: ./gradlew nativeTestCompile
+        run: ./gradlew test
 
       - name: Run native compile
         run: ./gradlew nativeCompile
+
+      - name: Get Project Version
+        id: get_version
+        run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
+
+      - id: executable
+        run: echo "executable_name=hollybike-${{ runner.os }}-${{ steps.get_version.outputs.version }}-x86_64" >> $GITHUB_OUTPUT
+
+      - name: Archive binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.executable.outputs.executable_name }}
+          path: build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+
+      - name: Upload release
+        run: gh release upload hollybike-${{ steps.get_version.outputs.version }} build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
