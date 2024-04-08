@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.executable.outputs.executable_name }}
-          path: build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+          path: .
 
       - name: Upload release
         run: gh release upload ${{ steps.get_version.outputs.version_full_name }} build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
