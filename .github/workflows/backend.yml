@@ -15,6 +15,9 @@ defaults:
   run:
     working-directory: packages/backend
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -63,15 +66,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.executable.outputs.executable_name }}
-          path: build
+          path: packages/backend/build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
 
-      - name: Archive binary 2
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.executable.outputs.executable_name }}_target
-          path: target
+      - name: Create release
+        run: |
+          gh release create \
+              ${{ steps.version_full_name.outputs.version_full_name }} --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release
-        run: gh release upload ${{ steps.get_version.outputs.version_full_name }} build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+        run: |
+          gh release upload \
+              ${{ steps.version_full_name.outputs.version_full_name }} \
+              build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
