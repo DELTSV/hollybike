@@ -10,8 +10,18 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun main() {
-	embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
-		.start(wait = true)
+	embeddedServer(CIO, applicationEngineEnvironment { env() }).start(wait = true)
+}
+
+fun ApplicationEngineEnvironmentBuilder.env() {
+	module {
+		module()
+	}
+	connector {
+		host = "0.0.0.0"
+		port = 8080
+	}
+	developmentMode = true
 }
 
 fun Application.module() {
@@ -19,14 +29,18 @@ fun Application.module() {
 	configureSerialization()
 	configureHTTP()
 	configureSecurity()
-
+	serveFront()
 	routing {
 		route("/api") {
-			get("/test") {
-				println("ICI")
+			get {
 				call.respondText("HELLO WORLD!")
 			}
 		}
+	}
+}
+
+fun Application.serveFront() {
+	routing {
 		get("/{...}") {
 			this::class.java.getResource("/front/index.html")?.readText()?.let {
 				call.respondText(it, ContentType.Text.Html)
