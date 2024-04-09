@@ -75,7 +75,7 @@ graalvmNative {
 			buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
 			buildArgs.add("-H:+ReportExceptionStackTraces")
 			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/src/main/resources/META-INF/native-image/reflect-config.json",)
-            buildArgs.add("-H:IncludeResources=.*")
+			resources.autodetect()
 
 			imageName.set(getIN())
 		}
