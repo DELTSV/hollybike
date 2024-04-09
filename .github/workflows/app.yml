@@ -73,6 +73,6 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
-          packageName: com.yourapp.package
+          packageName: com.hollybike.hollybike
           releaseFiles: ${{ env.AAB_PATH }}
           track: internal
