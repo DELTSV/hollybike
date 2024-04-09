@@ -17,6 +17,7 @@ defaults:
 
 jobs:
   build:
+    name: Build Frontend
     runs-on: ubuntu-latest
 
     steps:

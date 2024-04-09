@@ -17,6 +17,7 @@ defaults:
 
 jobs:
   build:
+    name: Build App
     runs-on: ubuntu-latest
 
     env:
@@ -69,10 +70,10 @@ jobs:
           name: aab-stores
           path: ${{ env.AAB_PATH }}
 
-      - name: Deploy to Play Store (Internal testing)
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
-          packageName: com.hollybike.hollybike
-          releaseFiles: ${{ env.AAB_PATH }}
-          track: internal
+#      - name: Deploy to Play Store (Internal testing)
+#        uses: r0adkll/upload-google-play@v1
+#        with:
+#          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
+#          packageName: com.hollybike.hollybike
+#          releaseFiles: ${{ env.AAB_PATH }}
+#          track: internal
