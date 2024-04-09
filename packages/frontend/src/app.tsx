@@ -6,5 +6,6 @@ export function App() {
     { path: "/", element: <p>root</p> },
     { path: "/login", element: <p>login</p> },
   ]);
+
   return <><RouterProvider router={router} /></>;
 }
