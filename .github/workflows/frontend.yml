@@ -30,7 +30,7 @@ jobs:
         run: bun install
 
       - name: Run svelte-check
-        run: bun run check
+        run: bun run lint
 
       - name: Try building application
         run: bun run build
