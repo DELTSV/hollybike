@@ -58,8 +58,10 @@ jobs:
       - name: Decode Android Service Account
         run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
-      - name: Build bundle
-        run: flutter build bundle --release
+      - name: Build aab
+        run: |
+          flutter build appbundle \
+            --release
 
       - name: Upload generated aab to the artifacts
         uses: actions/upload-artifact@master
