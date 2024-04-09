@@ -72,7 +72,7 @@ jobs:
       - name: Deploy to Play Store (Internal testing)
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJson: ${{ env.SERVICE_ACCOUNT_PATH }}
+          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
           packageName: com.yourapp.package
           releaseFiles: ${{ env.AAB_PATH }}
           track: internal
