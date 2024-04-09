@@ -66,13 +66,12 @@ jobs:
       - name: Run native compile
         run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
 
-      - name: Create release
-        continue-on-error: true
-        run: |
-          gh release create \
-              ${{ steps.version_full_name.outputs.version_full_name }} --generate-notes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Create release
+#        run: |
+#          gh release create \
+#              ${{ steps.version_full_name.outputs.version_full_name }} --generate-notes
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release
         run: |
