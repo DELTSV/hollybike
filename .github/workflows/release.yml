@@ -1,12 +1,6 @@
 name: Backend CI/CD
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'packages/backend/**'
-      - '.github/workflows/backend.yml'
   workflow_dispatch:
   release:
     types: [published]
@@ -53,31 +47,20 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
-      - name: Get Project Version
-        id: get_version
-        run: echo "version=$(./gradlew -q printVersion)" >> $GITHUB_OUTPUT
-
       - id: executable
-        run: echo "executable_name=hollybike-${{ runner.os }}-${{ steps.get_version.outputs.version }}-x86_64" >> $GITHUB_OUTPUT
+        run: echo "executable_name=hollybike-${{ runner.os }}-${{ github.event.release.tag_name || 'snapshot' }}-x86_64" >> $GITHUB_OUTPUT
 
       - id: version_full_name
-        run: echo "version_full_name=hollybike_server-${{ steps.get_version.outputs.version }}" >> $GITHUB_OUTPUT
+        run: echo "version_full_name=hollybike_server-${{ github.event.release.tag_name || 'snapshot' }}" >> $GITHUB_OUTPUT
 
       - name: Run native compile
         run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
 
-      - name: Create release
-        continue-on-error: true
-        run: |
-          gh release create \
-              ${{ steps.version_full_name.outputs.version_full_name }} --generate-notes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload release
+        if: github.event.release.tag_name
         run: |
           gh release upload \
-              ${{ steps.version_full_name.outputs.version_full_name }} \
+              ${{ github.event.release.tag_name }} \
               build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
