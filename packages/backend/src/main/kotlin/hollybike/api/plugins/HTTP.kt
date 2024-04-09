@@ -11,7 +11,7 @@ import io.ktor.server.routing.*
 
 fun Application.configureHTTP() {
 	routing {
-		if(System.getProperty("org.graalvm.nativeimage.imagecode") != "runtime") {
+		if (System.getProperty("org.graalvm.nativeimage.imagecode") != "runtime") {
 			swaggerUI(path = "openapi")
 		}
 	}
