@@ -1,4 +1,4 @@
-name: Backend CI/CD
+name: Release CI/CD
 
 on:
   workflow_dispatch:
@@ -10,14 +10,44 @@ env:
 
 defaults:
   run:
-    working-directory: packages/backend
     shell: bash
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Try building application
+        run: bun run build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-${{ github.event.release.tag_name || 'snapshot' }}
+          path: packages/frontend/dist
+          retention-days: 1
+
+  build-backend:
+    name: Build Backend
+    needs:
+      - build-frontend
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
@@ -29,6 +59,10 @@ jobs:
             executable-suffix: '.exe'
 
     runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        working-directory: packages/backend
 
     steps:
       - name: Checkout code
@@ -46,6 +80,17 @@ jobs:
 
       - id: executable
         run: echo "executable_name=hollybike-${{ runner.os }}-${{ github.event.release.tag_name || 'snapshot' }}-x86_64" >> $GITHUB_OUTPUT
+
+      - name: Download a single artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-${{ github.event.release.tag_name || 'snapshot' }}
+
+      - name: Remove files in ressources
+        run: rm -rf src/main/resources/front/*
+
+      - name: Copy downloaded artifact
+        run: cp -r ${{ github.workspace }}/frontend/dist/* src/main/resources/front/
 
       - name: Run native compile
         run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
