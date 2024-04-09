@@ -7,6 +7,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/app/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/packages/app/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/packages/app/build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/frontend/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

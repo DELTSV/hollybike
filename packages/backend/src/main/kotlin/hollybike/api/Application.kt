@@ -1,10 +1,12 @@
 package hollybike.api
 
 import hollybike.api.plugins.*
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun main() {
@@ -17,14 +19,19 @@ fun Application.module() {
 	configureSerialization()
 	configureHTTP()
 	configureSecurity()
-	configureRouting()
 
 	routing {
-		singlePageApplication {
-			useResources = true
-			filesPath = "sample-web-app"
-			defaultPage = "main.html"
-			ignoreFiles { it.endsWith(".txt") }
+		route("/api") {
+			get("/test") {
+				println("ICI")
+				call.respondText("HELLO WORLD!")
+			}
 		}
+		get("/{...}") {
+			this::class.java.getResource("/front/index.html")?.readText()?.let {
+				call.respondText(it, ContentType.Text.Html)
+			}
+		}
+		staticResources("/assets", "front/assets")
 	}
 }
