@@ -8,10 +8,6 @@ on:
 env:
   CI: true
 
-defaults:
-  run:
-    shell: bash
-
 permissions:
   contents: write
 
@@ -23,6 +19,7 @@ jobs:
     defaults:
       run:
         working-directory: packages/frontend
+        shell: bash
 
     steps:
       - name: Checkout code
@@ -63,6 +60,7 @@ jobs:
     defaults:
       run:
         working-directory: packages/backend
+        shell: bash
 
     steps:
       - name: Checkout code
