@@ -31,5 +31,9 @@
   {
     "name": "hollybike.api.ApplicationKt",
     "allPublicMethods": true
+  },
+  {
+    "name": "java.lang.String",
+    "allPublicMethods": true
   }
 ]
