@@ -81,16 +81,14 @@ jobs:
       - id: executable
         run: echo "executable_name=hollybike-${{ runner.os }}-${{ github.event.release.tag_name || 'snapshot' }}-x86_64" >> $GITHUB_OUTPUT
 
+      - name: Remove files in ressources
+        run: rm -rf src/main/resources/front/*
+
       - name: Download a single artifact
         uses: actions/download-artifact@v4
         with:
           name: frontend-${{ github.event.release.tag_name || 'snapshot' }}
-
-      - name: Remove files in ressources
-        run: rm -rf src/main/resources/front/*
-
-      - name: Copy downloaded artifact
-        run: cp -r ${{ github.workspace }}/frontend/dist/* src/main/resources/front/
+          path: packages/backend/src/main/resources/front/
 
       - name: Run native compile
         run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
