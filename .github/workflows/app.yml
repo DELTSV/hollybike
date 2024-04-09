@@ -19,6 +19,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      AAB_PATH: build/app/outputs/bundle/release/app-release.aab
+      KEYSTORE_PATH: android/upload-keystore.jks
+      KEY_PROPS_PATH: android/key.properties
+      SERVICE_ACCOUNT_PATH: store_credentials.json
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,3 +48,29 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+      - name: Decode Android keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
+
+      - name: Decode Android key properties
+        run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
+
+      - name: Decode Android Service Account
+        run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
+
+      - name: Build bundle
+        run: flutter build bundle --release
+
+      - name: Upload generated aab to the artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: aab-stores
+          path: ${{ env.AAB_PATH }}
+
+      - name: Deploy to Play Store (Internal testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ env.SERVICE_ACCOUNT_PATH }}
+          packageName: com.yourapp.package
+          releaseFiles: ${{ env.AAB_PATH }}
+          track: internal
