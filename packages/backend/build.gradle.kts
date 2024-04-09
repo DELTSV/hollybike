@@ -46,6 +46,10 @@ dependencies {
 	implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
+	implementation("org.ktorm:ktorm-core:3.6.0")
+	implementation("com.mchange:c3p0:0.9.5.5")
+	implementation("org.ktorm:ktorm-support-mysql:3.6.0")
+
 	testImplementation("io.ktor:ktor-server-tests-jvm")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 	testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
