@@ -7,6 +7,12 @@ on:
     paths:
       - 'packages/frontend/**'
       - '.github/workflows/frontend.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/frontend/**'
+      - '.github/workflows/frontend.yml'
 
 env:
   CI: true
@@ -17,11 +23,23 @@ defaults:
 
 jobs:
   build:
+    name: Build Frontend
     runs-on: ubuntu-latest
+
+    permissions:
+      checks: read
+      contents: read
+      actions: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Check and wait
+        uses: ./.github/actions/check-and-wait
+        with:
+          workflow: 'Infrastructure CI/CD'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
@@ -34,3 +52,23 @@ jobs:
 
       - name: Try building application
         run: bun run build
+
+      - name: Configure AWS credentials
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync cacheable files with S3 bucket
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
+
+      - name: Sync non cacheable files with S3 bucket
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
+
+      - name: Create CloudFront invalidation
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"

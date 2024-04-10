@@ -17,6 +17,7 @@ defaults:
 
 jobs:
   build:
+    name: Build Backend
     runs-on: ubuntu-latest
 
     steps:
