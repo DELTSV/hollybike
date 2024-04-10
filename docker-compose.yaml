@@ -1,0 +1,12 @@
+services:
+  database:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: hollybike
+    ports:
+      - "5432:5432"
+    volumes:
+      - /var/lib/postgresql/data

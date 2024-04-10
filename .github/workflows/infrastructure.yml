@@ -1,4 +1,4 @@
-name: ${{ vars.INFRA_WORKFLOW }}
+name: Infrastructure CI/CD
 
 on:
   push:

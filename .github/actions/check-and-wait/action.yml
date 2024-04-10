@@ -13,7 +13,6 @@ runs:
   steps:
     - name: Check if terraform workflow is started
       id: check-terraform-workflow
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
@@ -22,7 +21,7 @@ runs:
         echo "is_running=$(bash .github/scripts/check-terraform-workflow.sh '${{ inputs.workflow }}' ${{ github.repository }})" >> $GITHUB_OUTPUT
 
     - name: Wait for tests to succeed
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check-terraform-workflow.outputs.is_running == 'true'
+      if: steps.check-terraform-workflow.outputs.is_running == 'true'
       uses: lewagon/wait-on-check-action@v1.3.4
       with:
         ref: ${{ github.ref }}

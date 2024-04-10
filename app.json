@@ -1,0 +1,7 @@
+{
+  "db": {
+    "url": "jdbc:postgresql://localhost:5432/hollybike",
+    "username": "user",
+    "password": "password"
+  }
+}

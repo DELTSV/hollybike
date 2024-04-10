@@ -8,6 +8,7 @@ plugins {
 	id("io.ktor.plugin") version "2.3.9"
 	id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 	id("org.graalvm.buildtools.native") version "0.9.19"
+	id("com.google.devtools.ksp") version "1.9.21-1.0.15"
 }
 
 group = "hollybike.api"
@@ -30,6 +31,7 @@ application {
 repositories {
 	mavenCentral()
 }
+
 dependencies {
 	implementation("io.ktor:ktor-server-core:$ktor_version")
 	implementation("io.ktor:ktor-server-cio:$ktor_version")
@@ -48,7 +50,9 @@ dependencies {
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
 	implementation("org.ktorm:ktorm-core:3.6.0")
 	implementation("com.mchange:c3p0:0.9.5.5")
-	implementation("org.ktorm:ktorm-support-mysql:3.6.0")
+	implementation("org.ktorm:ktorm-support-postgresql:3.6.0")
+	implementation("org.postgresql:postgresql:42.7.3")
+	ksp(project(":processor"))
 
 	testImplementation("io.ktor:ktor-server-tests-jvm")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
@@ -74,7 +78,7 @@ graalvmNative {
 			buildArgs.add("-H:+InstallExitHandlers")
 			buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
 			buildArgs.add("-H:+ReportExceptionStackTraces")
-			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/src/main/resources/META-INF/native-image/reflect-config.json",)
+			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/build/generated/ksp/main/resources/META-INF/native-image/reflect-config.json",)
 			resources.autodetect()
 
 			imageName.set(getIN())

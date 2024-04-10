@@ -56,6 +56,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: ./.github/actions/check-and-wait
         with:
           workflow: ${{ vars.INFRA_WORKFLOW }}
