@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
   }
 
@@ -15,7 +15,7 @@ resource "aws_s3_bucket" "tfstate_bucket" {
 
   tags = {
     Name = "tfstate-bucket"
-    key = "tfstate"
+    key  = "tfstate"
   }
 }
 

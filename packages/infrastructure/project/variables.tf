@@ -13,5 +13,5 @@ variable "secret_access_key" {
 variable "region" {
   type        = string
   description = "The region where the server will be created"
-  default = "eu-west-3"
+  default     = "eu-west-3"
 }
