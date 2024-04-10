@@ -7,6 +7,12 @@ on:
     paths:
       - 'packages/app/**'
       - '.github/workflows/app.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/infrastructure/**'
+      - '.github/workflows/app.yml'
 
 env:
   CI: true
@@ -51,32 +57,40 @@ jobs:
         run: flutter test
 
       - name: Decode Android keystore
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
 
       - name: Copy keystore
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: cp ${{ env.KEYSTORE_PATH }} android/app/upload-keystore.jks
 
       - name: Decode Android key properties
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
 
       - name: Decode Android Service Account
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
       - name: Build aab
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           flutter build appbundle \
             --release
 
       - name: Upload generated aab to the artifacts
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/upload-artifact@master
         with:
           name: aab-stores
           path: ${{ env.AAB_PATH }}
 
       - name: Deploy to Play Store (Internal testing)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
           packageName: com.hollybike.hollybike
           releaseFiles: ${{ env.AAB_PATH }}
+          status: draft
           track: internal
