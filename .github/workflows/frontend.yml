@@ -35,26 +35,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check if terraform workflow is started
-        id: check-terraform-workflow
-        working-directory: .github/scripts
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # run script.sh and store the output in a variable
-        run: |
-            echo "is_running=$(bash check-terraform-workflow.sh 'Infrastructure CI/CD' ${{ github.repository }})" >> $GITHUB_OUTPUT
-
-      - name: Wait for tests to succeed
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check-terraform-workflow.outputs.is_running == 'true'
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ github.ref }}
-          check-name: Terraform
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-          allowed-conclusions: success
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
 
@@ -75,14 +55,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Sync cacheable files with S3 bucket
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
+      - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
+        uses: ./.github/actions/check-and-wait
+        with:
+          workflow: ${{ vars.INFRA_WORKFLOW }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sync non cacheable files with S3 bucket
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
-
-      - name: Create CloudFront invalidation
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"
+#      - name: Sync cacheable files with S3 bucket
+#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
+#
+#      - name: Sync non cacheable files with S3 bucket
+#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
+#
+#      - name: Create CloudFront invalidation
+#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#        run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"

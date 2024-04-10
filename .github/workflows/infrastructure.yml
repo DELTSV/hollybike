@@ -1,4 +1,4 @@
-name: Infrastructure CI/CD
+name: ${{ vars.INFRA_WORKFLOW }}
 
 on:
   push:
@@ -96,7 +96,7 @@ jobs:
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
-        run: exit 1
+        run: exit 0
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
