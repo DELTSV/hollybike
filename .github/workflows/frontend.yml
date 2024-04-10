@@ -42,6 +42,7 @@ jobs:
           check-name: Terraform
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
+          allowed-conclusions: in_progress
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
