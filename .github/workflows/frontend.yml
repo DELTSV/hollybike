@@ -62,14 +62,14 @@ jobs:
           workflow: ${{ vars.INFRA_WORKFLOW }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Sync cacheable files with S3 bucket
-#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
-#
-#      - name: Sync non cacheable files with S3 bucket
-#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
-#
-#      - name: Create CloudFront invalidation
-#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#        run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"
+      - name: Sync cacheable files with S3 bucket
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
+
+      - name: Sync non cacheable files with S3 bucket
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
+
+      - name: Create CloudFront invalidation
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"

@@ -15,3 +15,9 @@ variable "region" {
   description = "The region where the server will be created"
   default     = "eu-west-3"
 }
+
+variable "domain_name" {
+  type        = string
+  description = "The domain name for the server"
+  default     = "hollybike.fr"
+}
