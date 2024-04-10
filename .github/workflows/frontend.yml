@@ -43,11 +43,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # run script.sh and store the output in a variable
         run: |
-            gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "/repos/DELTSV/hollybike/actions/runs?status=in_progress&event=push"
-            echo $(bash check-terraform-workflow.sh) >> $GITHUB_OUTPUT
+            echo "is_running=$(bash check-terraform-workflow.sh 'Infrastructure CI/CD' ${{ github.repository }})" >> $GITHUB_OUTPUT
 
       - name: Wait for tests to succeed
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check-terraform-workflow.outputs.terraform == 'true'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && steps.check-terraform-workflow.outputs.is_running == 'true'
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           ref: ${{ github.ref }}

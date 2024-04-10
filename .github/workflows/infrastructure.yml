@@ -1,4 +1,4 @@
-name: Infrastructure CI/CD test
+name: Infrastructure CI/CD
 
 on:
   push:
