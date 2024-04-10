@@ -26,6 +26,10 @@ jobs:
     name: Build Frontend
     runs-on: ubuntu-latest
 
+    permissions:
+      checks: read
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
