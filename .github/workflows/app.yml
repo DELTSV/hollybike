@@ -22,7 +22,7 @@ jobs:
 
     env:
       AAB_PATH: packages/app/build/app/outputs/bundle/release/app-release.aab
-      KEYSTORE_PATH: android/upload-keystore.jks
+      KEYSTORE_PATH: android/app/upload-keystore.jks
       KEY_PROPS_PATH: android/key.properties
       SERVICE_ACCOUNT_PATH: store_credentials.json
 
