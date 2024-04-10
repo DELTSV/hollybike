@@ -78,13 +78,6 @@ jobs:
           flutter build appbundle \
             --release
 
-      - name: Upload generated aab to the artifacts
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/upload-artifact@master
-        with:
-          name: aab-stores
-          path: ${{ env.AAB_PATH }}
-
       - name: Deploy to Play Store (Internal testing)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: r0adkll/upload-google-play@v1
