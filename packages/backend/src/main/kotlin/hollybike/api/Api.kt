@@ -24,24 +24,3 @@ fun Application.api() {
 		}
 	}
 }
-
-@Serializable
-data class Conf(
-	val db: ConfDB
-)
-
-@Serializable
-data class ConfDB(
-	val url: String,
-	val username: String,
-	val password: String
-)
-
-fun parseConf(): Conf {
-	val f = File("./app.json")
-	val json = Json {
-		ignoreUnknownKeys = true
-	}
-	val conf = json.decodeFromString<Conf>(f.readText())
-	return conf
-}

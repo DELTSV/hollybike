@@ -8,7 +8,7 @@ plugins {
 	id("io.ktor.plugin") version "2.3.9"
 	id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 	id("org.graalvm.buildtools.native") version "0.9.19"
-	id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+	id("com.google.devtools.ksp") version "1.9.23-1.0.20"
 }
 
 group = "hollybike.api"
