@@ -27,7 +27,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'openjdk'
+          distribution: 'corretto'
           java-version: 21
 
       - name: Setup Gradle
