@@ -47,6 +47,8 @@ dependencies {
 	implementation("io.ktor:ktor-server-swagger-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+	implementation("io.ktor:ktor-server-resources:$ktor_version")
+	implementation("io.ktor:ktor-server-call-logging:$ktor_version")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
 	implementation("org.ktorm:ktorm-core:3.6.0")
 	implementation("com.mchange:c3p0:0.9.5.5")
