@@ -21,3 +21,16 @@ variable "domain_name" {
   description = "The domain name for the server"
   default     = "hollybike.fr"
 }
+
+variable "rds_pg_username" {
+  type        = string
+  default     = "postgres"
+  sensitive   = true
+  description = "Username for the RDS Postgres instance"
+}
+
+variable "rds_pg_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for the RDS Postgres instance"
+}

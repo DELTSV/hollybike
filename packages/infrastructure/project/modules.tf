@@ -27,3 +27,10 @@ module "certificates" {
     aws.virginia = aws.virginia
   }
 }
+
+module "database" {
+  source = "./database"
+
+  rds_pg_username = var.rds_pg_username
+  rds_pg_password = var.rds_pg_password
+}
