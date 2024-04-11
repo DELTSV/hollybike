@@ -6,6 +6,8 @@
       <module name="com.example.hollybike.main" target="19" />
       <module name="com.example.hollybike.test" target="19" />
       <module name="hollybike.api.hollybike" target="19" />
+      <module name="hollybike.api.processor.main" target="21" />
+      <module name="hollybike.api.processor.test" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
