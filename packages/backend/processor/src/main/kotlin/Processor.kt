@@ -29,7 +29,11 @@ class Processor(
 				""".trimIndent()
 				jsons.add(json)
 			}
-			outStream.write("[$sample,${jsons.joinToString(",")}]".toByteArray())
+			if(jsons.isNotEmpty()) {
+				outStream.write("[$sample,${jsons.joinToString(",")}]".toByteArray())
+			} else {
+				outStream.write("[$sample]".toByteArray())
+			}
 		}
 	}
 }
