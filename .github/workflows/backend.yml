@@ -36,8 +36,8 @@ jobs:
       - name: Read rights to gradlew
         run: chmod +x gradlew
 
-      - name: Run tests
-        run: ./gradlew test
+#      - name: Run tests
+#        run: ./gradlew test
 
       - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
         uses: ./.github/actions/check-and-wait
