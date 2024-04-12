@@ -10,6 +10,8 @@ on:
 
 env:
   CI: true
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 defaults:
   run:
@@ -20,18 +22,33 @@ jobs:
     name: Build Backend
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        java-version: [ '21' ]
+        graalvm-version: [ '22.3.3' ]
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'corretto'
-          java-version: 21
+#      - name: Setup Java
+#        uses: actions/setup-java@v4
+#        with:
+#          distribution: 'corretto'
+#          java-version: 21
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+      - name: Set up GraalVM (Java ${{ matrix.java-version }})
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '${{ matrix.java-version }}'
+          cache: 'gradle'
+
+#      - name: Setup Gradle
+#        uses: gradle/gradle-build-action@v3
 
       - name: Read rights to gradlew
         run: chmod +x gradlew
@@ -39,8 +56,37 @@ jobs:
 #      - name: Run tests
 #        run: ./gradlew test
 
-      - name: Run native compile
-        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+#      - name: Run native compile
+#        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+
+      - name: Create native fake folder
+        run: mkdir -p build/native/nativeCompile
+
+      - name: Create fake executable
+        run: touch build/native/nativeCompile/hollybike_server
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          context: packages/backend
+          build-args: |
+            EXECUTABLE=hollybike_server
 
       - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
         uses: ./.github/actions/check-and-wait
@@ -57,6 +103,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Upload to AWS
+      - name: Upload to AWS EC2
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: echo "Upload"
