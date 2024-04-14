@@ -1,11 +1,6 @@
 resource "aws_secretsmanager_secret" "backend_ghcr_credentials" {
   name                    = "hollybike-backend-gcr-access-key"
   recovery_window_in_days = 0
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 
 resource "aws_secretsmanager_secret_version" "backend_ghcr_credentials_version" {
@@ -20,9 +15,4 @@ resource "aws_vpc_endpoint" "secretsmanager_vpc_endpoint" {
   vpc_endpoint_type = "Interface"
   vpc_id            = var.default_vpc_id
   service_name      = "com.amazonaws.${var.region}.secretsmanager"
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }

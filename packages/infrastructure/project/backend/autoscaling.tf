@@ -4,11 +4,6 @@ resource "aws_appautoscaling_target" "ecs_target" {
   resource_id        = "service/${aws_ecs_cluster.backend_cluster.name}/${aws_ecs_service.backend_service.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 
 resource "aws_appautoscaling_policy" "ecs_cpu_policy" {

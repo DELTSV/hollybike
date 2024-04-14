@@ -34,10 +34,6 @@ resource "aws_ecs_task_definition" "backend_task" {
           name : "DB_USERNAME",
           value : var.rds_pg_username
         },
-        {
-          name : "DB_PASSWORD",
-          value : var.rds_pg_password
-        },
       ],
       logConfiguration : {
         logDriver : "awslogs",
@@ -55,9 +51,4 @@ resource "aws_ecs_task_definition" "backend_task" {
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_backend_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_backend_task_execution_role.arn
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }

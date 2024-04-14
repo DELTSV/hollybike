@@ -12,11 +12,6 @@ terraform {
 
 resource "aws_s3_bucket" "tfstate_bucket" {
   bucket = "tfstate-bucket-323827"
-
-  tags = {
-    Name = "tfstate-bucket"
-    key  = "tfstate"
-  }
 }
 
 provider "aws" {

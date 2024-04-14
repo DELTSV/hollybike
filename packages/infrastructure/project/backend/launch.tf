@@ -12,11 +12,6 @@ resource "aws_launch_template" "ecs_launch_template" {
   monitoring {
     enabled = true
   }
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 
 data "template_file" "user_data" {

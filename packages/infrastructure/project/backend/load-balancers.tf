@@ -6,10 +6,5 @@ resource "aws_alb" "backend_load_balancer" {
     var.default_vpc_subnet_b_id
   ]
   security_groups = [aws_security_group.load_balancer_security_group.id]
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 

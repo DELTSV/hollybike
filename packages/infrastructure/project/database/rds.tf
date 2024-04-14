@@ -12,9 +12,4 @@ resource "aws_db_instance" "backend_db" {
   publicly_accessible  = true
 
   vpc_security_group_ids = [aws_security_group.database_security_group.id]
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }

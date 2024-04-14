@@ -12,11 +12,6 @@ resource "aws_ecs_capacity_provider" "cas" {
       target_capacity           = 1
     }
   }
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 
 resource "aws_ecs_cluster_capacity_providers" "cas" {

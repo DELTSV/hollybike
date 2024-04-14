@@ -48,11 +48,6 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
     }
   }
 
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
-
   viewer_certificate {
     acm_certificate_arn      = var.public-cert-frontend-arn
     ssl_support_method       = "sni-only"

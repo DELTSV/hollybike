@@ -1,10 +1,5 @@
 resource "aws_ecs_cluster" "backend_cluster" {
   name = "hollybike-backend-cluster"
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 
 resource "aws_ecs_service" "backend_service" {
@@ -25,11 +20,6 @@ resource "aws_ecs_service" "backend_service" {
 #     assign_public_ip = true
     security_groups  = [aws_security_group.backend_security_group.id]
   }
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
-  }
 }
 
 resource "aws_security_group" "backend_security_group" {
@@ -47,10 +37,5 @@ resource "aws_security_group" "backend_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    "Project"   = "HollyBike"
-    "ManagedBy" = "Terraform"
   }
 }
