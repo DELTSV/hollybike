@@ -7,3 +7,9 @@ variable "route53_hosted_zone_id" {
   type        = string
   description = "The ID of the Route 53 hosted zone to use for the domain"
 }
+
+variable "api_subdomain" {
+  type        = string
+  description = "The subdomain for the API"
+  default     = "api"
+}

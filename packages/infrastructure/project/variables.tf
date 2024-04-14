@@ -22,6 +22,12 @@ variable "domain_name" {
   default     = "hollybike.fr"
 }
 
+variable "api_subdomain" {
+  type        = string
+  description = "The subdomain for the API"
+  default     = "api"
+}
+
 variable "rds_pg_username" {
   type        = string
   default     = "postgres"
@@ -33,4 +39,26 @@ variable "rds_pg_password" {
   type        = string
   sensitive   = true
   description = "Password for the RDS Postgres instance"
+}
+
+variable "ghcr_username" {
+  type        = string
+  description = "The username for the GitHub Container Registry"
+}
+
+variable "ghcr_password" {
+  type        = string
+  description = "The password for the GitHub Container Registry"
+}
+
+variable "ghcr_image_name" {
+  type        = string
+  default     = "hollybike"
+  description = "The name of the image in the GitHub Container Registry"
+}
+
+variable "ghcr_image_tag" {
+  type        = string
+  default     = "latest"
+  description = "The tag of the image in the GitHub Container Registry"
 }
