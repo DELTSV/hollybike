@@ -1,5 +1,5 @@
 resource "aws_launch_template" "ecs_launch_template" {
-  name                   = "ecs_launch_template"
+  name                   = "hollybike-backend-ecs-launch-template"
   image_id               = data.aws_ami.amazon_linux_2.id
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.ec2.id]
@@ -11,6 +11,11 @@ resource "aws_launch_template" "ecs_launch_template" {
 
   monitoring {
     enabled = true
+  }
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
   }
 }
 

@@ -1,5 +1,5 @@
 resource "aws_ecs_capacity_provider" "cas" {
-  name = "cas"
+  name = "hollybike-backend-capacity-provider"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_autoscaling_group.arn
@@ -11,6 +11,11 @@ resource "aws_ecs_capacity_provider" "cas" {
       status                    = "ENABLED"
       target_capacity           = 1
     }
+  }
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
   }
 }
 

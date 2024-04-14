@@ -4,10 +4,15 @@ resource "aws_appautoscaling_target" "ecs_target" {
   resource_id        = "service/${aws_ecs_cluster.backend_cluster.name}/${aws_ecs_service.backend_service.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }
 
 resource "aws_appautoscaling_policy" "ecs_cpu_policy" {
-  name               = "ecs_cpu_policy"
+  name               = "hollybike-backend-ecs-cpu-policy"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
@@ -23,7 +28,7 @@ resource "aws_appautoscaling_policy" "ecs_cpu_policy" {
 }
 
 resource "aws_appautoscaling_policy" "ecs_memory_policy" {
-  name               = "ecs_memory_policy"
+  name               = "hollybike-backend-ecs-memory-policy"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
@@ -39,7 +44,7 @@ resource "aws_appautoscaling_policy" "ecs_memory_policy" {
 }
 
 resource "aws_autoscaling_group" "ecs_autoscaling_group" {
-  name     = "ecs_autoscaling_group"
+  name     = "hollybike-backend-ecs-autoscaling-group"
   max_size = 1
   min_size = 1
 

@@ -12,6 +12,11 @@ resource "aws_lb_listener" "listener" {
       status_code = "HTTP_301"
     }
   }
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }
 
 

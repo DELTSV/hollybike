@@ -14,8 +14,13 @@ data "aws_iam_policy_document" "ec2_instance_role_policy" {
 }
 
 resource "aws_iam_role" "ec2_instance_role" {
-  name               = "ec2_instance_role"
+  name               = "hollybike-backend-ec2-instance-role"
   assume_role_policy = data.aws_iam_policy_document.ec2_instance_role_policy.json
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_instance_role_policy" {
@@ -24,6 +29,11 @@ resource "aws_iam_role_policy_attachment" "ec2_instance_role_policy" {
 }
 
 resource "aws_iam_instance_profile" "ec2_instance_role_profile" {
-  name = "ec2_instance_role_profile"
+  name = "hollybike-backend-ec2-instance-role-profile"
   role = aws_iam_role.ec2_instance_role.id
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }

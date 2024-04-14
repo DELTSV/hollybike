@@ -20,7 +20,8 @@ resource "aws_security_group" "ec2" {
   }
 
   tags = {
-    Name = "ec2"
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
   }
 }
 
@@ -39,7 +40,8 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "alb"
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
   }
 }
 

@@ -9,10 +9,15 @@ resource "aws_lb_listener" "listener_tls" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group.arn
   }
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name        = "target-group"
+  name        = "hollybike-backend-target-group"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -27,5 +32,11 @@ resource "aws_lb_target_group" "target_group" {
     timeout             = 10
     interval            = 30
   }
+
   vpc_id = var.default_vpc_id
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }

@@ -1,9 +1,9 @@
 resource "aws_ecs_task_definition" "backend_task" {
-  family = "backend-task"
+  family = "hollybike-backend-task"
 
   container_definitions = jsonencode([
     {
-      name : "backend-task",
+      name : "hollybike-backend-task",
       image : "ghcr.io/${var.ghcr_username}/${var.ghcr_image_name}:${var.ghcr_image_tag}",
       repositoryCredentials : {
         "credentialsParameter" : var.backend_ghcr_access_key_arn
@@ -55,4 +55,9 @@ resource "aws_ecs_task_definition" "backend_task" {
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_backend_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_backend_task_execution_role.arn
+
+  tags = {
+    "Project"   = "HollyBike"
+    "ManagedBy" = "Terraform"
+  }
 }

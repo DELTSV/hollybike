@@ -49,7 +49,7 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
   }
 
   tags = {
-    "Project"   = var.domain_name
+    "Project"   = "HollyBike"
     "ManagedBy" = "Terraform"
   }
 
@@ -58,6 +58,4 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
-
-#   depends_on = [aws_acm_certificate_validation.frontend]
 }
