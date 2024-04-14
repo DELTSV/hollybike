@@ -52,6 +52,8 @@ resource "aws_autoscaling_group" "ecs_autoscaling_group" {
 
   health_check_type = "EC2"
 
+  protect_from_scale_in = true
+
   enabled_metrics = [
     "GroupMinSize",
     "GroupMaxSize",
