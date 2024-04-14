@@ -56,17 +56,17 @@ jobs:
 #      - name: Run tests
 #        run: ./gradlew test
 
-#      - name: Run native compile
-#        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+      - name: Run native compile
+        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
 
-      - name: Create native fake folder
-        run: mkdir -p build/native/nativeCompile
-
-      - name: Create fake executable
-        run: touch build/native/nativeCompile/hollybike_server
+#      - name: Create native fake folder
+#        run: mkdir -p build/native/nativeCompile
+#
+#      - name: Create fake executable
+#        run: touch build/native/nativeCompile/hollybike_server
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
