@@ -1,23 +1,23 @@
-resource "aws_ecs_cluster" "fpr_backend_cluster" {
-  name = "fpr-backend-cluster"
+resource "aws_ecs_cluster" "backend_cluster" {
+  name = "backend-cluster"
 }
 
-resource "aws_ecs_service" "fpr_backend_service" {
-  name            = "fpr-backend-service"
-  cluster         = aws_ecs_cluster.fpr_backend_cluster.id
-  task_definition = aws_ecs_task_definition.fpr_backend_task.arn
-  launch_type     = "FARGATE"
+resource "aws_ecs_service" "backend_service" {
+  name            = "backend-service"
+  cluster         = aws_ecs_cluster.backend_cluster.id
+  task_definition = aws_ecs_task_definition.backend_task.arn
+  launch_type     = "EC2"
   desired_count   = 1
 
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
-    container_name   = aws_ecs_task_definition.fpr_backend_task.family
+    container_name   = aws_ecs_task_definition.backend_task.family
     container_port   = 8080
   }
 
   network_configuration {
     subnets          = [var.default_vpc_subnet_a_id, var.default_vpc_subnet_b_id]
-    assign_public_ip = true
+#     assign_public_ip = true
     security_groups  = [aws_security_group.backend_security_group.id]
   }
 }

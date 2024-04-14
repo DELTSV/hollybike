@@ -1,4 +1,4 @@
-variable "fpr_backend_ghcr_access_key_arn" {
+variable "backend_ghcr_access_key_arn" {
   description = "The ARN of the access key for the GitHub Container Registry"
   type        = string
 }
@@ -41,4 +41,19 @@ variable "default_vpc_subnet_a_id" {
 variable "default_vpc_subnet_b_id" {
   type        = string
   description = "The ID of the default VPC subnet B"
+}
+
+variable "rds_pg_username" {
+  type        = string
+  description = "Username for the RDS Postgres instance"
+}
+
+variable "rds_pg_password" {
+  type        = string
+  description = "Password for the RDS Postgres instance"
+}
+
+variable "db_connection_string" {
+  type        = string
+  description = "Connection string for the RDS Postgres instance"
 }

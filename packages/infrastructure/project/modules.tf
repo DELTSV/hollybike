@@ -28,13 +28,17 @@ module "backend" {
   default_vpc_subnet_a_id = module.network.default_vpc_subnet_a_id
   default_vpc_subnet_b_id = module.network.default_vpc_subnet_b_id
 
-  fpr_backend_ghcr_access_key_arn = module.secrets.fpr_backend_ghcr_access_key_arn
+  backend_ghcr_access_key_arn = module.secrets.backend_ghcr_access_key_arn
   region                          = var.region
   ghcr_image_name                 = var.ghcr_image_name
   ghcr_username                   = var.ghcr_username
   ghcr_image_tag                  = var.ghcr_image_tag
 
   public_cert_backend_arn = module.certificates.public-cert-backend-arn
+
+  db_connection_string = module.database.db_connection_string
+  rds_pg_password      = var.rds_pg_password
+  rds_pg_username      = var.rds_pg_username
 }
 
 module "domain" {

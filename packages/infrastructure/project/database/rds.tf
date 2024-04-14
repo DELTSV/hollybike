@@ -1,7 +1,7 @@
-resource "aws_db_instance" "fpr_backend_db" {
-  identifier           = "fpr-backend-db"
+resource "aws_db_instance" "backend_db" {
+  identifier           = "hollybike-db"
   allocated_storage    = 10
-  db_name              = "fpr_backend_db"
+  db_name              = "hollybike_db"
   engine               = "postgres"
   engine_version       = "14.7"
   instance_class       = "db.t3.micro"
