@@ -22,7 +22,6 @@ env:
   TF_VAR_ghcr_password: ${{ secrets.GITHUB_TOKEN }}
   TF_VAR_ghcr_username: ${{ github.actor }}
   TF_VAR_ghcr_image_tag: main
-  TF_VAR_rds_pg_password: ${{ secrets.RDS_PG_PASSWORD }}
 
 defaults:
   run:
@@ -91,6 +90,32 @@ jobs:
 
             *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
 
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Export Eagle Eye Config
+        if : github.event_name == 'pull_request'
+        run: echo "${{ secrets.EAGLE_EYE_CONFIG_FILE }}" | base64 --decode > project/eagle-eye-config.yml
+
+      - name: Eagle Eye
+        if: github.event_name == 'pull_request'
+        run: .github/scripts/run-eagle-eye.sh
+
+      - name: Comment to pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Eagle Eye 🦅 ###
+            ![Eagle Eye](packages/infrastructure/project/terraform.png)
+            
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,

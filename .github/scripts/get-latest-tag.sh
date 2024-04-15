@@ -1,4 +1,4 @@
-#!/bin/sh
+#bin/bash
 
 repo="${1:-deltsv/hollybike}"
 token=$(curl -s "https://ghcr.io/token?service=ghcr.io&scope=repository:${repo}:pull" \

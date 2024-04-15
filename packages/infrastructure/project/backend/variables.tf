@@ -18,6 +18,21 @@ variable "public_cert_backend_arn" {
   type        = string
 }
 
+variable "db_url_parameter_arn" {
+  description = "The ARN of the parameter store for the database URL"
+  type        = string
+}
+
+variable "db_username_parameter_arn" {
+  description = "The ARN of the parameter store for the database username"
+  type        = string
+}
+
+variable "db_password_parameter_arn" {
+  description = "The ARN of the parameter store for the database password"
+  type        = string
+}
+
 variable "region" {
   description = "The AWS region"
   type        = string
@@ -26,6 +41,11 @@ variable "region" {
 variable "ghcr_username" {
   type        = string
   description = "The username for the GitHub Container Registry"
+}
+
+variable "ghcr_password" {
+  type        = string
+  description = "The password for the GitHub Container Registry"
 }
 
 variable "ghcr_image_name" {
@@ -38,23 +58,17 @@ variable "ghcr_image_tag" {
   description = "The tag of the image in the GitHub Container Registry"
 }
 
-
-variable "rds_pg_username" {
-  type        = string
-  description = "Username for the RDS Postgres instance"
+variable "public_subnet_list" {
+  type        = list(string)
+  description = "List of public subnet IDs"
 }
 
-variable "rds_pg_password" {
-  type        = string
-  description = "Password for the RDS Postgres instance"
+variable "private_subnet_list" {
+  type        = list(string)
+  description = "List of private subnet IDs"
 }
 
-variable "db_connection_string" {
+variable "vpc_id" {
   type        = string
-  description = "Connection string for the RDS Postgres instance"
-}
-
-variable "ghcr_password" {
-  type        = string
-  description = "The password for the GitHub Container Registry"
+  description = "The VPC ID"
 }

@@ -2,6 +2,10 @@ resource "aws_acm_certificate" "public-cert-frontend" {
   provider          = aws.virginia
   domain_name       = var.domain_name
   validation_method = "DNS"
+
+  tags = {
+    Name = "${var.namespace}_Frontend_Certificate_${var.environment}"
+  }
 }
 
 resource "aws_acm_certificate_validation" "frontend" {
@@ -13,6 +17,10 @@ resource "aws_acm_certificate_validation" "frontend" {
 resource "aws_acm_certificate" "public-cert-backend" {
   domain_name       = "${var.api_subdomain}.${var.domain_name}"
   validation_method = "DNS"
+
+  tags = {
+    Name = "${var.namespace}_Backend_Certificate_${var.environment}"
+  }
 }
 
 resource "aws_acm_certificate_validation" "api" {

@@ -19,13 +19,17 @@ resource "aws_alb_listener" "alb_default_listener_https" {
     type             = "forward"
     target_group_arn = aws_alb_target_group.service_target_group.arn
   }
+
+  tags = {
+    Name        = "${var.namespace}-ALB-Listener-${var.environment}"
+  }
 }
 
 resource "aws_alb_target_group" "service_target_group" {
   name                 = "${var.namespace}-TargetGroup-${var.environment}"
   port                 = "80"
   protocol             = "HTTP"
-  vpc_id               = aws_default_vpc.default.id
+  vpc_id               = var.vpc_id
   deregistration_delay = 120
 
   health_check {

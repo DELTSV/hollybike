@@ -1,5 +1,5 @@
 resource "aws_security_group" "database_security_group" {
-  name = "hollybike-database-security-group"
+  name = "${var.namespace}_Database_SecurityGroup_${var.environment}"
 
   ingress {
     from_port   = 0
