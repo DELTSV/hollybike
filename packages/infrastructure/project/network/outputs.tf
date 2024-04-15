@@ -1,9 +1,9 @@
 output "public_subnet_list" {
-  value = aws_subnet.private.*.id
+  value = aws_default_subnet.public.*.id
 }
 
 output "private_subnet_list" {
-  value = aws_default_subnet.public.*.id
+  value = aws_subnet.private.*.id
 }
 
 output "vpc_id" {
