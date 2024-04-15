@@ -12,6 +12,10 @@ resource "aws_ecs_capacity_provider" "cas" {
       target_capacity           = 1
     }
   }
+
+  tags = {
+    Name        = "${var.namespace}_ECS_CapacityProvider_${var.environment}"
+  }
 }
 
 resource "aws_ecs_cluster_capacity_providers" "cas" {

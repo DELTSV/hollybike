@@ -25,7 +25,7 @@ resource "aws_iam_role" "ecs_task_iam_role" {
 }
 
 resource "aws_iam_role_policy" "ecs_backend_task_execution_ssm_role_policy" {
-  name = "hollybike-task-execution-role-policy"
+  name = "${var.namespace}_ECS_SSM_TaskIAMRole_${var.environment}"
   role = aws_iam_role.ecs_task_execution_role.id
 
   policy = jsonencode({
@@ -39,9 +39,9 @@ resource "aws_iam_role_policy" "ecs_backend_task_execution_ssm_role_policy" {
         ],
         "Resource" : [
           aws_secretsmanager_secret.backend_ghcr_credentials.arn,
-          aws_ssm_parameter.backend_db_url.arn,
-          aws_ssm_parameter.backend_db_username.arn,
-          aws_ssm_parameter.backend_db_password.arn
+          var.db_url_parameter_arn,
+          var.db_username_parameter_arn,
+          var.db_password_parameter_arn
         ]
       },
     ]

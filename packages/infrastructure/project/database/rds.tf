@@ -6,10 +6,14 @@ resource "aws_db_instance" "backend_db" {
   engine_version       = "14.7"
   instance_class       = "db.t3.micro"
   username             = var.rds_pg_username
-  password             = var.rds_pg_password
+  password             = random_password.master_password.result
   parameter_group_name = "default.postgres14"
   skip_final_snapshot  = true
   publicly_accessible  = true
 
   vpc_security_group_ids = [aws_security_group.database_security_group.id]
+
+  tags = {
+    Name = "${var.namespace}_Backend_DB_${var.environment}"
+  }
 }

@@ -7,7 +7,7 @@ variable "namespace" {
 variable "environment" {
   description = "The environment for the resources"
   type        = string
-  default     = "Dev"
+  default     = "Prod"
 }
 
 variable "az_count" {
@@ -49,14 +49,7 @@ variable "api_subdomain" {
 variable "rds_pg_username" {
   type        = string
   default     = "postgres"
-  sensitive   = true
   description = "Username for the RDS Postgres instance"
-}
-
-variable "rds_pg_password" {
-  type        = string
-  sensitive   = true
-  description = "Password for the RDS Postgres instance"
 }
 
 variable "ghcr_username" {

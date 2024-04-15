@@ -1,7 +1,7 @@
 resource "aws_security_group" "ec2" {
   name        = "${var.namespace}_EC2_Instance_SecurityGroup_${var.environment}"
   description = "Security group for EC2 instances in ECS cluster"
-  vpc_id      = aws_default_vpc.default.id
+  vpc_id      = var.vpc_id
 
   ingress {
     description     = "Allow ingress traffic from ALB on HTTP on ephemeral ports"
@@ -18,16 +18,12 @@ resource "aws_security_group" "ec2" {
     protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = {
-    Name = "${var.namespace}_EC2_Instance_SecurityGroup_${var.environment}"
-  }
 }
 
 resource "aws_security_group" "alb" {
   name        = "${var.namespace}_ALB_SecurityGroup_${var.environment}"
   description = "Security group for ALB"
-  vpc_id      = aws_default_vpc.default.id
+  vpc_id      = var.vpc_id
 
   egress {
     description = "Allow all egress traffic"
@@ -51,9 +47,5 @@ resource "aws_security_group" "alb" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.namespace}_ALB_SecurityGroup_${var.environment}"
   }
 }

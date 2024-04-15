@@ -53,4 +53,8 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
+
+  tags = {
+    Name = "${var.namespace}_Frontend_Cloudfront_${var.environment}"
+  }
 }

@@ -3,19 +3,17 @@ module "frontend" {
 
   domain_name              = var.domain_name
   public-cert-frontend-arn = module.certificates.public-cert-frontend-arn
-}
-
-module "secrets" {
-  source = "./secrets"
-
-  ghcr_username = var.ghcr_username
-  ghcr_password = var.ghcr_password
-
-  region = var.region
+  environment              = var.environment
+  namespace                = var.namespace
 }
 
 module "network" {
   source = "./network"
+
+  az_count    = var.az_count
+  namespace   = var.namespace
+  environment = var.environment
+  region      = var.region
 }
 
 module "backend" {
@@ -29,13 +27,15 @@ module "backend" {
 
   public_cert_backend_arn = module.certificates.public-cert-backend-arn
 
-  db_connection_string = module.database.db_connection_string
-  rds_pg_password      = var.rds_pg_password
-  rds_pg_username      = var.rds_pg_username
-
-  az_count    = var.az_count
-  namespace   = var.namespace
-  environment = var.environment
+  az_count                  = var.az_count
+  namespace                 = var.namespace
+  environment               = var.environment
+  public_subnet_list        = module.network.public_subnet_list
+  private_subnet_list       = module.network.private_subnet_list
+  vpc_id                    = module.network.vpc_id
+  db_password_parameter_arn = module.database.db_password_parameter_arn
+  db_url_parameter_arn      = module.database.db_url_parameter_arn
+  db_username_parameter_arn = module.database.db_username_parameter_arn
 }
 
 module "domain" {
@@ -64,11 +64,15 @@ module "certificates" {
   providers = {
     aws.virginia = aws.virginia
   }
+
+  environment = var.environment
+  namespace   = var.namespace
 }
 
 module "database" {
   source = "./database"
 
   rds_pg_username = var.rds_pg_username
-  rds_pg_password = var.rds_pg_password
+  environment     = var.environment
+  namespace       = var.namespace
 }
