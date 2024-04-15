@@ -1,5 +1,5 @@
 resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_alb.backend_load_balancer.arn
+  load_balancer_arn = aws_alb.alb.arn
   port              = "80"
   protocol          = "HTTP"
 
@@ -13,5 +13,3 @@ resource "aws_lb_listener" "listener" {
     }
   }
 }
-
-

@@ -11,34 +11,31 @@ module "secrets" {
   ghcr_username = var.ghcr_username
   ghcr_password = var.ghcr_password
 
-  default_vpc_id = module.network.default_vpc_id
-  region         = var.region
+  region = var.region
 }
 
 module "network" {
   source = "./network"
-
-  region = var.region
 }
 
 module "backend" {
   source = "./backend"
 
-  default_vpc_id          = module.network.default_vpc_id
-  default_vpc_subnet_a_id = module.network.default_vpc_subnet_a_id
-  default_vpc_subnet_b_id = module.network.default_vpc_subnet_b_id
-
-  backend_ghcr_access_key_arn = module.secrets.backend_ghcr_access_key_arn
-  region                      = var.region
-  ghcr_image_name             = var.ghcr_image_name
-  ghcr_username               = var.ghcr_username
-  ghcr_image_tag              = var.ghcr_image_tag
+  region          = var.region
+  ghcr_image_name = var.ghcr_image_name
+  ghcr_password   = var.ghcr_password
+  ghcr_username   = var.ghcr_username
+  ghcr_image_tag  = var.ghcr_image_tag
 
   public_cert_backend_arn = module.certificates.public-cert-backend-arn
 
   db_connection_string = module.database.db_connection_string
   rds_pg_password      = var.rds_pg_password
   rds_pg_username      = var.rds_pg_username
+
+  az_count    = var.az_count
+  namespace   = var.namespace
+  environment = var.environment
 }
 
 module "domain" {

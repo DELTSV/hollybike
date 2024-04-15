@@ -1,5 +1,5 @@
 resource "aws_ecs_capacity_provider" "cas" {
-  name = "hollybike-backend-capacity-provider"
+  name = "${var.namespace}_ECS_CapacityProvider_${var.environment}"
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.ecs_autoscaling_group.arn
@@ -15,6 +15,6 @@ resource "aws_ecs_capacity_provider" "cas" {
 }
 
 resource "aws_ecs_cluster_capacity_providers" "cas" {
-  cluster_name       = aws_ecs_cluster.backend_cluster.name
+  cluster_name       = aws_ecs_cluster.default.name
   capacity_providers = [aws_ecs_capacity_provider.cas.name]
 }

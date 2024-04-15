@@ -1,6 +1,16 @@
-variable "backend_ghcr_access_key_arn" {
-  description = "The ARN of the access key for the GitHub Container Registry"
+variable "namespace" {
+  description = "The namespace for the resources"
   type        = string
+}
+
+variable "environment" {
+  description = "The environment for the resources"
+  type        = string
+}
+
+variable "az_count" {
+  description = "The number of availability zones to use"
+  type        = number
 }
 
 variable "public_cert_backend_arn" {
@@ -28,20 +38,6 @@ variable "ghcr_image_tag" {
   description = "The tag of the image in the GitHub Container Registry"
 }
 
-variable "default_vpc_id" {
-  type        = string
-  description = "The ID of the default VPC"
-}
-
-variable "default_vpc_subnet_a_id" {
-  type        = string
-  description = "The ID of the default VPC subnet A"
-}
-
-variable "default_vpc_subnet_b_id" {
-  type        = string
-  description = "The ID of the default VPC subnet B"
-}
 
 variable "rds_pg_username" {
   type        = string
@@ -56,4 +52,9 @@ variable "rds_pg_password" {
 variable "db_connection_string" {
   type        = string
   description = "Connection string for the RDS Postgres instance"
+}
+
+variable "ghcr_password" {
+  type        = string
+  description = "The password for the GitHub Container Registry"
 }

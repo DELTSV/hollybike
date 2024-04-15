@@ -12,8 +12,3 @@ variable "region" {
   type        = string
   description = "The region to deploy the resources"
 }
-
-variable "default_vpc_id" {
-    type        = string
-    description = "The default VPC ID"
-}

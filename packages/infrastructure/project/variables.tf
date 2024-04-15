@@ -1,3 +1,21 @@
+variable "namespace" {
+  description = "The namespace for the resources"
+  type        = string
+  default     = "HollyBike"
+}
+
+variable "environment" {
+  description = "The environment for the resources"
+  type        = string
+  default     = "Dev"
+}
+
+variable "az_count" {
+  description = "The number of availability zones to use"
+  type        = number
+  default     = 3
+}
+
 variable "access_key" {
   description = "AWS access key"
   type        = string
