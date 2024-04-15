@@ -112,23 +112,12 @@ jobs:
         run: ${{ github.workspace }}/.github/scripts/run-eagle-eye.sh
         continue-on-error: true
 
-      - name: Comment to pull request
+      - name: Upload artifact
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
+        uses: actions/upload-artifact@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Eagle Eye 🦅 ###
-            ![Eagle Eye](packages/infrastructure/project/terraform.png)
-            
-            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+          name: eagle-eye-diagram
+          path: packages/infrastructure/project/terraform.png
         continue-on-error: true
 
       - name: Terraform Plan Status
