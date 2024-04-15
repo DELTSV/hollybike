@@ -11,7 +11,7 @@ on:
     branches:
       - main
     paths:
-      - 'packages/infrastructure/**'
+      - 'packages/app/**'
       - '.github/workflows/app.yml'
 
 env:

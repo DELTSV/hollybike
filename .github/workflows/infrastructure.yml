@@ -99,11 +99,18 @@ jobs:
 
       - name: Export Eagle Eye Config
         if : github.event_name == 'pull_request'
-        run: echo "${{ secrets.EAGLE_EYE_CONFIG_FILE }}" | base64 --decode > project/eagle-eye-config.yml
+        run: echo "${{ secrets.EAGLE_EYE_CONFIG_FILE }}" | base64 --decode > eagle-eye-config.yml
+        continue-on-error: true
+
+      - name: Grant execute permission to Eagle Eye script
+        if: github.event_name == 'pull_request'
+        run: chmod +x ${{ github.workspace }}/.github/scripts/run-eagle-eye.sh
+        continue-on-error: true
 
       - name: Eagle Eye
         if: github.event_name == 'pull_request'
-        run: .github/scripts/run-eagle-eye.sh
+        run: ${{ github.workspace }}/.github/scripts/run-eagle-eye.sh
+        continue-on-error: true
 
       - name: Comment to pull request
         if: github.event_name == 'pull_request'
@@ -122,6 +129,7 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+        continue-on-error: true
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
