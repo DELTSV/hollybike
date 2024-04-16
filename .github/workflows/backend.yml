@@ -7,11 +7,18 @@ on:
     paths:
       - 'packages/backend/**'
       - '.github/workflows/backend.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/backend/**'
+      - '.github/workflows/backend.yml'
 
 env:
   CI: true
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  JAVA_VERSION: 21
 
 defaults:
   run:
@@ -22,51 +29,51 @@ jobs:
     name: Build Backend
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        java-version: [ '21' ]
-        graalvm-version: [ '22.3.3' ]
-
     permissions:
       contents: read
       packages: write
+
+    services:
+      redis:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: user
+          POSTGRES_DB: hollybike
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-#      - name: Setup Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: 'corretto'
-#          java-version: 21
-
-      - name: Set up GraalVM (Java ${{ matrix.java-version }})
+      - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '${{ matrix.java-version }}'
+          java-version: '${{ env.JAVA_VERSION }}'
           cache: 'gradle'
 
-#      - name: Setup Gradle
-#        uses: gradle/gradle-build-action@v3
+      - name: Copy app.json
+        working-directory: .
+        run: cp app.json packages/backend/app.json
 
       - name: Read rights to gradlew
         run: chmod +x gradlew
 
-#      - name: Run tests
-#        run: ./gradlew test
+      - name: Run tests
+        run: ./gradlew test
 
       - name: Run native compile
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: ./gradlew nativeCompile -Pimage_name=hollybike_server
 
-#      - name: Create native fake folder
-#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#        run: mkdir -p build/native/nativeCompile
-#
-#      - name: Create fake executable
-#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#        run: touch build/native/nativeCompile/hollybike_server
+      #      - name: Create native fake folder
+      #        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #        run: mkdir -p build/native/nativeCompile
+      #
+      #      - name: Create fake executable
+      #        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #        run: touch build/native/nativeCompile/hollybike_server
 
       - name: Log in to the Container registry
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
