@@ -1,10 +1,9 @@
-#bin/bash
+#!/bin/bash
 
-repo="${1:-deltsv/hollybike}"
-gh_token=$2
-token=$(curl -s "https://ghcr.io/token?service=ghcr.io&scope=repository:${repo}:pull" \
-             -u "deltsv:${gh_token}" \
-        | jq -r '.token')
+json_data=$(gh api \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+      /orgs/deltsv/packages/container/hollybike/versions)
 
-curl -H "Authorization: Bearer $token" \
-     -s "https://ghcr.io/v2/${repo}/tags/list" | jq .
+echo "$json_data" | jq '.[0].metadata.container.tags[0]' | tr -d '"'
+
