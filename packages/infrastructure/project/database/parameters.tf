@@ -1,6 +1,11 @@
 resource "random_password" "master_password" {
-  length  = 16
-  special = false
+  length            = 40
+  special           = true
+  min_special       = 5
+  override_special  = "!#$%^&*()-_=+[]{}<>:?"
+  keepers           = {
+    pass_version  = 1
+  }
 }
 
 resource "aws_ssm_parameter" "rds_db_url" {

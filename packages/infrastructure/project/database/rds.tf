@@ -3,10 +3,10 @@ resource "aws_db_instance" "backend_db" {
   allocated_storage    = 10
   db_name              = "hollybike_db"
   engine               = "postgres"
-  engine_version       = "14.7"
+  engine_version       = "14.10"
   instance_class       = "db.t3.micro"
   username             = var.rds_pg_username
-  password             = random_password.master_password.result
+  password             = aws_ssm_parameter.rds_db_password.value
   parameter_group_name = "default.postgres14"
   skip_final_snapshot  = true
   publicly_accessible  = true

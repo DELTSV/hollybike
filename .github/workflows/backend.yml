@@ -56,16 +56,20 @@ jobs:
 #      - name: Run tests
 #        run: ./gradlew test
 
-      - name: Run native compile
-        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+#      - name: Run native compile
+#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
 
-#      - name: Create native fake folder
-#        run: mkdir -p build/native/nativeCompile
-#
-#      - name: Create fake executable
-#        run: touch build/native/nativeCompile/hollybike_server
+      - name: Create native fake folder
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: mkdir -p build/native/nativeCompile
+
+      - name: Create fake executable
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: touch build/native/nativeCompile/hollybike_server
 
       - name: Log in to the Container registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -73,12 +77,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            latest
+            type=sha
 
       - name: Build and push
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
           push: true
@@ -87,6 +96,13 @@ jobs:
           context: packages/backend
           build-args: |
             EXECUTABLE=hollybike_server
+
+      - name: Extract second tag (sha)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: extract-tag
+        run: |
+          TAGS=(${{ steps.meta.outputs.tags }})
+          echo "second-tag=${TAGS[1]}" >> $GITHUB_OUTPUT
 
       - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
         uses: ./.github/actions/check-and-wait
@@ -103,6 +119,25 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Upload to AWS EC2
+      - name: Download task def
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: echo "Upload"
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_NAME }} --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ vars.ECS_TASK_NAME }}
+          image: ${{ steps.extract-tag.outputs.second-tag }}
+
+      - name: Deploy Amazon ECS task definition
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
+          wait-for-service-stability: true
