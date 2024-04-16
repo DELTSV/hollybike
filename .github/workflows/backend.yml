@@ -47,20 +47,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      #      - name: Setup Java
-      #        uses: actions/setup-java@v4
-      #        with:
-      #          distribution: 'corretto'
-      #          java-version: 21
-
       - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
         uses: graalvm/setup-graalvm@v1
         with:
           java-version: '${{ env.JAVA_VERSION }}'
           cache: 'gradle'
-
-      #      - name: Setup Gradle
-      #        uses: gradle/gradle-build-action@v3
 
       - name: Copy app.json
         working-directory: .
