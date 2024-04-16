@@ -33,6 +33,16 @@ jobs:
       contents: read
       packages: write
 
+    services:
+      redis:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: user
+          POSTGRES_DB: hollybike
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
