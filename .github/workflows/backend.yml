@@ -121,6 +121,7 @@ jobs:
 
       - name: Download task def
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: .
         run: |
           aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_NAME }} --query taskDefinition > task-definition.json
 
@@ -130,7 +131,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ vars.ECS_TASK_NAME }}
+          container-name: backend
           image: ${{ steps.extract-tag.outputs.second-tag }}
 
       - name: Deploy Amazon ECS task definition
