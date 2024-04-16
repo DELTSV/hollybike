@@ -70,7 +70,6 @@ jobs:
         run: |
           echo chmod +x get-latest-tag.sh
           echo "tag=$(./get-latest-tag.sh)" >> $GITHUB_OUTPUT
-          echo "Latest image tag: $tag"
 
       - name: Terraform Plan
         env:
