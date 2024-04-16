@@ -22,6 +22,7 @@ env:
   TF_VAR_ghcr_password: ${{ secrets.GITHUB_TOKEN }}
   TF_VAR_ghcr_username: ${{ github.actor }}
   TF_VAR_ghcr_image_tag: main
+  TF_VAR_ghcr_image_name: ${{ github.repository }}
 
 defaults:
   run:
