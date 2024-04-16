@@ -31,7 +31,6 @@ module "backend" {
   namespace                 = var.namespace
   environment               = var.environment
   public_subnet_list        = module.network.public_subnet_list
-  private_subnet_list       = module.network.private_subnet_list
   vpc_id                    = module.network.vpc_id
   db_password_parameter_arn = module.database.db_password_parameter_arn
   db_url_parameter_arn      = module.database.db_url_parameter_arn
