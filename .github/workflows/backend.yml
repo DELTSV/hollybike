@@ -7,6 +7,12 @@ on:
     paths:
       - 'packages/backend/**'
       - '.github/workflows/backend.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/backend/**'
+      - '.github/workflows/backend.yml'
 
 env:
   CI: true
