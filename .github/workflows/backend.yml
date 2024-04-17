@@ -39,12 +39,12 @@ jobs:
 #        uses: actions/setup-java@v4
 #        with:
 #          distribution: 'corretto'
-#          java-version: 21
+#          java-version: 17
 
-      - name: Set up GraalVM (Java ${{ matrix.java-version }})
+      - name: Set up GraalVM (Java 17)
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '${{ matrix.java-version }}'
+          java-version: '17'
           cache: 'gradle'
 
 #      - name: Setup Gradle
@@ -57,7 +57,7 @@ jobs:
 #        run: ./gradlew test
 
       - name: Run native compile
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: ./gradlew nativeCompile -Pimage_name=hollybike_server
 
 #      - name: Create native fake folder

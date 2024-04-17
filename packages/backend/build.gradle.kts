@@ -95,8 +95,8 @@ graalvmNative {
 		all {
 			javaLauncher.set(
 				javaToolchains.launcherFor {
-					languageVersion.set(JavaLanguageVersion.of(21))
-//					vendor.set(JvmVendorSpec.AMAZON)
+					languageVersion.set(JavaLanguageVersion.of(17))
+//					vendor.set(JvmVendorSpec.ORACLE)
 				},
 			)
 		}
