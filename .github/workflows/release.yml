@@ -92,7 +92,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        java-version: [ '17' ]
+        java-version: [ '21' ]
         include:
           - os: ubuntu-latest
             executable-suffix: ''
