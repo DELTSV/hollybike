@@ -6,7 +6,7 @@ resource "aws_ecs_task_definition" "default" {
   container_definitions = jsonencode([
     {
       name = "backend"
-      image : "ghcr.io/${var.ghcr_image_name}:${var.ghcr_image_tag}",
+      image : "ghcr.io/${lower(var.ghcr_image_name)}:${lower(var.ghcr_image_tag)}",
       repositoryCredentials : {
         "credentialsParameter" : aws_secretsmanager_secret.backend_ghcr_credentials.arn
       },

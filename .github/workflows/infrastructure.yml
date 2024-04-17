@@ -21,7 +21,6 @@ env:
   TF_VAR_region: ${{ vars.AWS_REGION }}
   TF_VAR_ghcr_password: ${{ secrets.GITHUB_TOKEN }}
   TF_VAR_ghcr_username: ${{ github.actor }}
-  TF_VAR_ghcr_image_tag: main
   TF_VAR_ghcr_image_name: ${{ github.repository }}
 
 defaults:
@@ -35,6 +34,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
+      packages: read
 
     steps:
       - name: Checkout code
@@ -62,7 +62,18 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
+      - name: Get latest image tag from repository
+        working-directory: .github/scripts
+        id: get_image_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo chmod +x get-latest-tag.sh
+          echo "tag=$(./get-latest-tag.sh)" >> $GITHUB_OUTPUT
+
       - name: Terraform Plan
+        env:
+          TF_VAR_ghcr_image_tag: ${{ steps.get_image_tag.outputs.tag }}
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
@@ -126,5 +137,7 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
+        env:
+          TF_VAR_ghcr_image_tag: ${{ steps.get_image_tag.outputs.tag }}
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false

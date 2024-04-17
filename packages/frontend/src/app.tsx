@@ -6,7 +6,7 @@ export function App() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <p>{ "root test" }</p>,
+			element: <p>{ "root" }</p>,
 		},
 		{
 			path: "/login",
