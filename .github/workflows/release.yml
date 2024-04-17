@@ -16,6 +16,10 @@ jobs:
     name: Build App Android
     runs-on: ubuntu-latest
 
+    env:
+      KEYSTORE_PATH: android/upload-keystore.jks
+      KEY_PROPS_PATH: android/key.properties
+
     defaults:
       run:
         working-directory: packages/app
@@ -38,6 +42,15 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Decode Android keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
+
+      - name: Copy keystore
+        run: cp ${{ env.KEYSTORE_PATH }} android/app/upload-keystore.jks
+
+      - name: Decode Android key properties
+        run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
 
       - name: Build APK
         run: flutter build apk --release
