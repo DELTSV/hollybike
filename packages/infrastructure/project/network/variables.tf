@@ -8,7 +8,12 @@ variable "environment" {
   type        = string
 }
 
-variable "rds_pg_username" {
+variable "az_count" {
+  description = "The number of availability zones to use"
+  type        = number
+}
+
+variable "region" {
+  description = "The region to deploy the resources"
   type        = string
-  description = "Username for the RDS Postgres instance"
 }

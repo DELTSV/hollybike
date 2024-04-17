@@ -3,6 +3,11 @@ variable "domain_name" {
   description = "The domain name to use for the Route 53 hosted zone"
 }
 
+variable "backend_domain_name" {
+  type        = string
+  description = "The domain name of the backend service"
+}
+
 variable "cloudfront_domain_name" {
   type        = string
   description = "The domain name of the CloudFront distribution"
@@ -11,4 +16,14 @@ variable "cloudfront_domain_name" {
 variable "cloudfront_hosted_zone_id" {
   type        = string
   description = "The Route 53 hosted zone ID for the CloudFront distribution"
+}
+
+variable "alb_domain_name" {
+  type        = string
+  description = "The domain name of the ALB"
+}
+
+variable "alb_hosted_zone_id" {
+  type        = string
+  description = "The Route 53 hosted zone ID for the ALB"
 }

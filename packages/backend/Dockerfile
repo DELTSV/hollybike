@@ -1,6 +1,11 @@
-FROM gcr.io/distroless/base
+FROM debian:bookworm-slim
+
 ARG EXECUTABLE
-RUN test -n "$EXECUTABLE"
-EXPOSE 8080
-COPY build/native/nativeCompile/$EXECUTABLE /app
-ENTRYPOINT ["/app"]
+
+COPY build/native/nativeCompile/$EXECUTABLE /app/hollybike_server
+
+RUN apt-get update && apt-get install -y curl
+
+RUN chmod +x /app/hollybike_server
+
+ENTRYPOINT ["/app/hollybike_server"]

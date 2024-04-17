@@ -1,55 +1,41 @@
 variable "namespace" {
   description = "The namespace for the resources"
   type        = string
-  default     = "HollyBike"
 }
 
 variable "environment" {
   description = "The environment for the resources"
   type        = string
-  default     = "Prod"
 }
 
 variable "az_count" {
   description = "The number of availability zones to use"
   type        = number
-  default     = 3
 }
 
-variable "access_key" {
-  description = "AWS access key"
+variable "public_cert_backend_arn" {
+  description = "The ARN of the certificate for the backend"
   type        = string
-  sensitive   = true
 }
 
-variable "secret_access_key" {
-  description = "AWS secret key"
+variable "db_url_parameter_arn" {
+  description = "The ARN of the parameter store for the database URL"
   type        = string
-  sensitive   = true
+}
+
+variable "db_username_parameter_arn" {
+  description = "The ARN of the parameter store for the database username"
+  type        = string
+}
+
+variable "db_password_parameter_arn" {
+  description = "The ARN of the parameter store for the database password"
+  type        = string
 }
 
 variable "region" {
+  description = "The AWS region"
   type        = string
-  description = "The region where the server will be created"
-  default     = "eu-west-3"
-}
-
-variable "domain_name" {
-  type        = string
-  description = "The domain name for the server"
-  default     = "hollybike.fr"
-}
-
-variable "api_subdomain" {
-  type        = string
-  description = "The subdomain for the API"
-  default     = "api"
-}
-
-variable "rds_pg_username" {
-  type        = string
-  default     = "postgres"
-  description = "Username for the RDS Postgres instance"
 }
 
 variable "ghcr_username" {
@@ -64,12 +50,25 @@ variable "ghcr_password" {
 
 variable "ghcr_image_name" {
   type        = string
-  default     = "hollybike"
   description = "The name of the image in the GitHub Container Registry"
 }
 
 variable "ghcr_image_tag" {
   type        = string
-  default     = "latest"
   description = "The tag of the image in the GitHub Container Registry"
+}
+
+variable "public_subnet_list" {
+  type        = list(string)
+  description = "List of public subnet IDs"
+}
+
+variable "private_subnet_list" {
+  type        = list(string)
+  description = "List of private subnet IDs"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "The VPC ID"
 }

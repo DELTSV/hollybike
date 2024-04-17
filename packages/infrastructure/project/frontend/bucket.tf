@@ -14,10 +14,6 @@ data "aws_iam_policy_document" "bucket_policy_document_frontend" {
 
 resource "aws_s3_bucket" "bucket_frontend" {
   bucket_prefix = "hollybike-frontend"
-  tags = {
-    "Project"   = var.domain_name
-    "ManagedBy" = "Terraform"
-  }
   force_destroy = true
 }
 

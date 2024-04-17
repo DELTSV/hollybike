@@ -96,7 +96,7 @@ graalvmNative {
 			javaLauncher.set(
 				javaToolchains.launcherFor {
 					languageVersion.set(JavaLanguageVersion.of(21))
-					vendor.set(JvmVendorSpec.ORACLE)
+//					vendor.set(JvmVendorSpec.AMAZON)
 				},
 			)
 		}
@@ -116,8 +116,12 @@ graalvmNative {
 			buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
 			buildArgs.add("-H:+ReportExceptionStackTraces")
 			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/build/generated/ksp/main/resources/META-INF/native-image/reflect-config.json",)
+
 			buildArgs.add("-H:JNIConfigurationFiles=${project.projectDir}/src/main/resources/jni-config.json")
 			buildArgs.add("-H:ResourceConfigurationFiles=${project.projectDir}/src/main/resources/resource-config.json")
+
+			buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+
 			resources.autodetect()
 
 			imageName.set(getIN())

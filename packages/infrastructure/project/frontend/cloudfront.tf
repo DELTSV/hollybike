@@ -48,16 +48,13 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
     }
   }
 
-  tags = {
-    "Project"   = var.domain_name
-    "ManagedBy" = "Terraform"
-  }
-
   viewer_certificate {
     acm_certificate_arn      = var.public-cert-frontend-arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
 
-#   depends_on = [aws_acm_certificate_validation.frontend]
+  tags = {
+    Name = "${var.namespace}_Frontend_Cloudfront_${var.environment}"
+  }
 }
