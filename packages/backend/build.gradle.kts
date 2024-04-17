@@ -55,10 +55,10 @@ dependencies {
 	implementation("com.mchange:c3p0:0.9.5.5")
 	implementation("org.ktorm:ktorm-support-postgresql:3.6.0")
 	implementation("org.postgresql:postgresql:42.7.3")
-	implementation("org.liquibase:liquibase-core:4.25.1")
+	implementation("org.liquibase:liquibase-core:4.27.0")
 	ksp(project(":processor"))
 
-	liquibaseRuntime("org.liquibase:liquibase-core:4.24.0")
+	liquibaseRuntime("org.liquibase:liquibase-core:4.27.0")
 	liquibaseRuntime("info.picocli:picocli:4.7.5")
 	liquibaseRuntime("org.yaml:snakeyaml:2.2")
 	liquibaseRuntime("org.postgresql:postgresql:42.7.3")
@@ -91,6 +91,10 @@ liquibase {
 }
 
 graalvmNative {
+	agent {
+		defaultMode.set("standard")
+	}
+
 	binaries {
 		all {
 			javaLauncher.set(
@@ -127,6 +131,10 @@ graalvmNative {
 
 			imageName.set(getIN())
 		}
+	}
+
+	metadataRepository {
+		enabled.set(true)
 	}
 }
 

@@ -20,6 +20,90 @@
           "typeReachable": "liquibase.parser.core.xml.LiquibaseEntityResolver"
         },
         "pattern": "^www.liquibase.org/xml/ns/dbchangelog/dbchangelog-.*"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/io.ktor.server.config.ConfigLoader\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/java.sql.Driver\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/kotlin.test.AsserterContributor\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.changelog.ChangeLogHistoryService\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.command.CommandStep\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.configuration.AutoloadedConfigurations\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.configuration.ConfigurationValueProvider\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.database.Database\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.database.jvm.ConnectionPatterns\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.datatype.LiquibaseDataType\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.diff.compare.DatabaseObjectComparator\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.executor.Executor\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.lockservice.LockService\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.logging.LogService\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.logging.mdc.MdcManager\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.parser.ChangeLogParser\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.report.ShowSummaryGenerator\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.servicelocator.ServiceLocator\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.snapshot.SnapshotGenerator\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/liquibase.sqlgenerator.SqlGenerator\\E"
+      },
+      {
+        "pattern": "\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
+      },
+      {
+        "pattern": "\\Qliquibase-changelog.sql\\E"
+      },
+      {
+        "pattern": "\\Qliquibase.build.properties\\E"
+      },
+      {
+        "pattern": "\\Qlogback.xml\\E"
+      },
+      {
+        "pattern": "\\Qorg/fusesource/jansi/internal/native/Windows/x86_64/jansi.dll\\E"
+      },
+      {
+        "pattern": "\\Qorg/fusesource/jansi/jansi.properties\\E"
+      },
+      {
+        "pattern": "\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
+      },
+      {
+        "pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt67b/nfkc.nrm\\E"
       }
     ]
   }
