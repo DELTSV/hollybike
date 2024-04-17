@@ -54,6 +54,7 @@ dependencies {
 	implementation("com.mchange:c3p0:0.9.5.5")
 	implementation("org.ktorm:ktorm-support-postgresql:3.6.0")
 	implementation("org.postgresql:postgresql:42.7.3")
+	implementation("org.liquibase:liquibase-core:4.25.1")
 	ksp(project(":processor"))
 
 	testImplementation("io.ktor:ktor-server-tests-jvm")
@@ -76,11 +77,19 @@ graalvmNative {
 			verbose.set(true)
 
 			buildArgs.add("--initialize-at-build-time")
+			buildArgs.add("--initialize-at-run-time=liquibase.util.StringUtil")
+			buildArgs.add("--initialize-at-run-time=liquibase.command.core")
+			buildArgs.add("--initialize-at-run-time=liquibase.diff.compare.CompareControl")
+			buildArgs.add("--initialize-at-run-time=liquibase.snapshot.SnapshotIdService")
+
+			buildArgs.add("--initialize-at-run-time=liquibase.sqlgenerator.core.LockDatabaseChangeLogGenerator")
 
 			buildArgs.add("-H:+InstallExitHandlers")
 			buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
 			buildArgs.add("-H:+ReportExceptionStackTraces")
 			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/build/generated/ksp/main/resources/META-INF/native-image/reflect-config.json",)
+			buildArgs.add("-H:JNIConfigurationFiles=${project.projectDir}/src/main/resources/jni-config.json")
+			buildArgs.add("-H:ResourceConfigurationFiles=${project.projectDir}/src/main/resources/resource-config.json")
 			resources.autodetect()
 
 			imageName.set(getIN())
