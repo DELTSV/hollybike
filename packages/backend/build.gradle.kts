@@ -112,8 +112,9 @@ graalvmNative {
 
 			buildArgs.add("--initialize-at-run-time=liquibase.sqlgenerator.core.LockDatabaseChangeLogGenerator")
 
-			buildArgs.add("-H:+InstallExitHandlers")
-			buildArgs.add("-H:+ReportUnsupportedElementsAtRuntime")
+			buildArgs.add("--install-exit-handlers")
+			buildArgs.add("--report-unsupported-elements-at-runtime")
+
 			buildArgs.add("-H:+ReportExceptionStackTraces")
 			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/build/generated/ksp/main/resources/META-INF/native-image/reflect-config.json",)
 
