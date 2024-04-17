@@ -47,12 +47,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-#      - name: Setup Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: 'corretto'
-#          java-version: 17
-
       - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
         uses: graalvm/setup-graalvm@v1
         with:
@@ -70,7 +64,7 @@ jobs:
         run: ./gradlew test
 
       - name: Run native compile
-        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: ./gradlew nativeCompile -Pimage_name=hollybike_server
 
       #      - name: Create native fake folder
