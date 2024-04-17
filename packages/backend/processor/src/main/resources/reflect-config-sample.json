@@ -1,343 +1,1553 @@
-  {
-    "name":"android.os.Build$VERSION"
-  },
-  {
-    "name":"android.util.Log"
-  },
-  {
-    "name":"ch.qos.logback.classic.encoder.PatternLayoutEncoder",
-    "queryAllPublicMethods":true,
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.joran.SerializedModelConfigurator",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.pattern.DateConverter",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.pattern.LevelConverter",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.pattern.LineSeparatorConverter",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.pattern.LoggerConverter",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.pattern.MessageConverter",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.pattern.ThreadConverter",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.classic.util.DefaultJoranConfigurator",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.core.ConsoleAppender",
-    "queryAllPublicMethods":true,
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"ch.qos.logback.core.OutputStreamAppender",
-    "methods":[{"name":"setEncoder","parameterTypes":["ch.qos.logback.core.encoder.Encoder"] }]
-  },
-  {
-    "name":"ch.qos.logback.core.encoder.Encoder",
-    "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
-  },
-  {
-    "name":"ch.qos.logback.core.encoder.LayoutWrappingEncoder",
-    "methods":[{"name":"setParent","parameterTypes":["ch.qos.logback.core.spi.ContextAware"] }]
-  },
-  {
-    "name":"ch.qos.logback.core.pattern.PatternLayoutEncoderBase",
-    "methods":[{"name":"setPattern","parameterTypes":["java.lang.String"] }]
-  },
-  {
-    "name":"ch.qos.logback.core.spi.ContextAware",
-    "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
-  },
-  {
-    "name":"com.sun.crypto.provider.HmacCore$HmacSHA256",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"com.sun.crypto.provider.PBKDF2Core$HmacSHA256",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"hollybike.api.ApplicationKt",
-    "queryAllPublicMethods":true,
-    "methods":[{"name":"configureSerialization","parameterTypes":["io.ktor.server.application.Application"] }, {"name":"main","parameterTypes":[] }, {"name":"module","parameterTypes":["io.ktor.server.application.Application"] }]
-  },
-  {
-    "name":"io.ktor.network.selector.InterestSuspensionsMap",
-    "fields":[{"name":"acceptHandlerReference"}, {"name":"connectHandlerReference"}, {"name":"readHandlerReference"}, {"name":"writeHandlerReference"}]
-  },
-  {
-    "name":"io.ktor.network.selector.LockFreeMPSCQueue",
-    "fields":[{"name":"_cur"}]
-  },
-  {
-    "name":"io.ktor.network.selector.LockFreeMPSCQueueCore",
-    "fields":[{"name":"_next"}, {"name":"_state"}]
-  },
-  {
-    "name":"io.ktor.network.selector.SelectableBase",
-    "fields":[{"name":"_interestedOps"}]
-  },
-  {
-    "name":"io.ktor.server.application.Application"
-  },
-  {
-    "name":"io.ktor.server.cio.internal.WeakTimeoutQueue$WeakTimeoutCoroutine",
-    "fields":[{"name":"state"}]
-  },
-  {
-    "name":"io.ktor.util.collections.CopyOnWriteHashMap",
-    "fields":[{"name":"current"}]
-  },
-  {
-    "name":"io.ktor.util.internal.LockFreeLinkedListNode",
-    "fields":[{"name":"_next"}, {"name":"_prev"}, {"name":"_removedRef"}]
-  },
-  {
-    "name":"io.ktor.utils.io.ByteBufferChannel",
-    "fields":[{"name":"_closed"}, {"name":"_readOp"}, {"name":"_state"}, {"name":"_writeOp"}]
-  },
-  {
-    "name":"io.ktor.utils.io.core.internal.ChunkBuffer",
-    "fields":[{"name":"nextRef"}, {"name":"refCount"}]
-  },
-  {
-    "name":"io.ktor.utils.io.internal.CancellableReusableContinuation",
-    "fields":[{"name":"jobCancellationHandler"}, {"name":"state"}]
-  },
-  {
-    "name":"io.ktor.utils.io.internal.JoiningState",
-    "fields":[{"name":"_closeWaitJob"}]
-  },
-  {
-    "name":"io.ktor.utils.io.internal.RingBufferCapacity",
-    "fields":[{"name":"_availableForRead$internal"}, {"name":"_availableForWrite$internal"}, {"name":"_pendingToFlush"}]
-  },
-  {
-    "name":"io.ktor.utils.io.pool.DefaultPool",
-    "fields":[{"name":"top"}]
-  },
-  {
-    "name":"java.io.FilePermission"
-  },
-  {
-    "name":"java.lang.ClassValue"
-  },
-  {
-    "name":"java.lang.RuntimePermission"
-  },
-  {
-    "name":"java.lang.SecurityManager",
-    "methods":[{"name":"checkPermission","parameterTypes":["java.security.Permission"] }]
-  },
-  {
-    "name":"java.lang.System",
-    "methods":[{"name":"getSecurityManager","parameterTypes":[] }]
-  },
-  {
-    "name":"java.lang.Thread",
-    "fields":[{"name":"threadLocalRandomProbe"}]
-  },
-  {
-    "name":"java.net.NetPermission"
-  },
-  {
-    "name":"java.net.SocketPermission"
-  },
-  {
-    "name":"java.net.StandardSocketOptions"
-  },
-  {
-    "name":"java.net.URLPermission",
-    "methods":[{"name":"<init>","parameterTypes":["java.lang.String","java.lang.String"] }]
-  },
-  {
-    "name":"java.security.AccessController",
-    "methods":[{"name":"doPrivileged","parameterTypes":["java.security.PrivilegedExceptionAction"] }]
-  },
-  {
-    "name":"java.security.AllPermission"
-  },
-  {
-    "name":"java.security.SecureRandomParameters"
-  },
-  {
-    "name":"java.security.SecurityPermission"
-  },
-  {
-    "name":"java.util.PropertyPermission"
-  },
-  {
-    "name":"java.util.concurrent.atomic.AtomicBoolean",
-    "fields":[{"name":"value"}]
-  },
-  {
-    "name":"java.util.concurrent.atomic.AtomicReference",
-    "fields":[{"name":"value"}]
-  },
-  {
-    "name":"java.util.concurrent.atomic.Striped64",
-    "fields":[{"name":"base"}, {"name":"cellsBusy"}]
-  },
-  {
-    "name":"javax.smartcardio.CardPermission"
-  },
-  {
-    "name":"kotlin.Metadata",
-    "queryAllDeclaredMethods":true,
-    "methods":[{"name":"bv","parameterTypes":[] }, {"name":"d1","parameterTypes":[] }, {"name":"d2","parameterTypes":[] }, {"name":"k","parameterTypes":[] }, {"name":"mv","parameterTypes":[] }, {"name":"pn","parameterTypes":[] }, {"name":"xi","parameterTypes":[] }, {"name":"xs","parameterTypes":[] }]
-  },
-  {
-    "name":"kotlin.SafePublicationLazyImpl",
-    "fields":[{"name":"_value"}]
-  },
-  {
-    "name":"kotlin.Unit"
-  },
-  {
-    "name":"kotlin.jvm.internal.DefaultConstructorMarker"
-  },
-  {
-    "name":"kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"kotlin.reflect.jvm.internal.impl.resolve.scopes.DescriptorKindFilter",
-    "allPublicFields":true
-  },
-  {
-    "name":"kotlinx.coroutines.CancellableContinuationImpl",
-    "fields":[{"name":"_decisionAndIndex"}, {"name":"_parentHandle"}, {"name":"_state"}]
-  },
-  {
-    "name":"kotlinx.coroutines.CancelledContinuation",
-    "fields":[{"name":"_resumed"}]
-  },
-  {
-    "name":"kotlinx.coroutines.CompletedExceptionally",
-    "fields":[{"name":"_handled"}]
-  },
-  {
-    "name":"kotlinx.coroutines.DispatchedCoroutine",
-    "fields":[{"name":"_decision"}]
-  },
-  {
-    "name":"kotlinx.coroutines.EventLoopImplBase",
-    "fields":[{"name":"_delayed"}, {"name":"_isCompleted"}, {"name":"_queue"}]
-  },
-  {
-    "name":"kotlinx.coroutines.InvokeOnCancelling",
-    "fields":[{"name":"_invoked"}]
-  },
-  {
-    "name":"kotlinx.coroutines.JobSupport",
-    "fields":[{"name":"_parentHandle"}, {"name":"_state"}]
-  },
-  {
-    "name":"kotlinx.coroutines.JobSupport$Finishing",
-    "fields":[{"name":"_exceptionsHolder"}, {"name":"_isCompleting"}, {"name":"_rootCause"}]
-  },
-  {
-    "name":"kotlinx.coroutines.channels.BufferedChannel",
-    "fields":[{"name":"_closeCause"}, {"name":"bufferEnd"}, {"name":"bufferEndSegment"}, {"name":"closeHandler"}, {"name":"completedExpandBuffersAndPauseFlag"}, {"name":"receiveSegment"}, {"name":"receivers"}, {"name":"sendSegment"}, {"name":"sendersAndCloseStatus"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.AtomicOp",
-    "fields":[{"name":"_consensus"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.ConcurrentLinkedListNode",
-    "fields":[{"name":"_next"}, {"name":"_prev"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.DispatchedContinuation",
-    "fields":[{"name":"_reusableCancellableContinuation"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.LimitedDispatcher",
-    "fields":[{"name":"runningWorkers"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.LockFreeLinkedListNode",
-    "fields":[{"name":"_next"}, {"name":"_prev"}, {"name":"_removedRef"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.LockFreeTaskQueue",
-    "fields":[{"name":"_cur"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.LockFreeTaskQueueCore",
-    "fields":[{"name":"_next"}, {"name":"_state"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.Segment",
-    "fields":[{"name":"cleanedAndPointers"}]
-  },
-  {
-    "name":"kotlinx.coroutines.internal.ThreadSafeHeap",
-    "fields":[{"name":"_size"}]
-  },
-  {
-    "name":"kotlinx.coroutines.scheduling.CoroutineScheduler",
-    "fields":[{"name":"_isTerminated"}, {"name":"controlState"}, {"name":"parkedWorkersStack"}]
-  },
-  {
-    "name":"kotlinx.coroutines.scheduling.CoroutineScheduler$Worker",
-    "fields":[{"name":"workerCtl"}]
-  },
-  {
-    "name":"kotlinx.coroutines.scheduling.WorkQueue",
-    "fields":[{"name":"blockingTasksInBuffer"}, {"name":"consumerIndex"}, {"name":"lastScheduledTask"}, {"name":"producerIndex"}]
-  },
-  {
-    "name":"org.postgresql.Driver"
-  },
-  {
-    "name":"org.postgresql.core.QueryExecutorCloseAction",
-    "fields":[{"name":"pgStream"}]
-  },
-  {
-    "name":"org.postgresql.jdbc.PgStatement",
-    "fields":[{"name":"cancelTimerTask"}, {"name":"isClosed"}, {"name":"statementState"}]
-  },
-  {
-    "name":"org.slf4j.Logger",
-    "methods":[{"name":"debug","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"error","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"info","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"isDebugEnabled","parameterTypes":[] }, {"name":"isErrorEnabled","parameterTypes":[] }, {"name":"isInfoEnabled","parameterTypes":[] }, {"name":"isTraceEnabled","parameterTypes":[] }, {"name":"isWarnEnabled","parameterTypes":[] }, {"name":"trace","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"warn","parameterTypes":["java.lang.String","java.lang.Throwable"] }]
-  },
-  {
-    "name":"org.slf4j.LoggerFactory",
-    "methods":[{"name":"getLogger","parameterTypes":["java.lang.String"] }]
-  },
-  {
-    "name":"sun.security.provider.NativePRNG",
-    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["java.security.SecureRandomParameters"] }]
-  },
-  {
-    "name":"sun.security.provider.SHA",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-    "name":"sun.security.provider.SHA2$SHA256",
-    "methods":[{"name":"<init>","parameterTypes":[] }]
-  }
+{
+  "name": "android.os.Build$VERSION"
+},
+{
+"name": "android.util.Log"
+},
+{
+"name": "ch.qos.logback.classic.encoder.PatternLayoutEncoder",
+"queryAllPublicMethods": true,
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.joran.SerializedModelConfigurator",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.pattern.DateConverter",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.pattern.LevelConverter",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.pattern.LineSeparatorConverter",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.pattern.LoggerConverter",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.pattern.MessageConverter",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.pattern.ThreadConverter",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.classic.util.DefaultJoranConfigurator",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.core.ConsoleAppender",
+"queryAllPublicMethods": true,
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "ch.qos.logback.core.OutputStreamAppender",
+"methods":[{"name": "setEncoder", "parameterTypes":["ch.qos.logback.core.encoder.Encoder"] }]
+},
+{
+"name": "ch.qos.logback.core.encoder.Encoder",
+"methods":[{"name": "valueOf", "parameterTypes":["java.lang.String"] }]
+},
+{
+"name": "ch.qos.logback.core.encoder.LayoutWrappingEncoder",
+"methods":[{"name": "setParent", "parameterTypes":["ch.qos.logback.core.spi.ContextAware"] }]
+},
+{
+"name": "ch.qos.logback.core.pattern.PatternLayoutEncoderBase",
+"methods":[{"name": "setPattern", "parameterTypes":["java.lang.String"] }]
+},
+{
+"name": "ch.qos.logback.core.spi.ContextAware",
+"methods":[{"name": "valueOf", "parameterTypes":["java.lang.String"] }]
+},
+{
+"name": "com.sun.crypto.provider.HmacCore$HmacSHA256",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "com.sun.crypto.provider.PBKDF2Core$HmacSHA256",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "hollybike.api.ApplicationKt",
+"queryAllPublicMethods": true,
+"methods":[{"name": "configureSerialization", "parameterTypes":["io.ktor.server.application.Application"] }, {"name": "main", "parameterTypes":[] }, {"name": "module", "parameterTypes":["io.ktor.server.application.Application"] }]
+},
+{
+"name": "io.ktor.network.selector.InterestSuspensionsMap",
+"fields":[{"name": "acceptHandlerReference"}, {"name": "connectHandlerReference"}, {"name": "readHandlerReference"}, {"name": "writeHandlerReference"}]
+},
+{
+"name": "io.ktor.network.selector.LockFreeMPSCQueue",
+"fields":[{"name": "_cur"}]
+},
+{
+"name": "io.ktor.network.selector.LockFreeMPSCQueueCore",
+"fields":[{"name": "_next"}, {"name": "_state"}]
+},
+{
+"name": "io.ktor.network.selector.SelectableBase",
+"fields":[{"name": "_interestedOps"}]
+},
+{
+"name": "io.ktor.server.application.Application"
+},
+{
+"name": "io.ktor.server.cio.internal.WeakTimeoutQueue$WeakTimeoutCoroutine",
+"fields":[{"name": "state"}]
+},
+{
+"name": "io.ktor.util.collections.CopyOnWriteHashMap",
+"fields":[{"name": "current"}]
+},
+{
+"name": "io.ktor.util.internal.LockFreeLinkedListNode",
+"fields":[{"name": "_next"}, {"name": "_prev"}, {"name": "_removedRef"}]
+},
+{
+"name": "io.ktor.utils.io.ByteBufferChannel",
+"fields":[{"name": "_closed"}, {"name": "_readOp"}, {"name": "_state"}, {"name": "_writeOp"}]
+},
+{
+"name": "io.ktor.utils.io.core.internal.ChunkBuffer",
+"fields":[{"name": "nextRef"}, {"name": "refCount"}]
+},
+{
+"name": "io.ktor.utils.io.internal.CancellableReusableContinuation",
+"fields":[{"name": "jobCancellationHandler"}, {"name": "state"}]
+},
+{
+"name": "io.ktor.utils.io.internal.JoiningState",
+"fields":[{"name": "_closeWaitJob"}]
+},
+{
+"name": "io.ktor.utils.io.internal.RingBufferCapacity",
+"fields":[{"name": "_availableForRead$internal"}, {"name": "_availableForWrite$internal"}, {"name": "_pendingToFlush"}]
+},
+{
+"name": "io.ktor.utils.io.pool.DefaultPool",
+"fields":[{"name": "top"}]
+},
+{
+"name": "java.io.FilePermission"
+},
+{
+"name": "java.lang.ClassValue"
+},
+{
+"name": "java.lang.RuntimePermission"
+},
+{
+"name": "java.lang.SecurityManager",
+"methods":[{"name": "checkPermission", "parameterTypes":["java.security.Permission"] }]
+},
+{
+"name": "java.lang.System",
+"methods":[{"name": "getSecurityManager", "parameterTypes":[] }]
+},
+{
+"name": "java.lang.Thread",
+"fields":[{"name": "threadLocalRandomProbe"}]
+},
+{
+"name": "java.net.NetPermission"
+},
+{
+"name": "java.net.SocketPermission"
+},
+{
+"name": "java.net.StandardSocketOptions"
+},
+{
+"name": "java.net.URLPermission",
+"methods":[{"name": "<init>", "parameterTypes":["java.lang.String", "java.lang.String"] }]
+},
+{
+"name": "java.security.AccessController",
+"methods":[{"name": "doPrivileged", "parameterTypes":["java.security.PrivilegedExceptionAction"] }]
+},
+{
+"name": "java.security.AllPermission"
+},
+{
+"name": "java.security.SecureRandomParameters"
+},
+{
+"name": "java.security.SecurityPermission"
+},
+{
+"name": "java.util.PropertyPermission"
+},
+{
+"name": "java.util.concurrent.atomic.AtomicBoolean",
+"fields":[{"name": "value"}]
+},
+{
+"name": "java.util.concurrent.atomic.AtomicReference",
+"fields":[{"name": "value"}]
+},
+{
+"name": "java.util.concurrent.atomic.Striped64",
+"fields":[{"name": "base"}, {"name": "cellsBusy"}]
+},
+{
+"name": "javax.smartcardio.CardPermission"
+},
+{
+"name": "kotlin.Metadata",
+"queryAllDeclaredMethods": true,
+"methods":[{"name": "bv", "parameterTypes":[] }, {"name": "d1", "parameterTypes":[] }, {"name": "d2", "parameterTypes":[] }, {"name": "k", "parameterTypes":[] }, {"name": "mv", "parameterTypes":[] }, {"name": "pn", "parameterTypes":[] }, {"name": "xi", "parameterTypes":[] }, {"name": "xs", "parameterTypes":[] }]
+},
+{
+"name": "kotlin.SafePublicationLazyImpl",
+"fields":[{"name": "_value"}]
+},
+{
+"name": "kotlin.Unit"
+},
+{
+"name": "kotlin.jvm.internal.DefaultConstructorMarker"
+},
+{
+"name": "kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "kotlin.reflect.jvm.internal.impl.resolve.scopes.DescriptorKindFilter",
+"allPublicFields": true
+},
+{
+"name": "kotlinx.coroutines.CancellableContinuationImpl",
+"fields":[{"name": "_decisionAndIndex"}, {"name": "_parentHandle"}, {"name": "_state"}]
+},
+{
+"name": "kotlinx.coroutines.CancelledContinuation",
+"fields":[{"name": "_resumed"}]
+},
+{
+"name": "kotlinx.coroutines.CompletedExceptionally",
+"fields":[{"name": "_handled"}]
+},
+{
+"name": "kotlinx.coroutines.DispatchedCoroutine",
+"fields":[{"name": "_decision"}]
+},
+{
+"name": "kotlinx.coroutines.EventLoopImplBase",
+"fields":[{"name": "_delayed"}, {"name": "_isCompleted"}, {"name": "_queue"}]
+},
+{
+"name": "kotlinx.coroutines.InvokeOnCancelling",
+"fields":[{"name": "_invoked"}]
+},
+{
+"name": "kotlinx.coroutines.JobSupport",
+"fields":[{"name": "_parentHandle"}, {"name": "_state"}]
+},
+{
+"name": "kotlinx.coroutines.JobSupport$Finishing",
+"fields":[{"name": "_exceptionsHolder"}, {"name": "_isCompleting"}, {"name": "_rootCause"}]
+},
+{
+"name": "kotlinx.coroutines.channels.BufferedChannel",
+"fields":[{"name": "_closeCause"}, {"name": "bufferEnd"}, {"name": "bufferEndSegment"}, {"name": "closeHandler"}, {"name": "completedExpandBuffersAndPauseFlag"}, {"name": "receiveSegment"}, {"name": "receivers"}, {"name": "sendSegment"}, {"name": "sendersAndCloseStatus"}]
+},
+{
+"name": "kotlinx.coroutines.internal.AtomicOp",
+"fields":[{"name": "_consensus"}]
+},
+{
+"name": "kotlinx.coroutines.internal.ConcurrentLinkedListNode",
+"fields":[{"name": "_next"}, {"name": "_prev"}]
+},
+{
+"name": "kotlinx.coroutines.internal.DispatchedContinuation",
+"fields":[{"name": "_reusableCancellableContinuation"}]
+},
+{
+"name": "kotlinx.coroutines.internal.LimitedDispatcher",
+"fields":[{"name": "runningWorkers"}]
+},
+{
+"name": "kotlinx.coroutines.internal.LockFreeLinkedListNode",
+"fields":[{"name": "_next"}, {"name": "_prev"}, {"name": "_removedRef"}]
+},
+{
+"name": "kotlinx.coroutines.internal.LockFreeTaskQueue",
+"fields":[{"name": "_cur"}]
+},
+{
+"name": "kotlinx.coroutines.internal.LockFreeTaskQueueCore",
+"fields":[{"name": "_next"}, {"name": "_state"}]
+},
+{
+"name": "kotlinx.coroutines.internal.Segment",
+"fields":[{"name": "cleanedAndPointers"}]
+},
+{
+"name": "kotlinx.coroutines.internal.ThreadSafeHeap",
+"fields":[{"name": "_size"}]
+},
+{
+"name": "kotlinx.coroutines.scheduling.CoroutineScheduler",
+"fields":[{"name": "_isTerminated"}, {"name": "controlState"}, {"name": "parkedWorkersStack"}]
+},
+{
+"name": "kotlinx.coroutines.scheduling.CoroutineScheduler$Worker",
+"fields":[{"name": "workerCtl"}]
+},
+{
+"name": "kotlinx.coroutines.scheduling.WorkQueue",
+"fields":[{"name": "blockingTasksInBuffer"}, {"name": "consumerIndex"}, {"name": "lastScheduledTask"}, {"name": "producerIndex"}]
+},
+{
+"name": "org.postgresql.Driver"
+},
+{
+"name": "org.postgresql.core.QueryExecutorCloseAction",
+"fields":[{"name": "pgStream"}]
+},
+{
+"name": "org.postgresql.jdbc.PgStatement",
+"fields":[{"name": "cancelTimerTask"}, {"name": "isClosed"}, {"name": "statementState"}]
+},
+{
+"name": "org.slf4j.Logger",
+"methods":[{"name": "debug", "parameterTypes":["java.lang.String", "java.lang.Throwable"] }, {"name": "error", "parameterTypes":["java.lang.String", "java.lang.Throwable"] }, {"name": "info", "parameterTypes":["java.lang.String", "java.lang.Throwable"] }, {"name": "isDebugEnabled", "parameterTypes":[] }, {"name": "isErrorEnabled", "parameterTypes":[] }, {"name": "isInfoEnabled", "parameterTypes":[] }, {"name": "isTraceEnabled", "parameterTypes":[] }, {"name": "isWarnEnabled", "parameterTypes":[] }, {"name": "trace", "parameterTypes":["java.lang.String", "java.lang.Throwable"] }, {"name": "warn", "parameterTypes":["java.lang.String", "java.lang.Throwable"] }]
+},
+{
+"name": "org.slf4j.LoggerFactory",
+"methods":[{"name": "getLogger", "parameterTypes":["java.lang.String"] }]
+},
+{
+"name": "sun.security.provider.NativePRNG",
+"methods":[{"name": "<init>", "parameterTypes":[] }, {"name": "<init>", "parameterTypes":["java.security.SecureRandomParameters"] }]
+},
+{
+"name": "sun.security.provider.SHA",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+},
+{
+"name": "sun.security.provider.SHA2$SHA256",
+"methods":[{"name": "<init>", "parameterTypes":[] }]
+}, {
+"name": "java.util.ArrayList",
+"condition": {
+"typeReachable": "liquibase.snapshot.SnapshotGeneratorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "java.util.HashSet",
+"condition": {
+"typeReachable": "liquibase.lockservice.StandardLockService"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "java.util.concurrent.ConcurrentHashMap",
+"condition": {
+"typeReachable": "liquibase.snapshot.SnapshotGeneratorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.AbstractExtensibleObject",
+"queryAllPublicMethods": true,
+"condition": {
+"typeReachable": "liquibase.util.ObjectUtil$DefaultBeanIntrospector"
+}
+},
+{
+"name": "liquibase.change.AbstractChange",
+"queryAllPublicMethods": true,
+"condition": {
+"typeReachable": "liquibase.util.ObjectUtil$DefaultBeanIntrospector"
+}
+},
+{
+"name": "liquibase.change.AbstractSQLChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.AbstractSQLChange",
+"condition": {
+"typeReachable": "liquibase.changelog.RanChangeSet"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.AbstractTableChange",
+"queryAllPublicMethods": true,
+"condition": {
+"typeReachable": "liquibase.util.ObjectUtil$DefaultBeanIntrospector"
+}
+},
+{
+"name": "liquibase.change.AddColumnConfig",
+"queryAllPublicMethods": true,
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.change.ChangeFactory",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": []
+}
+]
+},
+{
+"name": "liquibase.change.ColumnConfig",
+"queryAllPublicMethods": true,
+"condition": {
+"typeReachable": "liquibase.change.AbstractChange"
+},
+"allDeclaredFields": true,
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.change.ConstraintsConfig",
+"condition": {
+"typeReachable": "liquibase.change.AbstractChange"
+},
+"allDeclaredFields": true
+},
+{
+"name": "liquibase.change.core.AbstractModifyDataChange",
+"condition": {
+"typeReachable": "liquibase.change.core.UpdateDataChange"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddAutoIncrementChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddColumnChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddDefaultValueChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddForeignKeyConstraintChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddLookupTableChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddNotNullConstraintChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddPrimaryKeyChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AddUniqueConstraintChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.AlterSequenceChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.CreateIndexChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.CreateProcedureChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.CreateSequenceChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.CreateTableChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.CreateViewChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DeleteDataChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropAllForeignKeyConstraintsChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropColumnChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropDefaultValueChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropForeignKeyConstraintChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropIndexChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropNotNullConstraintChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropPrimaryKeyChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropProcedureChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropSequenceChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropTableChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropUniqueConstraintChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.DropViewChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.EmptyChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.ExecuteShellCommandChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.InsertDataChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.LoadDataChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.LoadUpdateDataChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"queryAllPublicMethods": true
+},
+{
+"name": "liquibase.change.core.MergeColumnChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.ModifyDataTypeChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.OutputChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.RawSQLChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"queryAllPublicMethods": true
+},
+{
+"name": "liquibase.change.core.RenameColumnChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.RenameSequenceChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.RenameTableChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.RenameViewChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.SQLFileChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.SetColumnRemarksChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.SetTableRemarksChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.StopChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.TagDatabaseChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.core.UpdateDataChange",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.change.custom.CustomChangeWrapper",
+"condition": {
+"typeReachable": "liquibase.change.ChangeFactory"
+},
+"allPublicMethods": true
+},
+{
+"name": "liquibase.changelog.ChangeLogHistoryServiceFactory",
+"condition": {
+"typeReachable": "liquibase.changelog.ChangeLogHistoryServiceFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.changelog.StandardChangeLogHistoryService",
+"condition": {
+"typeReachable": "liquibase.changelog.ChangeLogHistoryServiceFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.CommandFactory",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.DropAllCommandStep",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.UpdateCommandStep",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.helpers.ChangeExecListenerCommandStep",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.helpers.DatabaseChangelogCommandStep",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.helpers.DbUrlConnectionCommandStep",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.helpers.LockServiceCommandStep",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.command.core.helpers.ShowSummaryArgument",
+"condition": {
+"typeReachable": "liquibase.command.CommandFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.configuration.ConfiguredValueModifierFactory",
+"condition": {
+"typeReachable": "liquibase.configuration.LiquibaseConfiguration"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.configuration.LiquibaseConfiguration",
+"condition": {
+"typeReachable": "liquibase.Scope"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.database.jvm.JdbcConnection",
+"condition": {
+"typeReachable": "liquibase.database.core.H2Database"
+},
+"methods": [
+{
+"name": "getWrappedConnection",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.BigIntType",
+"condition": {
+"typeReachable": "liquibase.change.AbstractChange"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+},
+{
+"name": "setAutoIncrement",
+"parameterTypes": [
+"boolean"
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.BinaryTypeSnowflake",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.BlobType",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.BooleanType",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.CharType",
+"condition": {
+"typeReachable": "liquibase.change.AbstractChange"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.ClobType",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.DateTimeType",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.DoubleDataTypeSnowflake",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.DoubleType",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.IntType",
+"condition": {
+"typeReachable": "liquibase.change.AbstractChange"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+},
+{
+"name": "setAutoIncrement",
+"parameterTypes": [
+"boolean"
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.TextDataTypeSnowflake",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.TimestampNTZTypeSnowflake",
+"condition": {
+"typeReachable": "liquibase.datatype.DataTypeFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.datatype.core.VarcharType",
+"condition": {
+"typeReachable": "liquibase.change.AbstractChange"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.diff.core.StandardDiffGenerator",
+"condition": {
+"typeReachable": "liquibase.diff.DiffGeneratorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.executor.ExecutorService",
+"condition": {
+"typeReachable": "liquibase.lockservice.StandardLockService"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": []
+}
+]
+},
+{
+"name": "liquibase.executor.jvm.JdbcExecutor",
+"condition": {
+"typeReachable": "liquibase.executor.ExecutorService"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.license.LicenseServiceFactory",
+"condition": {
+"typeReachable": "liquibase.license.LicenseServiceUtils"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.lockservice.StandardLockService",
+"condition": {
+"typeReachable": "liquibase.lockservice.LockServiceFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.logging.core.LogServiceFactory",
+"condition": {
+"typeReachable": "liquibase.Scope"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.logging.mdc.MdcManagerFactory",
+"condition": {
+"typeReachable": "liquibase.Scope"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.plugin.AbstractPlugin",
+"queryAllPublicMethods": true,
+"condition": {
+"typeReachable": "liquibase.util.ObjectUtil$DefaultBeanIntrospector"
+}
+},
+{
+"name": "liquibase.precondition.AbstractPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true
+},
+{
+"name": "liquibase.precondition.PreconditionLogic",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true
+},
+{
+"name": "liquibase.precondition.PreconditionLogic",
+"fields": [
+{
+"name": "nestedPreconditions"
+}
+],
+"condition": {
+"typeReachable": "liquibase.precondition.PreconditionLogic"
+}
+},
+{
+"name": "liquibase.precondition.PreconditionLogic",
+"fields": [
+{
+"name": "nestedPreconditions"
+}
+],
+"condition": {
+"typeReachable": "liquibase.serializer.ReflectionSerializer"
+}
+},
+{
+"name": "liquibase.precondition.core.AndPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true
+},
+{
+"name": "liquibase.precondition.core.ChangeLogPropertyDefinedPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"fields": [
+{
+"name": "property"
+},
+{
+"name": "value"
+}
+],
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+},
+{
+"name": "setProperty",
+"parameterTypes": [
+"java.lang.String"
+]
+},
+{
+"name": "setValue",
+"parameterTypes": [
+"java.lang.String"
+]
+}
+]
+},
+{
+"name": "liquibase.precondition.core.DBMSPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true
+},
+{
+"name": "liquibase.precondition.core.DBMSPrecondition",
+"condition": {
+"typeReachable": "liquibase.precondition.PreconditionFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.precondition.core.DBMSPrecondition",
+"condition": {
+"typeReachable": "liquibase.precondition.PreconditionLogic"
+},
+"fields": [
+{
+"name": "type"
+}
+],
+"methods": [
+{
+"name": "setType",
+"parameterTypes": [
+"java.lang.String"
+]
+}
+]
+},
+{
+"name": "liquibase.precondition.core.OrPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.precondition.core.PreconditionContainer",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"allPublicMethods": true
+},
+{
+"name": "liquibase.precondition.core.PreconditionContainer",
+"fields": [
+{
+"name": "onError"
+},
+{
+"name": "onErrorMessage"
+},
+{
+"name": "onFail"
+},
+{
+"name": "onFailMessage"
+},
+{
+"name": "onSqlOutput"
+}
+],
+"condition": {
+"typeReachable": "liquibase.precondition.core.PreconditionContainer"
+}
+},
+{
+"name": "liquibase.precondition.core.RunningAsPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"fields": [
+{
+"name": "username"
+}
+],
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+},
+{
+"name": "setUsername",
+"parameterTypes": [
+"java.lang.String"
+]
+}
+]
+},
+{
+"name": "liquibase.precondition.core.SqlPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"fields": [
+{
+"name": "expectedResult"
+}
+],
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+},
+{
+"name": "setExpectedResult",
+"parameterTypes": [
+"java.lang.String"
+]
+},
+{
+"name": "setSql",
+"parameterTypes": [
+"java.lang.String"
+]
+}
+]
+},
+{
+"name": "liquibase.precondition.core.TableExistsPrecondition",
+"condition": {
+"typeReachable": "liquibase.command.core.helpers.DatabaseChangelogCommandStep"
+},
+"allDeclaredFields": true,
+"fields": [
+{
+"name": "tableName"
+}
+],
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+},
+{
+"name": "setTableName",
+"parameterTypes": [
+"java.lang.String"
+]
+}
+]
+},
+{
+"name": "liquibase.serializer.AbstractLiquibaseSerializable",
+"condition": {
+"typeReachable": "liquibase.serializer.ReflectionSerializer"
+},
+"allDeclaredFields": true
+},
+{
+"name": "liquibase.sql.visitor.AppendSqlVisitor",
+"condition": {
+"typeReachable": "liquibase.sql.visitor.SqlVisitorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.sql.visitor.PrependSqlVisitor",
+"condition": {
+"typeReachable": "liquibase.sql.visitor.SqlVisitorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.sql.visitor.RegExpReplaceSqlVisitor",
+"condition": {
+"typeReachable": "liquibase.sql.visitor.SqlVisitorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.sql.visitor.ReplaceSqlVisitor",
+"condition": {
+"typeReachable": "liquibase.sql.visitor.SqlVisitorFactory"
+},
+"methods": [
+{
+"name": "<init>",
+"parameterTypes": [
+]
+}
+]
+},
+{
+"name": "liquibase.report.ShowSummaryGeneratorFactory",
+"methods":[{"name": "<init>", "parameterTypes":[] }, {"name": "<init>", "parameterTypes":["liquibase.Scope"] }]
+}
