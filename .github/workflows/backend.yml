@@ -21,6 +21,11 @@ defaults:
   run:
     working-directory: packages/backend
 
+permissions:
+  checks: read
+  contents: read
+  actions: read
+
 jobs:
   #  build-backend-production:
   #    name: Build Backend (production)
