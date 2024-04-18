@@ -3,7 +3,7 @@ name: Release CI/CD
 on:
   workflow_dispatch:
   release:
-    types: [ published ]
+    types: [ created ]
 
 env:
   CI: true
