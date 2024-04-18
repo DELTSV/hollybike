@@ -1,7 +1,6 @@
 name: Frontend CI/CD
 
 on:
-  workflow_dispatch:
   release:
     types: [ published ]
 
@@ -44,6 +43,14 @@ jobs:
 
       - name: Try building application
         run: bun run build
+
+      - name: Upload artifacts
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-${{ github.event.release.tag_name }}
+          path: packages/frontend/dist
+          retention-days: 1
 
       - name: Configure AWS credentials
         if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'

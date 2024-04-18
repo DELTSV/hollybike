@@ -1,9 +1,8 @@
 name: Flutter App CI/CD
 
 on:
-#  workflow_dispatch:
-#  release:
-#    types: [ published ]
+  release:
+    types: [ published ]
 
   pull_request:
     branches:
@@ -18,6 +17,9 @@ env:
 defaults:
   run:
     working-directory: packages/app
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -55,33 +57,50 @@ jobs:
         run: flutter test
 
       - name: Decode Android keystore
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
         run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
 
       - name: Copy keystore
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
         run: cp ${{ env.KEYSTORE_PATH }} android/app/upload-keystore.jks
 
       - name: Decode Android key properties
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
 
       - name: Decode Android Service Account
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
         run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
+      - name: Build APK
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+        run: flutter build apk --release
+
+      - name: Rename APK
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/hollybike-Android-${{ github.event.release.tag_name }}.apk
+
+      - name: Upload release
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+        run: |
+          gh release upload \
+              ${{ github.event.release.tag_name }} \
+              build/app/outputs/flutter-apk/hollybike-Android-${{ github.event.release.tag_name }}.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build aab
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
         run: |
           flutter build appbundle \
             --release
 
-      - name: Deploy to Play Store (Internal testing)
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
-          packageName: com.hollybike.hollybike
-          releaseFiles: ${{ env.AAB_PATH }}
-          status: draft
-          track: internal
+#      - name: Deploy to Play Store (Internal testing)
+#        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+#        uses: r0adkll/upload-google-play@v1
+#        with:
+#          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
+#          packageName: com.hollybike.hollybike
+#          releaseFiles: ${{ env.AAB_PATH }}
+#          status: draft
+#          track: internal
