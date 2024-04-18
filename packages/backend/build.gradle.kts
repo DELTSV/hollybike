@@ -26,7 +26,8 @@ application {
 	mainClass.set("hollybike.api.ApplicationKt")
 
 	val isDevelopment: Boolean = project.ext.has("development")
-	applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+//	applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+	applicationDefaultJvmArgs = listOf("-ea")
 }
 
 repositories {
@@ -43,11 +44,11 @@ dependencies {
 	implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
 	implementation("io.ktor:ktor-server-cors:$ktor_version")
 	implementation("io.ktor:ktor-server-auth:$ktor_version")
+	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 	implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
 	implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-swagger-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
-	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 	implementation("io.ktor:ktor-server-resources:$ktor_version")
 	implementation("io.ktor:ktor-server-call-logging:$ktor_version")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")

@@ -1,34 +1,28 @@
-openapi: "3.0.3"
+openapi: "3.0.0"
 info:
   title: "hollybike API"
   description: "hollybike API"
   version: "1.0.0"
 servers:
 - url: "https://hollybike"
+- url: "http://localhost:8080"
 paths:
-  /metrics-micrometer:
+  /{...}:
     get:
       description: ""
+      parameters:
+      - name: "..."
+        in: "path"
+        required: true
+        schema:
+          type: "string"
       responses:
         "200":
           description: "OK"
           content:
-            '*/*':
+            text/html:
               schema:
                 type: "string"
-  /:
-    get:
-      description: ""
-      responses:
-        "200":
-          description: "OK"
-          content:
-            text/plain:
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Hello World!"
   /json/kotlinx-serialization:
     get:
       description: ""
@@ -39,6 +33,16 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Map_String"
+  /metrics-micrometer:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
   /ws:
     get:
       description: ""
@@ -77,6 +81,98 @@ paths:
               required: true
               schema:
                 type: "string"
+  /api:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Bienvenue sur l'API hollybike"
+  /api/{path}:
+    get:
+      description: ""
+      parameters:
+      - name: "path"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Not Found"
+  /login:
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TLogin"
+        required: true
+      responses:
+        "200":
+          description: "OK <br> TODO store and retrieve token from db for auth"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAuthInfo"
+  /logout:
+    delete:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "204":
+          description: "No Content <br> TODO Delete token from DB"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /signin:
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TSignin"
+        required: true
+      responses:
+        "200":
+          description: "OK <br> TODO store token in db"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAuthInfo"
 components:
   schemas:
     Map:
@@ -84,3 +180,30 @@ components:
       properties: {}
     Map_String:
       type: "string"
+    TLogin:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      required:
+      - "email"
+      - "password"
+    TAuthInfo:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+      required:
+      - "token"
+    TSignin:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      required:
+      - "email"
+      - "password"
