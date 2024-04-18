@@ -1,8 +1,8 @@
 name: Flutter App CI/CD
 
 on:
-  release:
-    types: [ published ]
+#  release:
+#    types: [ published ]
 
   pull_request:
     branches:
