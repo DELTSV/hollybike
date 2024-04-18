@@ -1,12 +1,10 @@
 name: Flutter App CI/CD
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'packages/app/**'
-      - '.github/workflows/app.yml'
+#  workflow_dispatch:
+#  release:
+#    types: [ published ]
+
   pull_request:
     branches:
       - main

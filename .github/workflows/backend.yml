@@ -1,12 +1,10 @@
 name: Backend CI/CD
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'packages/backend/**'
-      - '.github/workflows/backend.yml'
+#  workflow_dispatch:
+#  release:
+#    types: [ published ]
+
   pull_request:
     branches:
       - main
