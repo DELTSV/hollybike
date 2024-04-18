@@ -5,6 +5,32 @@ on:
 #    types: [ published ]
 
   workflow_call:
+    inputs:
+      externall_call:
+        description: 'To distinguish workflow_call from regular events'
+        type: boolean
+        required: false
+        default: true
+
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+        description: 'AWS Access Key ID'
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+        description: 'AWS Secret Access Key'
+#      AWS_REGION:
+#        required: true
+#        description: 'AWS Region'
+#      AWS_S3_BUCKET:
+#        required: true
+#        description: 'AWS S3 Bucket'
+#      AWS_CF_DIST_ID:
+#        required: true
+#        description: 'AWS CloudFront Distribution ID'
+#      GITHUB_TOKEN:
+#        required: true
+#        description: 'GitHub Token'
 
   pull_request:
     branches:
@@ -26,14 +52,12 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
+      id-token: write
       checks: read
       contents: read
       actions: read
 
     steps:
-      - name: Echo event
-        run: echo ${{ toJson(github.event) }}
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -50,8 +74,7 @@ jobs:
         run: bun run build
 
       - name: Upload artifacts
-        # if it a workflow_call event
-        if: github.event_name == 'workflow_call'
+        if: ${{ inputs.externall_call }}
         uses: actions/upload-artifact@v4
         with:
           name: frontend-${{ github.event.release.tag_name }}
@@ -59,7 +82,7 @@ jobs:
           retention-days: 1
 
       - name: Configure AWS credentials
-        if: github.event_name == 'workflow_call'
+        if: ${{ inputs.externall_call }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -67,20 +90,20 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
-        if: github.event_name == 'workflow_call'
+        if: ${{ inputs.externall_call }}
         uses: ./.github/actions/check-and-wait
         with:
           workflow: ${{ vars.INFRA_WORKFLOW }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sync cacheable files with S3 bucket
-        if: github.event_name == 'workflow_call'
+        if: ${{ inputs.externall_call }}
         run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
 
       - name: Sync non cacheable files with S3 bucket
-        if: github.event_name == 'workflow_call'
+        if: ${{ inputs.externall_call }}
         run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
 
       - name: Create CloudFront invalidation
-        if: github.event_name == 'workflow_call'
+        if: ${{ inputs.externall_call }}
         run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"

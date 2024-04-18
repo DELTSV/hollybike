@@ -22,6 +22,7 @@ defaults:
     working-directory: packages/backend
 
 permissions:
+  id-token: write
   checks: read
   contents: read
   actions: read
@@ -155,6 +156,25 @@ jobs:
   build-frontend:
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
     uses: ./.github/workflows/frontend.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+#      AWS_ACCESS_KEY_ID:
+#        required: true
+#        description: 'AWS Access Key ID'
+#      AWS_SECRET_ACCESS_KEY:
+#        required: true
+#        description: 'AWS Secret Access Key'
+#      AWS_REGION:
+#        required: true
+#        description: 'AWS Region'
+#      AWS_S3_BUCKET:
+#        required: true
+#        description: 'AWS S3 Bucket'
+#      AWS_CF_DIST_ID:
+#        required: true
+#        description: 'AWS CloudFront Distribution ID'
 
   build-backend-on-premises:
     needs: [ build-frontend ]
