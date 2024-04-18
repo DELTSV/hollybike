@@ -1,9 +1,11 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version of the release'
+        required: true
 
 env:
   CI: true
@@ -20,9 +22,8 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
         run: |
-          gh release create "$tag" \
+          gh release create ${{ github.event.inputs.version }} \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-${tag#v}" \
               --generate-notes
