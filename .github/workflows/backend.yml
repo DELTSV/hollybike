@@ -1,8 +1,20 @@
 name: Backend CI/CD
 
 on:
-  release:
-    types: [ published ]
+  workflow_call:
+    inputs:
+      externall_call:
+        description: 'To distinguish workflow_call from regular events'
+        type: boolean
+        required: false
+        default: true
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+        description: 'AWS Access Key ID'
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+        description: 'AWS Secret Access Key'
 
   pull_request:
     branches:
@@ -22,7 +34,6 @@ defaults:
     working-directory: packages/backend
 
 permissions:
-  id-token: write
   checks: read
   contents: read
   actions: read
@@ -160,25 +171,9 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-#      AWS_ACCESS_KEY_ID:
-#        required: true
-#        description: 'AWS Access Key ID'
-#      AWS_SECRET_ACCESS_KEY:
-#        required: true
-#        description: 'AWS Secret Access Key'
-#      AWS_REGION:
-#        required: true
-#        description: 'AWS Region'
-#      AWS_S3_BUCKET:
-#        required: true
-#        description: 'AWS S3 Bucket'
-#      AWS_CF_DIST_ID:
-#        required: true
-#        description: 'AWS CloudFront Distribution ID'
-
   build-backend-on-premises:
     needs: [ build-frontend ]
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+    if: ${{ inputs.externall_call }}
     name: Build Backend (on premises)
     strategy:
       matrix:
@@ -213,13 +208,6 @@ jobs:
       - id: executable
         run: echo "executable_name=hollybike-${{ runner.os }}-${{ github.event.release.tag_name }}-x86_64" >> $GITHUB_OUTPUT
 
-      - name: Check and wait for workflow "Frontend CI/CD" to finish
-        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-        uses: ./.github/actions/check-and-wait
-        with:
-          workflow: "Frontend CI/CD"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Download a single artifact
         uses: actions/download-artifact@v4
         with:
@@ -230,7 +218,7 @@ jobs:
         run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
 
       - name: Upload release
-        if: github.event.release.tag_name
+        if: ${{ inputs.externall_call }}
         run: |
           gh release upload \
               ${{ github.event.release.tag_name }} \

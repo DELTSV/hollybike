@@ -11,7 +11,9 @@ env:
   CI: true
 
 permissions:
+  checks: read
   contents: write
+  actions: read
 
 jobs:
   create-release:
@@ -28,3 +30,10 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-${version#v}" \
               --generate-notes
+
+  build-backend:
+    needs: create-release
+    uses: ./.github/workflows/backend.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
