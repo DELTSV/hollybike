@@ -21,9 +21,10 @@ jobs:
     steps:
       - name: Create release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          version: ${{ github.event.inputs.version }}
         run: |
-          gh release create ${{ github.event.inputs.version }} \
+          gh release create "$version" \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/}-${tag#v}" \
+              --title="${GITHUB_REPOSITORY#*/}-${version#v}" \
               --generate-notes
