@@ -65,33 +65,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
-      #   uses: graalvm/setup-graalvm@v1
-      #   with:
-      #     java-version: '${{ env.JAVA_VERSION }}'
-      #     cache: 'gradle'
+      - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '${{ env.JAVA_VERSION }}'
+          cache: 'gradle'
 
-      # - name: Copy app.json
-      #   working-directory: .
-      #   run: cp app.json packages/backend/app.json
+      - name: Copy app.json
+        working-directory: .
+        run: cp app.json packages/backend/app.json
 
-      # - name: Read rights to gradlew
-      #   run: chmod +x gradlew
+      - name: Read rights to gradlew
+        run: chmod +x gradlew
 
-      # - name: Run tests
-      #   run: ./gradlew test
+      - name: Run tests
+        run: ./gradlew test
 
-      # - name: Run native compile
+      - name: Run native compile
+        if: ${{ inputs.externall_call }}
+        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+
+      # - name: Create native fake folder
       #   if: ${{ inputs.externall_call }}
-      #   run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+      #   run: mkdir -p build/native/nativeCompile
 
-      - name: Create native fake folder
-        if: ${{ inputs.externall_call }}
-        run: mkdir -p build/native/nativeCompile
-
-      - name: Create fake executable
-        if: ${{ inputs.externall_call }}
-        run: touch build/native/nativeCompile/hollybike_server
+      # - name: Create fake executable
+      #   if: ${{ inputs.externall_call }}
+      #   run: touch build/native/nativeCompile/hollybike_server
 
       - name: Log in to the Container registry
         if: ${{ inputs.externall_call }}
@@ -159,14 +159,14 @@ jobs:
           container-name: backend
           image: ${{ steps.extract-tag.outputs.second-tag }}
 
-      # - name: Deploy Amazon ECS task definition
-      #   if: ${{ inputs.externall_call }}
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     service: ${{ vars.ECS_SERVICE }}
-      #     cluster: ${{ vars.ECS_CLUSTER }}
-      #     wait-for-service-stability: false
+      - name: Deploy Amazon ECS task definition
+        if: ${{ inputs.externall_call }}
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
+          wait-for-service-stability: false
 
   build-frontend:
     name: Frontend
@@ -221,14 +221,14 @@ jobs:
           name: HollyBike-Frontend-${{ inputs.version }}
           path: packages/backend/src/main/resources/front
 
-      # - name: Run native compile
-      #   run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
+      - name: Run native compile
+        run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
 
-      - name: Create native fake folder
-        run: mkdir -p build/native/nativeCompile
+      # - name: Create native fake folder
+      #   run: mkdir -p build/native/nativeCompile
   
-      - name: Create fake executable
-        run: touch build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+      # - name: Create fake executable
+      #   run: touch build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
 
       - name: Upload executable to the artifacts
         uses: actions/upload-artifact@v4
