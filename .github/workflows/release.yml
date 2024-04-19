@@ -56,7 +56,6 @@ jobs:
 
   build-backend:
     name: Frontend & Backend
-    needs: create-release
     uses: ./.github/workflows/backend.yml
     with:
       version: ${{ github.event.inputs.version }}
