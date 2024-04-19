@@ -169,7 +169,7 @@ jobs:
   #          wait-for-service-stability: false
 
   build-frontend:
-    name: Build Frontend
+    name: Frontend
     if: ${{ inputs.externall_call }}
     uses: ./.github/workflows/frontend.yml
     with:
@@ -179,7 +179,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build-backend-on-premises:
-    name: Build Backend (on premises)
+    name: Build On Premises
     needs: [ build-frontend ]
     if: ${{ inputs.externall_call }}
     strategy:

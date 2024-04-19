@@ -40,8 +40,8 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build App
+  build-deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
     env:

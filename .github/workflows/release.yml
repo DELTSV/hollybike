@@ -18,7 +18,9 @@ permissions:
 jobs:
   create-release:
     name: Create Release
-    needs: build-app
+    needs:
+      - build-app
+      - build-backend
     runs-on: ubuntu-latest
 
     env:
@@ -53,7 +55,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-backend:
-    name: Build Frontend & Backend
+    name: Frontend & Backend
     needs: create-release
     uses: ./.github/workflows/backend.yml
     with:
@@ -63,7 +65,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build-app:
-    name: Build App
+    name: App
     uses: ./.github/workflows/app.yml
     with:
       version: ${{ github.event.inputs.version }}
