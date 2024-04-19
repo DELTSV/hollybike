@@ -31,7 +31,8 @@ jobs:
       - name: Get app artifact
         uses: actions/download-artifact@v4
         with:
-          pattern: HollyBike-V*
+          merge-multiple: true
+          pattern: HollyBike-${{ env.version }}-*
           path: .
 
       - name: Create release
@@ -51,13 +52,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#  build-backend:
-#    name: Build Frontend & Backend
-#    needs: create-release
-#    uses: ./.github/workflows/backend.yml
-#    secrets:
-#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  build-backend:
+    name: Build Frontend & Backend
+    needs: create-release
+    uses: ./.github/workflows/backend.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build-app:
     name: Build App

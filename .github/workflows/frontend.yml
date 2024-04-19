@@ -8,6 +8,9 @@ on:
         type: boolean
         required: false
         default: true
+      version:
+        description: 'Version of the release'
+        required: true  
 
     secrets:
       AWS_ACCESS_KEY_ID:
@@ -61,7 +64,7 @@ jobs:
         if: ${{ inputs.externall_call }}
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-${{ github.event.release.tag_name }}
+          name: HollyBike-Frontend-${{ inputs.version }}
           path: packages/frontend/dist
           retention-days: 1
 

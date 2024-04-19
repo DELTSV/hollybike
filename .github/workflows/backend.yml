@@ -8,6 +8,10 @@ on:
         type: boolean
         required: false
         default: true
+      version:
+        description: 'Version of the release'
+        type: string
+        required: true
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -168,6 +172,8 @@ jobs:
     name: Build Frontend
     if: ${{ inputs.externall_call }}
     uses: ./.github/workflows/frontend.yml
+    with:
+      version: ${{ github.event.inputs.version }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -207,12 +213,12 @@ jobs:
         run: chmod +x gradlew
 
       - id: executable
-        run: echo "executable_name=hollybike-${{ runner.os }}-${{ github.event.release.tag_name }}-x86_64" >> $GITHUB_OUTPUT
+        run: echo "executable_name=hollybike-${{ runner.os }}-${{ inputs.version }}-x86_64" >> $GITHUB_OUTPUT
 
       - name: Download a single artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend-${{ github.event.release.tag_name }}
+          name: HollyBike-Frontend-${{ inputs.version }}
           path: packages/backend/src/main/resources/front
 
       # - name: Run native compile
@@ -227,7 +233,7 @@ jobs:
       - name: Upload executable to the artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: HollyBike-V${{ inputs.version }}-Backend-${{ runner.os }}-${{ inputs.version }}
+          name: HollyBike-${{ inputs.version }}-Backend-${{ runner.os }}-${{ inputs.version }}
           path: packages/backend/build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
           retention-days: 1
         env:
