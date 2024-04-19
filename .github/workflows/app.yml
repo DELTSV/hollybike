@@ -90,17 +90,17 @@ jobs:
         if: ${{ inputs.externall_call }}
         run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
-      - name: Build APK
-        if: ${{ inputs.externall_call }}
-        run: flutter build apk --release
+      # - name: Build APK
+      #   if: ${{ inputs.externall_call }}
+      #   run: flutter build apk --release
 
-#      - name: Create build directory
-#        if: ${{ inputs.externall_call }}
-#        run: mkdir -p build/app/outputs/flutter-apk
-#
-#      - name: Create fake APK
-#        if: ${{ inputs.externall_call }}
-#        run: touch build/app/outputs/flutter-apk/app-release.apk
+      - name: Create build directory
+        if: ${{ inputs.externall_call }}
+        run: mkdir -p build/app/outputs/flutter-apk
+
+      - name: Create fake APK
+        if: ${{ inputs.externall_call }}
+        run: touch build/app/outputs/flutter-apk/app-release.apk
 
       - name: Rename APK
         if: ${{ inputs.externall_call }}
@@ -110,7 +110,7 @@ jobs:
         if: ${{ inputs.externall_call }}
         uses: actions/upload-artifact@v4
         with:
-          name: hollybike-Android-${{ inputs.version }}
+          name: HollyBike-V${{ inputs.version }}-Android
           path: packages/app/hollybike-Android-${{ inputs.version }}.apk
           retention-days: 1
         env:

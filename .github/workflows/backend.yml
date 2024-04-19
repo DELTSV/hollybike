@@ -215,14 +215,29 @@ jobs:
           name: frontend-${{ github.event.release.tag_name }}
           path: packages/backend/src/main/resources/front
 
-      - name: Run native compile
-        run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
+      # - name: Run native compile
+      #   run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
 
-      - name: Upload release
-        if: ${{ inputs.externall_call }}
-        run: |
-          gh release upload \
-              ${{ github.event.release.tag_name }} \
-              build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+      - name: Create native fake folder
+        run: mkdir -p build/native/nativeCompile
+  
+      - name: Create fake executable
+        run: touch build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+
+      - name: Upload executable to the artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: HollyBike-V${{ inputs.version }}-Backend-${{ runner.os }}-${{ inputs.version }}
+          path: packages/backend/build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
+          retention-days: 1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Upload release
+      #   if: ${{ inputs.externall_call }}
+      #   run: |
+      #     gh release upload \
+      #         ${{ github.event.release.tag_name }} \
+      #         build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

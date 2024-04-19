@@ -31,7 +31,7 @@ jobs:
       - name: Get app artifact
         uses: actions/download-artifact@v4
         with:
-          name: hollybike-Android-${{ env.version }}
+          pattern: HollyBike-V*
           path: .
 
       - name: Create release
