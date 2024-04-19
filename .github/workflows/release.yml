@@ -1,4 +1,6 @@
-name: Create Release
+name: Create Release & Deploy HollyBike
+
+run-name: Create Release & Deploy HollyBike v${{ inputs.version }} by @${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -17,11 +19,30 @@ permissions:
   packages: write
 
 jobs:
+  build-frontend-backend:
+    name: Frontend & Backend
+    uses: ./.github/workflows/backend.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  build-app:
+    name: App
+    uses: ./.github/workflows/app.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+      ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
+      PRODUCTION_CREDENTIAL_FILE: ${{ secrets.PRODUCTION_CREDENTIAL_FILE }}
+
   create-release:
     name: Create Release
     needs:
       - build-app
-      - build-backend
+      - build-frontend-backend
     runs-on: ubuntu-latest
 
     env:
@@ -49,30 +70,3 @@ jobs:
               hollybike-Android-${{ env.version }}.apk \
               hollybike-Windows-${{ env.version }}-x86_64.exe \
               hollybike-Linux-${{ env.version }}-x86_64
-
-      # - name: Upload release
-      #   run: |
-      #     gh release upload \
-      #         "$version" \
-      #         hollybike-Android-${{ env.version }}.apk
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-backend:
-    name: Frontend & Backend
-    uses: ./.github/workflows/backend.yml
-    with:
-      version: ${{ github.event.inputs.version }}
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-  build-app:
-    name: App
-    uses: ./.github/workflows/app.yml
-    with:
-      version: ${{ github.event.inputs.version }}
-    secrets:
-      ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
-      ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
-      PRODUCTION_CREDENTIAL_FILE: ${{ secrets.PRODUCTION_CREDENTIAL_FILE }}

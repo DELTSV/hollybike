@@ -44,7 +44,7 @@ permissions:
 
 jobs:
   build-backend-production:
-    name: Build & Deploy
+    name: Build & Deploy Backend
     runs-on: ubuntu-latest
 
     permissions:
