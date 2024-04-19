@@ -1,6 +1,6 @@
-name: Create Release & Deploy HollyBike
+name: Release & Deploy
 
-run-name: Create Release & Deploy HollyBike v${{ inputs.version }} by @${{ github.actor }}
+run-name: Release & Deploy HollyBike v${{ inputs.version }} by @${{ github.actor }}
 
 on:
   workflow_dispatch:
