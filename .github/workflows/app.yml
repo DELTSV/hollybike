@@ -40,8 +40,8 @@ permissions:
   contents: write
 
 jobs:
-  build-deploy:
-    name: Build & Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     env:
@@ -90,17 +90,17 @@ jobs:
         if: ${{ inputs.externall_call }}
         run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
-      - name: Build APK
-        if: ${{ inputs.externall_call }}
-        run: flutter build apk --release
+      # - name: Build APK
+      #   if: ${{ inputs.externall_call }}
+      #   run: flutter build apk --release
 
       - name: Create build directory
         if: ${{ inputs.externall_call }}
         run: mkdir -p build/app/outputs/flutter-apk
 
-      # - name: Create fake APK
-      #   if: ${{ inputs.externall_call }}
-      #   run: touch build/app/outputs/flutter-apk/app-release.apk
+      - name: Create fake APK
+        if: ${{ inputs.externall_call }}
+        run: touch build/app/outputs/flutter-apk/app-release.apk
 
       - name: Rename APK
         if: ${{ inputs.externall_call }}
@@ -115,6 +115,22 @@ jobs:
           retention-days: 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  deploy:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: build
+
+    env:
+      AAB_PATH: packages/app/build/app/outputs/bundle/release/app-release.aab
+      KEYSTORE_PATH: android/upload-keystore.jks
+      KEY_PROPS_PATH: android/key.properties
+      SERVICE_ACCOUNT_PATH: store_credentials.json
+    
+      steps:
+        - name: Dymmy
+          run: echo "Dummy"
 
 #      - name: Build aab
 #        if: ${{ inputs.externall_call }}
@@ -131,3 +147,4 @@ jobs:
 #          releaseFiles: ${{ env.AAB_PATH }}
 #          status: draft
 #          track: internal
+  
