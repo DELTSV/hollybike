@@ -238,12 +238,3 @@ jobs:
           retention-days: 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Upload release
-      #   if: ${{ inputs.externall_call }}
-      #   run: |
-      #     gh release upload \
-      #         ${{ github.event.release.tag_name }} \
-      #         build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
