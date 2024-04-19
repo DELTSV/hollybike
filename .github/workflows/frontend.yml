@@ -10,7 +10,8 @@ on:
         default: true
       version:
         description: 'Version of the release'
-        required: true  
+        type: string
+        required: true
 
     secrets:
       AWS_ACCESS_KEY_ID:
