@@ -14,6 +14,7 @@ permissions:
   checks: read
   contents: write
   actions: read
+  packages: write
 
 jobs:
   create-release:
