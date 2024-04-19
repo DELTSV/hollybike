@@ -44,13 +44,16 @@ jobs:
           gh release create "$version" \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-${version#v}" \
-              --generate-notes
+              --generate-notes \
+              hollybike-Android-${{ env.version }}.apk \
+              hollybike-Windows-${{ env.version }}-x86_64 \
+              hollybike-Linux-${{ env.version }}-x86_64
 
-      - name: Upload release
-        run: |
-          gh release upload \
-              "$version" \
-              hollybike-Android-${{ env.version }}.apk
+      # - name: Upload release
+      #   run: |
+      #     gh release upload \
+      #         "$version" \
+      #         hollybike-Android-${{ env.version }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

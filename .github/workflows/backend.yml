@@ -43,130 +43,130 @@ permissions:
   actions: read
 
 jobs:
-  #  build-backend-production:
-  #    name: Build Backend (production)
-  #    runs-on: ubuntu-latest
-  #
-  #    permissions:
-  #      contents: read
-  #      packages: write
-  #
-  #    services:
-  #      redis:
-  #        image: postgres:15
-  #        env:
-  #          POSTGRES_PASSWORD: password
-  #          POSTGRES_USER: user
-  #          POSTGRES_DB: hollybike
-  #        ports:
-  #          - 5432:5432
-  #
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v4
-  #
-  #      - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
-  #        uses: graalvm/setup-graalvm@v1
-  #        with:
-  #          java-version: '${{ env.JAVA_VERSION }}'
-  #          cache: 'gradle'
-  #
-  #      - name: Copy app.json
-  #        working-directory: .
-  #        run: cp app.json packages/backend/app.json
-  #
-  #      - name: Read rights to gradlew
-  #        run: chmod +x gradlew
-  #
-  #      - name: Run tests
-  #        run: ./gradlew test
-  #
-  #      - name: Run native compile
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        run: ./gradlew nativeCompile -Pimage_name=hollybike_server
-  #
-  #      #      - name: Create native fake folder
-  #      #        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #      #        run: mkdir -p build/native/nativeCompile
-  #      #
-  #      #      - name: Create fake executable
-  #      #        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #      #        run: touch build/native/nativeCompile/hollybike_server
-  #
-  #      - name: Log in to the Container registry
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        uses: docker/login-action@v3
-  #        with:
-  #          registry: ${{ env.REGISTRY }}
-  #          username: ${{ github.actor }}
-  #          password: ${{ secrets.GITHUB_TOKEN }}
-  #
-  #      - name: Extract metadata (tags, labels) for Docker
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        id: meta
-  #        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-  #        with:
-  #          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-  #          tags: |
-  #            latest
-  #            type=sha
-  #
-  #      - name: Build and push
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        uses: docker/build-push-action@v5
-  #        with:
-  #          push: true
-  #          tags: ${{ steps.meta.outputs.tags }}
-  #          labels: ${{ steps.meta.outputs.labels }}
-  #          context: packages/backend
-  #          build-args: |
-  #            EXECUTABLE=hollybike_server
-  #
-  #      - name: Extract second tag (sha)
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        id: extract-tag
-  #        run: |
-  #          TAGS=(${{ steps.meta.outputs.tags }})
-  #          echo "second-tag=${TAGS[1]}" >> $GITHUB_OUTPUT
-  #
-  #      - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
-  #        uses: ./.github/actions/check-and-wait
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        with:
-  #          workflow: ${{ vars.INFRA_WORKFLOW }}
-  #          github-token: ${{ secrets.GITHUB_TOKEN }}
-  #
-  #      - name: Configure AWS credentials
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        uses: aws-actions/configure-aws-credentials@v4
-  #        with:
-  #          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #          aws-region: ${{ vars.AWS_REGION }}
-  #
-  #      - name: Download task def
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        working-directory: .
-  #        run: |
-  #          aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_NAME }} --query taskDefinition > task-definition.json
-  #
-  #      - name: Fill in the new image ID in the Amazon ECS task definition
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        id: task-def
-  #        uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #        with:
-  #          task-definition: task-definition.json
-  #          container-name: backend
-  #          image: ${{ steps.extract-tag.outputs.second-tag }}
-  #
-  #      - name: Deploy Amazon ECS task definition
-  #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-  #        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-  #        with:
-  #          task-definition: ${{ steps.task-def.outputs.task-definition }}
-  #          service: ${{ vars.ECS_SERVICE }}
-  #          cluster: ${{ vars.ECS_CLUSTER }}
-  #          wait-for-service-stability: false
+  build-backend-production:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    services:
+      redis:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: user
+          POSTGRES_DB: hollybike
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # - name: Set up GraalVM (Java ${{ env.JAVA_VERSION }})
+      #   uses: graalvm/setup-graalvm@v1
+      #   with:
+      #     java-version: '${{ env.JAVA_VERSION }}'
+      #     cache: 'gradle'
+
+      # - name: Copy app.json
+      #   working-directory: .
+      #   run: cp app.json packages/backend/app.json
+
+      # - name: Read rights to gradlew
+      #   run: chmod +x gradlew
+
+      # - name: Run tests
+      #   run: ./gradlew test
+
+      # - name: Run native compile
+      #   if: ${{ inputs.externall_call }}
+      #   run: ./gradlew nativeCompile -Pimage_name=hollybike_server
+
+      - name: Create native fake folder
+        if: ${{ inputs.externall_call }}
+        run: mkdir -p build/native/nativeCompile
+
+      - name: Create fake executable
+        if: ${{ inputs.externall_call }}
+        run: touch build/native/nativeCompile/hollybike_server
+
+      - name: Log in to the Container registry
+        if: ${{ inputs.externall_call }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        if: ${{ inputs.externall_call }}
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            latest
+            ${{ inputs.version }}
+
+      - name: Build and push
+        if: ${{ inputs.externall_call }}
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          context: packages/backend
+          build-args: |
+            EXECUTABLE=hollybike_server
+
+      - name: Extract second tag (sha)
+        if: ${{ inputs.externall_call }}
+        id: extract-tag
+        run: |
+          TAGS=(${{ steps.meta.outputs.tags }})
+          echo "second-tag=${TAGS[1]}" >> $GITHUB_OUTPUT
+
+      - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
+        uses: ./.github/actions/check-and-wait
+        if: ${{ inputs.externall_call }}
+        with:
+          workflow: ${{ vars.INFRA_WORKFLOW }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure AWS credentials
+        if: ${{ inputs.externall_call }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Download task def
+        if: ${{ inputs.externall_call }}
+        working-directory: .
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_NAME }} --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        if: ${{ inputs.externall_call }}
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: backend
+          image: ${{ steps.extract-tag.outputs.second-tag }}
+
+      # - name: Deploy Amazon ECS task definition
+      #   if: ${{ inputs.externall_call }}
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     service: ${{ vars.ECS_SERVICE }}
+      #     cluster: ${{ vars.ECS_CLUSTER }}
+      #     wait-for-service-stability: false
 
   build-frontend:
     name: Frontend
