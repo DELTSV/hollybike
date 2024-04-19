@@ -47,7 +47,7 @@ jobs:
               --title="${GITHUB_REPOSITORY#*/}-${version#v}" \
               --generate-notes \
               hollybike-Android-${{ env.version }}.apk \
-              hollybike-Windows-${{ env.version }}-x86_64 \
+              hollybike-Windows-${{ env.version }}-x86_64.exe \
               hollybike-Linux-${{ env.version }}-x86_64
 
       # - name: Upload release
