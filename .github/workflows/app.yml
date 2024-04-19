@@ -128,9 +128,9 @@ jobs:
       KEY_PROPS_PATH: android/key.properties
       SERVICE_ACCOUNT_PATH: store_credentials.json
     
-      steps:
-        - name: Dymmy
-          run: echo "Dummy"
+    steps:
+      - name: Dymmy
+        run: echo "Dummy"
 
 #      - name: Build aab
 #        if: ${{ inputs.externall_call }}
