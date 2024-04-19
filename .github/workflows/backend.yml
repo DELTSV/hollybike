@@ -165,16 +165,17 @@ jobs:
   #          wait-for-service-stability: false
 
   build-frontend:
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+    name: Build Frontend
+    if: ${{ inputs.externall_call }}
     uses: ./.github/workflows/frontend.yml
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build-backend-on-premises:
+    name: Build Backend (on premises)
     needs: [ build-frontend ]
     if: ${{ inputs.externall_call }}
-    name: Build Backend (on premises)
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]

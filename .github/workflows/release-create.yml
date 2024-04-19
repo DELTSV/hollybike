@@ -18,6 +18,7 @@ permissions:
 jobs:
   create-release:
     name: Create Release
+    needs: build-app
     runs-on: ubuntu-latest
 
     steps:
@@ -31,9 +32,30 @@ jobs:
               --title="${GITHUB_REPOSITORY#*/}-${version#v}" \
               --generate-notes
 
-  build-backend:
-    needs: create-release
-    uses: ./.github/workflows/backend.yml
+      - name: Get app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hollybike-Android-${{ github.event.release.tag_name }}
+          path: .
+
+      - name: Upload release
+        run: |
+          gh release upload \
+              ${{ github.event.release.tag_name }} \
+              hollybike-Android-${{ github.event.release.tag_name }}.apk
+
+#  build-backend:
+#    name: Build Frontend & Backend
+#    needs: create-release
+#    uses: ./.github/workflows/backend.yml
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  build-app:
+    name: Build App
+    uses: ./.github/workflows/app.yml
     secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+      ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
+      PRODUCTION_CREDENTIAL_FILE: ${{ secrets.PRODUCTION_CREDENTIAL_FILE }}

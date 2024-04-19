@@ -1,9 +1,6 @@
 name: Frontend CI/CD
 
 on:
-#  release:
-#    types: [ published ]
-
   workflow_call:
     inputs:
       externall_call:
@@ -19,18 +16,6 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
         description: 'AWS Secret Access Key'
-#      AWS_REGION:
-#        required: true
-#        description: 'AWS Region'
-#      AWS_S3_BUCKET:
-#        required: true
-#        description: 'AWS S3 Bucket'
-#      AWS_CF_DIST_ID:
-#        required: true
-#        description: 'AWS CloudFront Distribution ID'
-#      GITHUB_TOKEN:
-#        required: true
-#        description: 'GitHub Token'
 
   pull_request:
     branches:
