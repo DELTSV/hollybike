@@ -13,9 +13,7 @@ env:
   CI: true
 
 permissions:
-  checks: read
   contents: write
-  actions: read
   packages: write
 
 jobs:
@@ -61,7 +59,7 @@ jobs:
 
       - name: Create release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "$version" \
               --repo="$GITHUB_REPOSITORY" \

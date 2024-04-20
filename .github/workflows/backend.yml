@@ -134,9 +134,7 @@ jobs:
     needs: [ build-backend ]
 
     permissions:
-      checks: read
       contents: read
-      actions: read
 
     steps:
       - name: Configure AWS credentials

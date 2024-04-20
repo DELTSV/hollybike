@@ -32,9 +32,6 @@ on:
 env:
   CI: true
 
-permissions:
-  contents: write
-
 jobs:
   build:
     name: Build
@@ -43,6 +40,9 @@ jobs:
     defaults:
       run:
         working-directory: packages/app
+
+    permissions:
+      contents: write
 
     env:
       AAB_PATH: packages/app/build/app/outputs/bundle/release/app-release.aab
