@@ -59,7 +59,7 @@ export default [
       "@stylistic/js/no-multiple-empty-lines": ["error"],
       "@stylistic/js/no-trailing-spaces": ["error"],
       "@stylistic/js/no-whitespace-before-property": ["error"],
-      "@stylistic/js/object-curly-newline": ["error", {multiline: true, minProperties: 2}],
+      "@stylistic/js/object-curly-newline": ["error", {multiline: true}],
       "@stylistic/js/object-curly-spacing": ["error", "always", {objectsInObjects: false, arraysInObjects: false}],
       "@stylistic/js/object-property-newline": ["error"],
       "@stylistic/js/operator-linebreak": ["error", "before"],

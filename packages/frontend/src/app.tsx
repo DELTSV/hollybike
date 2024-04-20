@@ -1,18 +1,33 @@
-import {
-	RouterProvider, createBrowserRouter,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { AuthContextProvider, AuthenticationGuard } from "./auth";
 
 export function App() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <p>{ "root" }</p>,
+			element: <AuthenticationGuard/>,
+			children: [
+				{
+					path: "/",
+					element: <p>{ "oui" }</p>,
+				},
+			],
 		},
 		{
-			path: "/login",
-			element: <p>{ "login" }</p>,
+			path: "auth",
+			element: <AuthenticationGuard/>,
+			children: [
+				{
+					path: "login",
+					element: <p>{ "login" }</p>,
+				},
+			],
 		},
 	]);
 
-	return <><RouterProvider router={ router } /></>;
+	return (
+		<AuthContextProvider>
+			<RouterProvider router={ router } />
+		</AuthContextProvider>
+	);
 }
