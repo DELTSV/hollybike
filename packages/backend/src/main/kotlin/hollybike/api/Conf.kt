@@ -6,7 +6,8 @@ import java.io.File
 
 @Serializable
 data class Conf(
-	val db: ConfDB
+	val db: ConfDB,
+	val security: ConfSecurity
 )
 
 @Serializable
@@ -14,6 +15,14 @@ data class ConfDB(
 	val url: String,
 	val username: String,
 	val password: String
+)
+
+@Serializable
+data class ConfSecurity(
+	val audience: String,
+	val domain: String,
+	val realm: String,
+	val secret: String
 )
 
 fun parseConf(): Conf {
@@ -36,5 +45,11 @@ private fun parseEnvConf() = Conf(
 		System.getenv("DB_URL"),
 		System.getenv("DB_USERNAME"),
 		System.getenv("DB_PASSWORD")
+	),
+	ConfSecurity(
+		System.getenv("SECURITY_AUDIENCE"),
+		System.getenv("SECURITY_DOMAIN"),
+		System.getenv("SECURITY_REALM"),
+		System.getenv("SECURITY_SECRET")
 	)
 )

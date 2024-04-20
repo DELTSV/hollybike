@@ -2,16 +2,17 @@ package hollybike.api.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import hollybike.api.conf
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
-	// Please read the jwt property from the config file if you are using EngineMain
-	val jwtAudience = "jwt-audience"
-	val jwtDomain = "https://jwt-provider-domain/"
-	val jwtRealm = "ktor sample app"
-	val jwtSecret = "secret"
+	println("Configuring security")
+	val jwtAudience = attributes.conf.security.audience
+	val jwtDomain = attributes.conf.security.domain
+	val jwtRealm = attributes.conf.security.realm
+	val jwtSecret = attributes.conf.security.secret
 	authentication {
 		jwt {
 			realm = jwtRealm

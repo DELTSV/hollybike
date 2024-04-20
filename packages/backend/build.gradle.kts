@@ -24,9 +24,6 @@ fun getIN(): String {
 
 application {
 	mainClass.set("hollybike.api.ApplicationKt")
-
-	val isDevelopment: Boolean = project.ext.has("development")
-	applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 repositories {
@@ -43,13 +40,14 @@ dependencies {
 	implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
 	implementation("io.ktor:ktor-server-cors:$ktor_version")
 	implementation("io.ktor:ktor-server-auth:$ktor_version")
+	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 	implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
 	implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-swagger-jvm:$ktor_version")
 	implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
-	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 	implementation("io.ktor:ktor-server-resources:$ktor_version")
 	implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+	implementation("de.nycode:bcrypt:2.2.0")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
 	implementation("org.ktorm:ktorm-core:3.6.0")
 	implementation("com.mchange:c3p0:0.9.5.5")
@@ -116,6 +114,12 @@ graalvmNative {
 
 			buildArgs.add("--initialize-at-run-time=liquibase.sqlgenerator.core.LockDatabaseChangeLogGenerator")
 
+			buildArgs.add("--initialize-at-run-time=de.nycode.bcrypt.BCryptKt")
+
+//			buildArgs.add("--initialize-at-run-time=java.time.zone.ZoneRulesProvider")
+//
+//			buildArgs.add("--trace-class-initialization=java.time.zone.ZoneRulesProvider")
+
 			buildArgs.add("--install-exit-handlers")
 			buildArgs.add("--report-unsupported-elements-at-runtime")
 
@@ -124,6 +128,7 @@ graalvmNative {
 
 			buildArgs.add("-H:JNIConfigurationFiles=${project.projectDir}/src/main/resources/jni-config.json")
 			buildArgs.add("-H:ResourceConfigurationFiles=${project.projectDir}/src/main/resources/resource-config.json")
+			buildArgs.add("-H:DynamicProxyConfigurationFiles=${project.projectDir}/src/main/resources/proxy-config.json")
 
 			buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
 
