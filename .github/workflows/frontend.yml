@@ -31,19 +31,17 @@ on:
 env:
   CI: true
 
-defaults:
-  run:
-    working-directory: packages/frontend
-
 jobs:
   build:
-    name: Build & Deploy Frontend
+    name: Build Frontend
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: packages/frontend
+
     permissions:
-      checks: read
       contents: read
-      actions: read
 
     steps:
       - name: Checkout code
@@ -69,29 +67,36 @@ jobs:
           path: packages/frontend/dist
           retention-days: 1
 
+  deploy:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ inputs.externall_call }}
+
+    permissions:
+      checks: read
+      contents: read
+      actions: read
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: HollyBike-Frontend-${{ inputs.version }}
+          path: dist
+
       - name: Configure AWS credentials
-        if: ${{ inputs.externall_call }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
-        if: ${{ inputs.externall_call }}
-        uses: ./.github/actions/check-and-wait
-        with:
-          workflow: ${{ vars.INFRA_WORKFLOW }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Sync cacheable files with S3 bucket
-        if: ${{ inputs.externall_call }}
         run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'max-age=31536000' --exclude "*.html"
 
       - name: Sync non cacheable files with S3 bucket
-        if: ${{ inputs.externall_call }}
         run: aws s3 sync ./dist s3://${{ vars.AWS_S3_BUCKET }} --cache-control 'no-cache'
 
       - name: Create CloudFront invalidation
-        if: ${{ inputs.externall_call }}
         run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_CF_DIST_ID }} --paths "/*"

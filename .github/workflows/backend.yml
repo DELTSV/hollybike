@@ -33,19 +33,14 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   JAVA_VERSION: 21
 
-defaults:
-  run:
-    working-directory: packages/backend
-
-permissions:
-  checks: read
-  contents: read
-  actions: read
-
 jobs:
-  build-backend-production:
-    name: Build & Deploy Backend
+  build-backend:
+    name: Build Backend
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/backend
 
     permissions:
       contents: read
@@ -60,6 +55,9 @@ jobs:
           POSTGRES_DB: hollybike
         ports:
           - 5432:5432
+
+    outputs:
+      image: ${{ steps.extract-tag.outputs.second-tag }}
 
     steps:
       - name: Checkout code
@@ -129,15 +127,19 @@ jobs:
           TAGS=(${{ steps.meta.outputs.tags }})
           echo "second-tag=${TAGS[1]}" >> $GITHUB_OUTPUT
 
-      - name: Check and wait for workflow ${{ vars.INFRA_WORKFLOW }} to finish
-        uses: ./.github/actions/check-and-wait
-        if: ${{ inputs.externall_call }}
-        with:
-          workflow: ${{ vars.INFRA_WORKFLOW }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+  deploy-backend:
+    name: Deploy Backend
+    if: ${{ inputs.externall_call }}
+    runs-on: ubuntu-latest
+    needs: [ build-backend ]
 
+    permissions:
+      checks: read
+      contents: read
+      actions: read
+
+    steps:
       - name: Configure AWS credentials
-        if: ${{ inputs.externall_call }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -145,19 +147,16 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Download task def
-        if: ${{ inputs.externall_call }}
-        working-directory: .
         run: |
           aws ecs describe-task-definition --task-definition ${{ vars.ECS_TASK_NAME }} --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
-        if: ${{ inputs.externall_call }}
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
           container-name: backend
-          image: ${{ steps.extract-tag.outputs.second-tag }}
+          image: ${{ needs.build-backend.outputs.image }}
 
       # - name: Deploy Amazon ECS task definition
       #   if: ${{ inputs.externall_call }}
@@ -168,7 +167,7 @@ jobs:
       #     cluster: ${{ vars.ECS_CLUSTER }}
       #     wait-for-service-stability: false
 
-  build-frontend:
+  frontend:
     name: Frontend
     if: ${{ inputs.externall_call }}
     uses: ./.github/workflows/frontend.yml
@@ -180,7 +179,7 @@ jobs:
 
   build-backend-on-premises:
     name: Build On Premises
-    needs: [ build-frontend ]
+    needs: [ frontend ]
     if: ${{ inputs.externall_call }}
     strategy:
       matrix:
@@ -193,6 +192,9 @@ jobs:
             executable-suffix: '.exe'
 
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
 
     defaults:
       run:
