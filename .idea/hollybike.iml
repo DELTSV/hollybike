@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/app/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/packages/app/build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/frontend/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/META-INF" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

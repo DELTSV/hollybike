@@ -17,7 +17,7 @@ val Attributes.conf get() = this[confKey]
 
 fun Application.api() {
 	this.attributes.put(confKey, parseConf())
-	configureDatabase()
+	val db = configureDatabase()
 	configureHTTP()
 	configureSecurity()
 	install(Resources)
@@ -25,5 +25,5 @@ fun Application.api() {
 		this.level = Level.INFO
 	}
 	ApiController(this)
-	AuthenticationController(this)
+	AuthenticationController(this, db)
 }

@@ -6,8 +6,7 @@
     <option name="MAIN_CLASS_NAME" value="hollybike.api.ApplicationKt" />
     <module name="hollybike.api.main" />
     <shortenClasspath name="NONE" />
-    <method v="2">
-      <option name="Make" enabled="true" />
-    </method>
+    <option name="VM_PARAMETERS" value="-Dio.ktor.development=true" />
+    <method v="2" />
   </configuration>
 </component>
