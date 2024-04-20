@@ -167,19 +167,9 @@ jobs:
       #     cluster: ${{ vars.ECS_CLUSTER }}
       #     wait-for-service-stability: false
 
-  frontend:
-    name: Frontend
-    if: ${{ inputs.externall_call }}
-    uses: ./.github/workflows/frontend.yml
-    with:
-      version: ${{ github.event.inputs.version }}
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
   build-backend-on-premises:
     name: Build On Premises
-    needs: [ frontend ]
+    needs: [ build-frontend ]
     if: ${{ inputs.externall_call }}
     strategy:
       matrix:
@@ -228,7 +218,7 @@ jobs:
 
       - name: Create native fake folder
         run: mkdir -p build/native/nativeCompile
-  
+
       - name: Create fake executable
         run: touch build/native/nativeCompile/${{ steps.executable.outputs.executable_name }}${{ matrix.executable-suffix }}
 
@@ -240,3 +230,21 @@ jobs:
           retention-days: 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-frontend:
+    name: Frontend
+    if: ${{ inputs.externall_call }}
+    uses: ./.github/workflows/build-frontend.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+
+  deploy-frontend:
+    name: Frontend
+    needs: [ build-frontend ]
+    if: ${{ inputs.externall_call }}
+    uses: ./.github/workflows/deploy-frontend.yml
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

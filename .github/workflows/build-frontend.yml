@@ -1,0 +1,60 @@
+name: Frontend CI
+
+on:
+  workflow_call:
+    inputs:
+      externall_call:
+        description: 'To distinguish workflow_call from regular events'
+        type: boolean
+        required: false
+        default: true
+      version:
+        description: 'Version of the release'
+        type: string
+        required: true
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/frontend/**'
+      - '.github/workflows/build-frontend.yml'
+
+env:
+  CI: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/frontend
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run linter
+        run: bun run lint
+
+      - name: Try building application
+        run: bun run build
+
+      - name: Upload artifacts
+        if: ${{ inputs.externall_call }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: HollyBike-Frontend-${{ inputs.version }}
+          path: packages/frontend/dist
+          retention-days: 1
