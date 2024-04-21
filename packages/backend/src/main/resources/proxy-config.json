@@ -1,11 +1,2 @@
 [
-  {
-    "interfaces":["hollybike.api.repository.Association"]
-  },
-  {
-    "interfaces":["hollybike.api.repository.User"]
-  },
-  {
-    "interfaces":["org.ktorm.support.postgresql.PostgreSqlExpressionVisitor"]
-  }
 ]

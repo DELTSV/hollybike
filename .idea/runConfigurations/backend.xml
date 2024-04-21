@@ -6,7 +6,7 @@
     <option name="MAIN_CLASS_NAME" value="hollybike.api.ApplicationKt" />
     <module name="hollybike.api.main" />
     <shortenClasspath name="NONE" />
-    <option name="VM_PARAMETERS" value="-Dio.ktor.development=true" />
+    <option name="VM_PARAMETERS" value="-Dio.ktor.development=true -agentlib:native-image-agent=config-output-dir=native-image" />
     <method v="2" />
   </configuration>
 </component>

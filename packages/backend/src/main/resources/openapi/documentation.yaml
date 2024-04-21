@@ -112,7 +112,7 @@ paths:
                 type: "string"
               examples:
                 Example#1:
-                  value: "Not Found"
+                  value: ""
   /login:
     post:
       description: ""
@@ -130,11 +130,23 @@ paths:
         required: true
       responses:
         "200":
-          description: "OK <br> TODO store and retrieve token from db for auth"
+          description: "OK"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TAuthInfo"
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
   /logout:
     delete:
       description: ""
@@ -146,7 +158,7 @@ paths:
           type: "object"
       responses:
         "204":
-          description: "No Content <br> TODO Delete token from DB"
+          description: "No Content"
           content:
             '*/*':
               schema:
@@ -167,12 +179,96 @@ paths:
               $ref: "#/components/schemas/TSignin"
         required: true
       responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Associations needed"
+                Example#2:
+                  value: "Invalid email"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
         "200":
-          description: "OK <br> TODO store token in db"
+          description: "OK"
           content:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TAuthInfo"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Email already exist"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Internal server error"
+  /users/{id}:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TUser"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "User not found"
+  /users/me:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TUser"
 components:
   schemas:
     Map:
@@ -204,6 +300,50 @@ components:
           type: "string"
         password:
           type: "string"
+        username:
+          type: "string"
+        association:
+          type: "integer"
+          format: "int32"
       required:
       - "email"
       - "password"
+      - "username"
+    Instant:
+      type: "object"
+      properties: {}
+    TAssociation:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+      required:
+      - "name"
+    TUser:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        email:
+          type: "string"
+        username:
+          type: "string"
+        scope:
+          type: "integer"
+          format: "int32"
+        status:
+          type: "integer"
+          format: "int32"
+        lastLogin:
+          $ref: "#/components/schemas/Instant"
+        association:
+          $ref: "#/components/schemas/TAssociation"
+      required:
+      - "email"
+      - "username"
+      - "lastLogin"
+      - "association"

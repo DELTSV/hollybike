@@ -2,13 +2,15 @@ package hollybike.api.routing.controller
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.sun.net.httpserver.HttpsServer
 import de.nycode.bcrypt.hash
 import de.nycode.bcrypt.verify
 import hollybike.api.conf
 import hollybike.api.isOnPremise
+import hollybike.api.repository.Association
+import hollybike.api.repository.Associations
 import hollybike.api.repository.User
-import hollybike.api.repository.users
-import hollybike.api.repository.associations
+import hollybike.api.repository.Users
 import hollybike.api.routing.resources.Login
 import hollybike.api.routing.resources.Logout
 import hollybike.api.routing.resources.Signin
@@ -26,11 +28,9 @@ import java.util.*
 import io.ktor.server.resources.post
 import io.ktor.util.*
 import kotlinx.datetime.Clock
-import org.ktorm.database.Database
-import org.ktorm.dsl.eq
-import org.ktorm.entity.add
-import org.ktorm.entity.find
-import org.ktorm.entity.first
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
 
 class AuthenticationController(
@@ -56,12 +56,20 @@ class AuthenticationController(
 	private fun Route.login() {
 		post<Login> {
 			val login = call.receive<TLogin>()
-			db.users.find { (it.email eq login.email) }?.let {
-				if(verify(login.password, it.password.decodeBase64Bytes())) {
-					it.lastLogin = Clock.System.now()
-					it.flushChanges()
-					val token = generateJWT(login.email)
-					call.respond(TAuthInfo(token))
+			transaction(db) {
+				User.find { Users.email eq login.email }.singleOrNull() ?.let {
+					if(verify(login.password, it.password.decodeBase64Bytes())) {
+						it.lastLogin = Clock.System.now()
+						generateJWT(login.email)
+					} else {
+						""
+					}
+				} ?: run {
+					null
+				}
+			}?.let {
+				if(it.isNotEmpty()) {
+					call.respond(TAuthInfo(it))
 				} else {
 					call.respond(HttpStatusCode.Unauthorized)
 				}
@@ -85,24 +93,26 @@ class AuthenticationController(
 				return@post
 			}
 			val association = if(application.isOnPremise) {
-				db.associations.first()
+				transaction(db) { Association[1] }
 			} else if(signin.association == null) {
 				call.respond(HttpStatusCode.BadRequest, "Associations needed")
 				return@post
 			} else {
-				db.associations.find { it.id eq signin.association } ?: run {
+				transaction(db) { Association.find { Associations.id eq signin.association }.singleOrNull() } ?: run {
 					call.respond(HttpStatusCode.NotFound, "Association ${signin.association} not found")
 					return@post
 				}
 			}
 			try {
-				db.users.add(User {
-					email = signin.email
-					username = signin.username
-					password = hash(signin.password, 4).encodeBase64()
-					this.association = association
-					lastLogin = Clock.System.now()
-				})
+				transaction(db) {
+					User.new {
+						email = signin.email
+						username = signin.username
+						password = hash(signin.password, 4).encodeBase64()
+						this.association = association
+						lastLogin = Clock.System.now()
+					}
+				}
 				val token = generateJWT(signin.email)
 				call.respond(TAuthInfo(token))
 			}catch (e: PSQLException) {

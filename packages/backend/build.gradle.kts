@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
+
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
+val exposedVersion: String by project
 
 plugins {
 	application
@@ -49,9 +52,10 @@ dependencies {
 	implementation("io.ktor:ktor-server-call-logging:$ktor_version")
 	implementation("de.nycode:bcrypt:2.2.0")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
-	implementation("org.ktorm:ktorm-core:3.6.0")
-	implementation("com.mchange:c3p0:0.9.5.5")
-	implementation("org.ktorm:ktorm-support-postgresql:3.6.0")
+	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.liquibase:liquibase-core:4.27.0")
 	ksp(project(":processor"))
@@ -117,6 +121,7 @@ graalvmNative {
 			buildArgs.add("--initialize-at-run-time=de.nycode.bcrypt.BCryptKt")
 
 //			buildArgs.add("--initialize-at-run-time=java.time.zone.ZoneRulesProvider")
+//			buildArgs.add("--initialize-at-run-time=java.time.ZoneRegion")
 //
 //			buildArgs.add("--trace-class-initialization=java.time.zone.ZoneRulesProvider")
 

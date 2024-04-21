@@ -3,11 +3,22 @@ package hollybike.api.plugins
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import hollybike.api.conf
+import hollybike.api.repository.User
+import hollybike.api.repository.Users
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.util.*
+import org.jetbrains.exposed.dao.load
+import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.transaction
 
-fun Application.configureSecurity() {
+private val userAttributeKey = AttributeKey<User>("user")
+
+val ApplicationCall.user: User get() = attributes[userAttributeKey]
+
+fun Application.configureSecurity(db: Database) {
 	println("Configuring security")
 	val jwtAudience = attributes.conf.security.audience
 	val jwtDomain = attributes.conf.security.domain
@@ -24,7 +35,19 @@ fun Application.configureSecurity() {
 					.build(),
 			)
 			validate { credential ->
-				if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+				if (credential.payload.audience.contains(jwtAudience)) {
+					val user = transaction(db) {
+						User.find {
+							Users.email eq credential.payload.getClaim("email").asString()
+						}.with(User::association).singleOrNull()
+					} ?: run {
+						return@validate null
+					}
+					this.attributes.put(userAttributeKey, user)
+					JWTPrincipal(credential.payload)
+				} else {
+					null
+				}
 			}
 		}
 	}

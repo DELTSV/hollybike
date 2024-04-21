@@ -1,37 +1,32 @@
 package hollybike.api.repository
 
-import kotlinx.datetime.Instant
-import org.ktorm.database.Database
-import org.ktorm.entity.Entity
-import org.ktorm.entity.sequenceOf
-import org.ktorm.schema.Table
-import org.ktorm.schema.int
-import org.ktorm.schema.varchar
+import hollybike.api.repository.User.Companion.referrersOn
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object Users: Table<User>("users") {
-	val id = int("id_user").primaryKey().bindTo { it.id }
-	val email = varchar("email").bindTo { it.email }
-	val username = varchar("username").bindTo { it.username }
-	val password = varchar("password").bindTo { it.password }
-	val status = int("status").bindTo { it.status }
-	val scope = int("scope").bindTo { it.scope }
-	val association = int("association").references(Associations) { it.association }
-	val lastLogin = datetime("last_login").bindTo { it.lastLogin }
-
-	val associations: Associations get() = association.referenceTable as Associations
+object Users: IntIdTable("users", "id_user") {
+	val email = varchar("email", 1_000)
+	val username = varchar("username", 1_000)
+	val password = varchar("password", 1_000)
+	val status = integer("status")
+	val scope = integer("scope")
+	val association = reference("association", Associations)
+	val lastLogin = timestamp("last_login")
 }
 
-interface User: Entity<User> {
-	val id: Int
-	var email: String
-	var username: String
-	var password: String
-	var status: Int
-	var scope: Int
-	var association: Association
-	var lastLogin: Instant
+class User(id: EntityID<Int>): IntEntity(id) {
+	var email by Users.email
+	var username by Users.username
+	var password by Users.password
+	var status by Users.status
+	var scope by Users.scope
+	var association by Association referencedOn Users.association
+	var lastLogin by Users.lastLogin
 
-	companion object: Entity.Factory<User>()
+	companion object: IntEntityClass<User>(Users)
 }
-
-val Database.users get() = this.sequenceOf(Users)

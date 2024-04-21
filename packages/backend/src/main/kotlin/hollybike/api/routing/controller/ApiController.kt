@@ -25,7 +25,7 @@ class ApiController(
 
 	private fun Route.notFound() {
 		get<API.NotFound> {
-			call.respondText("Not Found", status = HttpStatusCode.NotFound)
+			call.respondText("Path ${it.path} not Found", status = HttpStatusCode.NotFound)
 		}
 	}
 }

@@ -1,22 +1,18 @@
 package hollybike.api.repository
 
-import org.ktorm.database.Database
-import org.ktorm.entity.Entity
-import org.ktorm.entity.sequenceOf
-import org.ktorm.schema.Table
-import org.ktorm.schema.int
-import org.ktorm.schema.varchar
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
 
-object Associations: Table<Association>("associations") {
-	val id = int("id_association").primaryKey().bindTo { it.id }
-	val name = varchar("name").bindTo { it.name }
-	val status = int("status").bindTo { it.status }
+object Associations: IntIdTable("associations", "id_association") {
+	val name = varchar("name", 1_000)
+	val status = integer("status")
 }
 
-interface Association: Entity<Association> {
-	val id: Int
-	val name: String
-	val status: Int
-}
+class Association(id: EntityID<Int>): IntEntity(id) {
+	companion object: IntEntityClass<Association>(Associations)
 
-val Database.associations get() = sequenceOf(Associations)
+	val name by Associations.name
+	val status by Associations.status
+}

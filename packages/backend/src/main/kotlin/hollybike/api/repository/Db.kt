@@ -8,26 +8,28 @@ import liquibase.command.core.UpdateCommandStep
 import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
-import org.ktorm.database.Database
-import org.ktorm.support.postgresql.PostgreSqlDialect
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.DatabaseConfig
+import java.sql.Connection
 
 fun Application.configureDatabase(): Database {
 	println("Configuring Database")
 	val conf = attributes.conf
-	return Database.connect(conf.db.url, user = conf.db.username, password = conf.db.password, dialect = PostgreSqlDialect()).apply {
-		runMigration(developmentMode, isCloud)
+	return Database.connect(conf.db.url, user = conf.db.username, password = conf.db.password, driver = "org.postgresql.Driver", databaseConfig = DatabaseConfig {
+		keepLoadedReferencesOutOfTransaction = true
+	}).apply {
+		runMigration(developmentMode, isCloud, this.connector().connection as Connection)
 	}
 }
 
-fun Database.runMigration(isDev: Boolean, isCloud: Boolean) {
+fun runMigration(isDev: Boolean, isCloud: Boolean, connection: Connection) {
 	val changelog = "/liquibase-changelog.sql"
 	val context = (if(isDev) "dev," else "") + (if(isCloud) "cloud" else "premise")
-	this.useConnection {
-		val db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(JdbcConnection(it))
-		CommandScope("update").apply {
-			addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changelog)
-			addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, db)
-			addArgumentValue(UpdateCommandStep.CONTEXTS_ARG, context)
-		}.execute()
-	}
+
+	val db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(JdbcConnection(connection))
+	CommandScope("update").apply {
+		addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changelog)
+		addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, db)
+		addArgumentValue(UpdateCommandStep.CONTEXTS_ARG, context)
+	}.execute()
 }

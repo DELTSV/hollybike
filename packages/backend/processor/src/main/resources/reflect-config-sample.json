@@ -5,9 +5,6 @@
     "name":"android.os.Build$VERSION"
   },
   {
-    "name":"android.util.Log"
-  },
-  {
     "name":"ch.qos.logback.classic.encoder.PatternLayoutEncoder",
     "queryAllPublicMethods":true,
     "methods":[{"name":"<init>","parameterTypes":[] }]
@@ -89,37 +86,36 @@
     "methods":[{"name":"<init>","parameterTypes":[] }]
   },
   {
+    "name":"com.sun.nio.file.SensitivityWatchEventModifier",
+    "fields":[{"name":"HIGH"}]
+  },
+  {
     "name":"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
     "methods":[{"name":"<init>","parameterTypes":[] }]
   },
   {
     "name":"hollybike.api.ApplicationKt",
     "queryAllPublicMethods":true,
-    "methods":[{"name":"configureSerialization","parameterTypes":["io.ktor.server.application.Application"] }, {"name":"main","parameterTypes":[] }, {"name":"module","parameterTypes":["io.ktor.server.application.Application"] }]
+    "methods":[{"name":"module","parameterTypes":["io.ktor.server.application.Application"] }]
   },
   {
     "name":"hollybike.api.repository.Association",
-    "methods":[{"name":"getId","parameterTypes":[] }, {"name":"getName","parameterTypes":[] }, {"name":"getStatus","parameterTypes":[] }]
-  },
-  {
-    "name":"hollybike.api.repository.Associations"
+    "methods":[{"name":"<init>","parameterTypes":["org.jetbrains.exposed.dao.id.EntityID"] }]
   },
   {
     "name":"hollybike.api.repository.User",
-    "methods":[{"name":"getAssociation","parameterTypes":[] }, {"name":"getEmail","parameterTypes":[] }, {"name":"getId","parameterTypes":[] }, {"name":"getPassword","parameterTypes":[] }, {"name":"getScope","parameterTypes":[] }, {"name":"getStatus","parameterTypes":[] }, {"name":"getUsername","parameterTypes":[] }, {"name":"setEmail","parameterTypes":["java.lang.String"] }, {"name":"setPassword","parameterTypes":["java.lang.String"] }, {"name":"setScope","parameterTypes":["int"] }, {"name":"setStatus","parameterTypes":["int"] }]
+    "fields":[{"name":"association$delegate"}],
+    "methods":[{"name":"<init>","parameterTypes":["org.jetbrains.exposed.dao.id.EntityID"] }, {"name":"getAssociation","parameterTypes":[] }, {"name":"setAssociation","parameterTypes":["hollybike.api.repository.Association"] }]
   },
   {
     "name":"hollybike.api.repository.User$Companion"
   },
   {
-    "name":"hollybike.api.repository.Users"
-  },
-  {
-    "name":"hollybike.api.types.auth.TLogin",
+    "name":"hollybike.api.types.user.TUser",
     "fields":[{"name":"Companion"}]
   },
   {
-    "name":"hollybike.api.types.auth.TLogin$Companion",
+    "name":"hollybike.api.types.user.TUser$Companion",
     "methods":[{"name":"serializer","parameterTypes":[] }]
   },
   {
@@ -152,6 +148,9 @@
     "fields":[{"name":"state"}]
   },
   {
+    "name":"io.ktor.util.AttributeKey"
+  },
+  {
     "name":"io.ktor.util.collections.CopyOnWriteHashMap",
     "fields":[{"name":"current"}]
   },
@@ -162,9 +161,6 @@
   {
     "name":"io.ktor.utils.io.ByteBufferChannel",
     "fields":[{"name":"_closed"}, {"name":"_readOp"}, {"name":"_state"}, {"name":"_writeOp"}]
-  },
-  {
-    "name":"io.ktor.utils.io.ByteReadChannel"
   },
   {
     "name":"io.ktor.utils.io.core.internal.ChunkBuffer",
@@ -193,29 +189,15 @@
     "name":"java.io.FilePermission"
   },
   {
-    "name":"java.io.Serializable",
-    "allDeclaredFields":true,
-    "allDeclaredClasses":true,
-    "queryAllDeclaredMethods":true
-  },
-  {
-    "name":"java.lang.CharSequence"
-  },
-  {
     "name":"java.lang.Class",
     "methods":[{"name":"getPermittedSubclasses","parameterTypes":[] }, {"name":"getRecordComponents","parameterTypes":[] }, {"name":"isRecord","parameterTypes":[] }, {"name":"isSealed","parameterTypes":[] }]
   },
   {
+    "name":"java.lang.ClassLoader",
+    "fields":[{"name":"classLoaderValueMap"}]
+  },
+  {
     "name":"java.lang.ClassValue"
-  },
-  {
-    "name":"java.lang.Comparable"
-  },
-  {
-    "name":"java.lang.Integer"
-  },
-  {
-    "name":"java.lang.Number"
   },
   {
     "name":"java.lang.Object",
@@ -235,19 +217,12 @@
     "methods":[{"name":"checkPermission","parameterTypes":["java.security.Permission"] }]
   },
   {
-    "name":"java.lang.String"
-  },
-  {
     "name":"java.lang.System",
     "methods":[{"name":"getSecurityManager","parameterTypes":[] }]
   },
   {
     "name":"java.lang.Thread",
     "fields":[{"name":"threadLocalRandomProbe"}]
-  },
-  {
-    "name":"java.lang.invoke.MethodHandles",
-    "methods":[{"name":"privateLookupIn","parameterTypes":["java.lang.Class","java.lang.invoke.MethodHandles$Lookup"] }]
   },
   {
     "name":"java.net.NetPermission"
@@ -276,8 +251,17 @@
     "name":"java.security.SecurityPermission"
   },
   {
+    "name":"java.sql.ResultSet"
+  },
+  {
     "name":"java.util.ArrayList",
     "methods":[{"name":"<init>","parameterTypes":[] }]
+  },
+  {
+    "name":"java.util.HashMap"
+  },
+  {
+    "name":"java.util.LinkedHashMap"
   },
   {
     "name":"java.util.PropertyPermission"
@@ -304,10 +288,10 @@
     "name":"kotlin.Boolean"
   },
   {
-    "name":"kotlin.CharSequence"
+    "name":"kotlin.Comparable"
   },
   {
-    "name":"kotlin.Comparable"
+    "name":"kotlin.Function0"
   },
   {
     "name":"kotlin.Function1"
@@ -321,12 +305,6 @@
     "methods":[{"name":"bv","parameterTypes":[] }, {"name":"d1","parameterTypes":[] }, {"name":"d2","parameterTypes":[] }, {"name":"k","parameterTypes":[] }, {"name":"mv","parameterTypes":[] }, {"name":"pn","parameterTypes":[] }, {"name":"xi","parameterTypes":[] }, {"name":"xs","parameterTypes":[] }]
   },
   {
-    "name":"kotlin.Number"
-  },
-  {
-    "name":"kotlin.Pair"
-  },
-  {
     "name":"kotlin.SafePublicationLazyImpl",
     "fields":[{"name":"_value"}]
   },
@@ -337,16 +315,16 @@
     "name":"kotlin.Unit"
   },
   {
-    "name":"kotlin.collections.List"
+    "name":"kotlin.collections.HashMap"
   },
   {
-    "name":"kotlin.collections.Map"
+    "name":"kotlin.collections.LinkedHashMap"
   },
   {
     "name":"kotlin.jvm.internal.DefaultConstructorMarker"
   },
   {
-    "name":"kotlin.reflect.KClass"
+    "name":"kotlin.reflect.KProperty"
   },
   {
     "name":"kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
@@ -366,91 +344,91 @@
     "allPublicFields":true
   },
   {
-    "name":"kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.BuiltInsLoaderImpl"
-  },
-  {
     "name":"kotlinx.coroutines.CancellableContinuationImpl",
-    "fields":[{"name":"_decisionAndIndex"}, {"name":"_parentHandle"}, {"name":"_state"}]
+    "fields":[{"name":"_decisionAndIndex$volatile"}, {"name":"_parentHandle$volatile"}, {"name":"_state$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.CancelledContinuation",
-    "fields":[{"name":"_resumed"}]
+    "fields":[{"name":"_resumed$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.CompletedExceptionally",
-    "fields":[{"name":"_handled"}]
+    "fields":[{"name":"_handled$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.DispatchedCoroutine",
-    "fields":[{"name":"_decision"}]
+    "fields":[{"name":"_decision$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.EventLoopImplBase",
-    "fields":[{"name":"_delayed"}, {"name":"_isCompleted"}, {"name":"_queue"}]
+    "fields":[{"name":"_delayed$volatile"}, {"name":"_isCompleted$volatile"}, {"name":"_queue$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.InvokeOnCancelling",
-    "fields":[{"name":"_invoked"}]
+    "fields":[{"name":"_invoked$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.JobSupport",
-    "fields":[{"name":"_parentHandle"}, {"name":"_state"}]
+    "fields":[{"name":"_parentHandle$volatile"}, {"name":"_state$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.JobSupport$Finishing",
-    "fields":[{"name":"_exceptionsHolder"}, {"name":"_isCompleting"}, {"name":"_rootCause"}]
+    "fields":[{"name":"_exceptionsHolder$volatile"}, {"name":"_isCompleting$volatile"}, {"name":"_rootCause$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.channels.BufferedChannel",
-    "fields":[{"name":"_closeCause"}, {"name":"bufferEnd"}, {"name":"bufferEndSegment"}, {"name":"closeHandler"}, {"name":"completedExpandBuffersAndPauseFlag"}, {"name":"receiveSegment"}, {"name":"receivers"}, {"name":"sendSegment"}, {"name":"sendersAndCloseStatus"}]
+    "fields":[{"name":"_closeCause$volatile"}, {"name":"bufferEnd$volatile"}, {"name":"bufferEndSegment$volatile"}, {"name":"closeHandler$volatile"}, {"name":"completedExpandBuffersAndPauseFlag$volatile"}, {"name":"receiveSegment$volatile"}, {"name":"receivers$volatile"}, {"name":"sendSegment$volatile"}, {"name":"sendersAndCloseStatus$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.AtomicOp",
-    "fields":[{"name":"_consensus"}]
+    "fields":[{"name":"_consensus$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.ConcurrentLinkedListNode",
-    "fields":[{"name":"_next"}, {"name":"_prev"}]
+    "fields":[{"name":"_next$volatile"}, {"name":"_prev$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.DispatchedContinuation",
-    "fields":[{"name":"_reusableCancellableContinuation"}]
+    "fields":[{"name":"_reusableCancellableContinuation$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.LimitedDispatcher",
-    "fields":[{"name":"runningWorkers"}]
+    "fields":[{"name":"runningWorkers$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.LockFreeLinkedListNode",
-    "fields":[{"name":"_next"}, {"name":"_prev"}, {"name":"_removedRef"}]
+    "fields":[{"name":"_next$volatile"}, {"name":"_prev$volatile"}, {"name":"_removedRef$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.LockFreeTaskQueue",
-    "fields":[{"name":"_cur"}]
+    "fields":[{"name":"_cur$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.LockFreeTaskQueueCore",
-    "fields":[{"name":"_next"}, {"name":"_state"}]
+    "fields":[{"name":"_next$volatile"}, {"name":"_state$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.Segment",
-    "fields":[{"name":"cleanedAndPointers"}]
+    "fields":[{"name":"cleanedAndPointers$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.internal.ThreadSafeHeap",
-    "fields":[{"name":"_size"}]
+    "fields":[{"name":"_size$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.scheduling.CoroutineScheduler",
-    "fields":[{"name":"_isTerminated"}, {"name":"controlState"}, {"name":"parkedWorkersStack"}]
+    "fields":[{"name":"_isTerminated$volatile"}, {"name":"controlState$volatile"}, {"name":"parkedWorkersStack$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.scheduling.CoroutineScheduler$Worker",
-    "fields":[{"name":"workerCtl"}]
+    "fields":[{"name":"workerCtl$volatile"}]
   },
   {
     "name":"kotlinx.coroutines.scheduling.WorkQueue",
-    "fields":[{"name":"blockingTasksInBuffer"}, {"name":"consumerIndex"}, {"name":"lastScheduledTask"}, {"name":"producerIndex"}]
+    "fields":[{"name":"blockingTasksInBuffer$volatile"}, {"name":"consumerIndex$volatile"}, {"name":"lastScheduledTask$volatile"}, {"name":"producerIndex$volatile"}]
+  },
+  {
+    "name":"kotlinx.datetime.Instant"
   },
   {
     "name":"liquibase.AbstractExtensibleObject",
@@ -1946,132 +1924,73 @@
     "name":"liquibase.sqlgenerator.core.UpdateGenerator"
   },
   {
-    "name":"org.ktorm.entity.Entity"
+    "name":"org.jetbrains.exposed.dao.ColumnWithTransform"
   },
   {
-    "name":"org.ktorm.expression.AggregateExpression"
+    "name":"org.jetbrains.exposed.dao.DaoEntityIDFactory"
   },
   {
-    "name":"org.ktorm.expression.ArgumentExpression"
+    "name":"org.jetbrains.exposed.dao.Entity"
   },
   {
-    "name":"org.ktorm.expression.BetweenExpression"
+    "name":"org.jetbrains.exposed.dao.EntityBatchUpdate"
   },
   {
-    "name":"org.ktorm.expression.BinaryExpression"
+    "name":"org.jetbrains.exposed.dao.EntityClass"
   },
   {
-    "name":"org.ktorm.expression.CaseWhenExpression"
+    "name":"org.jetbrains.exposed.dao.EntityLifecycleInterceptor"
   },
   {
-    "name":"org.ktorm.expression.CastingExpression"
+    "name":"org.jetbrains.exposed.dao.InnerTableLink"
   },
   {
-    "name":"org.ktorm.expression.ColumnAssignmentExpression"
+    "name":"org.jetbrains.exposed.dao.IntEntity"
   },
   {
-    "name":"org.ktorm.expression.ColumnDeclaringExpression"
+    "name":"org.jetbrains.exposed.dao.OptionalReference"
   },
   {
-    "name":"org.ktorm.expression.ColumnExpression"
+    "name":"org.jetbrains.exposed.dao.Reference"
   },
   {
-    "name":"org.ktorm.expression.DeleteExpression"
+    "name":"org.jetbrains.exposed.dao.id.EntityID"
   },
   {
-    "name":"org.ktorm.expression.ExistsExpression"
+    "name":"org.jetbrains.exposed.jdbc.ExposedConnectionImpl"
   },
   {
-    "name":"org.ktorm.expression.FunctionExpression"
+    "name":"org.jetbrains.exposed.sql.Column"
   },
   {
-    "name":"org.ktorm.expression.InListExpression"
+    "name":"org.jetbrains.exposed.sql.ColumnType",
+    "methods":[{"name":"getNullable","parameterTypes":[] }, {"name":"setNullable","parameterTypes":["boolean"] }]
   },
   {
-    "name":"org.ktorm.expression.InsertExpression"
+    "name":"org.jetbrains.exposed.sql.CompositeColumn"
   },
   {
-    "name":"org.ktorm.expression.InsertFromQueryExpression"
+    "name":"org.jetbrains.exposed.sql.Database"
   },
   {
-    "name":"org.ktorm.expression.JoinExpression"
+    "name":"org.jetbrains.exposed.sql.IColumnType"
   },
   {
-    "name":"org.ktorm.expression.OrderByExpression"
+    "name":"org.jetbrains.exposed.sql.IntegerColumnType",
+    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"getNullable","parameterTypes":[] }, {"name":"setNullable","parameterTypes":["boolean"] }]
   },
   {
-    "name":"org.ktorm.expression.QueryExpression"
+    "name":"org.jetbrains.exposed.sql.ResultRow"
   },
   {
-    "name":"org.ktorm.expression.QuerySourceExpression"
+    "name":"org.jetbrains.exposed.sql.Table"
   },
   {
-    "name":"org.ktorm.expression.ScalarExpression"
+    "name":"org.jetbrains.exposed.sql.statements.api.PreparedStatementApi"
   },
   {
-    "name":"org.ktorm.expression.SelectExpression"
-  },
-  {
-    "name":"org.ktorm.expression.SqlExpression"
-  },
-  {
-    "name":"org.ktorm.expression.SqlExpressionVisitor"
-  },
-  {
-    "name":"org.ktorm.expression.SqlExpressionVisitor$DefaultImpls",
-    "methods":[{"name":"visitAggregate","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.AggregateExpression"] }, {"name":"visitArgument","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ArgumentExpression"] }, {"name":"visitBinary","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.BinaryExpression"] }, {"name":"visitColumn","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ColumnExpression"] }, {"name":"visitColumnDeclaring","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ColumnDeclaringExpression"] }, {"name":"visitExpressionList","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","java.util.List","kotlin.jvm.functions.Function1"] }, {"name":"visitJoin","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.JoinExpression"] }, {"name":"visitQuery","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.QueryExpression"] }, {"name":"visitQuerySource","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.QuerySourceExpression"] }, {"name":"visitSelect","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.SelectExpression"] }, {"name":"visitTable","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.TableExpression"] }]
-  },
-  {
-    "name":"org.ktorm.expression.TableExpression"
-  },
-  {
-    "name":"org.ktorm.expression.UnaryExpression"
-  },
-  {
-    "name":"org.ktorm.expression.UnionExpression"
-  },
-  {
-    "name":"org.ktorm.expression.UpdateExpression"
-  },
-  {
-    "name":"org.ktorm.expression.WindowFrameBoundExpression"
-  },
-  {
-    "name":"org.ktorm.expression.WindowFunctionExpression"
-  },
-  {
-    "name":"org.ktorm.expression.WindowSpecificationExpression"
-  },
-  {
-    "name":"org.ktorm.schema.Table"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.BulkInsertExpression"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.CubeExpression"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.DefaultValueExpression"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.HStoreExpression"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.ILikeExpression"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.InsertOrUpdateExpression"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.PostgreSqlExpressionVisitor"
-  },
-  {
-    "name":"org.ktorm.support.postgresql.PostgreSqlExpressionVisitor$DefaultImpls",
-    "methods":[{"name":"visit","parameterTypes":["org.ktorm.support.postgresql.PostgreSqlExpressionVisitor","org.ktorm.expression.SqlExpression"] }, {"name":"visitScalar","parameterTypes":["org.ktorm.support.postgresql.PostgreSqlExpressionVisitor","org.ktorm.expression.ScalarExpression"] }]
-  },
-  {
-    "name":"org.postgresql.Driver"
+    "name":"org.postgresql.Driver",
+    "methods":[{"name":"<init>","parameterTypes":[] }]
   },
   {
     "name":"org.postgresql.core.QueryExecutorCloseAction",
@@ -2080,14 +1999,6 @@
   {
     "name":"org.postgresql.jdbc.PgStatement",
     "fields":[{"name":"cancelTimerTask"}, {"name":"isClosed"}, {"name":"statementState"}]
-  },
-  {
-    "name":"org.slf4j.Logger",
-    "methods":[{"name":"debug","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"error","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"info","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"isDebugEnabled","parameterTypes":[] }, {"name":"isErrorEnabled","parameterTypes":[] }, {"name":"isInfoEnabled","parameterTypes":[] }, {"name":"isTraceEnabled","parameterTypes":[] }, {"name":"isWarnEnabled","parameterTypes":[] }, {"name":"trace","parameterTypes":["java.lang.String","java.lang.Throwable"] }, {"name":"warn","parameterTypes":["java.lang.String","java.lang.Throwable"] }]
-  },
-  {
-    "name":"org.slf4j.LoggerFactory",
-    "methods":[{"name":"getLogger","parameterTypes":["java.lang.String"] }]
   },
   {
     "name":"sun.security.provider.MD5",
@@ -2104,8 +2015,4 @@
   {
     "name":"sun.security.provider.SHA2$SHA256",
     "methods":[{"name":"<init>","parameterTypes":[] }]
-  },
-  {
-  "name":"org.ktorm.expression.SqlExpressionVisitor$DefaultImpls",
-  "methods":[{"name":"visitArgument","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ArgumentExpression"] }, {"name":"visitBinary","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.BinaryExpression"] }, {"name":"visitColumn","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ColumnExpression"] }, {"name":"visitColumnAssignment","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ColumnAssignmentExpression"] }, {"name":"visitColumnDeclaring","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.ColumnDeclaringExpression"] }, {"name":"visitExpressionList","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","java.util.List","kotlin.jvm.functions.Function1"] }, {"name":"visitInsert","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.InsertExpression"] }, {"name":"visitJoin","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.JoinExpression"] }, {"name":"visitQuery","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.QueryExpression"] }, {"name":"visitQuerySource","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.QuerySourceExpression"] }, {"name":"visitSelect","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.SelectExpression"] }, {"name":"visitTable","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.TableExpression"] }, {"name":"visitUpdate","parameterTypes":["org.ktorm.expression.SqlExpressionVisitor","org.ktorm.expression.UpdateExpression"] }]
   }
