@@ -2,7 +2,6 @@ package hollybike.api.routing.controller
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.sun.net.httpserver.HttpsServer
 import de.nycode.bcrypt.hash
 import de.nycode.bcrypt.verify
 import hollybike.api.conf
@@ -29,7 +28,6 @@ import io.ktor.server.resources.post
 import io.ktor.util.*
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
 
