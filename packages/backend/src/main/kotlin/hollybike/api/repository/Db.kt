@@ -1,6 +1,7 @@
 package hollybike.api.repository
 
 import hollybike.api.conf
+import hollybike.api.isCloud
 import io.ktor.server.application.*
 import liquibase.command.CommandScope
 import liquibase.command.core.UpdateCommandStep
@@ -14,17 +15,19 @@ fun Application.configureDatabase(): Database {
 	println("Configuring Database")
 	val conf = attributes.conf
 	return Database.connect(conf.db.url, user = conf.db.username, password = conf.db.password, dialect = PostgreSqlDialect()).apply {
-		runMigration()
+		runMigration(developmentMode, isCloud)
 	}
 }
 
-fun Database.runMigration() {
+fun Database.runMigration(isDev: Boolean, isCloud: Boolean) {
 	val changelog = "/liquibase-changelog.sql"
+	val context = (if(isDev) "dev," else "") + (if(isCloud) "cloud" else "premise")
 	this.useConnection {
 		val db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(JdbcConnection(it))
 		CommandScope("update").apply {
 			addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, changelog)
 			addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, db)
+			addArgumentValue(UpdateCommandStep.CONTEXTS_ARG, context)
 		}.execute()
 	}
 }
