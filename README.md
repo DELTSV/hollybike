@@ -77,6 +77,16 @@ Pour copier les métadatas générées par l'agent, vous pouvez utiliser la tâc
 
 Base de donnée utilisée : PostgreSQL
 
+### Nomenclature
+
+- Les noms de tables sont au pluriel.
+- Les clés primaires sont des entiers auto-increment nommés `id_<nom_de_l'entité_au_singulier>`.
+- Les tables de jointures sont nommées par le nom des 2 tables jointes au pluriel séparé par un verbe à l'infinitif.
+- Les clés étrangères sont nommées par l'entité pointée.
+- Privilégier les majuscules pour les mots clé SQL dans le changelog.
+- Privilégier le plus possible l'utilisation de `IF NOT EXIST` afin de pouvoir exécuter à nouveau les scripts en cas de
+  problème quelconque sur la base.
+
 ### Docker
 
 Pour lancer une base de donnée PostgreSQL en local, vous pouvez utiliser le docker-compose fourni.
@@ -87,19 +97,37 @@ docker-compose up -d
 
 ### Changelog
 
-Pour générer le changelog liquibase entre la base de production et votre base locale, vous devez lancer le script
-Gradle `diffChangelog`.
+Le changelog doit être écrit à la main dans le fichier `backend/src/main/resources/liquibase-changelog.sql`  
+Un nouveau changeset dans le changelog doit commencer par un commentaire contenant le nom de l'auteur du changeset,
+ainsi que l'id du changeset (entier incrémenté de 1 en 1), et le cas échant le contexte dans lequel il doit s'exécuter.
 
-Pour le lancer, le script nécessite des paramètres passés par variables d'environnements.
+#### Contexte
 
-| Nom             | Valeur                   |
-|-----------------|--------------------------|
-| DB_URL          | url base de prod         |
-| DB_USER         | user base de prod        |
-| DB_PASSWORD     | mot de passe base prod   |
-| REF_DB_URL      | url base locale          |
-| REF_DB_USER     | user base locale         |
-| REF_DB_PASSWORD | mot de passe base locale |
+Il existe 3 contextes différents
+- `dev`
+- `cloud`
+- `premise`
+
+Le contexte `dev` ne s'exécute qu'en environnement de dev (le mode développement de l'API doit être activé).
+
+Le contexte `cloud` s'exécute en version cloud (présence de la variable d'environnement `CLOUD=true`).  
+Dans le cas contraire le contexte `premise` est exécuté.
+
+Pour ne pas sélectionner un contexte, utiliser un `!` devant le contexte.
+
+Les mots clé `all` et `none` sont également disponible pour sélectionner respectivement tout et aucun contexte.
+
+#### Exemples
+
+`--changeset author:id [context:context1[,context2]]`
+
+`--changeset denis:1`
+
+`--changeset denis:2 context:dev`
+
+`--changeset denis:3 context:dev,!premise`
+
+`--changeset denis:4 context:none`
 
 ### Lancer la migration
 
