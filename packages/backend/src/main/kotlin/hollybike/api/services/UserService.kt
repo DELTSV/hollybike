@@ -2,6 +2,7 @@ package hollybike.api.services
 
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
+import hollybike.api.types.user.EUserScope
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -10,7 +11,7 @@ class UserService(
 ) {
 	fun getUser(caller: User?, id: Int): User? = transaction(db) {
 		val user = User.find { Users.id eq id }.singleOrNull()
-		if (caller != null && caller.association != user?.association && caller.scope != 2) {
+		if (caller != null && caller.association != user?.association && caller.scope == EUserScope.User) {
 			null
 		} else {
 			user
@@ -19,7 +20,7 @@ class UserService(
 
 	fun getUserByEmail(caller: User?, email: String): User? = transaction(this.db) {
 		val user = User.find { Users.email eq email }.singleOrNull()
-		if (caller != null && caller.association != user?.association && caller.scope != 2) {
+		if (caller != null && caller.association != user?.association && caller.scope == EUserScope.User) {
 			null
 		} else {
 			user
@@ -28,7 +29,7 @@ class UserService(
 
 	fun getUserByUsername(caller: User?, username: String): User? = transaction(db) {
 		val user = User.find { Users.username eq username }.singleOrNull()
-		if (caller != null && caller.association != user?.association && caller.scope != 2) {
+		if (caller != null && caller.association != user?.association && caller.scope == EUserScope.User) {
 			null
 		} else {
 			user
