@@ -21,14 +21,19 @@ class Processor(
 				if(s !is KSClassDeclaration) {
 					return@forEach
 				}
+				val parameterTypes = if((s as KSClassDeclaration).typeParameters.isNotEmpty()) {
+					s.typeParameters.map { _ -> "\"kotlinx.serialization.KSerializer\""}.joinToString(",", "[", "]")
+				} else {
+					"[]"
+				}
 				val json = """
 					{"name": "${s.qualifiedName?.asString()}","fields": [{"name": "Companion"}]},
-					{"name": "${s.qualifiedName?.asString()}${'$'}Companion","methods":[{"name":"serializer","parameterTypes":[] }]}
+					{"name": "${s.qualifiedName?.asString()}${'$'}Companion","methods":[{"name":"serializer","parameterTypes":$parameterTypes }]}
 				""".trimIndent()
 				jsons.add(json)
 			}
 			if(jsons.isNotEmpty()) {
-				outStream.write("[$sample,${jsons.joinToString(",")}]".toByteArray())
+				outStream.write("[$sample,${jsons.joinToString(",\n")}]".toByteArray())
 			} else {
 				outStream.write("[$sample]".toByteArray())
 			}
