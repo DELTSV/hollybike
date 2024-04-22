@@ -171,8 +171,8 @@ jobs:
 
   build-backend-on-premises:
     name: Build On Premises
-    needs: [ build-frontend ]
     if: inputs.externall_call && inputs.create-executables
+    needs: [ build-frontend ]
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]

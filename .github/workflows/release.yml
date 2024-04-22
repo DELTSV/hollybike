@@ -1,6 +1,6 @@
 name: Release & Deploy
 
-run-name: Release & Deploy HollyBike v${{ inputs.version }} by @${{ github.actor }}
+run-name: Release & Deploy HollyBike v${{ inputs.version }}${{ fromJSON('[" (production only)", ""]')[inputs.create-executables] }} by @${{ github.actor }}
 
 on:
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
     uses: ./.github/workflows/backend.yml
     with:
       version: ${{ github.event.inputs.version }}
-      create-executables: "${{ github.event.inputs.create-executables }}"
+      create-executables: ${{ github.event.inputs.create-executables == 'true' }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -44,6 +44,10 @@ jobs:
 
   create-release:
     name: Create Release
+    if: |
+      always() &&
+      (needs.build-app.result == 'success' || needs.build-app.result == 'skipped') &&
+      (needs.build-frontend-backend.result == 'success')
     needs:
       - build-app
       - build-frontend-backend
@@ -57,6 +61,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get app artifact
+        if: inputs.create-executables
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
@@ -66,11 +71,13 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXECUTABLES: 'hollybike-Android-${{ env.version }}.apk \
+                        hollybike-Windows-${{ env.version }}-x86_64.exe \
+                        hollybike-Linux-${{ env.version }}-x86_64'
         run: |
           gh release create "$version" \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/}-${version#v}" \
+              --title="${GITHUB_REPOSITORY#*/}-${version#v}${{ fromJSON('[" (production only)", ""]')[inputs.create-executables] }}" \
               --generate-notes \
-              hollybike-Android-${{ env.version }}.apk \
-              hollybike-Windows-${{ env.version }}-x86_64.exe \
-              hollybike-Linux-${{ env.version }}-x86_64
+              ${{ fromJSON('["", "$EXECUTABLES"]')[inputs.create-executables] }}
+              
