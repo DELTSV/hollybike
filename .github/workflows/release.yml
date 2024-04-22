@@ -8,6 +8,10 @@ on:
       version:
         description: 'Version of the release'
         required: true
+      create-executables:
+        type: boolean
+        description: 'Create executables'
+        default: false
 
 env:
   CI: true
@@ -22,11 +26,13 @@ jobs:
     uses: ./.github/workflows/backend.yml
     with:
       version: ${{ github.event.inputs.version }}
+      create-executables: "${{ github.event.inputs.create-executables }}"
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build-app:
+    if: github.event.inputs.create-executables
     name: App
     uses: ./.github/workflows/app.yml
     with:

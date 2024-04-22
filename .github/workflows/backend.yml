@@ -12,6 +12,10 @@ on:
         description: 'Version of the release'
         type: string
         required: true
+      create-executables:
+        description: 'Create executables'
+        type: boolean
+        required: true
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -168,7 +172,7 @@ jobs:
   build-backend-on-premises:
     name: Build On Premises
     needs: [ build-frontend ]
-    if: ${{ inputs.externall_call }}
+    if: inputs.externall_call && inputs.create-executables
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest ]
