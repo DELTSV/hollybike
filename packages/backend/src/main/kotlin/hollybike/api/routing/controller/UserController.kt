@@ -3,7 +3,9 @@ package hollybike.api.routing.controller
 import hollybike.api.plugins.user
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
+import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
+import hollybike.api.utils.get
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -32,7 +34,7 @@ class UserController(
 	}
 
 	private fun Route.getUserById() {
-		get<Users.Id> {
+		get<Users.Id>(EUserScope.Admin) {
 			userService.getUser(call.user, it.id)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {

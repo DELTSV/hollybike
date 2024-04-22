@@ -23,7 +23,7 @@ class User(id: EntityID<Int>): IntEntity(id) {
 	var email by Users.email
 	var username by Users.username
 	var password by Users.password
-	var status by Users.status.transform({ it.value }, { EUserStatus[it] })
+	var status by Users.status.transform({ it.value }, { println("LIL"); EUserStatus[it] })
 	var scope by Users.scope.transform({ it.value }, { EUserScope[it] })
 	var association by Association referencedOn Users.association
 	var lastLogin by Users.lastLogin

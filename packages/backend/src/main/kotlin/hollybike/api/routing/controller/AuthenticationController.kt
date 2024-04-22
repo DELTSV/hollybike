@@ -13,6 +13,7 @@ import hollybike.api.repository.Users
 import hollybike.api.routing.resources.Login
 import hollybike.api.routing.resources.Logout
 import hollybike.api.routing.resources.Signin
+import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignin
@@ -30,11 +31,9 @@ import io.ktor.server.resources.post
 import io.ktor.util.*
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
-import kotlin.math.log
 
 class AuthenticationController(
 	private val application: Application,
@@ -62,8 +61,8 @@ class AuthenticationController(
 			val login = call.receive<TLogin>()
 			newSuspendedTransaction {
 				User.find { Users.email eq login.email }.singleOrNull()?.let {
-					if(verify(login.password, it.password.decodeBase64Bytes())) {
-						if(it.status == EUserStatus.Enabled) {
+					if (verify(login.password, it.password.decodeBase64Bytes())) {
+						if (it.status == EUserStatus.Enabled && it.association.status == EAssociationsStatus.Enabled) {
 							call.respond(TAuthInfo(generateJWT(login.email, it.scope)))
 						} else {
 							call.respond(HttpStatusCode.Forbidden)
@@ -118,6 +117,7 @@ class AuthenticationController(
 				if(e.serverErrorMessage?.constraint == "users_email_uindex" && e.serverErrorMessage?.detail?.contains("already exists") == true) {
 					call.respond(HttpStatusCode.Conflict, "Email already exist")
 				} else {
+					e.printStackTrace()
 					call.respond(HttpStatusCode.InternalServerError, "Internal server error")
 				}
 			}

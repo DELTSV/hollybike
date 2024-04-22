@@ -7,7 +7,6 @@ import hollybike.api.routing.controller.ApiController
 import hollybike.api.routing.controller.AssociationController
 import hollybike.api.routing.controller.AuthenticationController
 import hollybike.api.routing.controller.UserController
-import hollybike.api.routing.resources.Associations
 import hollybike.api.services.UserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
