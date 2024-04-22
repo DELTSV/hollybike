@@ -21,8 +21,8 @@ class Processor(
 				if(s !is KSClassDeclaration) {
 					return@forEach
 				}
-				val parameterTypes = if((s as KSClassDeclaration).typeParameters.isNotEmpty()) {
-					s.typeParameters.map { _ -> "\"kotlinx.serialization.KSerializer\""}.joinToString(",", "[", "]")
+				val parameterTypes = if(s.typeParameters.isNotEmpty()) {
+					s.typeParameters.joinToString(",", "[", "]") { _ -> "\"kotlinx.serialization.KSerializer\"" }
 				} else {
 					"[]"
 				}
