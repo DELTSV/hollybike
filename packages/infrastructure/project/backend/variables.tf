@@ -13,23 +13,28 @@ variable "az_count" {
   type        = number
 }
 
+variable "domain_name" {
+  description = "The domain name for the resources"
+  type        = string
+}
+
 variable "public_cert_backend_arn" {
   description = "The ARN of the certificate for the backend"
   type        = string
 }
 
-variable "db_url_parameter_arn" {
-  description = "The ARN of the parameter store for the database URL"
+variable "rds_db_url" {
+  description = "The URL of the RDS database"
   type        = string
 }
 
-variable "db_username_parameter_arn" {
-  description = "The ARN of the parameter store for the database username"
+variable "rds_db_username" {
+  description = "The username of the RDS database"
   type        = string
 }
 
-variable "db_password_parameter_arn" {
-  description = "The ARN of the parameter store for the database password"
+variable "rds_db_password" {
+  description = "The password of the RDS database"
   type        = string
 }
 

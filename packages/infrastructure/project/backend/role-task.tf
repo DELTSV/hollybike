@@ -39,9 +39,13 @@ resource "aws_iam_role_policy" "ecs_backend_task_execution_ssm_role_policy" {
         ],
         "Resource" : [
           aws_secretsmanager_secret.backend_ghcr_credentials.arn,
-          var.db_url_parameter_arn,
-          var.db_username_parameter_arn,
-          var.db_password_parameter_arn
+          aws_ssm_parameter.backend_db_url.arn,
+          aws_ssm_parameter.backend_db_username.arn,
+          aws_ssm_parameter.backend_db_password.arn,
+          aws_ssm_parameter.backend_security_audience.arn,
+          aws_ssm_parameter.backend_security_domain.arn,
+          aws_ssm_parameter.backend_security_realm.arn,
+          aws_ssm_parameter.backend_security_secret.arn,
         ]
       },
     ]

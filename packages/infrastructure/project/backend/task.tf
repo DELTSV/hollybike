@@ -16,16 +16,32 @@ resource "aws_ecs_task_definition" "default" {
       secrets : [
         {
           name : "DB_URL",
-          valueFrom : var.db_url_parameter_arn
+          valueFrom : aws_ssm_parameter.backend_db_url.arn
         },
         {
           name : "DB_USERNAME",
-          valueFrom : var.db_username_parameter_arn
+          valueFrom : aws_ssm_parameter.backend_db_username.arn
         },
         {
           name : "DB_PASSWORD",
-          valueFrom : var.db_password_parameter_arn
-        }
+          valueFrom : aws_ssm_parameter.backend_db_password.arn
+        },
+        {
+          name : "SECURITY_AUDIENCE",
+          valueFrom : aws_ssm_parameter.backend_security_audience.arn
+        },
+        {
+          name : "SECURITY_DOMAIN",
+          valueFrom : aws_ssm_parameter.backend_security_domain.arn
+        },
+        {
+          name : "SECURITY_REALM",
+          valueFrom : aws_ssm_parameter.backend_security_realm.arn
+        },
+        {
+          name : "SECURITY_SECRET",
+          valueFrom : aws_ssm_parameter.backend_security_secret.arn
+        },
       ]
       portMappings = [
         {
