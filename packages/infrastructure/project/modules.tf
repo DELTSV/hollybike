@@ -20,6 +20,7 @@ module "backend" {
   source = "./backend"
 
   region          = var.region
+  domain_name     = var.domain_name
   ghcr_image_name = var.ghcr_image_name
   ghcr_password   = var.ghcr_password
   ghcr_username   = var.ghcr_username
@@ -27,14 +28,14 @@ module "backend" {
 
   public_cert_backend_arn = module.certificates.public-cert-backend-arn
 
-  az_count                  = var.az_count
-  namespace                 = var.namespace
-  environment               = var.environment
-  public_subnet_list        = module.network.public_subnet_list
-  vpc_id                    = module.network.vpc_id
-  db_password_parameter_arn = module.database.db_password_parameter_arn
-  db_url_parameter_arn      = module.database.db_url_parameter_arn
-  db_username_parameter_arn = module.database.db_username_parameter_arn
+  az_count           = var.az_count
+  namespace          = var.namespace
+  environment        = var.environment
+  public_subnet_list = module.network.public_subnet_list
+  vpc_id             = module.network.vpc_id
+  rds_db_password    = module.database.rds_db_password
+  rds_db_username    = var.rds_pg_username
+  rds_db_url         = module.database.rds_db_url
 }
 
 module "domain" {
