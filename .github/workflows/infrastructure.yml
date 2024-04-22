@@ -54,9 +54,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - name: Create backend configuration file
+        run: |
+          echo '${{ secrets.TF_BACKEND_CONFIG }}' > backend.conf
+
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform init --backend-config=backend.conf
 
       - name: Terraform Validate
         id: validate
@@ -110,22 +114,22 @@ jobs:
             })
 
       - name: Export Eagle Eye Config
-        if : github.event_name == 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: echo "${{ secrets.EAGLE_EYE_CONFIG_FILE }}" | base64 --decode > eagle-eye-config.yml
         continue-on-error: true
 
       - name: Grant execute permission to Eagle Eye script
-        if: github.event_name == 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: chmod +x ${{ github.workspace }}/.github/scripts/run-eagle-eye.sh
         continue-on-error: true
 
       - name: Eagle Eye
-        if: github.event_name == 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: ${{ github.workspace }}/.github/scripts/run-eagle-eye.sh
         continue-on-error: true
 
       - name: Upload artifact
-        if: github.event_name == 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/upload-artifact@v2
         with:
           name: eagle-eye-diagram
