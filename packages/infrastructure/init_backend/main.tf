@@ -1,7 +1,7 @@
 terraform {
   required_providers {
-    aws = {
-      source = "hashicorp/aws"
+    scaleway = {
+      source = "scaleway/scaleway"
     }
   }
 
@@ -10,12 +10,15 @@ terraform {
   }
 }
 
-resource "aws_s3_bucket" "tfstate_bucket" {
-  bucket = "tfstate-bucket-323827"
+resource "scaleway_object_bucket" "tfstate_bucket" {
+  name = "hollybike-terraformstate"
+  tags = {
+    key = "tfstate"
+  }
 }
 
-provider "aws" {
-  region     = var.region
-  access_key = var.access_key
-  secret_key = var.secret_access_key
+provider "scaleway" {
+  access_key = var.access_key_id
+  secret_key = var.secret_key
+  project_id = var.project_id
 }

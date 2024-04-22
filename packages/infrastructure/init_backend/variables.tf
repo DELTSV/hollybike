@@ -1,17 +1,16 @@
-variable "access_key" {
-  description = "AWS access key"
+variable "access_key_id" {
+  description = "Scaleway access key"
   type        = string
   sensitive   = true
 }
 
-variable "secret_access_key" {
-  description = "AWS secret key"
+variable "secret_key" {
+  description = "Scaleway secret key"
   type        = string
   sensitive   = true
 }
 
-variable "region" {
+variable "project_id" {
   type        = string
-  description = "The region where the server will be created"
-  default     = "eu-west-3"
+  description = "Your project ID."
 }
