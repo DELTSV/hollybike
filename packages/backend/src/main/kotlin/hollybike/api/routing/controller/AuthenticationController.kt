@@ -16,6 +16,8 @@ import hollybike.api.routing.resources.Signin
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignin
+import hollybike.api.types.user.EUserScope
+import hollybike.api.types.user.EUserStatus
 import hollybike.api.utils.isValidMail
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -28,8 +30,11 @@ import io.ktor.server.resources.post
 import io.ktor.util.*
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
+import kotlin.math.log
 
 class AuthenticationController(
 	private val application: Application,
@@ -44,35 +49,31 @@ class AuthenticationController(
 		}
 	}
 
-	private fun generateJWT(email: String) = JWT.create()
+	private fun generateJWT(email: String, scope: EUserScope) = JWT.create()
 		.withAudience(application.attributes.conf.security.audience)
 		.withIssuer(application.attributes.conf.security.domain)
 		.withClaim("email", email)
+		.withClaim("scope", scope.value)
 		.withExpiresAt(Date(System.currentTimeMillis() + 60000 * 60 * 24))
 		.sign(Algorithm.HMAC256(application.attributes.conf.security.secret))
 
 	private fun Route.login() {
 		post<Login> {
 			val login = call.receive<TLogin>()
-			transaction(db) {
-				User.find { Users.email eq login.email }.singleOrNull() ?.let {
+			newSuspendedTransaction {
+				User.find { Users.email eq login.email }.singleOrNull()?.let {
 					if(verify(login.password, it.password.decodeBase64Bytes())) {
-						it.lastLogin = Clock.System.now()
-						generateJWT(login.email)
+						if(it.status == EUserStatus.Enabled) {
+							call.respond(TAuthInfo(generateJWT(login.email, it.scope)))
+						} else {
+							call.respond(HttpStatusCode.Forbidden)
+						}
 					} else {
-						""
+						call.respond(HttpStatusCode.Unauthorized)
 					}
 				} ?: run {
-					null
+					call.respond(HttpStatusCode.NotFound, "User not found")
 				}
-			}?.let {
-				if(it.isNotEmpty()) {
-					call.respond(TAuthInfo(it))
-				} else {
-					call.respond(HttpStatusCode.Unauthorized)
-				}
-			} ?: run {
-				call.respond(HttpStatusCode.NotFound)
 			}
 		}
 	}
@@ -102,7 +103,7 @@ class AuthenticationController(
 				}
 			}
 			try {
-				transaction(db) {
+				val user = transaction(db) {
 					User.new {
 						email = signin.email
 						username = signin.username
@@ -111,7 +112,7 @@ class AuthenticationController(
 						lastLogin = Clock.System.now()
 					}
 				}
-				val token = generateJWT(signin.email)
+				val token = generateJWT(signin.email, user.scope)
 				call.respond(TAuthInfo(token))
 			}catch (e: PSQLException) {
 				if(e.serverErrorMessage?.constraint == "users_email_uindex" && e.serverErrorMessage?.detail?.contains("already exists") == true) {
