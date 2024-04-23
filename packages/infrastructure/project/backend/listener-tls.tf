@@ -21,7 +21,7 @@ resource "aws_alb_listener" "alb_default_listener_https" {
   }
 
   tags = {
-    Name        = "${var.namespace}-ALB-Listener-${var.environment}"
+    Name = "${var.namespace}-ALB-Listener-${var.environment}"
   }
 }
 
