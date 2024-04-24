@@ -12,3 +12,9 @@ variable "rds_pg_username" {
   type        = string
   description = "Username for the RDS Postgres instance"
 }
+
+
+variable "cloudfront_oai_iam_arn" {
+  type        = string
+  description = "The ARN of the CloudFront OAI"
+}
