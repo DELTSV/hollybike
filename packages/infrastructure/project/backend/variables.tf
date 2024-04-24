@@ -18,11 +18,6 @@ variable "domain_name" {
   type        = string
 }
 
-variable "public_cert_backend_arn" {
-  description = "The ARN of the certificate for the backend"
-  type        = string
-}
-
 variable "rds_db_url" {
   description = "The URL of the RDS database"
   type        = string

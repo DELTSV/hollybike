@@ -36,6 +36,15 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
   }
 
   origin {
+    domain_name = var.application_storage_bucket_domain_name
+    origin_id   = var.application_storage_bucket_id
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai_frontend.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
     domain_name = var.alb_domain_name
     origin_id   = var.alb_domain_name
 
@@ -87,6 +96,24 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all.id
   }
 
+  ordered_cache_behavior {
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id       = var.application_storage_bucket_id
+    viewer_protocol_policy = "redirect-to-https"
+
+    path_pattern = "/storage/*"
+
+    forwarded_values {
+      headers      = []
+      query_string = true
+
+      cookies {
+        forward = "all"
+      }
+    }
+  }
+
   http_version = "http2and3"
 
   restrictions {
@@ -97,7 +124,7 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = var.public-cert-frontend-arn
+    acm_certificate_arn      = var.public_cert_frontend_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }

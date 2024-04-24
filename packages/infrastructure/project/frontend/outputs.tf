@@ -9,5 +9,11 @@ output "cloudfront_hosted_zone_id" {
 }
 
 output "alb_header_value" {
-  value = random_password.alb_header_value.result
+  value       = random_password.alb_header_value.result
+  description = "The value of the header to be used for the ALB"
+}
+
+output "cloudfront_oai_iam_arn" {
+  description = "The ARN of the CloudFront OAI"
+  value       = aws_cloudfront_origin_access_identity.oai_frontend.iam_arn
 }
