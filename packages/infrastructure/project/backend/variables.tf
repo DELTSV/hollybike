@@ -72,3 +72,8 @@ variable "vpc_id" {
   type        = string
   description = "The VPC ID"
 }
+
+variable "alb_header_value" {
+  type        = string
+  description = "The header value to check for"
+}

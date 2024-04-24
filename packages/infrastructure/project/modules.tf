@@ -5,6 +5,7 @@ module "frontend" {
   public-cert-frontend-arn = module.certificates.public-cert-frontend-arn
   environment              = var.environment
   namespace                = var.namespace
+  alb_domain_name          = module.backend.alb_domain_name
 }
 
 module "network" {
@@ -36,6 +37,8 @@ module "backend" {
   rds_db_password    = module.database.rds_db_password
   rds_db_username    = var.rds_pg_username
   rds_db_url         = module.database.rds_db_url
+
+  alb_header_value = module.frontend.alb_header_value
 }
 
 module "domain" {
