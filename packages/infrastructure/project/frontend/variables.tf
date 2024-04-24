@@ -13,6 +13,11 @@ variable "domain_name" {
   description = "The domain name to use for the Route 53 hosted zone"
 }
 
+variable "alb_domain_name" {
+  type        = string
+  description = "The DNS name of the ALB"
+}
+
 
 variable "public-cert-frontend-arn" {
   type        = string

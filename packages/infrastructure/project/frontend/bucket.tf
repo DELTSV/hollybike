@@ -42,16 +42,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "encrypt" {
   }
 }
 
-resource "aws_s3_bucket_website_configuration" "website" {
-  bucket = aws_s3_bucket.bucket_frontend.id
-  index_document {
-    suffix = "index.html"
-  }
-  error_document {
-    key = "index.html"
-  }
-}
-
 resource "aws_s3_bucket_policy" "bucket_frontend_policy" {
   bucket = aws_s3_bucket.bucket_frontend.id
   policy = data.aws_iam_policy_document.bucket_policy_document_frontend.json
