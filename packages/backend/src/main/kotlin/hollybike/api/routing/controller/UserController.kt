@@ -15,53 +15,55 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 class UserController(
-    application: Application,
-    private val userService: UserService,
+	application: Application,
+	private val userService: UserService,
 ) {
-    init {
-        application.routing {
-            authenticate {
-                getMe()
-                getUserById()
-                uploadImages()
-            }
-        }
-    }
+	init {
+		application.routing {
+			authenticate {
+				getMe()
+				getUserById()
+				uploadProfilePicture()
+			}
+		}
+	}
 
-    private fun Route.getMe() {
-        get<Users.Me> {
-            call.respond(TUser(call.user))
-        }
-    }
+	private fun Route.getMe() {
+		get<Users.Me> {
+			call.respond(TUser(call.user))
+		}
+	}
 
-    private fun Route.getUserById() {
-        get<Users.Id> {
-            userService.getUser(call.user, it.id)?.let { user ->
-                call.respond(TUser(user))
-            } ?: run {
-                call.respond(HttpStatusCode.NotFound, "User not found")
-            }
-        }
-    }
+	private fun Route.getUserById() {
+		get<Users.Id> {
+			userService.getUser(call.user, it.id)?.let { user ->
+				call.respond(TUser(user))
+			} ?: run {
+				call.respond(HttpStatusCode.NotFound, "User not found")
+			}
+		}
+	}
 
-    private fun Route.uploadImages() {
-        post<Users.UploadTest> {
-            val form = call.receiveMultipart()
-            form.forEachPart {
-                when (it) {
-                    is PartData.FileItem -> {
-                        println(it.name)
-                        println(it.originalFileName)
-                        println(it.streamProvider().readBytes().size)
-                    }
+	private fun Route.uploadProfilePicture() {
+		post<Users.UploadProfilePicture> {
+			val multipart = call.receiveMultipart()
 
-                    is PartData.BinaryChannelItem -> TODO()
-                    is PartData.BinaryItem -> TODO()
-                    is PartData.FormItem -> TODO()
-                }
-            }
+			val user = call.user
+			val image = multipart.readPart() as PartData.FileItem
 
-            call.respond(HttpStatusCode.OK)
-        }
-    }
+			val contentType = image.contentType ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				return@post
+			}
+
+			if (!contentType.match(ContentType.Image.JPEG) && !contentType.match(ContentType.Image.PNG)) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				return@post
+			}
+
+			userService.uploadUserProfilePicture(user, image.streamProvider().readBytes(), contentType.toString())
+
+			call.respond(HttpStatusCode.OK)
+		}
+	}
 }

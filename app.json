@@ -9,5 +9,8 @@
     "domain": "http://0.0.0.0:8080",
     "realm": "realm",
     "secret": "SECRET"
+  },
+  "storage": {
+    "bucketName": "hollybike-application-storage20240424171223531700000001"
   }
 }

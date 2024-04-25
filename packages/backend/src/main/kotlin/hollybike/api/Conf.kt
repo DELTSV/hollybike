@@ -1,13 +1,19 @@
 package hollybike.api
 
+import io.ktor.util.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
 
+val confKey = AttributeKey<Conf>("hollybikeConf")
+val Attributes.conf get() = this[confKey]
+
+
 @Serializable
 data class Conf(
 	val db: ConfDB,
-	val security: ConfSecurity
+	val security: ConfSecurity,
+	val storage: ConfStorage = ConfStorage(),
 )
 
 @Serializable
@@ -25,9 +31,15 @@ data class ConfSecurity(
 	val secret: String
 )
 
+@Serializable
+data class ConfStorage(
+	var bucketName: String? = null,
+	val region: String = "eu-west-3"
+)
+
 fun parseConf(): Conf {
 	val f = File("./app.json")
-	return if(f.exists()) {
+	return if (f.exists()) {
 		parseFileConf(f)
 	} else {
 		parseEnvConf()
@@ -51,5 +63,9 @@ private fun parseEnvConf() = Conf(
 		System.getenv("SECURITY_DOMAIN"),
 		System.getenv("SECURITY_REALM"),
 		System.getenv("SECURITY_SECRET")
+	),
+	ConfStorage(
+		System.getenv("STORAGE_BUCKET_NAME"),
+		System.getenv("STORAGE_REGION"),
 	)
 )

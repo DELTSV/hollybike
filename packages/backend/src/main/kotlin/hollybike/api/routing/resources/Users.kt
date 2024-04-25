@@ -10,6 +10,6 @@ class Users(val api: API = API()) {
     @Resource("{id}")
     class Id(val users: Users = Users(), val id: Int)
 
-    @Resource("test")
-    class UploadTest(val users: Users = Users())
+    @Resource("profile-picture")
+    class UploadProfilePicture(val users: Users = Users())
 }
