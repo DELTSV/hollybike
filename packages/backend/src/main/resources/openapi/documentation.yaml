@@ -135,6 +135,12 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TAuthInfo"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
         "401":
           description: "Unauthorized"
           content:
@@ -146,7 +152,10 @@ paths:
           content:
             '*/*':
               schema:
-                type: "object"
+                type: "string"
+              examples:
+                Example#1:
+                  value: "User not found"
   /logout:
     delete:
       description: ""
@@ -253,6 +262,36 @@ paths:
               examples:
                 Example#1:
                   value: "User not found"
+  /users/email/{email}:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "email"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TUser"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "User not found"
   /users/me:
     get:
       description: ""
@@ -269,6 +308,274 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TUser"
+    patch:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TUserUpdateSelf"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TUser"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "new_password and _new_password_again are different"
+                Example#2:
+                  value: "Change password need new_password, new_password_again and\
+                    \ old_password"
+        "401":
+          description: "Unauthorized"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Wrong old_password"
+  /users/username/{username}:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "username"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TUser"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "User not found"
+  /associations:
+    post:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TNewAssociation"
+        required: true
+      responses:
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Associations already exist"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Internal server error"
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAssociation"
+  /associations/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "204":
+          description: "No Content"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+    get:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAssociation"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+    patch:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TUpdateAssociation"
+        required: true
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAssociation"
+  /associations/me:
+    get:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAssociation"
+    patch:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TUpdateAssociation"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAssociation"
 components:
   schemas:
     Map:
@@ -320,8 +627,16 @@ components:
           format: "int32"
         name:
           type: "string"
+        status:
+          type: "string"
+          enum:
+          - "Enabled"
+          - "Disabled"
+        picture:
+          type: "string"
       required:
       - "name"
+      - "status"
     TUser:
       type: "object"
       properties:
@@ -333,17 +648,92 @@ components:
         username:
           type: "string"
         scope:
-          type: "integer"
-          format: "int32"
+          type: "string"
+          enum:
+          - "User"
+          - "Admin"
+          - "Root"
         status:
-          type: "integer"
-          format: "int32"
+          type: "string"
+          enum:
+          - "Enabled"
+          - "Disabled"
         lastLogin:
           $ref: "#/components/schemas/Instant"
         association:
           $ref: "#/components/schemas/TAssociation"
+        profilePicture:
+          type: "string"
       required:
       - "email"
       - "username"
+      - "scope"
+      - "status"
       - "lastLogin"
       - "association"
+    TUserUpdateSelf:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+        newPassword:
+          type: "string"
+        newPasswordAgain:
+          type: "string"
+        oldPassword:
+          type: "string"
+    TLists:
+      type: "object"
+      properties:
+        data:
+          type: "array"
+        page:
+          type: "integer"
+          format: "int32"
+        totalPage:
+          type: "integer"
+          format: "int32"
+        perPage:
+          type: "integer"
+          format: "int32"
+        totalData:
+          type: "integer"
+          format: "int32"
+      required:
+      - "data"
+    TLists_TAssociation:
+      type: "object"
+      properties:
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TAssociation"
+        page:
+          type: "integer"
+          format: "int32"
+        totalPage:
+          type: "integer"
+          format: "int32"
+        perPage:
+          type: "integer"
+          format: "int32"
+        totalData:
+          type: "integer"
+          format: "int32"
+    TNewAssociation:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+      required:
+      - "name"
+    TUpdateAssociation:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        status:
+          type: "string"
+          enum:
+          - "Enabled"
+          - "Disabled"
