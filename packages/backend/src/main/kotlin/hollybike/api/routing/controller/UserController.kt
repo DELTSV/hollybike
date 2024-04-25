@@ -37,7 +37,6 @@ class UserController(
 
 	private fun Route.getMe() {
 		get<Users.Me> {
-			println(call.user.association)
 			call.respond(TUser(call.user))
 		}
 	}
