@@ -9,4 +9,10 @@ class Users(val api: API = API()) {
 
 	@Resource("{id}")
 	class Id(val users: Users = Users(), val id: Int)
+
+	@Resource("username/{username}")
+	class Username(val users: Users = Users(), val username: String)
+
+	@Resource("email/{email}")
+	class Email(val users: Users = Users(), val email: String)
 }

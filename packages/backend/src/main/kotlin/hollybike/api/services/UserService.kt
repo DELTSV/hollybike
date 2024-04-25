@@ -1,8 +1,15 @@
 package hollybike.api.services
 
+import de.nycode.bcrypt.hash
+import de.nycode.bcrypt.verify
+import hollybike.api.exceptions.BadRequestException
+import hollybike.api.exceptions.UserDifferentNewPassword
+import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.types.user.EUserScope
+import hollybike.api.types.user.TUserUpdateSelf
+import io.ktor.util.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -34,5 +41,24 @@ class UserService(
 		} else {
 			user
 		}
+	}
+
+	fun updateMe(user: User, update: TUserUpdateSelf): Result<User> = transaction(db) {
+		user.apply {
+			update.newPassword?.let {
+				if ((update.newPasswordAgain == null || update.oldPassword == null)) {
+					return@transaction Result.failure(BadRequestException())
+				}
+				if (update.newPassword != update.newPasswordAgain) {
+					return@transaction Result.failure(UserDifferentNewPassword())
+				}
+				if (!verify(update.oldPassword, user.password.decodeBase64Bytes())) {
+					return@transaction Result.failure(UserWrongPassword())
+				}
+				user.password = hash(it).encodeBase64()
+			}
+			update.username?.let { user.username = it }
+		}
+		return@transaction Result.success(user)
 	}
 }

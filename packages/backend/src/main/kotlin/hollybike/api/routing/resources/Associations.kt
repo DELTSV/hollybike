@@ -6,4 +6,7 @@ import io.ktor.resources.*
 class Associations<T>(val parent: T) {
 	@Resource("{id}")
 	class Id<T>(val associations: Associations<T>, val id: Int)
+
+	@Resource("me")
+	class Me<T>(val associations: Associations<T>)
 }

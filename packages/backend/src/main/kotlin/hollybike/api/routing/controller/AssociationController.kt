@@ -1,6 +1,7 @@
 package hollybike.api.routing.controller
 
 import hollybike.api.isCloud
+import hollybike.api.plugins.user
 import hollybike.api.repository.Association
 import hollybike.api.repository.User
 import hollybike.api.routing.resources.API
@@ -32,15 +33,33 @@ class AssociationController(
 	init {
 		application.routing {
 			authenticate {
-				getAll()
-				getById()
-				getByUser()
+				getMyAssociation()
+				updateMyAssociation()
 				if(application.isCloud) {
+					getAll()
+					getById()
+					getByUser()
 					addAssociation()
 					updateAssociation()
 					deleteAssociation()
 				}
 			}
+		}
+	}
+
+	private fun Route.getMyAssociation() {
+		get<Associations.Me<API>>(EUserScope.Admin) {
+			call.respond(TAssociation(call.user.association))
+		}
+	}
+
+	private fun Route.updateMyAssociation() {
+		patch<Associations.Me<API>>(EUserScope.Admin) {
+			val update = call.receive<TUpdateAssociation>()
+			transaction(db) {
+				update.name?.let { call.user.association.name = it }
+			}
+			call.respond(TAssociation(call.user.association))
 		}
 	}
 
