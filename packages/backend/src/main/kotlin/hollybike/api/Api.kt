@@ -11,15 +11,11 @@ import hollybike.api.services.UserService
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
-import io.ktor.util.*
 import org.slf4j.event.Level
 
-val confKey = AttributeKey<Conf>("hollybikeConf")
-
-val Attributes.conf get() = this[confKey]
-
 fun Application.api() {
-	this.attributes.put(confKey, parseConf())
+	val conf = attributes.conf
+
 	val db = configureDatabase()
 	configureHTTP()
 	configureSecurity(db)
@@ -27,7 +23,7 @@ fun Application.api() {
 	install(CallLogging) {
 		this.level = Level.INFO
 	}
-	val userService = UserService(db)
+	val userService = UserService(db, conf)
 	ApiController(this)
 	AuthenticationController(this, db)
 	UserController(this, userService)

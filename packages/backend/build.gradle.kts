@@ -1,7 +1,8 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
+val ktorVersion: String by project
+val kotlinVersion: String by project
+val logbackVersion: String by project
 val exposedVersion: String by project
+val awsSdkKotlinVersion: String by project
 
 plugins {
 	application
@@ -32,28 +33,33 @@ repositories {
 }
 
 dependencies {
-	implementation("io.ktor:ktor-server-core:$ktor_version")
-	implementation("io.ktor:ktor-server-cio:$ktor_version")
-	implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
-	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-	implementation("ch.qos.logback:logback-classic:$logback_version")
-	implementation("io.ktor:ktor-server-websockets:$ktor_version")
-	implementation("io.ktor:ktor-server-caching-headers:$ktor_version")
-	implementation("io.ktor:ktor-server-cors:$ktor_version")
-	implementation("io.ktor:ktor-server-auth:$ktor_version")
-	implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+	implementation("io.ktor:ktor-server-core:$ktorVersion")
+	implementation("io.ktor:ktor-server-cio:$ktorVersion")
+	implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+	implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+	implementation("ch.qos.logback:logback-classic:$logbackVersion")
+	implementation("io.ktor:ktor-server-websockets:$ktorVersion")
+	implementation("io.ktor:ktor-server-caching-headers:$ktorVersion")
+	implementation("io.ktor:ktor-server-cors:$ktorVersion")
+	implementation("io.ktor:ktor-server-auth:$ktorVersion")
+	implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
 	implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
-	implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktor_version")
-	implementation("io.ktor:ktor-server-swagger-jvm:$ktor_version")
-	implementation("io.ktor:ktor-server-compression-jvm:$ktor_version")
-	implementation("io.ktor:ktor-server-resources:$ktor_version")
-	implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+	implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-server-swagger-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
+	implementation("io.ktor:ktor-server-resources:$ktorVersion")
+	implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 	implementation("de.nycode:bcrypt:2.2.0")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+
+	implementation("aws.sdk.kotlin:s3:$awsSdkKotlinVersion")
+
+	implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
+
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.liquibase:liquibase-core:4.27.0")
 	implementation("software.amazon.awssdk:s3:2.25.30")
@@ -65,7 +71,7 @@ dependencies {
 	liquibaseRuntime("org.postgresql:postgresql:42.7.3")
 
 	testImplementation("io.ktor:ktor-server-tests-jvm")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 	testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
 }
 
@@ -77,16 +83,17 @@ liquibase {
 		val refDbUrl = System.getenv("REF_DB_URL")
 		val refDbUser = System.getenv("REF_DB_USER")
 		val refDbPass = System.getenv("REF_DB_PASSWORD")
-		arguments = mapOf(
-			"referenceUrl" to refDbUrl,
-			"referenceUsername" to refDbUser,
-			"referencePassword" to refDbPass,
-			"logLevel" to "info",
-			"changelogFile" to "src/main/resources/liquibase-changelog.sql",
-			"url" to dbUrl,
-			"username" to dbUser,
-			"password" to dbPass
-		)
+		arguments =
+			mapOf(
+				"referenceUrl" to refDbUrl,
+				"referenceUsername" to refDbUser,
+				"referencePassword" to refDbPass,
+				"logLevel" to "info",
+				"changelogFile" to "src/main/resources/liquibase-changelog.sql",
+				"url" to dbUrl,
+				"username" to dbUser,
+				"password" to dbPass,
+			)
 	}
 	runList = "main"
 }
@@ -101,7 +108,7 @@ graalvmNative {
 			javaLauncher.set(
 				javaToolchains.launcherFor {
 					languageVersion.set(JavaLanguageVersion.of(21))
-//					vendor.set(JvmVendorSpec.ORACLE)
+// 					vendor.set(JvmVendorSpec.ORACLE)
 				},
 			)
 		}
@@ -119,22 +126,26 @@ graalvmNative {
 
 			buildArgs.add("--initialize-at-run-time=de.nycode.bcrypt.BCryptKt")
 
-//			buildArgs.add("--initialize-at-run-time=java.time.zone.ZoneRulesProvider")
-//			buildArgs.add("--initialize-at-run-time=java.time.ZoneRegion")
+// 			buildArgs.add("--initialize-at-run-time=java.time.zone.ZoneRulesProvider")
+// 			buildArgs.add("--initialize-at-run-time=java.time.ZoneRegion")
 //
-//			buildArgs.add("--trace-class-initialization=java.time.zone.ZoneRulesProvider")
+// 			buildArgs.add("--trace-class-initialization=java.time.zone.ZoneRulesProvider")
 
 			buildArgs.add("--install-exit-handlers")
 			buildArgs.add("--report-unsupported-elements-at-runtime")
 
 			buildArgs.add("-H:+ReportExceptionStackTraces")
-			buildArgs.add("-H:ReflectionConfigurationFiles=${project.projectDir}/build/generated/ksp/main/resources/META-INF/native-image/reflect-config.json",)
+			buildArgs.add(
+				"-H:ReflectionConfigurationFiles=${project.projectDir}/build/generated/ksp/main/resources/META-INF/native-image/reflect-config.json",
+			)
 
 			buildArgs.add("-H:JNIConfigurationFiles=${project.projectDir}/src/main/resources/jni-config.json")
 			buildArgs.add("-H:ResourceConfigurationFiles=${project.projectDir}/src/main/resources/resource-config.json")
 			buildArgs.add("-H:DynamicProxyConfigurationFiles=${project.projectDir}/src/main/resources/proxy-config.json")
 
 			buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+
+			buildArgs.add("--features=okhttp3.internal.graal.OkHttpFeature")
 
 			resources.autodetect()
 

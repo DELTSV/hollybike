@@ -24,22 +24,21 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.util.*
-import io.ktor.server.resources.post
 import io.ktor.util.*
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
+import java.util.*
 
 class AuthenticationController(
 	private val application: Application,
-	private val db: Database
+	private val db: Database,
 ) {
-
 	init {
 		application.routing {
 			login()
@@ -86,35 +85,42 @@ class AuthenticationController(
 	private fun Route.signin() {
 		post<Signin> {
 			val signin = call.receive<TSignin>()
-			if(!signin.email.isValidMail()) {
+			if (!signin.email.isValidMail()) {
 				call.respond(HttpStatusCode.BadRequest, "Invalid email")
 				return@post
 			}
-			val association = if(application.isOnPremise) {
-				transaction(db) { Association[1] }
-			} else if(signin.association == null) {
-				call.respond(HttpStatusCode.BadRequest, "Associations needed")
-				return@post
-			} else {
-				transaction(db) { Association.find { Associations.id eq signin.association }.singleOrNull() } ?: run {
-					call.respond(HttpStatusCode.NotFound, "Association ${signin.association} not found")
+			val association =
+				if (application.isOnPremise) {
+					transaction(db) { Association[1] }
+				} else if (signin.association == null) {
+					call.respond(HttpStatusCode.BadRequest, "Associations needed")
 					return@post
+				} else {
+					transaction(db) { Association.find { Associations.id eq signin.association }.singleOrNull() }
+						?: run {
+							call.respond(HttpStatusCode.NotFound, "Association ${signin.association} not found")
+							return@post
+						}
 				}
-			}
 			try {
 				val user = transaction(db) {
 					User.new {
 						email = signin.email
 						username = signin.username
 						password = hash(signin.password, 4).encodeBase64()
+						status = EUserStatus.Enabled
+						scope = EUserScope.User
 						this.association = association
 						lastLogin = Clock.System.now()
 					}
 				}
 				val token = generateJWT(signin.email, user.scope)
 				call.respond(TAuthInfo(token))
-			}catch (e: PSQLException) {
-				if(e.serverErrorMessage?.constraint == "users_email_uindex" && e.serverErrorMessage?.detail?.contains("already exists") == true) {
+			} catch (e: PSQLException) {
+				if (e.serverErrorMessage?.constraint == "users_email_uindex" && e.serverErrorMessage?.detail?.contains(
+						"already exists",
+					) == true
+				) {
 					call.respond(HttpStatusCode.Conflict, "Email already exist")
 				} else {
 					e.printStackTrace()

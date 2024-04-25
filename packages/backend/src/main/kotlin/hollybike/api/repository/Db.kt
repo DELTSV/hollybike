@@ -15,16 +15,21 @@ import java.sql.Connection
 fun Application.configureDatabase(): Database {
 	println("Configuring Database")
 	val conf = attributes.conf
-	return Database.connect(conf.db.url, user = conf.db.username, password = conf.db.password, driver = "org.postgresql.Driver", databaseConfig = DatabaseConfig {
-		keepLoadedReferencesOutOfTransaction = true
-	}).apply {
+	return Database.connect(
+		conf.db.url,
+		user = conf.db.username,
+		password = conf.db.password,
+		driver = "org.postgresql.Driver",
+		databaseConfig = DatabaseConfig {
+			keepLoadedReferencesOutOfTransaction = true
+		}).apply {
 		runMigration(developmentMode, isCloud, this.connector().connection as Connection)
 	}
 }
 
 fun runMigration(isDev: Boolean, isCloud: Boolean, connection: Connection) {
 	val changelog = "/liquibase-changelog.sql"
-	val context = (if(isDev) "dev," else "") + (if(isCloud) "cloud" else "premise")
+	val context = (if (isDev) "dev," else "") + (if (isCloud) "cloud" else "premise")
 
 	val db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(JdbcConnection(connection))
 	CommandScope("update").apply {
