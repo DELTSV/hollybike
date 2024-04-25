@@ -58,6 +58,8 @@ dependencies {
 
 	implementation("aws.sdk.kotlin:s3:$awsSdkKotlinVersion")
 
+	implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
+
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.liquibase:liquibase-core:4.27.0")
 	ksp(project(":processor"))
@@ -141,6 +143,8 @@ graalvmNative {
 			buildArgs.add("-H:DynamicProxyConfigurationFiles=${project.projectDir}/src/main/resources/proxy-config.json")
 
 			buildArgs.add("-H:+StaticExecutableWithDynamicLibC")
+
+			buildArgs.add("--features=okhttp3.internal.graal.OkHttpFeature")
 
 			resources.autodetect()
 

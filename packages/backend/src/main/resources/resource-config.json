@@ -1,1543 +1,1145 @@
 {
-  "resources":{
-    "includes":[{
-      "pattern":"\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/io.ktor.serialization.kotlinx.KotlinxSerializationExtensionProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.nio.channels.spi.SelectorProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.sql.Driver\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/java.util.spi.ResourceBundleControlProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.util.ModuleVisibilityHelper\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.change.Change\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.changelog.ChangeLogHistoryService\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.changeset.ChangeSetService\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.command.CommandStep\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.configuration.AutoloadedConfigurations\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.configuration.ConfigurationValueProvider\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.configuration.ConfiguredValueModifier\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.database.Database\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.database.LiquibaseTableNames\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.database.jvm.ConnectionPatterns\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.datatype.LiquibaseDataType\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.diff.compare.DatabaseObjectComparator\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.executor.Executor\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.lockservice.LockService\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.logging.LogService\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.logging.mdc.MdcManager\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.parser.ChangeLogParser\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.report.ShowSummaryGenerator\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.servicelocator.ServiceLocator\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.snapshot.SnapshotGenerator\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/liquibase.sqlgenerator.SqlGenerator\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/org.jetbrains.exposed.dao.id.EntityIDFactory\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/org.jetbrains.exposed.sql.DatabaseConnectionAutoRegistration\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/org.jetbrains.exposed.sql.statements.GlobalStatementInterceptor\\E"
-    }, {
-      "pattern":"\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
-    }, {
-      "pattern":"\\Q\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/boolex\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/encoder\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/joran/action\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/joran/sanity\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/joran\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/model/processor\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/model\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/pattern/color\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/pattern\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/spi\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic/util\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/classic\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/boolex\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/encoder\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/filter\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/helpers\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/hook\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/action\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/conditional\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/event\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/sanity\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/spi\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/util/beans\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran/util\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/joran\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/model/conditional\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/model/processor/conditional\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/model/processor\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/model\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/net/ssl\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/net\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/pattern/color\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/pattern/parser\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/pattern/util\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/pattern\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/sift\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/spi\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/status\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/subst\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core/util\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback/core\\E"
-    }, {
-      "pattern":"\\Qch/qos/logback\\E"
-    }, {
-      "pattern":"\\Qch/qos\\E"
-    }, {
-      "pattern":"\\Qch\\E"
-    }, {
-      "pattern":"\\Qcom/auth0/jwk\\E"
-    }, {
-      "pattern":"\\Qcom/auth0/jwt/algorithms\\E"
-    }, {
-      "pattern":"\\Qcom/auth0/jwt/exceptions\\E"
-    }, {
-      "pattern":"\\Qcom/auth0/jwt/impl\\E"
-    }, {
-      "pattern":"\\Qcom/auth0/jwt/interfaces\\E"
-    }, {
-      "pattern":"\\Qcom/auth0/jwt\\E"
-    }, {
-      "pattern":"\\Qcom/auth0\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/annotation\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/async\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/base\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/exc\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/filter\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/io\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/json/async\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/json\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/sym\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/type\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core/util\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/core\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/annotation\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/cfg\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/deser/impl\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/deser/std\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/deser\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/exc\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/ext\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/introspect\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/jsonFormatVisitors\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/jsonschema\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/jsontype/impl\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/jsontype\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/module\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/node\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/ser/impl\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/ser/std\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/ser\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/type\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/util/internal\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind/util\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson/databind\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml/jackson\\E"
-    }, {
-      "pattern":"\\Qcom/fasterxml\\E"
-    }, {
-      "pattern":"\\Qcom/intellij/rt/execution/application\\E"
-    }, {
-      "pattern":"\\Qcom/intellij/rt/execution\\E"
-    }, {
-      "pattern":"\\Qcom/intellij/rt\\E"
-    }, {
-      "pattern":"\\Qcom/intellij\\E"
-    }, {
-      "pattern":"\\Qcom/opencsv/exceptions\\E"
-    }, {
-      "pattern":"\\Qcom/opencsv\\E"
-    }, {
-      "pattern":"\\Qcom/sun/beans/finder\\E"
-    }, {
-      "pattern":"\\Qcom/sun/beans/introspect\\E"
-    }, {
-      "pattern":"\\Qcom/sun/beans/util\\E"
-    }, {
-      "pattern":"\\Qcom/sun/beans\\E"
-    }, {
-      "pattern":"\\Qcom/sun/crypto/provider\\E"
-    }, {
-      "pattern":"\\Qcom/sun/crypto\\E"
-    }, {
-      "pattern":"\\Qcom/sun/management/internal\\E"
-    }, {
-      "pattern":"\\Qcom/sun/management\\E"
-    }, {
-      "pattern":"\\Qcom/sun/nio/file\\E"
-    }, {
-      "pattern":"\\Qcom/sun/nio\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl/dtd\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl/dv/dtd\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl/dv\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl/io\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl/msg\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl/validation\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/impl\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/jaxp\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/parsers\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/util\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/utils\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/xni/grammars\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/xni/parser\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/xni\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal/xs\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces/internal\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache/xerces\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org/apache\\E"
-    }, {
-      "pattern":"\\Qcom/sun/org\\E"
-    }, {
-      "pattern":"\\Qcom/sun/xml/internal/stream/util\\E"
-    }, {
-      "pattern":"\\Qcom/sun/xml/internal/stream\\E"
-    }, {
-      "pattern":"\\Qcom/sun/xml/internal\\E"
-    }, {
-      "pattern":"\\Qcom/sun/xml\\E"
-    }, {
-      "pattern":"\\Qcom/sun\\E"
-    }, {
-      "pattern":"\\Qcom\\E"
-    }, {
-      "pattern":"\\Qhollybike/api\\E"
-    }, {
-      "pattern":"\\Qhollybike\\E"
-    }, {
-      "pattern":"\\Qio/ktor/events\\E"
-    }, {
-      "pattern":"\\Qio/ktor/http/auth\\E"
-    }, {
-      "pattern":"\\Qio/ktor/http/cio/internals\\E"
-    }, {
-      "pattern":"\\Qio/ktor/http/cio\\E"
-    }, {
-      "pattern":"\\Qio/ktor/http/content\\E"
-    }, {
-      "pattern":"\\Qio/ktor/http/parsing\\E"
-    }, {
-      "pattern":"\\Qio/ktor/http\\E"
-    }, {
-      "pattern":"\\Qio/ktor/network/selector\\E"
-    }, {
-      "pattern":"\\Qio/ktor/network/sockets\\E"
-    }, {
-      "pattern":"\\Qio/ktor/network\\E"
-    }, {
-      "pattern":"\\Qio/ktor/resources/serialization\\E"
-    }, {
-      "pattern":"\\Qio/ktor/resources\\E"
-    }, {
-      "pattern":"\\Qio/ktor/serialization/kotlinx/json\\E"
-    }, {
-      "pattern":"\\Qio/ktor/serialization/kotlinx\\E"
-    }, {
-      "pattern":"\\Qio/ktor/serialization\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/application/debug\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/application/hooks\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/application\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/auth/jwt\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/auth\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/cio/backend\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/cio/internal\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/cio\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/config\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/engine/internal\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/engine\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/http/content\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/http\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/logging\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/cachingheaders\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/callloging\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/compression\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/contentnegotiation\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/cors/routing\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/cors\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins/swagger\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/plugins\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/request\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/resources\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/response\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server/routing\\E"
-    }, {
-      "pattern":"\\Qio/ktor/server\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/cio\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/collections\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/date\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/debug/plugins\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/debug\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/internal\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/logging\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/pipeline\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util/reflect\\E"
-    }, {
-      "pattern":"\\Qio/ktor/util\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io/bits\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io/charsets\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io/core/internal\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io/core\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io/internal\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io/pool\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils/io\\E"
-    }, {
-      "pattern":"\\Qio/ktor/utils\\E"
-    }, {
-      "pattern":"\\Qio/ktor\\E"
-    }, {
-      "pattern":"\\Qio\\E"
-    }, {
-      "pattern":"\\Qjava/beans\\E"
-    }, {
-      "pattern":"\\Qjava/io\\E"
-    }, {
-      "pattern":"\\Qjava/lang/annotation\\E"
-    }, {
-      "pattern":"\\Qjava/lang/constant\\E"
-    }, {
-      "pattern":"\\Qjava/lang/foreign\\E"
-    }, {
-      "pattern":"\\Qjava/lang/instrument\\E"
-    }, {
-      "pattern":"\\Qjava/lang/invoke\\E"
-    }, {
-      "pattern":"\\Qjava/lang/management\\E"
-    }, {
-      "pattern":"\\Qjava/lang/module\\E"
-    }, {
-      "pattern":"\\Qjava/lang/ref\\E"
-    }, {
-      "pattern":"\\Qjava/lang/reflect\\E"
-    }, {
-      "pattern":"\\Qjava/lang\\E"
-    }, {
-      "pattern":"\\Qjava/math\\E"
-    }, {
-      "pattern":"\\Qjava/net/spi\\E"
-    }, {
-      "pattern":"\\Qjava/net\\E"
-    }, {
-      "pattern":"\\Qjava/nio/channels/spi\\E"
-    }, {
-      "pattern":"\\Qjava/nio/channels\\E"
-    }, {
-      "pattern":"\\Qjava/nio/charset/spi\\E"
-    }, {
-      "pattern":"\\Qjava/nio/charset\\E"
-    }, {
-      "pattern":"\\Qjava/nio/file/attribute\\E"
-    }, {
-      "pattern":"\\Qjava/nio/file/spi\\E"
-    }, {
-      "pattern":"\\Qjava/nio/file\\E"
-    }, {
-      "pattern":"\\Qjava/nio\\E"
-    }, {
-      "pattern":"\\Qjava/security/cert\\E"
-    }, {
-      "pattern":"\\Qjava/security/spec\\E"
-    }, {
-      "pattern":"\\Qjava/security\\E"
-    }, {
-      "pattern":"\\Qjava/sql\\E"
-    }, {
-      "pattern":"\\Qjava/text/spi\\E"
-    }, {
-      "pattern":"\\Qjava/text\\E"
-    }, {
-      "pattern":"\\Qjava/time/chrono\\E"
-    }, {
-      "pattern":"\\Qjava/time/format\\E"
-    }, {
-      "pattern":"\\Qjava/time/temporal\\E"
-    }, {
-      "pattern":"\\Qjava/time/zone\\E"
-    }, {
-      "pattern":"\\Qjava/time\\E"
-    }, {
-      "pattern":"\\Qjava/util/concurrent/atomic\\E"
-    }, {
-      "pattern":"\\Qjava/util/concurrent/locks\\E"
-    }, {
-      "pattern":"\\Qjava/util/concurrent\\E"
-    }, {
-      "pattern":"\\Qjava/util/function\\E"
-    }, {
-      "pattern":"\\Qjava/util/jar\\E"
-    }, {
-      "pattern":"\\Qjava/util/logging\\E"
-    }, {
-      "pattern":"\\Qjava/util/random\\E"
-    }, {
-      "pattern":"\\Qjava/util/regex\\E"
-    }, {
-      "pattern":"\\Qjava/util/spi\\E"
-    }, {
-      "pattern":"\\Qjava/util/stream\\E"
-    }, {
-      "pattern":"\\Qjava/util/zip\\E"
-    }, {
-      "pattern":"\\Qjava/util\\E"
-    }, {
-      "pattern":"\\Qjava\\E"
-    }, {
-      "pattern":"\\Qjavax/crypto/interfaces\\E"
-    }, {
-      "pattern":"\\Qjavax/crypto/spec\\E"
-    }, {
-      "pattern":"\\Qjavax/crypto\\E"
-    }, {
-      "pattern":"\\Qjavax/management\\E"
-    }, {
-      "pattern":"\\Qjavax/naming\\E"
-    }, {
-      "pattern":"\\Qjavax/net/ssl\\E"
-    }, {
-      "pattern":"\\Qjavax/net\\E"
-    }, {
-      "pattern":"\\Qjavax/security/auth\\E"
-    }, {
-      "pattern":"\\Qjavax/security/sasl\\E"
-    }, {
-      "pattern":"\\Qjavax/security\\E"
-    }, {
-      "pattern":"\\Qjavax/swing\\E"
-    }, {
-      "pattern":"\\Qjavax/xml/catalog\\E"
-    }, {
-      "pattern":"\\Qjavax/xml/parsers\\E"
-    }, {
-      "pattern":"\\Qjavax/xml/stream\\E"
-    }, {
-      "pattern":"\\Qjavax/xml/transform\\E"
-    }, {
-      "pattern":"\\Qjavax/xml\\E"
-    }, {
-      "pattern":"\\Qjavax\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/access\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/event\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/foreign/abi\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/foreign\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/icu/impl\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/icu/text\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/icu/util\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/icu\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/jimage/decompressor\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/jimage\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/loader\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/logger\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/math\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/misc\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/module\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/org/objectweb/asm\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/org/objectweb\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/org\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/perf\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/ref\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/reflect\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/util/random\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/util\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/vm/annotation\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/vm/vector\\E"
-    }, {
-      "pattern":"\\Qjdk/internal/vm\\E"
-    }, {
-      "pattern":"\\Qjdk/internal\\E"
-    }, {
-      "pattern":"\\Qjdk/management/jfr/internal\\E"
-    }, {
-      "pattern":"\\Qjdk/management/jfr\\E"
-    }, {
-      "pattern":"\\Qjdk/management\\E"
-    }, {
-      "pattern":"\\Qjdk/net\\E"
-    }, {
-      "pattern":"\\Qjdk/xml/internal\\E"
-    }, {
-      "pattern":"\\Qjdk/xml\\E"
-    }, {
-      "pattern":"\\Qjdk\\E"
-    }, {
-      "pattern":"\\Qkotlin/annotation\\E"
-    }, {
-      "pattern":"\\Qkotlin/collections/builders\\E"
-    }, {
-      "pattern":"\\Qkotlin/collections/collections.kotlin_builtins\\E"
-    }, {
-      "pattern":"\\Qkotlin/collections\\E"
-    }, {
-      "pattern":"\\Qkotlin/comparisons\\E"
-    }, {
-      "pattern":"\\Qkotlin/coroutines/intrinsics\\E"
-    }, {
-      "pattern":"\\Qkotlin/coroutines/jvm/internal\\E"
-    }, {
-      "pattern":"\\Qkotlin/coroutines/jvm\\E"
-    }, {
-      "pattern":"\\Qkotlin/coroutines\\E"
-    }, {
-      "pattern":"\\Qkotlin/enums\\E"
-    }, {
-      "pattern":"\\Qkotlin/internal/jdk7\\E"
-    }, {
-      "pattern":"\\Qkotlin/internal/jdk8\\E"
-    }, {
-      "pattern":"\\Qkotlin/internal\\E"
-    }, {
-      "pattern":"\\Qkotlin/io\\E"
-    }, {
-      "pattern":"\\Qkotlin/jvm/functions\\E"
-    }, {
-      "pattern":"\\Qkotlin/jvm/internal/markers\\E"
-    }, {
-      "pattern":"\\Qkotlin/jvm/internal\\E"
-    }, {
-      "pattern":"\\Qkotlin/jvm\\E"
-    }, {
-      "pattern":"\\Qkotlin/kotlin.kotlin_builtins\\E"
-    }, {
-      "pattern":"\\Qkotlin/properties\\E"
-    }, {
-      "pattern":"\\Qkotlin/random/jdk8\\E"
-    }, {
-      "pattern":"\\Qkotlin/random\\E"
-    }, {
-      "pattern":"\\Qkotlin/ranges\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/full\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/calls\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/builtins/functions\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/builtins/jvm\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/builtins\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors/annotations\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors/deserialization\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors/impl\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors/runtime/components\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors/runtime/structure\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors/runtime\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/descriptors\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/incremental/components\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/incremental\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/components\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/descriptors\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/lazy/descriptors\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/lazy/types\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/lazy\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/sources\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/structure\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java/typeEnhancement\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/java\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/kotlin/header\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load/kotlin\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/load\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/metadata/builtins\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/metadata/deserialization\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/metadata/jvm/deserialization\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/metadata/jvm\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/metadata\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/name\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/protobuf\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/renderer\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/calls/inference\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/calls\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/constants\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/descriptorUtil\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/jvm\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/sam\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/scopes/receivers\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve/scopes\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/resolve\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/serialization/deserialization/builtins\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/serialization/deserialization/descriptors\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/serialization/deserialization\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/serialization\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/storage\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/types/checker\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/types/error\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/types/extensions\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/types/model\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/types/typesApproximation\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/types\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/util/capitalizeDecapitalize\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/util/collectionUtils\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/util\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl/utils\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal/impl\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm/internal\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/jvm\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect/reflect.kotlin_builtins\\E"
-    }, {
-      "pattern":"\\Qkotlin/reflect\\E"
-    }, {
-      "pattern":"\\Qkotlin/sequences\\E"
-    }, {
-      "pattern":"\\Qkotlin/text\\E"
-    }, {
-      "pattern":"\\Qkotlin/time\\E"
-    }, {
-      "pattern":"\\Qkotlin\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/channels\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/flow/internal\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/flow\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/internal\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/intrinsics\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/scheduling\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/selects\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines/slf4j\\E"
-    }, {
-      "pattern":"\\Qkotlinx/coroutines\\E"
-    }, {
-      "pattern":"\\Qkotlinx/datetime/serializers\\E"
-    }, {
-      "pattern":"\\Qkotlinx/datetime\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/builtins\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/descriptors\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/encoding\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/internal\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/json/internal\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/json\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization/modules\\E"
-    }, {
-      "pattern":"\\Qkotlinx/serialization\\E"
-    }, {
-      "pattern":"\\Qkotlinx\\E"
-    }, {
-      "pattern":"\\Qliquibase-changelog.sql\\E"
-    }, {
-      "pattern":"\\Qliquibase.build.properties\\E"
-    }, {
-      "pattern":"\\Qliquibase/change/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/change/custom\\E"
-    }, {
-      "pattern":"\\Qliquibase/change/visitor\\E"
-    }, {
-      "pattern":"\\Qliquibase/change\\E"
-    }, {
-      "pattern":"\\Qliquibase/changelog/column\\E"
-    }, {
-      "pattern":"\\Qliquibase/changelog/filter\\E"
-    }, {
-      "pattern":"\\Qliquibase/changelog/visitor\\E"
-    }, {
-      "pattern":"\\Qliquibase/changelog\\E"
-    }, {
-      "pattern":"\\Qliquibase/changeset\\E"
-    }, {
-      "pattern":"\\Qliquibase/command/core/helpers\\E"
-    }, {
-      "pattern":"\\Qliquibase/command/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/command/providers\\E"
-    }, {
-      "pattern":"\\Qliquibase/command\\E"
-    }, {
-      "pattern":"\\Qliquibase/configuration/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/configuration\\E"
-    }, {
-      "pattern":"\\Qliquibase/database/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/database/jvm\\E"
-    }, {
-      "pattern":"\\Qliquibase/database\\E"
-    }, {
-      "pattern":"\\Qliquibase/datatype/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/datatype\\E"
-    }, {
-      "pattern":"\\Qliquibase/diff/compare/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/diff/compare\\E"
-    }, {
-      "pattern":"\\Qliquibase/diff/output\\E"
-    }, {
-      "pattern":"\\Qliquibase/diff\\E"
-    }, {
-      "pattern":"\\Qliquibase/exception\\E"
-    }, {
-      "pattern":"\\Qliquibase/executor/jvm\\E"
-    }, {
-      "pattern":"\\Qliquibase/executor\\E"
-    }, {
-      "pattern":"\\Qliquibase/i18n/liquibase-core.properties\\E"
-    }, {
-      "pattern":"\\Qliquibase/i18n/liquibase-core_fr.properties\\E"
-    }, {
-      "pattern":"\\Qliquibase/i18n/liquibase-core_fr_FR.properties\\E"
-    }, {
-      "pattern":"\\Qliquibase/integration/commandline\\E"
-    }, {
-      "pattern":"\\Qliquibase/integration\\E"
-    }, {
-      "pattern":"\\Qliquibase/io\\E"
-    }, {
-      "pattern":"\\Qliquibase/listener\\E"
-    }, {
-      "pattern":"\\Qliquibase/lockservice\\E"
-    }, {
-      "pattern":"\\Qliquibase/logging/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/logging/mdc/customobjects\\E"
-    }, {
-      "pattern":"\\Qliquibase/logging/mdc\\E"
-    }, {
-      "pattern":"\\Qliquibase/logging\\E"
-    }, {
-      "pattern":"\\Qliquibase/osgi\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser/core/formattedsql\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser/core/json\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser/core/sql\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser/core/xml\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser/core/yaml\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/parser\\E"
-    }, {
-      "pattern":"\\Qliquibase/plugin\\E"
-    }, {
-      "pattern":"\\Qliquibase/precondition/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/precondition\\E"
-    }, {
-      "pattern":"\\Qliquibase/report\\E"
-    }, {
-      "pattern":"\\Qliquibase/resource\\E"
-    }, {
-      "pattern":"\\Qliquibase/serializer/core/string\\E"
-    }, {
-      "pattern":"\\Qliquibase/serializer/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/serializer\\E"
-    }, {
-      "pattern":"\\Qliquibase/servicelocator\\E"
-    }, {
-      "pattern":"\\Qliquibase/snapshot/jvm\\E"
-    }, {
-      "pattern":"\\Qliquibase/snapshot\\E"
-    }, {
-      "pattern":"\\Qliquibase/sql\\E"
-    }, {
-      "pattern":"\\Qliquibase/sqlgenerator/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/sqlgenerator\\E"
-    }, {
-      "pattern":"\\Qliquibase/statement/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/statement\\E"
-    }, {
-      "pattern":"\\Qliquibase/structure/core\\E"
-    }, {
-      "pattern":"\\Qliquibase/structure\\E"
-    }, {
-      "pattern":"\\Qliquibase/ui\\E"
-    }, {
-      "pattern":"\\Qliquibase/util/csv\\E"
-    }, {
-      "pattern":"\\Qliquibase/util/grammar\\E"
-    }, {
-      "pattern":"\\Qliquibase/util\\E"
-    }, {
-      "pattern":"\\Qliquibase\\E"
-    }, {
-      "pattern":"\\Qlogback-test.scmo\\E"
-    }, {
-      "pattern":"\\Qlogback-test.xml\\E"
-    }, {
-      "pattern":"\\Qlogback.scmo\\E"
-    }, {
-      "pattern":"\\Qlogback.xml\\E"
-    }, {
-      "pattern":"\\Qopenapi/documentation.yaml\\E"
-    }, {
-      "pattern":"\\Qorg/apache/commons/lang3\\E"
-    }, {
-      "pattern":"\\Qorg/apache/commons\\E"
-    }, {
-      "pattern":"\\Qorg/apache\\E"
-    }, {
-      "pattern":"\\Qorg/fusesource/jansi/internal/native/Linux/x86_64/libjansi.so\\E"
-    }, {
-      "pattern":"\\Qorg/fusesource/jansi/internal\\E"
-    }, {
-      "pattern":"\\Qorg/fusesource/jansi/io\\E"
-    }, {
-      "pattern":"\\Qorg/fusesource/jansi/jansi.properties\\E"
-    }, {
-      "pattern":"\\Qorg/fusesource/jansi\\E"
-    }, {
-      "pattern":"\\Qorg/fusesource\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/dao/exceptions\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/dao/id\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/dao\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/exceptions\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/jdbc\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/kotlin/datetime\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/kotlin\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/ops\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/statements/api\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/statements/jdbc\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/statements\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/transactions\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql/vendors\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed/sql\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains/exposed\\E"
-    }, {
-      "pattern":"\\Qorg/jetbrains\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/copy\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/core/v3/adaptivefetch\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/core/v3/replication\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/core/v3\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/core\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/driverconfig.properties\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/geometric\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/gss\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/hostchooser\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/jdbc\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/jre7/sasl\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/jre7\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/plugin\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/replication/fluent\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/replication\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/saslprep\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/client\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/bouncycastle/base64\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/bouncycastle/pbkdf2\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/bouncycastle\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/exception\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/gssapi\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/message\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/stringprep\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common/util\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram/common\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/scram\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres/stringprep\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com/ongres\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded/com\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/shaded\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/ssl\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/util/internal\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/util\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql/xml\\E"
-    }, {
-      "pattern":"\\Qorg/postgresql\\E"
-    }, {
-      "pattern":"\\Qorg/slf4j/event\\E"
-    }, {
-      "pattern":"\\Qorg/slf4j/helpers\\E"
-    }, {
-      "pattern":"\\Qorg/slf4j/spi\\E"
-    }, {
-      "pattern":"\\Qorg/slf4j\\E"
-    }, {
-      "pattern":"\\Qorg/w3c/dom/ls\\E"
-    }, {
-      "pattern":"\\Qorg/w3c/dom\\E"
-    }, {
-      "pattern":"\\Qorg/w3c\\E"
-    }, {
-      "pattern":"\\Qorg/xml/sax/ext\\E"
-    }, {
-      "pattern":"\\Qorg/xml/sax/helpers\\E"
-    }, {
-      "pattern":"\\Qorg/xml/sax\\E"
-    }, {
-      "pattern":"\\Qorg/xml\\E"
-    }, {
-      "pattern":"\\Qorg/yaml/snakeyaml/constructor\\E"
-    }, {
-      "pattern":"\\Qorg/yaml/snakeyaml\\E"
-    }, {
-      "pattern":"\\Qorg/yaml\\E"
-    }, {
-      "pattern":"\\Qorg\\E"
-    }, {
-      "pattern":"\\Qsun/instrument\\E"
-    }, {
-      "pattern":"\\Qsun/invoke/empty\\E"
-    }, {
-      "pattern":"\\Qsun/invoke/util\\E"
-    }, {
-      "pattern":"\\Qsun/invoke\\E"
-    }, {
-      "pattern":"\\Qsun/launcher\\E"
-    }, {
-      "pattern":"\\Qsun/management/spi\\E"
-    }, {
-      "pattern":"\\Qsun/management\\E"
-    }, {
-      "pattern":"\\Qsun/misc\\E"
-    }, {
-      "pattern":"\\Qsun/net/ext\\E"
-    }, {
-      "pattern":"\\Qsun/net/sdp\\E"
-    }, {
-      "pattern":"\\Qsun/net/spi\\E"
-    }, {
-      "pattern":"\\Qsun/net/util\\E"
-    }, {
-      "pattern":"\\Qsun/net/www/protocol/file\\E"
-    }, {
-      "pattern":"\\Qsun/net/www/protocol/http\\E"
-    }, {
-      "pattern":"\\Qsun/net/www/protocol/jar\\E"
-    }, {
-      "pattern":"\\Qsun/net/www/protocol/jrt\\E"
-    }, {
-      "pattern":"\\Qsun/net/www/protocol\\E"
-    }, {
-      "pattern":"\\Qsun/net/www\\E"
-    }, {
-      "pattern":"\\Qsun/net\\E"
-    }, {
-      "pattern":"\\Qsun/nio/ch\\E"
-    }, {
-      "pattern":"\\Qsun/nio/cs\\E"
-    }, {
-      "pattern":"\\Qsun/nio/fs\\E"
-    }, {
-      "pattern":"\\Qsun/nio\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/annotation\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/factory\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/parser\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/reflectiveObjects\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/repository\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/scope\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/tree\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics/visitor\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/generics\\E"
-    }, {
-      "pattern":"\\Qsun/reflect/misc\\E"
-    }, {
-      "pattern":"\\Qsun/reflect\\E"
-    }, {
-      "pattern":"\\Qsun/security/action\\E"
-    }, {
-      "pattern":"\\Qsun/security/ec\\E"
-    }, {
-      "pattern":"\\Qsun/security/jca\\E"
-    }, {
-      "pattern":"\\Qsun/security/provider\\E"
-    }, {
-      "pattern":"\\Qsun/security/rsa\\E"
-    }, {
-      "pattern":"\\Qsun/security/ssl\\E"
-    }, {
-      "pattern":"\\Qsun/security/util\\E"
-    }, {
-      "pattern":"\\Qsun/security\\E"
-    }, {
-      "pattern":"\\Qsun/text/resources/cldr/ext\\E"
-    }, {
-      "pattern":"\\Qsun/text/resources/cldr\\E"
-    }, {
-      "pattern":"\\Qsun/text/resources\\E"
-    }, {
-      "pattern":"\\Qsun/text\\E"
-    }, {
-      "pattern":"\\Qsun/util/calendar\\E"
-    }, {
-      "pattern":"\\Qsun/util/cldr\\E"
-    }, {
-      "pattern":"\\Qsun/util/locale/provider\\E"
-    }, {
-      "pattern":"\\Qsun/util/locale\\E"
-    }, {
-      "pattern":"\\Qsun/util/logging/internal\\E"
-    }, {
-      "pattern":"\\Qsun/util/logging/resources\\E"
-    }, {
-      "pattern":"\\Qsun/util/logging\\E"
-    }, {
-      "pattern":"\\Qsun/util/resources/cldr/provider\\E"
-    }, {
-      "pattern":"\\Qsun/util/resources/cldr\\E"
-    }, {
-      "pattern":"\\Qsun/util/resources/provider\\E"
-    }, {
-      "pattern":"\\Qsun/util/resources\\E"
-    }, {
-      "pattern":"\\Qsun/util/spi\\E"
-    }, {
-      "pattern":"\\Qsun/util\\E"
-    }, {
-      "pattern":"\\Qsun\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/annotation\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/constant\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/foreign\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/instrument\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/invoke\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/management\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/module\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/ref\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/lang/reflect\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/net/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/channels/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/channels\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/charset/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/charset\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/file/attribute\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/file/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/nio/file\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/security/cert\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/security/spec\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/text/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/time/chrono\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/time/format\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/time/temporal\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/time/zone\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/concurrent/atomic\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/concurrent/locks\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/concurrent\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/function\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/jar\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/logging\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/random\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/regex\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/stream\\E"
-    }, {
-      "pattern":"java.base:\\Qjava/util/zip\\E"
-    }, {
-      "pattern":"java.base:\\Qjavax/crypto/interfaces\\E"
-    }, {
-      "pattern":"java.base:\\Qjavax/crypto/spec\\E"
-    }, {
-      "pattern":"java.base:\\Qjavax/net/ssl\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/access\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/event\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/foreign/abi\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/foreign\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/nfc.nrm\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt74b/nfkc.nrm\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/icu\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/jimage/decompressor\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/jimage\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/loader\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/logger\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/math\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/misc\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/module\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/org\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/perf\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/ref\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/reflect\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/util/random\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/util\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/vm/annotation\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/vm/vector\\E"
-    }, {
-      "pattern":"java.base:\\Qjdk/internal/vm\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/net/ext\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/net/sdp\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/net/spi\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/net/util\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/net/www/protocol\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/net/www\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/nio/ch\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/nio/cs\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/nio/fs\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/text/resources/cldr/ext\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/text/resources/cldr\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/text/resources\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/calendar\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/cldr\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/locale/provider\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/locale\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/logging/internal\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/logging/resources\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/logging\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/resources/cldr/provider\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/resources/cldr\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/resources/provider\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/resources\\E"
-    }, {
-      "pattern":"java.base:\\Qsun/util/spi\\E"
-    }, {
-      "pattern":"java.desktop:\\Qcom/sun/beans/finder\\E"
-    }, {
-      "pattern":"java.desktop:\\Qcom/sun/beans/introspect\\E"
-    }, {
-      "pattern":"java.desktop:\\Qcom/sun/beans/util\\E"
-    }, {
-      "pattern":"java.logging:\\Qsun/util/logging/resources/logging_fr.properties\\E"
-    }, {
-      "pattern":"java.logging:\\Qsun/util/logging/resources/logging_fr_FR.properties\\E"
-    }, {
-      "pattern":"java.management:\\Qsun/management/spi\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/dtd\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/dv/dtd\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/dv\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/io\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/msg\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/validation\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/xni/grammars\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/org/apache/xerces/internal/xni/parser\\E"
-    }, {
-      "pattern":"java.xml:\\Qcom/sun/xml/internal/stream/util\\E"
-    }, {
-      "pattern":"java.xml:\\Qjavax/xml/catalog\\E"
-    }, {
-      "pattern":"java.xml:\\Qjavax/xml/parsers\\E"
-    }, {
-      "pattern":"java.xml:\\Qjavax/xml/stream\\E"
-    }, {
-      "pattern":"java.xml:\\Qjavax/xml/transform\\E"
-    }, {
-      "pattern":"java.xml:\\Qjdk/xml/internal/jdkcatalog/JDKCatalog.xml\\E"
-    }, {
-      "pattern":"java.xml:\\Qorg/w3c/dom/ls\\E"
-    }, {
-      "pattern":"java.xml:\\Qorg/xml/sax/ext\\E"
-    }, {
-      "pattern":"java.xml:\\Qorg/xml/sax/helpers\\E"
-    }, {
-      "pattern":"jdk.management.jfr:\\Qjdk/management/jfr/internal\\E"
-    }, {
-      "pattern":"jdk.management:\\Qcom/sun/management/internal\\E"
-    }, {
-      "pattern":"jdk.unsupported:\\Qsun/reflect/annotation\\E"
-    }, {
-      "pattern":"jdk.unsupported:\\Qsun/reflect/generics\\E"
-    }, {
-      "pattern":"jdk.unsupported:\\Qsun/reflect/misc\\E"
-    }]},
-  "bundles":[{
-    "name":"liquibase/i18n/liquibase-core",
-    "locales":["fr-FR"]
-  }, {
-    "name":"sun.text.resources.cldr.FormatData",
-    "locales":["en", "en-US", "fr", "fr-FR", "und"]
-  }, {
-    "name":"sun.util.resources.cldr.CalendarData",
-    "locales":["und"]
-  }, {
-    "name":"sun.util.resources.cldr.TimeZoneNames",
-    "locales":["en", "en-US", "und"]
-  }]
+	"resources": {
+		"includes": [
+			{
+				"pattern": "\\QMETA-INF/services/ch.qos.logback.classic.spi.Configurator\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/io.ktor.serialization.kotlinx.KotlinxSerializationExtensionProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.lang.System$LoggerFinder\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.net.spi.InetAddressResolverProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.net.spi.URLStreamHandlerProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.nio.channels.spi.SelectorProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.sql.Driver\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.time.zone.ZoneRulesProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/java.util.spi.ResourceBundleControlProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/javax.xml.parsers.SAXParserFactory\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.resolve.ExternalOverridabilityCondition\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/kotlin.reflect.jvm.internal.impl.util.ModuleVisibilityHelper\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.change.Change\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.changelog.ChangeLogHistoryService\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.changeset.ChangeSetService\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.command.CommandStep\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.configuration.AutoloadedConfigurations\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.configuration.ConfigurationValueProvider\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.configuration.ConfiguredValueModifier\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.database.Database\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.database.LiquibaseTableNames\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.database.jvm.ConnectionPatterns\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.datatype.LiquibaseDataType\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.diff.compare.DatabaseObjectComparator\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.executor.Executor\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.lockservice.LockService\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.logging.LogService\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.logging.mdc.MdcManager\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.parser.ChangeLogParser\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.report.ShowSummaryGenerator\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.servicelocator.ServiceLocator\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.snapshot.SnapshotGenerator\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/liquibase.sqlgenerator.SqlGenerator\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/org.jetbrains.exposed.dao.id.EntityIDFactory\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/org.jetbrains.exposed.sql.DatabaseConnectionAutoRegistration\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/org.jetbrains.exposed.sql.statements.GlobalStatementInterceptor\\E"
+			},
+			{
+				"pattern": "\\QMETA-INF/services/org.slf4j.spi.SLF4JServiceProvider\\E"
+			},
+			{
+				"pattern": "\\Q\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/boolex\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/encoder\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/joran/action\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/joran/sanity\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/joran\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/model/processor\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/model\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/pattern/color\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/pattern\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/spi\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic/util\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/classic\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/boolex\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/encoder\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/filter\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/helpers\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/hook\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/action\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/conditional\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/event\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/sanity\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/spi\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/util/beans\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran/util\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/joran\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/model/conditional\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/model/processor/conditional\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/model/processor\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/model\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/net/ssl\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/net\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/pattern/color\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/pattern/parser\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/pattern/util\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/pattern\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/sift\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/spi\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/status\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/subst\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core/util\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback/core\\E"
+			},
+			{
+				"pattern": "\\Qch/qos/logback\\E"
+			},
+			{
+				"pattern": "\\Qch/qos\\E"
+			},
+			{
+				"pattern": "\\Qch\\E"
+			},
+			{
+				"pattern": "\\Qcom/intellij/rt/execution/application\\E"
+			},
+			{
+				"pattern": "\\Qcom/intellij/rt/execution\\E"
+			},
+			{
+				"pattern": "\\Qcom/intellij/rt\\E"
+			},
+			{
+				"pattern": "\\Qcom/intellij\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl/dtd\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl/dv/dtd\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl/dv\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl/io\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl/msg\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl/validation\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/impl\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/jaxp\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/parsers\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/util\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/utils\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/xni/grammars\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/xni/parser\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/xni\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal/xs\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces/internal\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache/xerces\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org/apache\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/org\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/xml/internal/stream/util\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/xml/internal/stream\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/xml/internal\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun/xml\\E"
+			},
+			{
+				"pattern": "\\Qcom/sun\\E"
+			},
+			{
+				"pattern": "\\Qcom\\E"
+			},
+			{
+				"pattern": "\\Qhollybike/api\\E"
+			},
+			{
+				"pattern": "\\Qhollybike\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/events\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/application\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/cio/internal\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/cio\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/config\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/engine/internal\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/engine\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/request\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server/response\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/server\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/util/cio\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/util/collections\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/util/date\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/util/logging\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/util/pipeline\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/util\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/utils/io\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor/utils\\E"
+			},
+			{
+				"pattern": "\\Qio/ktor\\E"
+			},
+			{
+				"pattern": "\\Qio\\E"
+			},
+			{
+				"pattern": "\\Qjava/io\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/annotation\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/constant\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/instrument\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/invoke\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/module\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/ref\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang/reflect\\E"
+			},
+			{
+				"pattern": "\\Qjava/lang\\E"
+			},
+			{
+				"pattern": "\\Qjava/math\\E"
+			},
+			{
+				"pattern": "\\Qjava/net/spi\\E"
+			},
+			{
+				"pattern": "\\Qjava/net\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/channels/spi\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/channels\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/charset/spi\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/charset\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/file/attribute\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/file/spi\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio/file\\E"
+			},
+			{
+				"pattern": "\\Qjava/nio\\E"
+			},
+			{
+				"pattern": "\\Qjava/security/cert\\E"
+			},
+			{
+				"pattern": "\\Qjava/security\\E"
+			},
+			{
+				"pattern": "\\Qjava/text/spi\\E"
+			},
+			{
+				"pattern": "\\Qjava/text\\E"
+			},
+			{
+				"pattern": "\\Qjava/time/chrono\\E"
+			},
+			{
+				"pattern": "\\Qjava/time/format\\E"
+			},
+			{
+				"pattern": "\\Qjava/time/temporal\\E"
+			},
+			{
+				"pattern": "\\Qjava/time/zone\\E"
+			},
+			{
+				"pattern": "\\Qjava/time\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/concurrent/atomic\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/concurrent/locks\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/concurrent\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/function\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/jar\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/random\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/regex\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/spi\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/stream\\E"
+			},
+			{
+				"pattern": "\\Qjava/util/zip\\E"
+			},
+			{
+				"pattern": "\\Qjava/util\\E"
+			},
+			{
+				"pattern": "\\Qjava\\E"
+			},
+			{
+				"pattern": "\\Qjavax/naming\\E"
+			},
+			{
+				"pattern": "\\Qjavax/xml/catalog\\E"
+			},
+			{
+				"pattern": "\\Qjavax/xml/parsers\\E"
+			},
+			{
+				"pattern": "\\Qjavax/xml\\E"
+			},
+			{
+				"pattern": "\\Qjavax\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/access\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/foreign/abi\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/foreign\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/jimage/decompressor\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/jimage\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/loader\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/misc\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/module\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/org/objectweb/asm\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/org/objectweb\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/org\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/perf\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/ref\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/reflect\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/util/random\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/util\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/vm/vector\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal/vm\\E"
+			},
+			{
+				"pattern": "\\Qjdk/internal\\E"
+			},
+			{
+				"pattern": "\\Qjdk/net\\E"
+			},
+			{
+				"pattern": "\\Qjdk/xml/internal\\E"
+			},
+			{
+				"pattern": "\\Qjdk/xml\\E"
+			},
+			{
+				"pattern": "\\Qjdk\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/collections/collections.kotlin_builtins\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/collections\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/comparisons\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/coroutines/intrinsics\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/coroutines/jvm/internal\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/coroutines/jvm\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/coroutines\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/enums\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/internal/jdk7\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/internal/jdk8\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/internal\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/jvm/functions\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/jvm/internal/markers\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/jvm/internal\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/jvm\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/kotlin.kotlin_builtins\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/random/jdk8\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/random\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/ranges\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/reflect/reflect.kotlin_builtins\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/reflect\\E"
+			},
+			{
+				"pattern": "\\Qkotlin/text\\E"
+			},
+			{
+				"pattern": "\\Qkotlin\\E"
+			},
+			{
+				"pattern": "\\Qkotlinx/coroutines/internal\\E"
+			},
+			{
+				"pattern": "\\Qkotlinx/coroutines/intrinsics\\E"
+			},
+			{
+				"pattern": "\\Qkotlinx/coroutines/scheduling\\E"
+			},
+			{
+				"pattern": "\\Qkotlinx/coroutines\\E"
+			},
+			{
+				"pattern": "\\Qkotlinx\\E"
+			},
+			{
+				"pattern": "\\Qliquibase-changelog.sql\\E"
+			},
+			{
+				"pattern": "\\Qliquibase.build.properties\\E"
+			},
+			{
+				"pattern": "\\Qlogback-test.scmo\\E"
+			},
+			{
+				"pattern": "\\Qlogback-test.xml\\E"
+			},
+			{
+				"pattern": "\\Qlogback.scmo\\E"
+			},
+			{
+				"pattern": "\\Qlogback.xml\\E"
+			},
+			{
+				"pattern": "\\Qopenapi/documentation.yaml\\E"
+			},
+			{
+				"pattern": "\\Qorg/fusesource/jansi/internal/native/Windows/x86_64/jansi.dll\\E"
+			},
+			{
+				"pattern": "\\Qorg/fusesource/jansi/jansi.properties\\E"
+			},
+			{
+				"pattern": "\\Qorg/postgresql/driverconfig.properties\\E"
+			},
+			{
+				"pattern": "\\Qorg/slf4j/event\\E"
+			},
+			{
+				"pattern": "\\Qorg/slf4j/helpers\\E"
+			},
+			{
+				"pattern": "\\Qorg/slf4j/spi\\E"
+			},
+			{
+				"pattern": "\\Qorg/slf4j\\E"
+			},
+			{
+				"pattern": "\\Qorg/xml/sax/ext\\E"
+			},
+			{
+				"pattern": "\\Qorg/xml/sax/helpers\\E"
+			},
+			{
+				"pattern": "\\Qorg/xml/sax\\E"
+			},
+			{
+				"pattern": "\\Qorg/xml\\E"
+			},
+			{
+				"pattern": "\\Qorg\\E"
+			},
+			{
+				"pattern": "\\Qsun/instrument\\E"
+			},
+			{
+				"pattern": "\\Qsun/invoke/empty\\E"
+			},
+			{
+				"pattern": "\\Qsun/invoke/util\\E"
+			},
+			{
+				"pattern": "\\Qsun/invoke\\E"
+			},
+			{
+				"pattern": "\\Qsun/io\\E"
+			},
+			{
+				"pattern": "\\Qsun/launcher\\E"
+			},
+			{
+				"pattern": "\\Qsun/misc\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/ext\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/spi\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/util\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/www/protocol/file\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/www/protocol/jar\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/www/protocol/jrt\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/www/protocol\\E"
+			},
+			{
+				"pattern": "\\Qsun/net/www\\E"
+			},
+			{
+				"pattern": "\\Qsun/net\\E"
+			},
+			{
+				"pattern": "\\Qsun/nio/ch\\E"
+			},
+			{
+				"pattern": "\\Qsun/nio/cs\\E"
+			},
+			{
+				"pattern": "\\Qsun/nio/fs\\E"
+			},
+			{
+				"pattern": "\\Qsun/nio\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/annotation\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/generics/factory\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/generics/parser\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/generics/scope\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/generics/tree\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/generics/visitor\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/generics\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect/misc\\E"
+			},
+			{
+				"pattern": "\\Qsun/reflect\\E"
+			},
+			{
+				"pattern": "\\Qsun/security/action\\E"
+			},
+			{
+				"pattern": "\\Qsun/security/provider\\E"
+			},
+			{
+				"pattern": "\\Qsun/security/util\\E"
+			},
+			{
+				"pattern": "\\Qsun/security\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/calendar\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/cldr\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/locale/provider\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/locale\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/resources/cldr/provider\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/resources/cldr\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/resources/provider\\E"
+			},
+			{
+				"pattern": "\\Qsun/util/resources\\E"
+			},
+			{
+				"pattern": "\\Qsun/util\\E"
+			},
+			{
+				"pattern": "\\Qsun\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/annotation\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/constant\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/instrument\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/invoke\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/module\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/ref\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/lang/reflect\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/net/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/channels/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/channels\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/charset/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/charset\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/file/attribute\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/file/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/nio/file\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/security/cert\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/text/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/time/chrono\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/time/format\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/time/temporal\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/time/zone\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/concurrent/atomic\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/concurrent/locks\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/concurrent\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/function\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/jar\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/random\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/regex\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/stream\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjava/util/zip\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/access\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/foreign/abi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/foreign\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfc.nrm\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt72b/nfkc.nrm\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt72b/uprops.icu\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/jimage/decompressor\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/jimage\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/loader\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/misc\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/module\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/org\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/perf\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/ref\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/reflect\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/util/random\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/util\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/vm/vector\\E"
+			},
+			{
+				"pattern": "java.base:\\Qjdk/internal/vm\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/invoke/empty\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/invoke/util\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/net/ext\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/net/idn/uidna.spp\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/net/spi\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/net/util\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/net/www/protocol\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/net/www\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/nio/ch\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/nio/cs\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/nio/fs\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/calendar\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/cldr\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/locale/provider\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/locale\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/resources/cldr/provider\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/resources/cldr\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/resources/provider\\E"
+			},
+			{
+				"pattern": "java.base:\\Qsun/util/resources\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/dtd\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/dv/dtd\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/dv\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/io\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/msg\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/impl/validation\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/xni/grammars\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/org/apache/xerces/internal/xni/parser\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qcom/sun/xml/internal/stream/util\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qjavax/xml/catalog\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qjavax/xml/parsers\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qorg/xml/sax/ext\\E"
+			},
+			{
+				"pattern": "java.xml:\\Qorg/xml/sax/helpers\\E"
+			},
+			{
+				"pattern": "jdk.unsupported:\\Qsun/reflect/annotation\\E"
+			},
+			{
+				"pattern": "jdk.unsupported:\\Qsun/reflect/generics\\E"
+			},
+			{
+				"pattern": "jdk.unsupported:\\Qsun/reflect/misc\\E"
+			}
+		]
+	},
+	"bundles": [
+		{
+			"name": "liquibase/i18n/liquibase-core",
+			"locales": [
+				""
+			]
+		}
+	]
 }
