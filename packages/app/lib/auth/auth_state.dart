@@ -10,3 +10,7 @@ class AuthState {
     return AuthState(count + valueToIncrement);
   }
 }
+
+class AuthInitial extends AuthState {
+  const AuthInitial() : super(0);
+}

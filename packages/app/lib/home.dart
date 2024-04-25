@@ -31,7 +31,7 @@ class Home extends StatelessWidget {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => context.read<AuthBloc>().add(AuthEventIncrement()),
+            onPressed: () => context.read<AuthBloc>().add(AuthLogin()),
             tooltip: 'Add',
             child: const Icon(Icons.add),
           ),
