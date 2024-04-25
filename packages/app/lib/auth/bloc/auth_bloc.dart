@@ -14,7 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
-      emit(state.withIncrement(2));
+      emit(const AuthState("logged"));
     });
   }
 }
