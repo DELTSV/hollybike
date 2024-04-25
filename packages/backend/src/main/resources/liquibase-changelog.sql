@@ -10,3 +10,9 @@ ALTER TABLE "users" ADD CONSTRAINT "users_associations_id_association_fk" FOREIG
 
 -- changeset denis:2 context:dev
 INSERT INTO associations (name) VALUES ('Motoloup');
+
+-- changeset denis:3
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(2048) DEFAULT null;
+ALTER TABLE associations
+    ADD COLUMN IF NOT EXISTS picture VARCHAR(2048) DEFAULT null;

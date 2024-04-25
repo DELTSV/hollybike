@@ -11,11 +11,13 @@ data class TUser(
 	val id: Int,
 	val email: String,
 	val username: String,
-	val scope: Int,
-	val status: Int,
+	val scope: EUserScope,
+	val status: EUserStatus,
 	@SerialName("last_login")
 	val lastLogin: Instant,
-	val association: TAssociation
+	val association: TAssociation,
+	@SerialName("profile_picture")
+	val profilePicture: String? = null,
 ) {
 	constructor(entity: User): this(
 		id = entity.id.value,
@@ -24,6 +26,7 @@ data class TUser(
 		scope = entity.scope,
 		status = entity.status,
 		lastLogin = entity.lastLogin,
-		association = TAssociation(entity.association)
+		association = TAssociation(entity.association),
+		profilePicture = entity.profilePicture
 	)
 }

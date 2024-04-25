@@ -5,12 +5,14 @@ import com.auth0.jwt.algorithms.Algorithm
 import hollybike.api.conf
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
+import hollybike.api.types.user.EUserStatus
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.util.*
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
 private val userAttributeKey = AttributeKey<User>("user")
@@ -37,7 +39,7 @@ fun Application.configureSecurity(db: Database) {
 				if (credential.payload.audience.contains(jwtAudience)) {
 					val user = transaction(db) {
 						User.find {
-							Users.email eq credential.payload.getClaim("email").asString()
+							(Users.email eq credential.payload.getClaim("email").asString()) and (Users.status neq EUserStatus.Disabled.value)
 						}.with(User::association).singleOrNull()
 					} ?: run {
 						return@validate null

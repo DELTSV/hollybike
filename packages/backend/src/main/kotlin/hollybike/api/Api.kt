@@ -4,6 +4,7 @@ import hollybike.api.plugins.configureHTTP
 import hollybike.api.plugins.configureSecurity
 import hollybike.api.repository.configureDatabase
 import hollybike.api.routing.controller.ApiController
+import hollybike.api.routing.controller.AssociationController
 import hollybike.api.routing.controller.AuthenticationController
 import hollybike.api.routing.controller.UserController
 import hollybike.api.services.UserService
@@ -30,4 +31,5 @@ fun Application.api() {
 	ApiController(this)
 	AuthenticationController(this, db)
 	UserController(this, userService)
+	AssociationController(this, db)
 }

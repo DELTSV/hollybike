@@ -1,7 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="backend" type="JetRunConfigurationType">
+  <configuration default="false" name="launch backend" type="JetRunConfigurationType">
     <envs>
-      <env name="DEV" value="" />
+      <env name="DEV" value="true" />
+      <env name="CLOUD" value="true" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="hollybike.api.ApplicationKt" />
     <module name="hollybike.api.main" />
