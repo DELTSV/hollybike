@@ -21,7 +21,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.Route
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserController(
 	application: Application,
