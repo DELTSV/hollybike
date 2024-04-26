@@ -79,6 +79,13 @@ private fun parseEnvConf() = Conf(
 		System.getenv("SECURITY_REALM"),
 		System.getenv("SECURITY_SECRET")
 	),
+	ConfSMTP(
+		System.getenv("SMTP_URL"),
+		System.getenv("SMTP_PORT").toInt(),
+		System.getenv("SMTP_USERNAME"),
+		System.getenv("SMTP_PASSWORD"),
+		System.getenv("SMTP_SENDER"),
+	),
 	ConfStorage(
 		System.getenv("STORAGE_S3_BUCKET_NAME"),
 		System.getenv("STORAGE_S3_REGION"),
