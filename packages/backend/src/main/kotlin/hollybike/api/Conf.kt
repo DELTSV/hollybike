@@ -43,8 +43,8 @@ data class ConfSMTP(
 
 @Serializable
 data class ConfStorage(
-	var s3bucketName: String? = null,
-	val s3region: String? = null,
+	var s3BucketName: String? = null,
+	val s3Region: String? = null,
 	val localPath: String? = null,
 	val ftpServer: String? = null,
 	val ftpUsername: String? = null,

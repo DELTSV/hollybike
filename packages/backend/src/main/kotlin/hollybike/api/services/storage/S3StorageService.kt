@@ -28,7 +28,7 @@ class S3StorageService(
 
 		runBlocking {
 			if (!client.bucketExists(bucketName)) {
-				throw Exception("Cannot reach bucket $bucketName")
+				throw Exception("Cannot reach bucket $bucketName, check your IAM permissions")
 			}
 		}
 	}

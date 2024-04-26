@@ -27,7 +27,7 @@ object StorageServiceFactory {
 				)
 			}
 		} else {
-			S3StorageService(isDevMode, conf.storage.s3bucketName, conf.storage.s3region)
+			S3StorageService(isDevMode, conf.storage.s3BucketName, conf.storage.s3Region)
 		}
 	}
 }
