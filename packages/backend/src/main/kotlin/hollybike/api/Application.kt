@@ -48,7 +48,7 @@ fun Application.checkOnPremise() {
 	if (!isOnPremise) {
 		val conf = attributes.conf
 
-		if (conf.storage.S3bucketName == null) {
+		if (conf.storage.s3bucketName == null) {
 			throw IllegalStateException("Missing storage.bucketName in configuration for production mode")
 		}
 	}

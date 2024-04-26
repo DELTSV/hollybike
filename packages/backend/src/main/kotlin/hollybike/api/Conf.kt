@@ -33,9 +33,13 @@ data class ConfSecurity(
 
 @Serializable
 data class ConfStorage(
-	var S3bucketName: String? = null,
-	val S3region: String = "eu-west-3",
-	val localPath: String? = null
+	var s3bucketName: String? = null,
+	val s3region: String = "eu-west-3",
+	val localPath: String? = null,
+	val ftpServer: String? = null,
+	val ftpUsername: String? = null,
+	val ftpPassword: String? = null,
+	val ftpDirectory: String? = null
 )
 
 fun parseConf(): Conf {
@@ -68,6 +72,10 @@ private fun parseEnvConf() = Conf(
 	ConfStorage(
 		System.getenv("STORAGE_S3_BUCKET_NAME"),
 		System.getenv("STORAGE_S3_REGION"),
-		System.getenv("STORAGE_LOCAL_PATH")
+		System.getenv("STORAGE_LOCAL_PATH"),
+		System.getenv("STORAGE_FTP_SERVER"),
+		System.getenv("STORAGE_FTP_USERNAME"),
+		System.getenv("STORAGE_FTP_PASSWORD"),
+		System.getenv("STORAGE_FTP_DIRECTORY")
 	)
 )

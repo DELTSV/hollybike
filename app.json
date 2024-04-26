@@ -12,6 +12,6 @@
   },
   "storage": {
 		"localPath": "./storage",
-    "bucketName": "hollybike"
+    "s3bucketName": "hollybike"
   }
 }
