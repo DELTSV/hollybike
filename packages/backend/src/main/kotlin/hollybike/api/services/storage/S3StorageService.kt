@@ -14,6 +14,8 @@ class S3StorageService(
 	private val bucketName: String?,
 	private val bucketRegion: String,
 ) : StorageService {
+	override val mode = StorageMode.S3
+
 	private val client = S3Client {
 		endpointUrl = if (isDev) Url.parse("http://localhost:9000") else null
 		region = bucketRegion

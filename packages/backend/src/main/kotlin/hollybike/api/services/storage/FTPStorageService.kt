@@ -9,7 +9,9 @@ class FTPStorageService(
 	ftpUsername: String?,
 	ftpPassword: String?,
 	ftpDirectory: String?,
-): StorageService {
+) : StorageService {
+	override val mode = StorageMode.FTP
+
 	private val ftpClient = FTPClient()
 
 	init {

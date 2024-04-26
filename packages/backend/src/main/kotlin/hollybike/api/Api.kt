@@ -27,6 +27,9 @@ fun Application.api() {
 		developmentMode,
 		isOnPremise
 	)
+
+	log.info("Using ${storageService.mode} storage mode")
+
 	val userService = UserService(db, storageService)
 
 	ApiController(this)

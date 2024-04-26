@@ -5,6 +5,7 @@ import java.io.File
 class LocalStorageService(
 	private val storagePath: String?,
 ) : StorageService {
+	override val mode = StorageMode.LOCAL
 
 	init {
 		if (storagePath == null) {
