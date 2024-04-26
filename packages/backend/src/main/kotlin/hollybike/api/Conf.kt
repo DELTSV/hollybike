@@ -13,7 +13,8 @@ val Attributes.conf get() = this[confKey]
 data class Conf(
 	val db: ConfDB,
 	val security: ConfSecurity,
-	val storage: ConfStorage = ConfStorage(),
+	val smtp: ConfSMTP? = null,
+	val storage: ConfStorage = ConfStorage()
 )
 
 @Serializable
@@ -29,6 +30,15 @@ data class ConfSecurity(
 	val domain: String,
 	val realm: String,
 	val secret: String
+)
+
+@Serializable
+data class ConfSMTP(
+	val url: String,
+	val port:Int,
+	val sender: String,
+	val username: String? = null,
+	val password: String? = null
 )
 
 @Serializable
@@ -68,6 +78,13 @@ private fun parseEnvConf() = Conf(
 		System.getenv("SECURITY_DOMAIN"),
 		System.getenv("SECURITY_REALM"),
 		System.getenv("SECURITY_SECRET")
+	),
+	ConfSMTP(
+		System.getenv("SMTP_URL"),
+		System.getenv("SMTP_PORT").toInt(),
+		System.getenv("SMTP_USERNAME"),
+		System.getenv("SMTP_PASSWORD"),
+		System.getenv("SMTP_SENDER"),
 	),
 	ConfStorage(
 		System.getenv("STORAGE_S3_BUCKET_NAME"),
