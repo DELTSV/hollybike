@@ -18,6 +18,11 @@ output "application_storage_bucket_id" {
   description = "The ID of the S3 bucket used for application storage"
 }
 
+output "application_storage_bucket_arn" {
+  value       = aws_s3_bucket.application_storage.arn
+  description = "The ARN of the S3 bucket used for application storage"
+}
+
 output "application_storage_bucket_domain_name" {
   value       = aws_s3_bucket.application_storage.bucket_regional_domain_name
   description = "The domain name of the S3 bucket used for application storage"

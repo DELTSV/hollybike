@@ -77,3 +77,8 @@ variable "storage_s3_bucket_name" {
   type        = string
   description = "The name of the S3 bucket"
 }
+
+variable "storage_bucket_arn" {
+  type        = string
+  description = "The ARN of the S3 bucket used for application storage"
+}

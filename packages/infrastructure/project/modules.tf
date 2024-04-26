@@ -39,6 +39,7 @@ module "backend" {
   rds_db_url             = module.storage.rds_db_url
   alb_header_value       = module.frontend.alb_header_value
   storage_s3_bucket_name = module.storage.application_storage_bucket_name
+  storage_bucket_arn     = module.storage.application_storage_bucket_arn
 }
 
 module "domain" {

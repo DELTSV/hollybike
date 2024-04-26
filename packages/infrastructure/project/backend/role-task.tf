@@ -53,3 +53,28 @@ resource "aws_iam_role_policy" "ecs_backend_task_execution_ssm_role_policy" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "ecs_backend_task_execution_s3_role_policy" {
+  name = "${var.namespace}_ECS_S3_TaskIAMRole_${var.environment}"
+  role = aws_iam_role.ecs_task_execution_role.id
+
+  policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket",
+          "s3:GetBucketLocation",
+        ],
+        "Resource" : [
+          var.storage_bucket_arn,
+          "${var.storage_bucket_arn}/*"
+        ]
+      },
+    ]
+  })
+}
