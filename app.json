@@ -12,7 +12,7 @@
 	},
 	"storage": {
 		"localPath": "./storage",
-		"s3BucketName": "hollybike-application-storage20240424171223531700000001",
+		"s3BucketName": "hollybike",
 		"s3Region": "eu-west-3"
 	}
 }
