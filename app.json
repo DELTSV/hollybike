@@ -11,6 +11,7 @@
     "secret": "SECRET"
   },
   "storage": {
-    "bucketName": "hollybike-application-storage20240424171223531700000001"
+		"localPath": "./storage",
+    "s3bucketName": "hollybike"
   }
 }
