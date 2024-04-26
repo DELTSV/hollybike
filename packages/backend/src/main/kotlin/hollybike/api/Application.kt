@@ -8,6 +8,8 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.util.*
 import kotlinx.serialization.json.Json
 
+import generated.Constants
+
 fun main() {
 	embeddedServer(
 		CIO,
@@ -23,6 +25,8 @@ fun Application.module() {
 	checkOnPremise()
 	configureSerialization()
 	api()
+
+	log.info("Running hollybike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
 
 	if (isOnPremise) {
 		frontend()
@@ -43,7 +47,7 @@ fun Application.loadConfig() {
 }
 
 fun Application.checkOnPremise() {
-	attributes.put(onPremiseAttributeKey, System.getenv("CLOUD") != "true")
+	attributes.put(onPremiseAttributeKey, Constants.IS_ON_PREMISE)
 
 	if (!isOnPremise) {
 		val conf = attributes.conf

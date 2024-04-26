@@ -16,12 +16,20 @@ plugins {
 
 group = "hollybike.api"
 
-fun getIN(): String {
+fun getNativeImageName(): String {
 	if (hasProperty("image_name")) {
-		return project.findProperty("image_name") as String
+		return findProperty("image_name") as String
 	}
 
 	return "hollybike_server"
+}
+
+fun getIsOnPremiseMode(): Boolean {
+	if (hasProperty("is_on_premise")) {
+		return findProperty("is_on_premise") == "true"
+	}
+
+	return false
 }
 
 application {
@@ -31,6 +39,32 @@ application {
 repositories {
 	mavenCentral()
 }
+
+sourceSets {
+	main {
+		kotlin {
+			srcDir("${layout.buildDirectory.get()}/generated")
+		}
+	}
+}
+
+tasks.register("generateConstantsFile") {
+	doLast {
+		val outputDir = "${layout.buildDirectory.get()}/generated/src/constants"
+		val outputFile = File(outputDir, "Constants.kt")
+
+		outputFile.parentFile.mkdirs()
+		outputFile.writeText("""
+            package generated
+
+            object Constants {
+                const val IS_ON_PREMISE = ${getIsOnPremiseMode()}
+            }
+        """.trimIndent())
+	}
+}
+
+tasks.getByName("compileKotlin").dependsOn("generateConstantsFile")
 
 dependencies {
 	implementation("io.ktor:ktor-server-core:$ktorVersion")
@@ -149,7 +183,7 @@ graalvmNative {
 
 			resources.autodetect()
 
-			imageName.set(getIN())
+			imageName.set(getNativeImageName())
 		}
 	}
 
