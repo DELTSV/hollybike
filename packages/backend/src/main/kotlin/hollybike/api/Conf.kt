@@ -1,14 +1,20 @@
 package hollybike.api
 
+import io.ktor.util.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
+
+val confKey = AttributeKey<Conf>("hollybikeConf")
+val Attributes.conf get() = this[confKey]
+
 
 @Serializable
 data class Conf(
 	val db: ConfDB,
 	val security: ConfSecurity,
-	val smtp: ConfSMTP? = null
+	val smtp: ConfSMTP? = null,
+	val storage: ConfStorage = ConfStorage()
 )
 
 @Serializable
@@ -35,9 +41,20 @@ data class ConfSMTP(
 	val password: String? = null
 )
 
+@Serializable
+data class ConfStorage(
+	var s3bucketName: String? = null,
+	val s3region: String = "eu-west-3",
+	val localPath: String? = null,
+	val ftpServer: String? = null,
+	val ftpUsername: String? = null,
+	val ftpPassword: String? = null,
+	val ftpDirectory: String? = null
+)
+
 fun parseConf(): Conf {
 	val f = File("./app.json")
-	return if(f.exists()) {
+	return if (f.exists()) {
 		parseFileConf(f)
 	} else {
 		parseEnvConf()
@@ -61,5 +78,14 @@ private fun parseEnvConf() = Conf(
 		System.getenv("SECURITY_DOMAIN"),
 		System.getenv("SECURITY_REALM"),
 		System.getenv("SECURITY_SECRET")
+	),
+	ConfStorage(
+		System.getenv("STORAGE_S3_BUCKET_NAME"),
+		System.getenv("STORAGE_S3_REGION"),
+		System.getenv("STORAGE_LOCAL_PATH"),
+		System.getenv("STORAGE_FTP_SERVER"),
+		System.getenv("STORAGE_FTP_USERNAME"),
+		System.getenv("STORAGE_FTP_PASSWORD"),
+		System.getenv("STORAGE_FTP_DIRECTORY")
 	)
 )

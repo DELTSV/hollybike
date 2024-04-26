@@ -15,4 +15,7 @@ class Users(val api: API = API()) {
 
 	@Resource("email/{email}")
 	class Email(val users: Users = Users(), val email: String)
+
+	@Resource("profile-picture")
+	class UploadProfilePicture(val users: Users = Users())
 }

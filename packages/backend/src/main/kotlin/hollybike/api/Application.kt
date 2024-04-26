@@ -9,14 +9,24 @@ import io.ktor.util.*
 import kotlinx.serialization.json.Json
 
 fun main() {
-	embeddedServer(CIO, port = 8080, host = "0.0.0.0", watchPaths = listOf("classes", "resources"), module = Application::module).start(wait = true)
+	embeddedServer(
+		CIO,
+		port = 8080,
+		host = "0.0.0.0",
+		watchPaths = listOf("classes", "resources"),
+		module = Application::module
+	).start(wait = true)
 }
 
 fun Application.module() {
+	loadConfig()
 	checkOnPremise()
 	configureSerialization()
-	frontend()
 	api()
+
+	if (isOnPremise) {
+		frontend()
+	}
 }
 
 fun Application.configureSerialization() {
@@ -28,8 +38,20 @@ fun Application.configureSerialization() {
 	}
 }
 
+fun Application.loadConfig() {
+	this.attributes.put(confKey, parseConf())
+}
+
 fun Application.checkOnPremise() {
 	attributes.put(onPremiseAttributeKey, System.getenv("CLOUD") != "true")
+
+	if (!isOnPremise) {
+		val conf = attributes.conf
+
+		if (conf.storage.s3bucketName == null) {
+			throw IllegalStateException("Missing storage.bucketName in configuration for production mode")
+		}
+	}
 }
 
 val Application.isOnPremise: Boolean get() = attributes[onPremiseAttributeKey]
