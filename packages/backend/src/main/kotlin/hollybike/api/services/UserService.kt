@@ -29,11 +29,18 @@ class UserService(
 	}
 
 	suspend fun uploadUserProfilePicture(
-		caller: User?,
+		caller: User,
+		user: User,
 		image: ByteArray,
 		imageContentType: String,
-	) {
-		storageService.store(image, "u/${caller?.id}/p", imageContentType)
+	): Boolean {
+		if(caller.id != user.id && caller.scope == EUserScope.User) {
+			return false
+		}
+		val path = "u/${user.id}/p"
+		storageService.store(image, path, imageContentType)
+		transaction(db) { user.profilePicture = path }
+		return true
 	}
 
 	fun getUserByEmail(caller: User?, email: String): User? = transaction(this.db) {

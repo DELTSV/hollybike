@@ -38,7 +38,7 @@ fun Application.api() {
 	ApiController(this)
 	AuthenticationController(this, db)
 	UserController(this, userService)
-	AssociationController(this, db)
+	AssociationController(this, db, storageService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

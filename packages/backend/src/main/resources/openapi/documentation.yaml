@@ -102,7 +102,7 @@ paths:
         in: "path"
         required: true
         schema:
-          type: "string"
+          type: "object"
       responses:
         "404":
           description: "Not Found"
@@ -262,6 +262,47 @@ paths:
               examples:
                 Example#1:
                   value: "User not found"
+  /users/{id}/profile-picture:
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid image content type (only JPEG and PNG are supported)"
+                Example#2:
+                  value: "Missing image content type"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
   /users/email/{email}:
     get:
       description: ""
@@ -350,6 +391,33 @@ paths:
               examples:
                 Example#1:
                   value: "Wrong old_password"
+  /users/me/profile-picture:
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid image content type (only JPEG and PNG are supported)"
+                Example#2:
+                  value: "Missing image content type"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
   /users/username/{username}:
     get:
       description: ""
@@ -529,6 +597,51 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TAssociation"
+  /associations/{id}/picture:
+    put:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "object"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid image content type (only JPEG and PNG are supported)"
+                Example#2:
+                  value: "Missing image content type"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
   /associations/me:
     get:
       description: ""
@@ -576,6 +689,78 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/TAssociation"
+  /associations/me/picture:
+    put:
+      description: ""
+      parameters:
+      - name: "parent"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "associations"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      - name: "me"
+        in: "query"
+        required: true
+        schema:
+          type: "object"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid image content type (only JPEG and PNG are supported)"
+                Example#2:
+                  value: "Missing image content type"
+  /storage:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Bienvenue le storage de hollybike"
+  /storage/{path}:
+    get:
+      description: ""
+      parameters:
+      - name: "path"
+        in: "path"
+        required: true
+        schema:
+          type: "array"
+          items:
+            type: "string"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Not found"
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+                format: "byte"
 components:
   schemas:
     Map:

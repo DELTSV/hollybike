@@ -7,6 +7,7 @@ import hollybike.api.repository.User
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
 import hollybike.api.routing.resources.Users
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TNewAssociation
 import hollybike.api.types.association.TUpdateAssociation
@@ -14,6 +15,7 @@ import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -28,19 +30,22 @@ import kotlin.math.ceil
 
 class AssociationController(
 	application: Application,
-	private val db: Database
+	private val db: Database,
+	private val storageService: StorageService
 ) {
 	init {
 		application.routing {
 			authenticate {
 				getMyAssociation()
 				updateMyAssociation()
+				updateMyAssociationPicture()
 				if(application.isCloud) {
 					getAll()
 					getById()
 					getByUser()
 					addAssociation()
 					updateAssociation()
+					updateAssociationPicture()
 					deleteAssociation()
 				}
 			}
@@ -60,6 +65,27 @@ class AssociationController(
 				update.name?.let { call.user.association.name = it }
 			}
 			call.respond(TAssociation(call.user.association))
+		}
+	}
+
+	private fun Route.updateMyAssociationPicture() {
+		put<Associations.Me.Picture<API>>(EUserScope.Admin) {
+			val multipart = call.receiveMultipart()
+
+			val image = multipart.readPart() as PartData.FileItem
+
+			val contentType = image.contentType ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				return@put
+			}
+
+			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				return@put
+			}
+			val path = "a/${call.user.association.id}/p"
+			storageService.store(image.streamProvider().readBytes(), path, contentType.contentType)
+			transaction(db) { call.user.association.picture = path }
 		}
 	}
 
@@ -136,6 +162,33 @@ class AssociationController(
 				update.status?.let { association.status = it }
 				call.respond(TAssociation(association))
 			}
+		}
+	}
+
+	private fun Route.updateAssociationPicture() {
+		put<Associations.Id.Picture<API>>(EUserScope.Root) {
+			val multipart = call.receiveMultipart()
+
+			val image = multipart.readPart() as PartData.FileItem
+
+			val contentType = image.contentType ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				return@put
+			}
+
+			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				return@put
+			}
+
+			val association = transaction(db) { Association.findById(it.id.id) } ?: run {
+				call.respond(HttpStatusCode.NotFound, "Association ${it.id} not found")
+				return@put
+			}
+
+			val path = "a/${association.id}/p"
+			storageService.store(image.streamProvider().readBytes(), path, contentType.contentType)
+			transaction(db) { association.picture = path }
 		}
 	}
 
