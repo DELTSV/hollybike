@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 class S3StorageService(
 	private val isDev: Boolean,
 	private val bucketName: String?,
-	private val bucketRegion: String,
+	private val bucketRegion: String?,
 ) : StorageService {
 	override val mode = StorageMode.S3
 
@@ -24,6 +24,7 @@ class S3StorageService(
 
 	init {
 		if (bucketName == null) throw IllegalArgumentException("Bucket name is required for S3 storage")
+		if (bucketRegion == null) throw IllegalArgumentException("Bucket region is required for S3 storage")
 
 		runBlocking {
 			if (!client.bucketExists(bucketName)) {

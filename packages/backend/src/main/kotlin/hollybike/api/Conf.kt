@@ -44,7 +44,7 @@ data class ConfSMTP(
 @Serializable
 data class ConfStorage(
 	var s3bucketName: String? = null,
-	val s3region: String = "eu-west-3",
+	val s3region: String? = null,
 	val localPath: String? = null,
 	val ftpServer: String? = null,
 	val ftpUsername: String? = null,
@@ -101,7 +101,7 @@ private fun parseEnvSMTPConv(): ConfSMTP? {
 			System.getenv("SMTP_SENDER"),
 		)
 		return conf
-	}catch (_: NullPointerException){
+	} catch (_: NullPointerException) {
 		return null
 	}
 }

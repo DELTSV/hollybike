@@ -1,17 +1,18 @@
 {
-  "db": {
-    "url": "jdbc:postgresql://localhost:5432/hollybike",
-    "username": "user",
-    "password": "password"
-  },
-  "security": {
-    "audience": "hollybike.fr",
-    "domain": "http://0.0.0.0:8080",
-    "realm": "realm",
-    "secret": "SECRET"
-  },
-  "storage": {
+	"db": {
+		"url": "jdbc:postgresql://localhost:5432/hollybike",
+		"username": "user",
+		"password": "password"
+	},
+	"security": {
+		"audience": "hollybike.fr",
+		"domain": "http://0.0.0.0:8080",
+		"realm": "realm",
+		"secret": "SECRET"
+	},
+	"storage": {
 		"localPath": "./storage",
-    "s3bucketName": "hollybike"
-  }
+		"s3bucketName": "hollybike",
+		"s3BucketRegion": "eu-west-3"
+	}
 }

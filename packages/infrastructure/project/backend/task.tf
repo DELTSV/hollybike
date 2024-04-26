@@ -46,6 +46,10 @@ resource "aws_ecs_task_definition" "default" {
           name : "STORAGE_S3_BUCKET_NAME",
           valueFrom : aws_ssm_parameter.backend_storage_bucket_name.arn
         },
+        {
+          name : "STORAGE_S3_BUCKET_REGION",
+          valueFrom : aws_ssm_parameter.backend_storage_bucket_region.arn
+        },
       ]
       portMappings = [
         {
