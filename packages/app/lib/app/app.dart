@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/router/app_router.dart';
+import 'package:hollybike/app/app_router.dart';
 
 class App extends StatelessWidget {
   App({super.key});
