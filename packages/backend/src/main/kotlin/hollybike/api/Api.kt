@@ -8,6 +8,7 @@ import hollybike.api.routing.controller.AssociationController
 import hollybike.api.routing.controller.AuthenticationController
 import hollybike.api.routing.controller.UserController
 import hollybike.api.services.UserService
+import hollybike.api.services.storage.StorageServiceFactory
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
@@ -23,7 +24,14 @@ fun Application.api() {
 	install(CallLogging) {
 		this.level = Level.INFO
 	}
-	val userService = UserService(db, conf)
+
+	val storageService = StorageServiceFactory.getService(
+		conf,
+		developmentMode,
+		isOnPremise
+	)
+	val userService = UserService(db, storageService)
+
 	ApiController(this)
 	AuthenticationController(this, db)
 	UserController(this, userService)
