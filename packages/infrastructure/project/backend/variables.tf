@@ -72,3 +72,8 @@ variable "alb_header_value" {
   type        = string
   description = "The header value to check for"
 }
+
+variable "storage_s3_bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket"
+}

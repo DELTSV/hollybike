@@ -42,6 +42,10 @@ resource "aws_ecs_task_definition" "default" {
           name : "SECURITY_SECRET",
           valueFrom : aws_ssm_parameter.backend_security_secret.arn
         },
+        {
+          name : "STORAGE_S3_BUCKET_NAME",
+          valueFrom : aws_ssm_parameter.backend_storage_bucket_name.arn
+        },
       ]
       portMappings = [
         {
