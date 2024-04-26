@@ -13,6 +13,12 @@ resource "aws_ecs_task_definition" "default" {
       cpu       = 256
       memory    = 256
       essential = true
+      environment: [
+        {
+          "name": "CLOUD",
+          "value": "true"
+        }
+      ],
       secrets : [
         {
           name : "DB_URL",
@@ -47,7 +53,7 @@ resource "aws_ecs_task_definition" "default" {
           valueFrom : aws_ssm_parameter.backend_storage_bucket_name.arn
         },
         {
-          name : "STORAGE_S3_BUCKET_REGION",
+          name : "STORAGE_S3_REGION",
           valueFrom : aws_ssm_parameter.backend_storage_bucket_region.arn
         },
       ]
