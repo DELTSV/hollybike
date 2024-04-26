@@ -10,6 +10,7 @@ import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.get
+import hollybike.api.utils.post
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -20,6 +21,7 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.Route
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserController(
 	application: Application,
@@ -33,7 +35,8 @@ class UserController(
 				getByUserName()
 				getByEmail()
 				updateMe()
-				uploadProfilePicture()
+				uploadMeProfilePicture()
+				uploadUserProfilePicture()
 			}
 		}
 	}
@@ -89,11 +92,10 @@ class UserController(
 		}
 	}
 
-	private fun Route.uploadProfilePicture() {
-		post<Users.UploadProfilePicture> {
+	private fun Route.uploadMeProfilePicture() {
+		post<Users.Me.UploadProfilePicture> {
 			val multipart = call.receiveMultipart()
 
-			val user = call.user
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
@@ -101,12 +103,39 @@ class UserController(
 				return@post
 			}
 
-			if (!contentType.match(ContentType.Image.JPEG) && !contentType.match(ContentType.Image.PNG)) {
+			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
 				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
 				return@post
 			}
 
-			userService.uploadUserProfilePicture(user, image.streamProvider().readBytes(), contentType.toString())
+			userService.uploadUserProfilePicture(call.user, call.user, image.streamProvider().readBytes(), contentType.toString())
+
+			call.respond(HttpStatusCode.OK)
+		}
+	}
+
+	private fun Route.uploadUserProfilePicture() {
+		post<Users.Id.UploadProfilePicture>(EUserScope.Admin) {
+			val multipart = call.receiveMultipart()
+
+			val image = multipart.readPart() as PartData.FileItem
+
+			val user = userService.getUser(call.user, it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "User ${it.id.id} not found")
+				return@post
+			}
+
+			val contentType = image.contentType ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				return@post
+			}
+
+			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				return@post
+			}
+
+			userService.uploadUserProfilePicture(call.user, user, image.streamProvider().readBytes(), contentType.toString())
 
 			call.respond(HttpStatusCode.OK)
 		}
