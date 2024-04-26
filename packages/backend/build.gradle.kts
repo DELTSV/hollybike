@@ -57,6 +57,7 @@ dependencies {
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.liquibase:liquibase-core:4.27.0")
 	implementation("software.amazon.awssdk:s3:2.25.30")
+	implementation("org.simplejavamail:simple-java-mail:8.8.4")
 	ksp(project(":processor"))
 
 	liquibaseRuntime("org.liquibase:liquibase-core:4.27.0")
@@ -119,10 +120,8 @@ graalvmNative {
 
 			buildArgs.add("--initialize-at-run-time=de.nycode.bcrypt.BCryptKt")
 
-//			buildArgs.add("--initialize-at-run-time=java.time.zone.ZoneRulesProvider")
-//			buildArgs.add("--initialize-at-run-time=java.time.ZoneRegion")
-//
-//			buildArgs.add("--trace-class-initialization=java.time.zone.ZoneRulesProvider")
+			buildArgs.add("--initialize-at-run-time=org.simplejavamail.internal.util.MiscUtil")
+			buildArgs.add("--initialize-at-run-time=org.simplejavamail.internal.moduleloader.ModuleLoader")
 
 			buildArgs.add("--install-exit-handlers")
 			buildArgs.add("--report-unsupported-elements-at-runtime")

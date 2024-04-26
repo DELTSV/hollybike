@@ -7,7 +7,8 @@ import java.io.File
 @Serializable
 data class Conf(
 	val db: ConfDB,
-	val security: ConfSecurity
+	val security: ConfSecurity,
+	val smtp: ConfSMTP? = null
 )
 
 @Serializable
@@ -23,6 +24,15 @@ data class ConfSecurity(
 	val domain: String,
 	val realm: String,
 	val secret: String
+)
+
+@Serializable
+data class ConfSMTP(
+	val url: String,
+	val port:Int,
+	val sender: String,
+	val username: String? = null,
+	val password: String? = null
 )
 
 fun parseConf(): Conf {

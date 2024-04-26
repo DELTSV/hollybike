@@ -8,6 +8,7 @@ import hollybike.api.routing.controller.AssociationController
 import hollybike.api.routing.controller.AuthenticationController
 import hollybike.api.routing.controller.UserController
 import hollybike.api.services.UserService
+import hollybike.api.utils.MailSender
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
@@ -28,6 +29,9 @@ fun Application.api() {
 		this.level = Level.INFO
 	}
 	val userService = UserService(db)
+	val mailSender = attributes.conf.smtp?.let {
+		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
+	}
 	ApiController(this)
 	AuthenticationController(this, db)
 	UserController(this, userService)
