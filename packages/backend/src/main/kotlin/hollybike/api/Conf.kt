@@ -33,8 +33,9 @@ data class ConfSecurity(
 
 @Serializable
 data class ConfStorage(
-	var bucketName: String? = null,
-	val region: String = "eu-west-3"
+	var S3bucketName: String? = null,
+	val S3region: String = "eu-west-3",
+	val localPath: String? = null
 )
 
 fun parseConf(): Conf {
@@ -65,7 +66,8 @@ private fun parseEnvConf() = Conf(
 		System.getenv("SECURITY_SECRET")
 	),
 	ConfStorage(
-		System.getenv("STORAGE_BUCKET_NAME"),
-		System.getenv("STORAGE_REGION"),
+		System.getenv("STORAGE_S3_BUCKET_NAME"),
+		System.getenv("STORAGE_S3_REGION"),
+		System.getenv("STORAGE_LOCAL_PATH")
 	)
 )

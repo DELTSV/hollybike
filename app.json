@@ -11,6 +11,7 @@
     "secret": "SECRET"
   },
   "storage": {
+		"localPath": "./storage",
     "bucketName": "hollybike"
   }
 }

@@ -3,10 +3,7 @@ package hollybike.api
 import hollybike.api.plugins.configureHTTP
 import hollybike.api.plugins.configureSecurity
 import hollybike.api.repository.configureDatabase
-import hollybike.api.routing.controller.ApiController
-import hollybike.api.routing.controller.AssociationController
-import hollybike.api.routing.controller.AuthenticationController
-import hollybike.api.routing.controller.UserController
+import hollybike.api.routing.controller.*
 import hollybike.api.services.UserService
 import hollybike.api.services.storage.StorageServiceFactory
 import io.ktor.server.application.*
@@ -36,4 +33,8 @@ fun Application.api() {
 	AuthenticationController(this, db)
 	UserController(this, userService)
 	AssociationController(this, db)
+
+	if (isOnPremise) {
+		StorageController(this, storageService)
+	}
 }

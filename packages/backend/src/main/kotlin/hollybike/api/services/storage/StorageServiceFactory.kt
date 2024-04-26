@@ -6,12 +6,12 @@ object StorageServiceFactory {
 	fun getService(conf: Conf, isDevMode: Boolean, isOnPremise: Boolean): StorageService {
 		return if (isOnPremise) {
 			if (isDevMode) {
-				LocalStorageService()
+				LocalStorageService(conf.storage.localPath)
 			} else {
 				FTPStorageService()
 			}
 		} else {
-			S3StorageService(isDevMode, conf.storage.bucketName, conf.storage.region)
+			S3StorageService(isDevMode, conf.storage.S3bucketName, conf.storage.S3region)
 		}
 	}
 }

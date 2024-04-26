@@ -1,14 +1,45 @@
 package hollybike.api.services.storage
+
 import java.io.File
 
-class LocalStorageService: StorageService {
-	override suspend fun store(data: ByteArray, path: String, contentType: String) {
-		// Store the file in S3
+class LocalStorageService(
+	private val storagePath: String?,
+) : StorageService {
+
+	init {
+		if (storagePath == null) {
+			throw IllegalArgumentException("Storage path is not set")
+		}
+
+		val directory = File(storagePath)
+
+		if (!directory.exists()) {
+			directory.mkdirs()
+		}
+
+		if (!directory.isDirectory) {
+			throw IllegalArgumentException("Storage path is not a directory")
+		}
+
+		if (!directory.canRead() || !directory.canWrite()) {
+			throw IllegalArgumentException("Storage path is not readable or writable")
+		}
 	}
 
-	override fun retrieve(id: String): File {
-		// Retrieve the file from S3
+	override suspend fun store(data: ByteArray, path: String, dataContentType: String) {
+		val file = File("$storagePath/$path")
 
-		return File("file")
+		file.parentFile.mkdirs()
+		file.writeBytes(data)
+	}
+
+	override suspend fun retrieve(path: String): ByteArray? {
+		val file = File("$storagePath/$path")
+
+		if (!file.exists()) {
+			return null
+		}
+
+		return file.readBytes()
 	}
 }

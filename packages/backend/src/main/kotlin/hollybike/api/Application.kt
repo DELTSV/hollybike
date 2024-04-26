@@ -22,8 +22,11 @@ fun Application.module() {
 	loadConfig()
 	checkOnPremise()
 	configureSerialization()
-	frontend()
 	api()
+
+	if (isOnPremise) {
+		frontend()
+	}
 }
 
 fun Application.configureSerialization() {
@@ -45,7 +48,7 @@ fun Application.checkOnPremise() {
 	if (!isOnPremise) {
 		val conf = attributes.conf
 
-		if (conf.storage.bucketName == null) {
+		if (conf.storage.S3bucketName == null) {
 			throw IllegalStateException("Missing storage.bucketName in configuration for production mode")
 		}
 	}

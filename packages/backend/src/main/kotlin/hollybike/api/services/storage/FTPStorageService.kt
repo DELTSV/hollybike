@@ -1,14 +1,15 @@
 package hollybike.api.services.storage
-import java.io.File
 
 class FTPStorageService: StorageService {
-	override suspend fun store(data: ByteArray, path: String, contentType: String) {
-		// Store the file in S3
+	override suspend fun store(data: ByteArray, path: String, dataContentType: String) {
+		// TODO: Store the file in FTP
 	}
 
-	override fun retrieve(id: String): File {
-		// Retrieve the file from S3
+	override suspend fun retrieve(path: String): ByteArray? {
+		// TODO: Retrieve the file from FTP
 
-		return File("file")
+		println("Retrieving $path")
+
+		return null
 	}
 }
