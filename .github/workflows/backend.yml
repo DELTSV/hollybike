@@ -81,7 +81,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew test -Pis_on_premise=true
 
       - name: Run native compile
         if: ${{ inputs.externall_call }}
@@ -216,7 +216,7 @@ jobs:
           path: packages/backend/src/main/resources/front
 
       - name: Run native compile
-        run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }}
+        run: ./gradlew nativeCompile -Pimage_name=${{ steps.executable.outputs.executable_name }} -Pis_on_premise=true
 
 #      - name: Create native fake folder
 #        run: mkdir -p build/native/nativeCompile
