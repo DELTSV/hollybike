@@ -6,8 +6,8 @@ import 'package:hollybike/auth/types/form_field_config.dart';
 import 'package:hollybike/auth/widgets/text_form_builder.dart';
 
 @RoutePage()
-class LoginRoute extends StatelessWidget {
-  const LoginRoute({super.key});
+class ForgotPasswordRoute extends StatelessWidget {
+  const ForgotPasswordRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +18,6 @@ class LoginRoute extends StatelessWidget {
         },
         formFields: {
           "email": FormFieldConfig(validator: _inputValidator),
-          "password": FormFieldConfig(
-            validator: _inputValidator,
-            isSecured: true,
-          ),
         },
       );
     });

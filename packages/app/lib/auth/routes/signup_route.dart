@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +14,6 @@ class SignupRoute extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return TextFormBuilder(
         onFormSubmit: (formValue) {
-          print(jsonEncode(formValue));
           context.read<AuthBloc>().add(AuthLogin());
         },
         formFields: {
