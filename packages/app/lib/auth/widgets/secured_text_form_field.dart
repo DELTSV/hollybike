@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class PasswordFormField extends StatefulWidget {
+class SecuredTextFormField extends StatefulWidget {
   final TextEditingController? controller;
   final InputDecoration decoration;
   final String? Function(String?) validator;
 
-  const PasswordFormField({
+  const SecuredTextFormField({
     super.key,
     required this.controller,
     required this.decoration,
@@ -13,10 +13,10 @@ class PasswordFormField extends StatefulWidget {
   });
 
   @override
-  State<PasswordFormField> createState() => _PasswordFormFieldState();
+  State<SecuredTextFormField> createState() => _SecuredTextFormFieldState();
 }
 
-class _PasswordFormFieldState extends State<PasswordFormField> {
+class _SecuredTextFormFieldState extends State<SecuredTextFormField> {
   bool _hide = true;
 
   @override
@@ -24,20 +24,20 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: TextFormField(
-            validator: widget.validator,
-            controller: widget.controller,
-            obscureText: _hide,
-            decoration: widget.decoration,
-          ),
-        ),
         IconButton(
           onPressed: () => setState(() {
             _hide = !_hide;
           }),
           icon: Icon(
             _hide ? Icons.visibility_off : Icons.visibility,
+          ),
+        ),
+        Expanded(
+          child: TextFormField(
+            validator: widget.validator,
+            controller: widget.controller,
+            obscureText: _hide,
+            decoration: widget.decoration,
           ),
         ),
       ],

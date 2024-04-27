@@ -4,7 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/widgets/auth_form.dart';
+import 'package:hollybike/auth/types/form_field_config.dart';
+import 'package:hollybike/auth/widgets/text_form_builder.dart';
 
 @RoutePage()
 class LoginRoute extends StatelessWidget {
@@ -13,19 +14,16 @@ class LoginRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      return AuthForm(
+      return TextFormBuilder(
         onFormSubmit: (formValue) {
           print(jsonEncode(formValue));
           context.read<AuthBloc>().add(AuthLogin());
         },
         formFields: {
-          "email": (
+          "email": FormFieldConfig(validator: _inputValidator),
+          "password": FormFieldConfig(
             validator: _inputValidator,
-            isHideable: false,
-          ),
-          "password": (
-            validator: _inputValidator,
-            isHideable: true,
+            isSecured: true,
           ),
         },
       );

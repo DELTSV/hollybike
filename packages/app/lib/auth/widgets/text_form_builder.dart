@@ -1,29 +1,24 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:hollybike/auth/widgets/password_form_field.dart';
+import 'package:hollybike/auth/widgets/control_text_form_field.dart';
+import 'package:hollybike/auth/widgets/secured_text_form_field.dart';
 
-typedef FormFields = Map<String, FormFieldConfig>;
-typedef FormFieldConfig = ({
-  String? Function(String?) validator,
-  bool isHideable
-});
+import '../types/form_field_config.dart';
 
-class AuthForm extends StatefulWidget {
+class TextFormBuilder extends StatefulWidget {
   final void Function(Map<String, String>) onFormSubmit;
   final FormFields formFields;
 
-  const AuthForm({
+  const TextFormBuilder({
     super.key,
     required this.onFormSubmit,
     required this.formFields,
   });
 
   @override
-  State<AuthForm> createState() => _AuthFormState();
+  State<TextFormBuilder> createState() => _TextFormBuilderState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _TextFormBuilderState extends State<TextFormBuilder> {
   final _formKey = GlobalKey<FormState>();
 
   late Map<String, TextEditingController> _formControllers;
@@ -61,7 +56,7 @@ class _AuthFormState extends State<AuthForm> {
     final decoration = InputDecoration(labelText: key);
     final controller = _formControllers[key];
 
-    if (config.isHideable == false) {
+    if (config.isSecured == false) {
       return TextFormField(
         validator: config.validator,
         controller: controller,
@@ -69,11 +64,22 @@ class _AuthFormState extends State<AuthForm> {
       );
     }
 
-    return PasswordFormField(
-      controller: controller,
-      decoration: decoration,
-      validator: config.validator,
-    );
+    var fields = <Widget>[
+      SecuredTextFormField(
+        controller: controller,
+        decoration: decoration,
+        validator: config.validator,
+      )
+    ];
+
+    if (config.hasControlField) {
+      fields.add(ControlTextFormField(
+        controlledFieldText: key,
+        controller: controller,
+      ));
+    }
+
+    return Column(children: fields);
   }
 
   void _handleFormSubmit() {
