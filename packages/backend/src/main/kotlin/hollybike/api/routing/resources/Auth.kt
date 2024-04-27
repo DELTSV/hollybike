@@ -2,11 +2,14 @@ package hollybike.api.routing.resources
 
 import io.ktor.resources.*
 
-@Resource("login")
-class Login(val api: API = API())
+@Resource("/auth")
+class Auth(val api: API = API()) {
+	@Resource("login")
+	class Login(val auth: Auth = Auth())
 
-@Resource("/logout")
-class Logout(val api: API = API())
+	@Resource("/signin")
+	class Signin(val auth: Auth = Auth())
 
-@Resource("/signin")
-class Signin(val api: API = API())
+	@Resource("/link")
+	class Link(val auth: Auth = Auth())
+}

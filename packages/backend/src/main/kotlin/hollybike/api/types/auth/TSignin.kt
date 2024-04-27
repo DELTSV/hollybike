@@ -7,5 +7,7 @@ data class TSignin(
 	val email: String,
 	val password: String,
 	val username: String,
-	val association: Int? = null
+	val verify: String,
+	val association: Int? = null,
+	val role: Int
 )

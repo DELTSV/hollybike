@@ -1,18 +1,18 @@
 package hollybike.api.routing.controller
 
+import aws.smithy.kotlin.runtime.text.encoding.encodeBase64String
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import de.nycode.bcrypt.hash
 import de.nycode.bcrypt.verify
 import hollybike.api.conf
 import hollybike.api.isOnPremise
+import hollybike.api.plugins.user
 import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
-import hollybike.api.routing.resources.Login
-import hollybike.api.routing.resources.Logout
-import hollybike.api.routing.resources.Signin
+import hollybike.api.routing.resources.Auth
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
@@ -20,30 +20,42 @@ import hollybike.api.types.auth.TSignin
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
 import hollybike.api.utils.isValidMail
+import hollybike.api.utils.post
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
-import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 import kotlinx.datetime.Clock
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
+import java.sql.BatchUpdateException
 import java.util.*
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 class AuthenticationController(
 	private val application: Application,
 	private val db: Database,
 ) {
+	private val key = SecretKeySpec(application.attributes.conf.security.secret.toByteArray(), "HmacSHA256")
+	private val mac = Mac.getInstance("HmacSHA256").apply {
+		init(key)
+	}
+
 	init {
 		application.routing {
 			login()
-			logout()
 			signin()
+			authenticate {
+				link()
+			}
 		}
 	}
 
@@ -56,7 +68,7 @@ class AuthenticationController(
 		.sign(Algorithm.HMAC256(application.attributes.conf.security.secret))
 
 	private fun Route.login() {
-		post<Login> {
+		post<Auth.Login> {
 			val login = call.receive<TLogin>()
 			newSuspendedTransaction {
 				User.find { Users.email eq login.email }.singleOrNull()?.let {
@@ -76,17 +88,17 @@ class AuthenticationController(
 		}
 	}
 
-	private fun Route.logout() {
-		delete<Logout> {
-			call.respond(HttpStatusCode.NoContent)
-		}
-	}
-
 	private fun Route.signin() {
-		post<Signin> {
+		post<Auth.Signin> {
 			val signin = call.receive<TSignin>()
 			if (!signin.email.isValidMail()) {
 				call.respond(HttpStatusCode.BadRequest, "Invalid email")
+				return@post
+			}
+			val role = try {
+				EUserScope[signin.role]
+			} catch (_: NoSuchElementException) {
+				call.respond(HttpStatusCode.BadRequest, "Role not found")
 				return@post
 			}
 			val association =
@@ -102,6 +114,21 @@ class AuthenticationController(
 							return@post
 						}
 				}
+			val host = call.request.headers["Host"] ?: run {
+				call.respond(HttpStatusCode.BadRequest, "No Host")
+				return@post
+			}
+			val checksum = signin.association?.let {
+				mac.doFinal("$host${role.value}$it".encodeToByteArray()).encodeBase64String()
+			} ?: run {
+				mac.doFinal("$host${role.value}".encodeToByteArray()).encodeBase64String()
+			}
+			if(checksum != signin.verify) {
+				println(checksum)
+				println(signin.verify)
+				call.respond(HttpStatusCode.Forbidden)
+				return@post
+			}
 			try {
 				val user = transaction(db) {
 					User.new {
@@ -109,22 +136,66 @@ class AuthenticationController(
 						username = signin.username
 						password = hash(signin.password, 4).encodeBase64()
 						status = EUserStatus.Enabled
-						scope = EUserScope.User
+						scope = role
 						this.association = association
 						lastLogin = Clock.System.now()
 					}
 				}
 				val token = generateJWT(signin.email, user.scope)
 				call.respond(TAuthInfo(token))
-			} catch (e: PSQLException) {
-				if (e.serverErrorMessage?.constraint == "users_email_uindex" && e.serverErrorMessage?.detail?.contains(
-						"already exists",
-					) == true
-				) {
-					call.respond(HttpStatusCode.Conflict, "Email already exist")
+			} catch (e: ExposedSQLException) {
+				if(e.cause is BatchUpdateException && (e.cause as BatchUpdateException).cause is PSQLException) {
+					val cause = (e.cause as BatchUpdateException).cause as PSQLException
+					if (
+						cause.serverErrorMessage?.constraint == "users_email_uindex" &&
+						cause.serverErrorMessage?.detail?.contains("already exists") == true
+					) {
+						call.respond(HttpStatusCode.Conflict, "Email already exist")
+						return@post
+					}
+				}
+				e.printStackTrace()
+				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
+			}
+		}
+	}
+
+	private fun Route.link() {
+		post<Auth.Link>(EUserScope.Admin) {
+			val host = call.request.headers["Host"] ?: run {
+				call.respond(HttpStatusCode.BadRequest, "No host in headers")
+				return@post
+			}
+			val role = try {
+				call.request.queryParameters["role"]?.let { EUserScope[it.toInt()] } ?: EUserScope.User
+			} catch (_: NumberFormatException) {
+				call.respond(HttpStatusCode.BadRequest, "Role must be a number")
+				return@post
+			}
+			if(role == EUserScope.Root) {
+				call.respond(HttpStatusCode.Forbidden, "Cannot create root link")
+				return@post
+			}
+			if(call.application.isOnPremise) {
+				val sign = mac.doFinal("$host${role.value}".toByteArray()).encodeBase64()
+				call.respond("https://hollybike.fr/invite?host=$host&role=${role.value}&verify=$sign")
+			} else {
+				if(call.user.scope == EUserScope.Root && call.request.queryParameters.contains("association")) {
+					val association = try {
+						call.request.queryParameters["association"]!!.toInt()
+					} catch (e: NumberFormatException) {
+						call.respond(HttpStatusCode.BadRequest, "Association must be number")
+						return@post
+					}
+					transaction(db) { Association.findById(association) } ?: run {
+						call.respond(HttpStatusCode.NotFound, "Associations not found")
+						return@post
+					}
+					val sign = mac.doFinal("$host${role.value}$association".toByteArray()).encodeBase64()
+					call.respond("https://hollybike.fr/invite?host=$host&role=${role.value}&association=${association}&verify=$sign")
 				} else {
-					e.printStackTrace()
-					call.respond(HttpStatusCode.InternalServerError, "Internal server error")
+					val sign = mac.doFinal("$host${role.value}${call.user.association.id}".toByteArray()).encodeBase64()
+					call.respond("https://hollybike.fr/invite?host=$host&role=${role.value}&association=${call.user.association.id}&verify=$sign")
 				}
 			}
 		}
