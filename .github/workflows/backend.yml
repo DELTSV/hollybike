@@ -81,7 +81,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew test -Pis_on_premise=true
 
       - name: Run native compile
         if: ${{ inputs.externall_call }}
