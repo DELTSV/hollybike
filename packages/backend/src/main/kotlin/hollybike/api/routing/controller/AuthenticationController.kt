@@ -4,16 +4,17 @@ import aws.smithy.kotlin.runtime.text.encoding.encodeBase64String
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import de.nycode.bcrypt.hash
-import de.nycode.bcrypt.verify
 import hollybike.api.conf
+import hollybike.api.exceptions.UserDisabled
+import hollybike.api.exceptions.UserNotFoundException
+import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.isOnPremise
 import hollybike.api.plugins.user
 import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
-import hollybike.api.repository.Users
 import hollybike.api.routing.resources.Auth
-import hollybike.api.types.association.EAssociationsStatus
+import hollybike.api.services.AuthService
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignin
@@ -32,7 +33,6 @@ import io.ktor.util.*
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
 import java.sql.BatchUpdateException
@@ -43,6 +43,7 @@ import javax.crypto.spec.SecretKeySpec
 class AuthenticationController(
 	private val application: Application,
 	private val db: Database,
+	private val authService: AuthService
 ) {
 	private val key = SecretKeySpec(application.attributes.conf.security.secret.toByteArray(), "HmacSHA256")
 	private val mac = Mac.getInstance("HmacSHA256").apply {
@@ -70,19 +71,13 @@ class AuthenticationController(
 	private fun Route.login() {
 		post<Auth.Login> {
 			val login = call.receive<TLogin>()
-			newSuspendedTransaction {
-				User.find { Users.email eq login.email }.singleOrNull()?.let {
-					if (verify(login.password, it.password.decodeBase64Bytes())) {
-						if (it.status == EUserStatus.Enabled && it.association.status == EAssociationsStatus.Enabled) {
-							call.respond(TAuthInfo(generateJWT(login.email, it.scope)))
-						} else {
-							call.respond(HttpStatusCode.Forbidden)
-						}
-					} else {
-						call.respond(HttpStatusCode.Unauthorized)
-					}
-				} ?: run {
-					call.respond(HttpStatusCode.NotFound, "User not found")
+			authService.login(login).onSuccess {
+				call.respond(TAuthInfo(it))
+			}.onFailure {
+				when(it) {
+					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "User not found")
+					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Wrong password")
+					is UserDisabled -> call.respond(HttpStatusCode.Forbidden)
 				}
 			}
 		}
@@ -176,28 +171,17 @@ class AuthenticationController(
 				call.respond(HttpStatusCode.Forbidden, "Cannot create root link")
 				return@post
 			}
-			if(call.application.isOnPremise) {
-				val sign = mac.doFinal("$host${role.value}".toByteArray()).encodeBase64()
-				call.respond("https://hollybike.fr/invite?host=$host&role=${role.value}&verify=$sign")
-			} else {
-				if(call.user.scope == EUserScope.Root && call.request.queryParameters.contains("association")) {
-					val association = try {
-						call.request.queryParameters["association"]!!.toInt()
-					} catch (e: NumberFormatException) {
-						call.respond(HttpStatusCode.BadRequest, "Association must be number")
-						return@post
-					}
-					transaction(db) { Association.findById(association) } ?: run {
-						call.respond(HttpStatusCode.NotFound, "Associations not found")
-						return@post
-					}
-					val sign = mac.doFinal("$host${role.value}$association".toByteArray()).encodeBase64()
-					call.respond("https://hollybike.fr/invite?host=$host&role=${role.value}&association=${association}&verify=$sign")
-				} else {
-					val sign = mac.doFinal("$host${role.value}${call.user.association.id}".toByteArray()).encodeBase64()
-					call.respond("https://hollybike.fr/invite?host=$host&role=${role.value}&association=${call.user.association.id}&verify=$sign")
-				}
+			val association = try {
+				call.request.queryParameters["association"]?.toInt()
+			} catch (e: NumberFormatException) {
+				call.respond(HttpStatusCode.BadRequest, "Association must be a number")
+				return@post
 			}
+			val link = authService.generateLink(call.user, host, role, association) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Association not found")
+				return@post
+			}
+			call.respond(link)
 		}
 	}
 }
