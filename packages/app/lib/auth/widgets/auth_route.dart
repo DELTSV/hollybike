@@ -13,21 +13,16 @@ class AuthRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        print(state.token);
         if (state.token != null) onAuthSuccess.call();
       },
-      builder: (context, state) => Scaffold(
+      builder: (context, state) => const Scaffold(
         body: Center(
-          child: Form(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => context.read<AuthBloc>().add(AuthLogin()),
-                  child: const Text("login"),
-                )
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Hollybike"),
+              AutoRouter(),
+            ],
           ),
         ),
       ),

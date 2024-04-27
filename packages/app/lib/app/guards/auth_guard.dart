@@ -15,7 +15,7 @@ class AuthGuard extends AutoRouteGuard {
     if (token != null) {
       resolver.next(true);
     } else {
-      resolver.redirect(AuthRoute(onAuthSuccess: () => resolver.next(true)));
+      router.push(AuthRoute(onAuthSuccess: () => resolver.next(true)));
     }
   }
 }
