@@ -15,13 +15,29 @@ class AuthRoute extends StatelessWidget {
       listener: (context, state) {
         if (state.token != null) onAuthSuccess.call();
       },
-      builder: (context, state) => const Scaffold(
+      builder: (context, state) => Scaffold(
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Wrap(
             children: [
-              Text("Hollybike"),
-              AutoRouter(),
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  border: Border.all(width: 2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Hollybike",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    const AutoRouter(),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
