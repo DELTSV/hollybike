@@ -23,6 +23,7 @@ class App extends StatelessWidget {
 
   ThemeData _getAppTheme() {
     return ThemeData(
+      fontFamily: 'Inter',
       colorScheme: const ColorScheme.dark(
         error: Color(0xfff38ba8),
         background: Color(0xff11111b),
