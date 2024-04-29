@@ -14,6 +14,7 @@ import hollybike.api.types.auth.TLogin
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
 import io.ktor.util.*
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -51,7 +52,6 @@ class AuthService (
 	}
 
 	fun generateLink(caller: User, host: String, role: EUserScope, association: Int? = null): String? {
-		val a = transaction(db) { Association.findById(association ?: 0) } ?: caller.association
 		val sign = getLinkSignature(host, role, association)
 		return if(isOnPremise) {
 			"https://hollybike.fr/invite?host=$host&role=${role.value}&verify=$sign"
@@ -64,7 +64,7 @@ class AuthService (
 	}
 
 	fun login(login: TLogin): Result<String> {
-		val user = transaction(db) { User.find { Users.email eq login.email }.singleOrNull() }
+		val user = transaction(db) { User.find { Users.email eq login.email }.singleOrNull()?.load(User::association) }
 			?: return Result.failure(UserNotFoundException())
 		if(!verify(login.password, user.password.decodeBase64Bytes())) {
 			return Result.failure(UserWrongPassword())

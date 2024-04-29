@@ -69,8 +69,8 @@ class InvitationService(
 			return Result.failure(NotAllowedException())
 		}
 		val invitations = transaction(db) {
-			Invitation.find { Invitations.association eq association.id.value }
-		}.toList()
+			Invitation.find { Invitations.association eq association.id.value }.toList()
+		}
 		return Result.success(invitations)
 	}
 }

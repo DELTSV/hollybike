@@ -5,6 +5,8 @@ import hollybike.api.plugins.configureSecurity
 import hollybike.api.repository.configureDatabase
 import hollybike.api.routing.controller.*
 import hollybike.api.services.UserService
+import hollybike.api.services.auth.AuthService
+import hollybike.api.services.auth.InvitationService
 import hollybike.api.utils.MailSender
 import hollybike.api.services.storage.StorageServiceFactory
 import io.ktor.server.application.*
@@ -32,13 +34,16 @@ fun Application.api() {
 	log.info("Using ${storageService.mode} storage mode")
 
 	val userService = UserService(db, storageService)
+	val authService = AuthService(db, conf.security, isOnPremise)
+	val invitationService = InvitationService(db)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
 	ApiController(this, mailSender)
-	AuthenticationController(this, db)
+	AuthenticationController(this, db, authService)
 	UserController(this, userService)
 	AssociationController(this, db, storageService)
+	InvitationController(this, authService, invitationService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)
