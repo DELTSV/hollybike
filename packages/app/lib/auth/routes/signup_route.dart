@@ -42,7 +42,10 @@ class SignupRoute extends StatelessWidget {
               description: "Vous avez déja un compte?",
               buttonText: "Connectez-vous ici",
               destination: LoginRoute(),
-            )),
+            ),
+          submit: "S'inscrire"
+        ),
+
       );
     });
   }

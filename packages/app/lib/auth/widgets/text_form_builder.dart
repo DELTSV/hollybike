@@ -1,7 +1,7 @@
+import 'dart:ui';
+
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/widgets/control_text_form_field.dart';
 import 'package:hollybike/auth/widgets/secured_text_form_field.dart';
@@ -66,8 +66,34 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   }
 
   List<Widget> _getFormFooter(FormTexts texts) {
+    final button = Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                  Theme.of(context).colorScheme.onPrimary),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            onPressed: _handleFormSubmit,
+            child: Text(
+              texts.submit ?? "Envoyer",
+              style: const TextStyle(
+                fontSize: 16,
+                fontVariations: [FontVariation.weight(800)],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
     if (texts.link == null) {
-      return <Widget>[];
+      return <Widget>[button];
     }
 
     final linkDescription = FormTexts.toWidgetArray(texts.link!.description);
@@ -87,12 +113,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
       Wrap(
         runSpacing: 8,
         children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: _handleFormSubmit,
-              child: const Text("submit"),
-            ),
-          ),
+          button,
           Wrap(
             direction: Axis.horizontal,
             spacing: 4,
@@ -152,7 +173,8 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     return fields;
   }
 
-  InputDecoration _getInputDecoration(String labelText, {IconButton? iconButton}) {
+  InputDecoration _getInputDecoration(String labelText,
+      {IconButton? iconButton}) {
     return InputDecoration(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

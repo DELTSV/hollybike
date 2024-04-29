@@ -14,8 +14,22 @@ class AppTitle extends StatelessWidget {
           title,
           style: TextStyle(
             fontVariations: const [
-              FontVariation.slant(-10),
-              FontVariation.weight(800),
+              FontVariation.slant(-20),
+              FontVariation.weight(900),
+            ],
+            fontSize: fontSize,
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 12
+              ..color = Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        Text(
+          title,
+          style: TextStyle(
+            fontVariations: const [
+              FontVariation.slant(-20),
+              FontVariation.weight(900),
             ],
             fontSize: fontSize,
             foreground: Paint()
@@ -28,8 +42,8 @@ class AppTitle extends StatelessWidget {
           title,
           style: TextStyle(
             fontVariations: const [
-              FontVariation.slant(-10),
-              FontVariation.weight(800),
+              FontVariation.slant(-20),
+              FontVariation.weight(900),
             ],
             fontSize: fontSize,
             color: Theme.of(context).colorScheme.primaryContainer,

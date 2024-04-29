@@ -19,11 +19,7 @@ class LoginRoute extends StatelessWidget {
           title: "Bienvenue!",
           description:
               "Entrez vos identifiants ci-dessous pour accéder à votre compte.",
-          link: (
-            description: "Vous n'avez pas encore de compte?",
-            buttonText: "Inscrivez-vous ici",
-            destination: SignupRoute()
-          ),
+          submit: "Se connecter"
         ),
         onFormSubmit: (formValue) {
           context.read<AuthBloc>().add(AuthLogin());

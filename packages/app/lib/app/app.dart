@@ -45,11 +45,11 @@ class App extends StatelessWidget {
       ),
       textTheme: const TextTheme(
         titleMedium: TextStyle(
-          fontWeight: FontWeight.w900,
+          fontVariations: [FontVariation.weight(800)],
           fontSize: 28,
         ),
         titleSmall: TextStyle(
-          fontWeight: FontWeight.w600,
+          fontVariations: [FontVariation.weight(700)],
           fontSize: 14,
         ),
       ),
