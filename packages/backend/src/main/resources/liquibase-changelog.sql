@@ -67,6 +67,9 @@ CREATE TABLE IF NOT EXISTS users_participate_events
             PRIMARY KEY,
     "user"           INTEGER                                  NOT NULL REFERENCES users (id_user),
     event            INTEGER                                  NOT NULL REFERENCES events (id_event),
-    role             INTEGER                                  NOT NULL DEFAULT 1
+    role             INTEGER                                  NOT NULL DEFAULT 1,
+    joined_date_time TIMESTAMP                                NOT NULL DEFAULT NOW() NOT NULL,
+    CONSTRAINT users_participate_events_unique_key
+        UNIQUE ("user", event)
 );
 

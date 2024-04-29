@@ -11,6 +11,7 @@ class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	var user by User referencedOn EventParticipations.user
 	var event by Event referencedOn EventParticipations.event
 	var role by EventParticipations.role.transform({ it.value }, { EEventRole[it] })
+	var joinedDateTime by EventParticipations.joinedDateTime
 
 	companion object : IntEntityClass<EventParticipation>(EventParticipations)
 }
