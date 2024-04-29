@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<AuthBloc>(
       create: (context) => AuthBloc(),
-      child: App(),
+      child: const App(),
     );
   }
 }

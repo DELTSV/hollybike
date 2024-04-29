@@ -4,7 +4,7 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/app/app_router.dart';
 
 class App extends StatelessWidget {
-  App({super.key});
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
