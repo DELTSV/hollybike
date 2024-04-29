@@ -1,6 +1,6 @@
 package hollybike.api.repository
 
-import hollybike.api.types.invation.EInvitationStatus
+import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
@@ -28,7 +28,7 @@ class Invitation(id: EntityID<Int>) : IntEntity(id) {
 	var expiration by Invitations.expiration
 	var creation by Invitations.creation
 	var uses by Invitations.uses
-	val maxUses by Invitations.maxUses
+	var maxUses by Invitations.maxUses
 
 	companion object: IntEntityClass<Invitation>(Invitations)
 }

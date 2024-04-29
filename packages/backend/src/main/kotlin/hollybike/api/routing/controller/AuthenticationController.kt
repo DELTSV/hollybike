@@ -14,7 +14,7 @@ import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
 import hollybike.api.routing.resources.Auth
-import hollybike.api.services.AuthService
+import hollybike.api.services.auth.AuthService
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignin

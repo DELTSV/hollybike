@@ -1,3 +1,7 @@
 package hollybike.api.exceptions
 
-class
+class InvitationDisabledException(message: String? = null): Exception(message)
+
+class InvitationNotFoundException(message: String? = null): Exception(message)
+
+class InvitationAlreadyExist(message: String? = null): Exception(message)

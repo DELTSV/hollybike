@@ -1,4 +1,4 @@
-package hollybike.api.types.invation
+package hollybike.api.types.invitation
 
 import kotlinx.serialization.Serializable
 
