@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/shared/widgets/app_banner.dart';
 
 @RoutePage()
 class AuthRoute extends StatelessWidget {
@@ -16,25 +17,26 @@ class AuthRoute extends StatelessWidget {
         if (state.token != null) onAuthSuccess.call();
       },
       builder: (context, state) => Scaffold(
-        body: Center(
+        body: Container(
+          padding: const EdgeInsets.all(12),
+          alignment: Alignment.center,
           child: Wrap(
             children: [
               Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
-                  border: Border.all(width: 2),
-                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(
+                    width: 2,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                child: Column(
+                clipBehavior: Clip.hardEdge,
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Hollybike",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
-                    const AutoRouter(),
+                    AppBanner(),
+                    AutoRouter(),
                   ],
                 ),
               ),

@@ -23,6 +23,7 @@ class App extends StatelessWidget {
 
   ThemeData _getAppTheme() {
     return ThemeData(
+      useMaterial3: true,
       fontFamily: 'Inter',
       colorScheme: const ColorScheme.dark(
         error: Color(0xfff38ba8),
@@ -35,13 +36,22 @@ class App extends StatelessWidget {
         onSurface: Color(0xffbac2de),
         onSurfaceVariant: Color(0xffcdd6f4),
         outline: Color(0xffcdd6f4),
-        inverseSurface: Colors.red,
-        inversePrimary: Colors.red,
+        secondary: Color(0xff94e2d5),
       ),
       textSelectionTheme: const TextSelectionThemeData(
         selectionColor: Color(0x6689b4fa),
         cursorColor: Color(0xffb4befe),
         selectionHandleColor: Color(0xffb4befe),
+      ),
+      textTheme: const TextTheme(
+        titleMedium: TextStyle(
+          fontWeight: FontWeight.w900,
+          fontSize: 28,
+        ),
+        titleSmall: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
       ),
     );
   }

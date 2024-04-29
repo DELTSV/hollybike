@@ -17,7 +17,10 @@ class ForgotPasswordRoute extends StatelessWidget {
           context.read<AuthBloc>().add(AuthLogin());
         },
         formFields: {
-          "email": FormFieldConfig(validator: _inputValidator),
+          "email": FormFieldConfig(
+            label: "adresse mail",
+            validator: _inputValidator,
+          ),
         },
       );
     });
@@ -25,7 +28,7 @@ class ForgotPasswordRoute extends StatelessWidget {
 
   String? _inputValidator(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
-      return 'Please enter some text';
+      return 'Ce champ ne peut pas être vide';
     }
     return null;
   }

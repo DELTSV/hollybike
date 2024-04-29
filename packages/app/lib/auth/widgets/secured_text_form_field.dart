@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class SecuredTextFormField extends StatefulWidget {
   final TextEditingController? controller;
-  final InputDecoration decoration;
   final String? Function(String?) validator;
+  final InputDecoration Function({required IconButton iconButton}) getDecoration;
 
   const SecuredTextFormField({
     super.key,
     required this.controller,
-    required this.decoration,
     required this.validator,
+    required this.getDecoration,
   });
 
   @override
@@ -21,10 +21,12 @@ class _SecuredTextFormFieldState extends State<SecuredTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        IconButton(
+    return TextFormField(
+      validator: widget.validator,
+      controller: widget.controller,
+      obscureText: _hide,
+      decoration: widget.getDecoration(
+        iconButton: IconButton(
           onPressed: () => setState(() {
             _hide = !_hide;
           }),
@@ -32,15 +34,7 @@ class _SecuredTextFormFieldState extends State<SecuredTextFormField> {
             _hide ? Icons.visibility_off : Icons.visibility,
           ),
         ),
-        Expanded(
-          child: TextFormField(
-            validator: widget.validator,
-            controller: widget.controller,
-            obscureText: _hide,
-            decoration: widget.decoration,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

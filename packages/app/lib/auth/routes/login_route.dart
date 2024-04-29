@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/auth/types/form_field_config.dart';
+import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/widgets/text_form_builder.dart';
 
 @RoutePage()
@@ -13,12 +15,26 @@ class LoginRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return TextFormBuilder(
+        texts: const FormTexts(
+          title: "Bienvenue!",
+          description:
+              "Entrez vos identifiants ci-dessous pour accéder à votre compte.",
+          link: (
+            description: "Vous n'avez pas encore de compte?",
+            buttonText: "Inscrivez-vous ici",
+            destination: SignupRoute()
+          ),
+        ),
         onFormSubmit: (formValue) {
           context.read<AuthBloc>().add(AuthLogin());
         },
         formFields: {
-          "email": FormFieldConfig(validator: _inputValidator),
+          "email": FormFieldConfig(
+            label: "adresse mail",
+            validator: _inputValidator,
+          ),
           "password": FormFieldConfig(
+            label: "mot de passe",
             validator: _inputValidator,
             isSecured: true,
           ),
@@ -29,7 +45,7 @@ class LoginRoute extends StatelessWidget {
 
   String? _inputValidator(String? inputValue) {
     if (inputValue == null || inputValue.isEmpty) {
-      return 'Please enter some text';
+      return 'Ce champ ne peut pas être vide';
     }
     return null;
   }

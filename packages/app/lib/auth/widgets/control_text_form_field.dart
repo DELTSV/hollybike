@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class ControlTextFormField extends StatefulWidget {
   final String controlledFieldText;
   final TextEditingController? controller;
+  final InputDecoration Function(String, {IconButton iconButton}) getDecoration;
 
   const ControlTextFormField({
     super.key,
     required this.controlledFieldText,
     required this.controller,
+    required this.getDecoration,
   });
 
   @override
@@ -19,10 +21,12 @@ class _ControlTextFormFieldState extends State<ControlTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        IconButton(
+    return TextFormField(
+      validator: _confirmFieldValidator,
+      obscureText: _hide,
+      decoration: widget.getDecoration(
+        "confirmer le ${widget.controlledFieldText}",
+        iconButton: IconButton(
           onPressed: () => setState(() {
             _hide = !_hide;
           }),
@@ -30,21 +34,13 @@ class _ControlTextFormFieldState extends State<ControlTextFormField> {
             _hide ? Icons.visibility_off : Icons.visibility,
           ),
         ),
-        Expanded(
-          child: TextFormField(
-            validator: _confirmFieldValidator,
-            obscureText: _hide,
-            decoration: InputDecoration(
-                labelText: "confirm ${widget.controlledFieldText}"),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
   String? _confirmFieldValidator(String? value) {
     if (value == null || value.isEmpty || value != widget.controller!.text) {
-      return "This input value should be equal to ${widget.controlledFieldText}";
+      return "Ce champ devrait avoir la même valeur que ${widget.controlledFieldText}";
     }
     return null;
   }
