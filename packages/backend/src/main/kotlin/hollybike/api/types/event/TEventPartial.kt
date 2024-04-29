@@ -7,14 +7,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TEvent(
+data class TEventPartial(
 	val id: Int,
 	val name: String,
 	val description: String?,
 	val image: String? = null,
 	val status: EEventStatus,
 	val owner: TUserPartial,
-	val participants: List<TUserPartial>,
 	@SerialName("start_date_time")
 	val startDateTime: Instant,
 	@SerialName("end_date_time")
@@ -31,7 +30,6 @@ data class TEvent(
 		image = entity.image,
 		status = entity.status,
 		owner = TUserPartial(entity.owner),
-		participants = entity.participants.map { TUserPartial(it.user) },
 		startDateTime = entity.startDateTime,
 		endDateTime = entity.endDateTime,
 		createDateTime = entity.createDateTime,

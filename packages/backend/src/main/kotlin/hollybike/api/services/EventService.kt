@@ -32,4 +32,10 @@ class EventService(
 		.and(Events.status eq EEventStatus.PENDING.value)
 		.or(Events.status neq EEventStatus.PENDING.value)
 		.and(Events.association eq caller.association.id)
+
+	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
+		Event.find {
+			Events.id eq id and eventUserCondition(caller)
+		}.with(Event::owner).with(Event::participants).firstOrNull()
+	}
 }
