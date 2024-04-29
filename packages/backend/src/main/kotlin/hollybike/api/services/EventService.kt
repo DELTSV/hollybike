@@ -4,6 +4,7 @@ import hollybike.api.repository.User
 import hollybike.api.repository.events.Event
 import hollybike.api.repository.events.Events
 import hollybike.api.types.event.EEventStatus
+import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -18,7 +19,7 @@ class EventService(
 	fun getEvents(caller: User, perPage: Int, page: Int): List<Event> = transaction(db) {
 		Event.find {
 			eventUserCondition(caller)
-		}.limit(perPage, offset = (page * perPage).toLong()).toList()
+		}.limit(perPage, offset = (page * perPage).toLong()).with(Event::owner).toList()
 	}
 
 	fun countEvents(caller: User): Int = transaction(db) {

@@ -2,6 +2,8 @@ package hollybike.api.repository.events
 
 import hollybike.api.repository.Association
 import hollybike.api.repository.User
+import hollybike.api.repository.events.participations.EventParticipation
+import hollybike.api.repository.events.participations.EventParticipations
 import hollybike.api.types.event.EEventStatus
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -12,6 +14,7 @@ class Event(id: EntityID<Int>) : IntEntity(id) {
 	var description by Events.description
 	var association by Association referencedOn Events.association
 	var image by Events.image
+	val participants by EventParticipation referrersOn EventParticipations.event
 	var status by Events.status.transform({ it.value }, { EEventStatus[it] })
 	var owner by User referencedOn Events.owner
 	var startDateTime by Events.startDateTime

@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object Events : IntIdTable("events", "id_event") {
 	val name = varchar("name", 1_000)
-	val description = varchar("description", 1_000)
+	val description = varchar("description", 1_000).nullable().default(null)
 	val association = reference("association", Associations)
 	val image = varchar("image", 2_048).nullable().default(null)
 	val status = integer("status")
