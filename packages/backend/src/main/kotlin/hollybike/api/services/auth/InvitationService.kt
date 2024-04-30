@@ -1,5 +1,6 @@
 package hollybike.api.services.auth
 
+import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.InvitationAlreadyExist
 import hollybike.api.exceptions.InvitationNotFoundException
 import hollybike.api.exceptions.NotAllowedException
@@ -10,8 +11,10 @@ import hollybike.api.repository.User
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
 import kotlinx.datetime.Instant
+import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -25,7 +28,7 @@ class InvitationService(
 		if(caller.scope == EUserScope.Root && caller.association.id != caller.association.id) {
 			return Result.failure(NotAllowedException())
 		}
-		var condition = (Invitations.role eq role.value) and (Invitations.status eq EInvitationStatus.Disabled.value) and (Invitations.association eq association.id.value)
+		var condition = (Invitations.role eq role.value) and (Invitations.status neq EInvitationStatus.Disabled.value) and (Invitations.association eq association.id.value)
 		maxUse?.let { condition = condition and (Invitations.maxUses eq it) }
 		expiration?.let { condition = condition and (Invitations.expiration eq it) }
 		transaction(db) { Invitation.find(condition).singleOrNull() }?.let {
@@ -35,18 +38,21 @@ class InvitationService(
 		}
 	}
 
-	fun createInvitation(caller: User, role: EUserScope, association: Association, maxUses: Int? = null, expiration: Instant? = null): Result<Invitation> {
-		if(caller.scope == EUserScope.User) {
+	fun createInvitation(caller: User, role: EUserScope, association: Int, maxUses: Int? = null, expiration: Instant? = null): Result<Invitation> {
+		if(caller.scope == EUserScope.User || caller.scope not role) {
 			return Result.failure(NotAllowedException())
 		}
-		if(getInvitation(caller, role, association, maxUses, expiration).isSuccess) {
+		val assoc = transaction(db) { Association.findById(association) } ?: run {
+			return Result.failure(AssociationNotFound())
+		}
+		if(getInvitation(caller, role, assoc, maxUses, expiration).isSuccess) {
 			return Result.failure(InvitationAlreadyExist())
 		}
 		val invitation = transaction(db) {
 			Invitation.new {
 				this.creator = caller
 				this.role = role
-				this.association = association
+				this.association = assoc
 				this.maxUses = maxUses
 				this.expiration = expiration
 				this.status = EInvitationStatus.Enabled
@@ -69,7 +75,7 @@ class InvitationService(
 			return Result.failure(NotAllowedException())
 		}
 		val invitations = transaction(db) {
-			Invitation.find { Invitations.association eq association.id.value }.toList()
+			Invitation.find { Invitations.association eq association.id.value }.with(Invitation::association).toList()
 		}
 		return Result.success(invitations)
 	}

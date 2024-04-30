@@ -14,9 +14,9 @@ data class TInvitation(
 	val creation: Instant,
 	val uses: Int,
 	val maxUses: Int?,
-	val link: String
+	val link: String? = null
 ) {
-	constructor(invitation: Invitation, link: String) : this(
+	constructor(invitation: Invitation, link: String? = null) : this(
 		invitation.id.value,
 		invitation.role,
 		invitation.status,

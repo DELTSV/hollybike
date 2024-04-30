@@ -39,28 +39,17 @@ class AuthService (
 		.withExpiresAt(Date(System.currentTimeMillis() + 60000 * 60 * 24))
 		.sign(Algorithm.HMAC256(conf.secret))
 
-	fun verifyLinkSignature(signature: String, host: String, role: EUserScope, association: Int? = null): Boolean =
-		getLinkSignature(host, role, association) == signature
+	fun verifyLinkSignature(signature: String, host: String, role: EUserScope, association: Int, invitation: Int): Boolean =
+		getLinkSignature(host, role, association, invitation) == signature
 
-	private fun getLinkSignature(host: String, role: EUserScope, association: Int? = null): String {
-		val value = association?.let { a ->
-			"$host${role.value}$a"
-		} ?: run {
-			"$host${role.value}"
-		}
+	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
+		val value = "$host${role.value}$association$invitation"
 		return mac.doFinal(value.toByteArray()).encodeBase64String()
 	}
 
-	fun generateLink(caller: User, host: String, role: EUserScope, association: Int? = null): String? {
-		val sign = getLinkSignature(host, role, association)
-		return if(isOnPremise) {
-			"https://hollybike.fr/invite?host=$host&role=${role.value}&verify=$sign"
-		} else if(caller.scope == EUserScope.Root && association != null){
-			transaction(db) { Association.findById(association) } ?: return null
-			return "https://hollybike.fr/invite?host=$host&role=${role.value}&association=${association}&verify=$sign"
-		} else {
-			return "https://hollybike.fr/invite?host=$host&role=${role.value}&association=${caller.association.id}&verify=$sign"
-		}
+	fun generateLink(caller: User, host: String, invitation: Invitation): String {
+		val sign = getLinkSignature(host, invitation.role, invitation.association.id.value, invitation.id.value)
+		return "https://hollybike.fr/invite?host=$host&role=${invitation.role.value}&association=${caller.association.id}&invitation=${invitation.id.value}&verify=$sign"
 	}
 
 	fun login(login: TLogin): Result<String> {

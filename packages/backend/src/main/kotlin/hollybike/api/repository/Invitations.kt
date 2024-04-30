@@ -12,8 +12,8 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 object Invitations: IntIdTable("invitations", "id_invitation") {
 	val role = integer("role")
 	val status = integer("status").default(1)
-	val association = integer("association")
-	val creator = integer("creator")
+	val association = reference("association", Associations)
+	val creator = reference("creator", Users)
 	val expiration = timestamp("expiration").nullable()
 	val creation = timestamp("creation").default(Clock.System.now())
 	val uses = integer("uses").default(0)

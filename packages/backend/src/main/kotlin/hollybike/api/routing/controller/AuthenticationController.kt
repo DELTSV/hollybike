@@ -54,9 +54,6 @@ class AuthenticationController(
 		application.routing {
 			login()
 			signin()
-			authenticate {
-				link()
-			}
 		}
 	}
 
@@ -152,36 +149,6 @@ class AuthenticationController(
 				e.printStackTrace()
 				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
 			}
-		}
-	}
-
-	private fun Route.link() {
-		post<Auth.Link>(EUserScope.Admin) {
-			val host = call.request.headers["Host"] ?: run {
-				call.respond(HttpStatusCode.BadRequest, "No host in headers")
-				return@post
-			}
-			val role = try {
-				call.request.queryParameters["role"]?.let { EUserScope[it.toInt()] } ?: EUserScope.User
-			} catch (_: NumberFormatException) {
-				call.respond(HttpStatusCode.BadRequest, "Role must be a number")
-				return@post
-			}
-			if(role == EUserScope.Root) {
-				call.respond(HttpStatusCode.Forbidden, "Cannot create root link")
-				return@post
-			}
-			val association = try {
-				call.request.queryParameters["association"]?.toInt()
-			} catch (e: NumberFormatException) {
-				call.respond(HttpStatusCode.BadRequest, "Association must be a number")
-				return@post
-			}
-			val link = authService.generateLink(call.user, host, role, association) ?: run {
-				call.respond(HttpStatusCode.NotFound, "Association not found")
-				return@post
-			}
-			call.respond(link)
 		}
 	}
 }
