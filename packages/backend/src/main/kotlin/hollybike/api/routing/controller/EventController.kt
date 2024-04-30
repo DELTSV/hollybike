@@ -8,6 +8,7 @@ import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.listParams
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -30,6 +31,7 @@ class EventController(
 				getEvent()
 				createEvent()
 				updateEvent()
+				uploadEventImage()
 				deleteEvent()
 				participateEvent()
 				leaveEvent()
@@ -39,6 +41,32 @@ class EventController(
 				scheduleEvent()
 				finishEvent()
 				pendEvent()
+			}
+		}
+	}
+
+	private suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
+		when (exception) {
+			is EventNotFoundException -> call.respond(HttpStatusCode.NotFound, "Event not found")
+			is EventActionDeniedException -> call.respond(
+				HttpStatusCode.Forbidden,
+				exception.message ?: "Action denied"
+			)
+
+			is InvalidDateException -> call.respond(HttpStatusCode.BadRequest, exception.message ?: "Invalid date")
+			is InvalidEventNameException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid event name"
+			)
+
+			is InvalidEventDescriptionException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid event description"
+			)
+
+			else -> {
+				exception.printStackTrace()
+				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
 			}
 		}
 	}
@@ -62,6 +90,15 @@ class EventController(
 					totalData = total
 				)
 			)
+		}
+	}
+
+	private fun Route.getEvent() {
+		get<Events.Id> { id ->
+			val event = eventService.getEvent(call.user, id.id)
+				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
+
+			call.respond(TEvent(event))
 		}
 	}
 
@@ -99,67 +136,6 @@ class EventController(
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
-		}
-	}
-
-	private fun Route.deleteEvent() {
-		delete<Events.Id> { id ->
-			eventService.deleteEvent(call.user, id.id).onSuccess {
-				call.respond(HttpStatusCode.OK)
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.getEvent() {
-		get<Events.Id> { id ->
-			val event = eventService.getEvent(call.user, id.id)
-				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
-
-			call.respond(TEvent(event))
-		}
-	}
-
-	private fun Route.participateEvent() {
-		post<Events.Id.Participations> { data ->
-			eventService.participateEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it))
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.leaveEvent() {
-		delete<Events.Id.Participations> { data ->
-			eventService.leaveEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.OK)
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.promoteParticipant() {
-		patch<Events.Id.Participations.User.Promote> { data ->
-			eventService.promoteParticipant(call.user, data.promote.user.participations.id, data.promote.userId)
-				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it))
-				}.onFailure {
-					handleEventExceptions(it, call)
-				}
-		}
-	}
-
-	private fun Route.demoteParticipant() {
-		patch<Events.Id.Participations.User.Demote> { data ->
-			eventService.demoteParticipant(call.user, data.demote.user.participations.id, data.demote.userId)
-				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it))
-				}.onFailure {
-					handleEventExceptions(it, call)
-				}
 		}
 	}
 
@@ -203,29 +179,84 @@ class EventController(
 		}
 	}
 
-	private suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
-		when (exception) {
-			is EventNotFoundException -> call.respond(HttpStatusCode.NotFound, "Event not found")
-			is EventActionDeniedException -> call.respond(
-				HttpStatusCode.Forbidden,
-				exception.message ?: "Action denied"
-			)
+	private fun Route.uploadEventImage() {
+		patch<Events.Id.UploadImage> { data ->
+			val multipart = call.receiveMultipart()
 
-			is InvalidDateException -> call.respond(HttpStatusCode.BadRequest, exception.message ?: "Invalid date")
-			is InvalidEventNameException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event name"
-			)
+			val image = multipart.readPart() as PartData.FileItem
 
-			is InvalidEventDescriptionException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event description"
-			)
-
-			else -> {
-				exception.printStackTrace()
-				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
+			val contentType = image.contentType ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				return@patch
 			}
+
+			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
+				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				return@patch
+			}
+
+			eventService.uploadEventImage(
+				call.user,
+				data.image.id,
+				image.streamProvider().readBytes(),
+				contentType.toString()
+			).onSuccess {
+				call.respond(TEvent(it))
+			}.onFailure {
+				handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.deleteEvent() {
+		delete<Events.Id> { id ->
+			eventService.deleteEvent(call.user, id.id).onSuccess {
+				call.respond(HttpStatusCode.OK)
+			}.onFailure {
+				handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.participateEvent() {
+		post<Events.Id.Participations> { data ->
+			eventService.participateEvent(call.user, data.participations.id).onSuccess {
+				call.respond(HttpStatusCode.Created, TEventParticipation(it))
+			}.onFailure {
+				handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.leaveEvent() {
+		delete<Events.Id.Participations> { data ->
+			eventService.leaveEvent(call.user, data.participations.id).onSuccess {
+				call.respond(HttpStatusCode.OK)
+			}.onFailure {
+				handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.promoteParticipant() {
+		patch<Events.Id.Participations.User.Promote> { data ->
+			eventService.promoteParticipant(call.user, data.promote.user.participations.id, data.promote.userId)
+				.onSuccess {
+					call.respond(HttpStatusCode.OK, TEventParticipation(it))
+				}.onFailure {
+					handleEventExceptions(it, call)
+				}
+		}
+	}
+
+	private fun Route.demoteParticipant() {
+		patch<Events.Id.Participations.User.Demote> { data ->
+			eventService.demoteParticipant(call.user, data.demote.user.participations.id, data.demote.userId)
+				.onSuccess {
+					call.respond(HttpStatusCode.OK, TEventParticipation(it))
+				}.onFailure {
+					handleEventExceptions(it, call)
+				}
 		}
 	}
 }

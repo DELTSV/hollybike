@@ -6,8 +6,10 @@ import hollybike.api.repository.events.Event
 import hollybike.api.repository.events.Events
 import hollybike.api.repository.events.participations.EventParticipation
 import hollybike.api.repository.events.participations.EventParticipations
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
@@ -20,6 +22,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class EventService(
 	private val db: Database,
+	private val storageService: StorageService,
 ) {
 	private fun checkEventTextFields(name: String, description: String?): Result<Unit> {
 		if (name.isBlank()) {
@@ -63,6 +66,23 @@ class EventService(
 			return Result.failure(InvalidDateException("Start date must be before end date"))
 		}
 		return Result.success(Unit)
+	}
+
+	private fun foundEventIfOrganizer(eventId: Int, user: User): Result<Event> {
+		val event = Event.find {
+			Events.id eq eventId and eventUserCondition(user)
+		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return Result.failure(
+			EventNotFoundException("Event not found")
+		)
+
+		val participation = event.participants.find { it.user.id == user.id }
+			?: return Result.failure(EventActionDeniedException("Not participating to this event"))
+
+		if (participation.role != EEventRole.ORGANIZER) {
+			return Result.failure(EventActionDeniedException("Only an organizer can update event"))
+		}
+
+		return Result.success(event)
 	}
 
 	private fun eventUserCondition(caller: User): Op<Boolean> = (Events.owner eq caller.id)
@@ -133,26 +153,17 @@ class EventService(
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
 
 		return transaction(db) {
-			val event = Event.find {
-				Events.id eq eventId and eventUserCondition(caller)
-			}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull()
-				?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+			foundEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }
+				.onSuccess { event ->
+					event.apply {
+						this.name = name
+						this.description = description
+						this.startDateTime = Instant.parse(startDate)
+						this.endDateTime = endDate?.let { Instant.parse(it) }
+					}
 
-			val participation = event.participants.find { it.user.id == caller.id }
-				?: return@transaction Result.failure(EventActionDeniedException("Not participating to this event"))
-
-			if (participation.role != EEventRole.ORGANIZER) {
-				return@transaction Result.failure(EventActionDeniedException("Only an organizer can update event"))
-			}
-
-			event.apply {
-				this.name = name
-				this.description = description
-				this.startDateTime = Instant.parse(startDate)
-				this.endDateTime = endDate?.let { Instant.parse(it) }
-			}
-
-			Result.success(event)
+					Result.success(event)
+				}
 		}
 	}
 
@@ -200,6 +211,21 @@ class EventService(
 
 		Result.success(Unit)
 	}
+
+	fun uploadEventImage(caller: User, eventId: Int, image: ByteArray, imageContentType: String): Result<Event> =
+		transaction(db) {
+			foundEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
+				val path = "e/$eventId/i"
+
+				runBlocking {
+					storageService.store(image, path, imageContentType)
+				}
+
+				it.image = path
+
+				Result.success(it)
+			}
+		}
 
 	fun deleteEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
 		val event = Event.find {

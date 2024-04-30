@@ -6,17 +6,8 @@ import io.ktor.resources.*
 class Events(val api: API = API()) {
 	@Resource("{id}")
 	class Id(val events: Events = Events(), val id: Int) {
-		@Resource("participations")
-		class Participations(val participations: Id) {
-			@Resource("{userId}")
-			class User(val user: Participations, val userId: Int) {
-				@Resource("promote")
-				class Promote(val promote: User)
-
-				@Resource("demote")
-				class Demote(val demote: User)
-			}
-		}
+		@Resource("image")
+		class UploadImage(val image: Id)
 
 		@Resource("cancel")
 		class Cancel(val cancel: Id)
@@ -29,5 +20,17 @@ class Events(val api: API = API()) {
 
 		@Resource("pend")
 		class Pend(val pend: Id)
+
+		@Resource("participations")
+		class Participations(val participations: Id) {
+			@Resource("{userId}")
+			class User(val user: Participations, val userId: Int) {
+				@Resource("promote")
+				class Promote(val promote: User)
+
+				@Resource("demote")
+				class Demote(val demote: User)
+			}
+		}
 	}
 }
