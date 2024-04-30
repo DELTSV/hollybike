@@ -9,7 +9,6 @@ import hollybike.api.exceptions.UserDisabled
 import hollybike.api.exceptions.UserNotFoundException
 import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.isOnPremise
-import hollybike.api.plugins.user
 import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
@@ -21,10 +20,8 @@ import hollybike.api.types.auth.TSignin
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
 import hollybike.api.utils.isValidMail
-import hollybike.api.utils.post
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
