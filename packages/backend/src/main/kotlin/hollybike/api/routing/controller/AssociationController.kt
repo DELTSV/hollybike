@@ -39,7 +39,7 @@ class AssociationController(
 				getMyAssociation()
 				updateMyAssociation()
 				updateMyAssociationPicture()
-				if(application.isCloud) {
+				if (application.isCloud) {
 					getAll()
 					getById()
 					getByUser()
@@ -86,6 +86,8 @@ class AssociationController(
 			val path = "a/${call.user.association.id}/p"
 			storageService.store(image.streamProvider().readBytes(), path, contentType.contentType)
 			transaction(db) { call.user.association.picture = path }
+
+			call.respond(HttpStatusCode.OK)
 		}
 	}
 
@@ -93,7 +95,8 @@ class AssociationController(
 		get<Associations<API>>(EUserScope.Root) {
 			val listParam = call.listParams
 			val associations = transaction(db) {
-				Association.all().limit(listParam.perPage, offset = (listParam.page * listParam.perPage).toLong()).toList()
+				Association.all().limit(listParam.perPage, offset = (listParam.page * listParam.perPage).toLong())
+					.toList()
 			}
 			val totAssociations = transaction(db) { Association.count() }
 			call.respond(
@@ -131,14 +134,17 @@ class AssociationController(
 	private fun Route.addAssociation() {
 		post<Associations<API>>(EUserScope.Root) {
 			val new = call.receive<TNewAssociation>()
-			val association = try{
+			val association = try {
 				transaction(db) {
 					Association.new {
 						this.name = new.name
 					}
 				}
-			}catch (e: PSQLException) {
-				if(e.serverErrorMessage?.constraint == "associations_name_uindex" && e.serverErrorMessage?.detail?.contains("already exists") == true) {
+			} catch (e: PSQLException) {
+				if (e.serverErrorMessage?.constraint == "associations_name_uindex" && e.serverErrorMessage?.detail?.contains(
+						"already exists"
+					) == true
+				) {
 					call.respond(HttpStatusCode.Conflict, "Associations already exist")
 				} else {
 					e.printStackTrace()
@@ -189,6 +195,8 @@ class AssociationController(
 			val path = "a/${association.id}/p"
 			storageService.store(image.streamProvider().readBytes(), path, contentType.contentType)
 			transaction(db) { association.picture = path }
+
+			call.respond(HttpStatusCode.OK)
 		}
 	}
 
@@ -201,7 +209,7 @@ class AssociationController(
 				association.delete()
 				return@transaction true
 			}
-			if(deleted) {
+			if (deleted) {
 				call.respond(HttpStatusCode.NoContent)
 			} else {
 				call.respond(HttpStatusCode.NotFound, "Association ${it.id} not found")
