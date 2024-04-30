@@ -11,7 +11,7 @@ data class TEventPartial(
 	val id: Int,
 	val name: String,
 	val description: String?,
-	val image: String? = null,
+	val image: String?,
 	val status: EEventStatus,
 	val owner: TUserPartial,
 	@SerialName("start_date_time")

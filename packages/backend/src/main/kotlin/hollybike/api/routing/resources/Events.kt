@@ -12,7 +12,22 @@ class Events(val api: API = API()) {
 			class User(val user: Participations, val userId: Int) {
 				@Resource("promote")
 				class Promote(val promote: User)
+
+				@Resource("demote")
+				class Demote(val demote: User)
 			}
 		}
+
+		@Resource("cancel")
+		class Cancel(val cancel: Id)
+
+		@Resource("schedule")
+		class Schedule(val schedule: Id)
+
+		@Resource("finish")
+		class Finish(val finish: Id)
+
+		@Resource("pend")
+		class Pend(val pend: Id)
 	}
 }
