@@ -51,7 +51,7 @@ class UserController(
 			userService.getUser(call.user, it.id)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "User not found")
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
 		}
 	}
@@ -61,7 +61,7 @@ class UserController(
 			userService.getUserByUsername(call.user, it.username)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "User not found")
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
 		}
 	}
@@ -71,7 +71,7 @@ class UserController(
 			userService.getUserByEmail(call.user, it.email)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "User not found")
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
 		}
 	}
@@ -83,9 +83,9 @@ class UserController(
 				call.respond(TUser(it))
 			}.onFailure {
 				when(it) {
-					is BadRequestException -> call.respond(HttpStatusCode.BadRequest, "Change password need new_password, new_password_again and old_password")
-					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Wrong old_password")
-					is UserDifferentNewPassword -> call.respond(HttpStatusCode.BadRequest, "new_password and _new_password_again are different")
+					is BadRequestException -> call.respond(HttpStatusCode.BadRequest, "Changer de mot de passe nécessite new_password, new_password_again et old_password")
+					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais old_password")
+					is UserDifferentNewPassword -> call.respond(HttpStatusCode.BadRequest, "new_password et _new_password_again sont différent")
 				}
 			}
 		}
@@ -98,12 +98,12 @@ class UserController(
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
 				return@post
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@post
 			}
 
@@ -120,17 +120,17 @@ class UserController(
 			val image = multipart.readPart() as PartData.FileItem
 
 			val user = userService.getUser(call.user, it.id.id) ?: run {
-				call.respond(HttpStatusCode.NotFound, "User ${it.id.id} not found")
+				call.respond(HttpStatusCode.NotFound, "Utilisateur ${it.id.id} inconnu")
 				return@post
 			}
 
 			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
 				return@post
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@post
 			}
 

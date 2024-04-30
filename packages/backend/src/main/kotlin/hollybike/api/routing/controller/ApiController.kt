@@ -28,14 +28,14 @@ class ApiController(
 
 	private fun Route.notFound() {
 		get<API.NotFound> {
-			call.respondText("Path ${it.path} not Found", status = HttpStatusCode.NotFound)
+			call.respondText("Chemin ${it.path.joinToString("/")} inconnu", status = HttpStatusCode.NotFound)
 		}
 	}
 
 	private fun Route.getSMTPStatus() {
 		get<API.SMTP> {
 			if(mailSender == null) {
-				call.respond(HttpStatusCode.ServiceUnavailable, "SMTP Service unavailable, configure smtp to have access to these functionality")
+				call.respond(HttpStatusCode.ServiceUnavailable, "Service SMTP indisponible, configurer un server SMTP pour accéder à cette fonctionnalité")
 			} else {
 				call.respond(HttpStatusCode.OK)
 			}

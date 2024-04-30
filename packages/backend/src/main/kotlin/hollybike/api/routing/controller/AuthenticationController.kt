@@ -53,8 +53,8 @@ class AuthenticationController(
 				call.respond(TAuthInfo(it))
 			}.onFailure {
 				when(it) {
-					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "User not found")
-					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Wrong password")
+					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais mot de passe")
 					is UserDisabled -> call.respond(HttpStatusCode.Forbidden)
 				}
 			}
@@ -65,18 +65,18 @@ class AuthenticationController(
 		post<Auth.Signin> {
 			val signin = call.receive<TSignin>()
 			val host = call.request.headers["Host"] ?: run {
-				call.respond(HttpStatusCode.BadRequest, "No host")
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host")
 				return@post
 			}
 			authService.signin(host, signin).onSuccess {
 				call.respond(TAuthInfo(it))
 			}.onFailure {
 				when(it) {
-					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalid")
+					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalide")
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "No such valid invitation")
-					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "No such association")
-					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, "User already exists")
+					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Aucune invitation valide")
+					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
+					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'utilisateur existe déjà")
 					else -> {
 						it.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)

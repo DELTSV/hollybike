@@ -75,12 +75,12 @@ class AssociationController(
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
 				return@put
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@put
 			}
 			val path = "a/${call.user.association.id}/p"
@@ -116,7 +116,7 @@ class AssociationController(
 			transaction(db) { Association.findById(it.id) }?.let {
 				call.respond(TAssociation(it))
 			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "Association ${it.id} not found")
+				call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
 			}
 		}
 	}
@@ -126,7 +126,7 @@ class AssociationController(
 			transaction(db) { User.findById(it.parent.id)?.load(User::association) }?.let {
 				call.respond(TAssociation(it.association))
 			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "User not found")
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
 		}
 	}
@@ -145,10 +145,10 @@ class AssociationController(
 						"already exists"
 					) == true
 				) {
-					call.respond(HttpStatusCode.Conflict, "Associations already exist")
+					call.respond(HttpStatusCode.Conflict, "L'associations existe déjà")
 				} else {
 					e.printStackTrace()
-					call.respond(HttpStatusCode.InternalServerError, "Internal server error")
+					call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
 				}
 				return@post
 			}
@@ -161,7 +161,7 @@ class AssociationController(
 			val update = call.receive<TUpdateAssociation>()
 			newSuspendedTransaction(db = db) {
 				val association = Association.findById(it.id) ?: run {
-					call.respond(HttpStatusCode.NotFound, "Association ${it.id} not found")
+					call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
 					return@newSuspendedTransaction
 				}
 				update.name?.let { association.name = it }
@@ -178,17 +178,17 @@ class AssociationController(
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
 				return@put
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@put
 			}
 
 			val association = transaction(db) { Association.findById(it.id.id) } ?: run {
-				call.respond(HttpStatusCode.NotFound, "Association ${it.id} not found")
+				call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
 				return@put
 			}
 
@@ -212,7 +212,7 @@ class AssociationController(
 			if (deleted) {
 				call.respond(HttpStatusCode.NoContent)
 			} else {
-				call.respond(HttpStatusCode.NotFound, "Association ${it.id} not found")
+				call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
 			}
 		}
 	}

@@ -67,8 +67,8 @@ class InvitationController(
 			}.onFailure {
 				when(it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association not found")
-					is InvitationAlreadyExist -> call.respond(HttpStatusCode.Conflict, "An invitation with these parameters already exist")
+					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
+					is InvitationAlreadyExist -> call.respond(HttpStatusCode.Conflict, "Une invitation avec ces paramètres existe déjà")
 					else -> {
 						it.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)
@@ -85,7 +85,7 @@ class InvitationController(
 			}.onFailure {  e ->
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association not found")
+					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
 					else -> {
 						e.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)
