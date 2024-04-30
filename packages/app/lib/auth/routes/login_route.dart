@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/form_field_config.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
+import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/widgets/text_form_builder.dart';
 
 @RoutePage()
@@ -15,13 +18,13 @@ class LoginRoute extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return TextFormBuilder(
         texts: const FormTexts(
-          title: "Bienvenue!",
-          description:
-              "Entrez vos identifiants ci-dessous pour accéder à votre compte.",
-          submit: "Se connecter"
-        ),
+            title: "Bienvenue!",
+            description:
+                "Entrez vos identifiants ci-dessous pour accéder à votre compte.",
+            submit: "Se connecter"),
         onFormSubmit: (formValue) {
-          context.read<AuthBloc>().add(AuthLogin());
+          final loginDto = LoginDto.fromMap(formValue);
+          context.read<AuthBloc>().add(AuthLogin(loginDto: loginDto));
         },
         formFields: {
           "email": FormFieldConfig(
