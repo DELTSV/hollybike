@@ -1,5 +1,6 @@
 package hollybike.api.types.auth
 
+import hollybike.api.types.user.EUserScope
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,6 +9,7 @@ data class TSignin(
 	val password: String,
 	val username: String,
 	val verify: String,
-	val association: Int? = null,
-	val role: Int
+	val association: Int,
+	val role: EUserScope,
+	val invitation: Int
 )

@@ -7,3 +7,5 @@ class UserWrongPassword(override val message: String? = null) : Exception(messag
 class UserDifferentNewPassword(override val message: String? = null) : Exception(message)
 
 class UserDisabled(override val message: String? = null) : Exception(message)
+
+class UserAlreadyExists(override val message: String? = null) : Exception(message)

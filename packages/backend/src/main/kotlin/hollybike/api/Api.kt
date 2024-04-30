@@ -34,8 +34,8 @@ fun Application.api() {
 	log.info("Using ${storageService.mode} storage mode")
 
 	val userService = UserService(db, storageService)
-	val authService = AuthService(db, conf.security, isOnPremise)
 	val invitationService = InvitationService(db)
+	val authService = AuthService(db, conf.security, invitationService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}

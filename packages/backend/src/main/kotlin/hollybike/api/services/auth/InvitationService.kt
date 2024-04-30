@@ -4,18 +4,17 @@ import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.InvitationAlreadyExist
 import hollybike.api.exceptions.InvitationNotFoundException
 import hollybike.api.exceptions.NotAllowedException
-import hollybike.api.repository.Association
-import hollybike.api.repository.Invitation
-import hollybike.api.repository.Invitations
-import hollybike.api.repository.User
+import hollybike.api.repository.*
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class InvitationService(
@@ -36,6 +35,15 @@ class InvitationService(
 		} ?: run {
 			return Result.failure(InvitationNotFoundException())
 		}
+	}
+
+	fun getValidInvitation(id: Int) = transaction(db) {
+		Invitation.find {
+			(Invitations.id eq id) and
+					(Invitations.status eq EInvitationStatus.Enabled.value) and
+					(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
+					(Invitations.expiration.isNull() or (Invitations.expiration less Clock.System.now()))
+		}.singleOrNull()
 	}
 
 	fun createInvitation(caller: User, role: EUserScope, association: Int, maxUses: Int? = null, expiration: Instant? = null): Result<Invitation> {

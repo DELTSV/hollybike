@@ -1,38 +1,22 @@
 package hollybike.api.routing.controller
 
-import aws.smithy.kotlin.runtime.text.encoding.encodeBase64String
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import de.nycode.bcrypt.hash
 import hollybike.api.conf
-import hollybike.api.exceptions.UserDisabled
-import hollybike.api.exceptions.UserNotFoundException
-import hollybike.api.exceptions.UserWrongPassword
-import hollybike.api.isOnPremise
-import hollybike.api.repository.Association
-import hollybike.api.repository.Associations
-import hollybike.api.repository.User
+import hollybike.api.exceptions.*
 import hollybike.api.routing.resources.Auth
 import hollybike.api.services.auth.AuthService
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignin
 import hollybike.api.types.user.EUserScope
-import hollybike.api.types.user.EUserStatus
-import hollybike.api.utils.isValidMail
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.*
-import kotlinx.datetime.Clock
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.postgresql.util.PSQLException
-import java.sql.BatchUpdateException
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -80,71 +64,24 @@ class AuthenticationController(
 	private fun Route.signin() {
 		post<Auth.Signin> {
 			val signin = call.receive<TSignin>()
-			if (!signin.email.isValidMail()) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid email")
-				return@post
-			}
-			val role = try {
-				EUserScope[signin.role]
-			} catch (_: NoSuchElementException) {
-				call.respond(HttpStatusCode.BadRequest, "Role not found")
-				return@post
-			}
-			val association =
-				if (application.isOnPremise) {
-					transaction(db) { Association[1] }
-				} else if (signin.association == null) {
-					call.respond(HttpStatusCode.BadRequest, "Associations needed")
-					return@post
-				} else {
-					transaction(db) { Association.find { Associations.id eq signin.association }.singleOrNull() }
-						?: run {
-							call.respond(HttpStatusCode.NotFound, "Association ${signin.association} not found")
-							return@post
-						}
-				}
 			val host = call.request.headers["Host"] ?: run {
-				call.respond(HttpStatusCode.BadRequest, "No Host")
+				call.respond(HttpStatusCode.BadRequest, "No host")
 				return@post
 			}
-			val checksum = signin.association?.let {
-				mac.doFinal("$host${role.value}$it".encodeToByteArray()).encodeBase64String()
-			} ?: run {
-				mac.doFinal("$host${role.value}".encodeToByteArray()).encodeBase64String()
-			}
-			if(checksum != signin.verify) {
-				println(checksum)
-				println(signin.verify)
-				call.respond(HttpStatusCode.Forbidden)
-				return@post
-			}
-			try {
-				val user = transaction(db) {
-					User.new {
-						email = signin.email
-						username = signin.username
-						password = hash(signin.password, 4).encodeBase64()
-						status = EUserStatus.Enabled
-						scope = role
-						this.association = association
-						lastLogin = Clock.System.now()
+			authService.signin(host, signin).onSuccess {
+				call.respond(TAuthInfo(it))
+			}.onFailure {
+				when(it) {
+					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalid")
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "No such valid invitation")
+					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "No such association")
+					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, "User already exists")
+					else -> {
+						it.printStackTrace()
+						call.respond(HttpStatusCode.InternalServerError)
 					}
 				}
-				val token = generateJWT(signin.email, user.scope)
-				call.respond(TAuthInfo(token))
-			} catch (e: ExposedSQLException) {
-				if(e.cause is BatchUpdateException && (e.cause as BatchUpdateException).cause is PSQLException) {
-					val cause = (e.cause as BatchUpdateException).cause as PSQLException
-					if (
-						cause.serverErrorMessage?.constraint == "users_email_uindex" &&
-						cause.serverErrorMessage?.detail?.contains("already exists") == true
-					) {
-						call.respond(HttpStatusCode.Conflict, "Email already exist")
-						return@post
-					}
-				}
-				e.printStackTrace()
-				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
 			}
 		}
 	}
