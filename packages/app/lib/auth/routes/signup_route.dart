@@ -16,7 +16,6 @@ class SignupRoute extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return TextFormBuilder(
         onFormSubmit: (formValue) {
-          context.read<AuthBloc>().add(AuthLogin());
         },
         formFields: {
           "username": FormFieldConfig(
