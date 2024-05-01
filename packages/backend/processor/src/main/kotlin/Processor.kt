@@ -12,10 +12,15 @@ class Processor(
 		val jsons = mutableListOf<String>()
 		val sample = this::class.java.getResource("/reflect-config-sample.json")?.readText()?: ""
 		val outStream = try {
+			if(symbols.toList().isEmpty()) {
+				return emptyList()
+			}
 			codeGenerator.createNewFileByPath(Dependencies(false), "META-INF/native-image/reflect-config", "json")
 		} catch (e: FileAlreadyExistsException) {
 			return listOf()
 		}
+		logger.warn(symbols.toList().toString())
+		logger.warn(symbols.toList().size.toString())
 		return symbols.filter { it is KSClassDeclaration }.toList().also {
 			it.forEach { s ->
 				if(s !is KSClassDeclaration) {
