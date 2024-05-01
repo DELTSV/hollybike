@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/packages/app/flutter.iml" filepath="$PROJECT_DIR$/packages/app/flutter.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/hollybike.iml" filepath="$PROJECT_DIR$/.idea/hollybike.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hollybike.api.test.iml" filepath="$PROJECT_DIR$/.idea/modules/hollybike.api.test.iml" />
     </modules>
   </component>
 </project>
