@@ -7,7 +7,7 @@ class Processor(
 	val logger: KSPLogger
 ) : SymbolProcessor {
 	override fun process(resolver: Resolver): List<KSAnnotated> {
-		val symbols = resolver.getSymbolsWithAnnotation("kotlinx.serialization.Serializable", true)
+		val symbols = resolver.getSymbolsWithAnnotation("kotlinx.serialization.Serializable", true).filter { it is KSClassDeclaration }
 		val jsons = mutableListOf<String>()
 		val sample = this::class.java.getResource("/reflect-config-sample.json")?.readText() ?: ""
 		val outStream = try {
@@ -17,9 +17,9 @@ class Processor(
 			codeGenerator.createNewFileByPath(Dependencies(false), "META-INF/native-image/reflect-config", "json")
 		} catch (e: FileAlreadyExistsException) {
 			logger.warn("Didn't create file")
-			return listOf()
+			return symbols.toList()
 		}
-		symbols.filter { it is KSClassDeclaration }.toList().forEach { s ->
+		symbols.toList().forEach { s ->
 			if (s !is KSClassDeclaration) {
 				return@forEach
 			}
@@ -40,7 +40,7 @@ class Processor(
 			logger.warn("No @Serializable")
 			outStream.write("[$sample]".toByteArray())
 		}
-		return emptyList()
+		return symbols.toList()
 	}
 }
 
