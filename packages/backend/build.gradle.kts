@@ -65,6 +65,12 @@ tasks.register("generateConstantsFile") {
 	}
 }
 
+project.afterEvaluate {
+	tasks.test {
+		setDependsOn(dependsOn - listOf(tasks.findByPath("kspKotlin")!!).toSet())
+	}
+}
+
 tasks.getByName("compileKotlin").dependsOn("generateConstantsFile")
 
 dependencies {
