@@ -19,9 +19,7 @@ class Processor(
 		} catch (e: FileAlreadyExistsException) {
 			return listOf()
 		}
-		logger.warn(symbols.toList().toString())
-		logger.warn(symbols.toList().size.toString())
-		return symbols.filter { it is KSClassDeclaration }.toList().also {
+		symbols.filter { it is KSClassDeclaration }.toList().also {
 			it.forEach { s ->
 				if(s !is KSClassDeclaration) {
 					return@forEach
@@ -43,6 +41,7 @@ class Processor(
 				outStream.write("[$sample]".toByteArray())
 			}
 		}
+		return emptyList()
 	}
 }
 
