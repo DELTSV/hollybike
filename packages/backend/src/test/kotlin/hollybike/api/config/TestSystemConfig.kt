@@ -1,4 +1,4 @@
-package hollybike.api
+package hollybike.api.config
 
 import com.trendyol.stove.testing.e2e.http.httpClient
 import com.trendyol.stove.testing.e2e.ktor
@@ -15,7 +15,7 @@ class TestSystemConfig : AbstractProjectConfig() {
 						"port=8080",
 					),
 					runner = {
-						run(isTestEnv = true)
+						hollybike.api.run(isTestEnv = true)
 					}
 				)
 			}.run()

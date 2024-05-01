@@ -1,4 +1,4 @@
-package hollybike.api
+package hollybike.api.utils
 
 import arrow.core.Option
 
