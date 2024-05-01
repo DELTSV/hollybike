@@ -115,6 +115,7 @@ dependencies {
 	testImplementation("com.trendyol:stove-testing-e2e:0.9.8")
 	testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.1")
 	testImplementation("com.trendyol:stove-testing-e2e-http:0.9.8")
+	testImplementation("com.trendyol:stove-testing-e2e-rdbms-postgres:0.9.8")
 }
 
 liquibase {
