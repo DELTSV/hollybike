@@ -14,10 +14,22 @@ fun main() {
 	run()
 }
 
-fun run(isTestEnv: Boolean = false): ApplicationEngine {
+class TestDatabaseConfig(
+	val url: String,
+	val username: String,
+	val password: String
+)
+
+fun run(isTestEnv: Boolean = false, testDatabaseConfig: TestDatabaseConfig?  = null): ApplicationEngine {
 	if (isTestEnv) {
 		System.setProperty("aws.accessKeyId","minio-root-user")
 		System.setProperty("aws.secretAccessKey","minio-root-password")
+
+		if (testDatabaseConfig != null) {
+			System.setProperty("database.url", testDatabaseConfig.url)
+			System.setProperty("database.username", testDatabaseConfig.username)
+			System.setProperty("database.password", testDatabaseConfig.password)
+		}
 	}
 
 	return embeddedServer(

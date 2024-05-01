@@ -17,10 +17,11 @@ import java.sql.Connection
 fun Application.configureDatabase(): Database {
 	log.info("Configuring Database")
 	val conf = attributes.conf
+
 	return Database.connect(
-		conf.db.url,
-		user = conf.db.username,
-		password = conf.db.password,
+		System.getProperty("database.url") ?: conf.db.url,
+		user = System.getProperty("database.username") ?: conf.db.username,
+		password = System.getProperty("database.password") ?: conf.db.password,
 		driver = "org.postgresql.Driver",
 		databaseConfig = DatabaseConfig {
 			keepLoadedReferencesOutOfTransaction = true
