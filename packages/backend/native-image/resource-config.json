@@ -59,6 +59,8 @@
   }, {
     "pattern":"\\QMETA-INF/services/liquibase.parser.ChangeLogParser\\E"
   }, {
+    "pattern":"\\QMETA-INF/services/liquibase.parser.LiquibaseSqlParser\\E"
+  }, {
     "pattern":"\\QMETA-INF/services/liquibase.servicelocator.ServiceLocator\\E"
   }, {
     "pattern":"\\QMETA-INF/services/liquibase.snapshot.SnapshotGenerator\\E"

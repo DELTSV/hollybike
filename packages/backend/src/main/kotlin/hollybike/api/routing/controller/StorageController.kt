@@ -33,7 +33,7 @@ class StorageController(
 			val path = it.path.joinToString("/")
 
 			val data = storageService.retrieve(path) ?: return@get call.respondText(
-				"Not found",
+				"Inconnu",
 				status = HttpStatusCode.NotFound
 			)
 

@@ -11,4 +11,8 @@ enum class EUserScope(val value: Int) {
 	companion object {
 		operator fun get(value: Int) = entries.first { it.value == value }
 	}
+
+	infix fun atLeast(other: EUserScope): Boolean = this.value >= other.value
+
+	infix fun not(other: EUserScope): Boolean = this.value < other.value
 }
