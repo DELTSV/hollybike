@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class LoginDto {
   final String email;
   final String password;
@@ -23,5 +25,12 @@ class LoginDto {
       email: map[emailKey] as String,
       password: map[passwordKey] as String,
     );
+  }
+
+  Object asJson() {
+    return json.encode({
+      "email": email,
+      "password": password,
+    });
   }
 }
