@@ -14,7 +14,7 @@ class Processor(
 			if (symbols.toList().isEmpty()) {
 				logger.warn("Empty @Serializable")
 			}
-			codeGenerator.createNewFileByPath(Dependencies(false), "META-INF/native-image/reflect-config", "json")
+			codeGenerator.createNewFileByPath(Dependencies(false, *resolver.getAllFiles().toList().toTypedArray()), "META-INF/native-image/reflect-config", "json")
 		} catch (e: FileAlreadyExistsException) {
 			logger.warn("Didn't create file")
 			return symbols.toList()
