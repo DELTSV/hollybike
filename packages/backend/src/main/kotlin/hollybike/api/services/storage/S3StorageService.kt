@@ -10,16 +10,16 @@ import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.runBlocking
 
 class S3StorageService(
-	private val isDev: Boolean,
+	private val s3Url: String?,
 	private val bucketName: String?,
 	private val bucketRegion: String?,
 ) : StorageService {
 	override val mode = StorageMode.S3
 
 	private val client = S3Client {
-		endpointUrl = if (isDev) Url.parse("http://localhost:9000") else null
+		endpointUrl = if (s3Url != null) Url.parse(s3Url) else null
 		region = bucketRegion
-		forcePathStyle = isDev
+		forcePathStyle = s3Url != null
 	}
 
 	init {

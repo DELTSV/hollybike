@@ -11,22 +11,32 @@ import kotlinx.serialization.json.Json
 import generated.Constants
 
 fun main() {
-	embeddedServer(
+	run()
+}
+
+fun run(isTestEnv: Boolean = false): ApplicationEngine {
+	if (isTestEnv) {
+		System.setProperty("aws.accessKeyId","minio-root-user")
+		System.setProperty("aws.secretAccessKey","minio-root-password")
+	}
+
+	return embeddedServer(
 		CIO,
 		port = 8080,
 		host = "0.0.0.0",
 		watchPaths = listOf("classes", "resources"),
 		module = Application::module
-	).start(wait = true)
+	).start(wait = !isTestEnv)
 }
 
 fun Application.module() {
 	loadConfig()
+	checkTestEnvironement()
 	checkOnPremise()
 	configureSerialization()
 	api()
 
-	log.info("Running hollybike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
+	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
 
 	if (isOnPremise) {
 		frontend()
@@ -40,6 +50,25 @@ fun Application.configureSerialization() {
 			ignoreUnknownKeys = true
 		})
 	}
+}
+
+fun Application.checkTestEnvironement() {
+	log.info("Checking environment...")
+
+	attributes.put(isTestEnvAttributeKey, System.getProperty("is_test_env")?.let {
+		if (it == "true") {
+			log.info("Running in test environment")
+			true
+		} else {
+			if (developmentMode) {
+				log.info("Running in development environment")
+			} else {
+				log.info("Running in production environment")
+			}
+
+			false
+		}
+	} ?: false)
 }
 
 fun Application.loadConfig() {
@@ -58,7 +87,9 @@ fun Application.checkOnPremise() {
 	}
 }
 
+val Application.isTestEnv: Boolean get() = attributes[isTestEnvAttributeKey]
 val Application.isOnPremise: Boolean get() = attributes[onPremiseAttributeKey]
 val Application.isCloud: Boolean get() = !isOnPremise
 
 private val onPremiseAttributeKey = AttributeKey<Boolean>("onPremise")
+private val isTestEnvAttributeKey = AttributeKey<Boolean>("isTestEnv")

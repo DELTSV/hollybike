@@ -45,6 +45,7 @@ data class ConfSMTP(
 data class ConfStorage(
 	var s3BucketName: String? = null,
 	val s3Region: String? = null,
+	val s3Url: String? = null,
 	val localPath: String? = null,
 	val ftpServer: String? = null,
 	val ftpUsername: String? = null,
@@ -83,6 +84,7 @@ private fun parseEnvConf() = Conf(
 	ConfStorage(
 		System.getenv("STORAGE_S3_BUCKET_NAME"),
 		System.getenv("STORAGE_S3_REGION"),
+		System.getenv("STORAGE_S3_URL"),
 		System.getenv("STORAGE_LOCAL_PATH"),
 		System.getenv("STORAGE_FTP_SERVER"),
 		System.getenv("STORAGE_FTP_USERNAME"),

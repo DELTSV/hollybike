@@ -182,7 +182,7 @@ class EventService(
 		}
 
 		if (status == event.status) {
-			return@transaction Result.failure(EventActionDeniedException("Event already ${status.name.toLowerCase()}"))
+			return@transaction Result.failure(EventActionDeniedException("Event already ${status.name.lowercase()}"))
 		}
 
 		when (status) {

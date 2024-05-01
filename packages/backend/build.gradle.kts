@@ -12,6 +12,7 @@ plugins {
 	id("org.graalvm.buildtools.native") version "0.9.19"
 	id("com.google.devtools.ksp") version "1.9.23-1.0.20"
 	id("org.liquibase.gradle") version "2.1.1"
+	id("com.adarshr.test-logger") version "4.0.0"
 }
 
 group = "hollybike.api"
@@ -109,6 +110,11 @@ dependencies {
 	testImplementation("io.ktor:ktor-server-tests-jvm")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 	testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
+	testImplementation("com.h2database:h2:2.2.224")
+	testImplementation("com.trendyol:stove-ktor-testing-e2e:0.9.8")
+	testImplementation("com.trendyol:stove-testing-e2e:0.9.8")
+	testImplementation("io.kotest:kotest-runner-junit5-jvm:5.8.1")
+	testImplementation("com.trendyol:stove-testing-e2e-http:0.9.8")
 }
 
 liquibase {
@@ -191,6 +197,23 @@ graalvmNative {
 		enabled.set(true)
 	}
 }
+
+tasks {
+	test {
+		useJUnitPlatform()
+//		testlogger {
+//			setTheme("mocha")
+//			showStandardStreams = true
+//			showExceptions = true
+//			showCauses = true
+//		}
+		reports {
+			junitXml.required.set(true)
+		}
+		jvmArgs("--add-opens", "java.base/java.util=ALL-UNNAMED")
+	}
+}
+
 
 tasks.register("printVersion") {
 	doLast {

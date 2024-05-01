@@ -22,7 +22,7 @@ class ApiController(
 
 	private fun Route.index() {
 		get<API> {
-			call.respondText("Bienvenue sur l'API hollybike")
+			call.respondText("Bienvenue sur l'API hollyBike")
 		}
 	}
 

@@ -20,7 +20,7 @@ private val userAttributeKey = AttributeKey<User>("user")
 val ApplicationCall.user: User get() = attributes[userAttributeKey]
 
 fun Application.configureSecurity(db: Database) {
-	println("Configuring security")
+	log.info("Configuring Security")
 	val jwtAudience = attributes.conf.security.audience
 	val jwtDomain = attributes.conf.security.domain
 	val jwtRealm = attributes.conf.security.realm

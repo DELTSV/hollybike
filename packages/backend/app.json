@@ -11,8 +11,8 @@
 		"secret": "SECRET"
 	},
 	"storage": {
-		"localPath": "./storage",
 		"s3BucketName": "hollybike",
-		"s3Region": "eu-west-3"
+		"s3Region": "eu-west-3",
+		"s3Url": "http://localhost:9000"
 	}
 }
