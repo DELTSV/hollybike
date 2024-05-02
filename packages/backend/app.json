@@ -1,6 +1,6 @@
 {
 	"db": {
-		"url": "jdbc:h2:mem:;DATABASE_TO_UPPER=false;MODE=PostgreSQL",
+		"url": "jdbc:postgresql://localhost:5432/hollybike",
 		"username": "user",
 		"password": "password"
 	},

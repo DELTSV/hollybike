@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@hollybike-db.c9ckcm2ksc5t.eu-west-3.rds.amazonaws.com" uuid="b4de8219-c12b-48ef-99b0-01f45608cea9">
+    <data-source source="LOCAL" name="hollybike_db@hollybike-db.c9ckcm2ksc5t.eu-west-3.rds.amazonaws.com" uuid="b4de8219-c12b-48ef-99b0-01f45608cea9">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

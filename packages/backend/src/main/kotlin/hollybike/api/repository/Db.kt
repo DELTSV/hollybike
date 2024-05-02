@@ -19,9 +19,9 @@ fun Application.configureDatabase(): Database {
 	val conf = attributes.conf
 
 	return Database.connect(
-		System.getProperty("database.url") ?: conf.db.url,
-		user = System.getProperty("database.username") ?: conf.db.username,
-		password = System.getProperty("database.password") ?: conf.db.password,
+		url = conf.db.url,
+		user = conf.db.username,
+		password = conf.db.password,
 		driver = "org.postgresql.Driver",
 		databaseConfig = DatabaseConfig {
 			keepLoadedReferencesOutOfTransaction = true

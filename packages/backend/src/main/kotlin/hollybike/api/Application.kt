@@ -14,27 +14,10 @@ fun main() {
 	run()
 }
 
-class TestDatabaseConfig(
-	val url: String,
-	val username: String,
-	val password: String
-)
-
-fun run(isTestEnv: Boolean = false, testDatabaseConfig: TestDatabaseConfig?  = null): ApplicationEngine {
-	if (isTestEnv) {
-		System.setProperty("aws.accessKeyId","minio-root-user")
-		System.setProperty("aws.secretAccessKey","minio-root-password")
-
-		if (testDatabaseConfig != null) {
-			System.setProperty("database.url", testDatabaseConfig.url)
-			System.setProperty("database.username", testDatabaseConfig.username)
-			System.setProperty("database.password", testDatabaseConfig.password)
-		}
-	}
-
+fun run(isTestEnv: Boolean = false): ApplicationEngine {
 	return embeddedServer(
 		CIO,
-		port = 8080,
+		port = System.getProperty("port")?.toInt() ?: 8080,
 		host = "0.0.0.0",
 		watchPaths = listOf("classes", "resources"),
 		module = Application::module
@@ -42,8 +25,8 @@ fun run(isTestEnv: Boolean = false, testDatabaseConfig: TestDatabaseConfig?  = n
 }
 
 fun Application.module() {
+	checkTestEnvironment()
 	loadConfig()
-	checkTestEnvironement()
 	checkOnPremise()
 	configureSerialization()
 	api()
@@ -64,7 +47,7 @@ fun Application.configureSerialization() {
 	}
 }
 
-fun Application.checkTestEnvironement() {
+fun Application.checkTestEnvironment() {
 	log.info("Checking environment...")
 
 	attributes.put(isTestEnvAttributeKey, System.getProperty("is_test_env")?.let {
@@ -84,19 +67,11 @@ fun Application.checkTestEnvironement() {
 }
 
 fun Application.loadConfig() {
-	this.attributes.put(confKey, parseConf())
+	this.attributes.put(confKey, parseConf(isTestEnv))
 }
 
 fun Application.checkOnPremise() {
 	attributes.put(onPremiseAttributeKey, Constants.IS_ON_PREMISE)
-
-	if (!isOnPremise) {
-		val conf = attributes.conf
-
-		if (conf.storage.s3BucketName == null) {
-			throw IllegalStateException("Missing storage.s3BucketName in configuration for production mode")
-		}
-	}
 }
 
 val Application.isTestEnv: Boolean get() = attributes[isTestEnvAttributeKey]
