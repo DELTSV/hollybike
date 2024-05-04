@@ -40,10 +40,10 @@ fun Application.api() {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
 	ApiController(this, mailSender)
-	AuthenticationController(this, db, authService)
+	AuthenticationController(this, authService)
 	UserController(this, userService)
 	AssociationController(this, db, storageService)
-	InvitationController(this, authService, invitationService)
+	InvitationController(this, authService, invitationService, mailSender)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

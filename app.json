@@ -14,5 +14,12 @@
 		"localPath": "./storage",
 		"s3BucketName": "hollybike",
 		"s3Region": "eu-west-3"
+	},
+	"smtp": {
+		"url": "live.smtp.mailtrap.io",
+		"port": "587",
+		"sender": "test@demomailtrap.com",
+		"username": "api",
+		"password": "174dd8fade45af58e2099756485eb812"
 	}
 }

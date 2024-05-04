@@ -43,7 +43,7 @@ class InvitationService(
 					(Invitations.status eq EInvitationStatus.Enabled.value) and
 					(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
 					(Invitations.expiration.isNull() or (Invitations.expiration less Clock.System.now()))
-		}.singleOrNull()
+		}.with(Invitation::association).singleOrNull()
 	}
 
 	fun createInvitation(caller: User, role: EUserScope, association: Int, maxUses: Int? = null, expiration: Instant? = null): Result<Invitation> {

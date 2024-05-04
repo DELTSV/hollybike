@@ -16,14 +16,12 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.sql.Database
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 class AuthenticationController(
 	private val application: Application,
-	private val db: Database,
 	private val authService: AuthService
 ) {
 	private val key = SecretKeySpec(application.attributes.conf.security.secret.toByteArray(), "HmacSHA256")

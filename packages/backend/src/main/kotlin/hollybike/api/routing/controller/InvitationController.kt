@@ -11,6 +11,7 @@ import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
 import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.MailSender
 import hollybike.api.utils.get
 import hollybike.api.utils.patch
 import hollybike.api.utils.post
@@ -18,13 +19,15 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 class InvitationController(
 	application: Application,
 	private val authService: AuthService,
-	private val invitationService: InvitationService
+	private val invitationService: InvitationService,
+	private val mailSender: MailSender?
 ) {
 	init {
 		application.routing {
@@ -32,6 +35,7 @@ class InvitationController(
 				listInvitations()
 				createInvitation()
 				disableInvitation()
+				sendLinkMail()
 			}
 		}
 	}
@@ -91,6 +95,33 @@ class InvitationController(
 						call.respond(HttpStatusCode.InternalServerError)
 					}
 				}
+			}
+		}
+	}
+
+	private fun Route.sendLinkMail() {
+		post<Invitation.Id.SendMail> {
+			if(mailSender == null) {
+				call.respond(HttpStatusCode.ServiceUnavailable, "Aucun serveur SMTP n'est configurer")
+				return@post
+			}
+			val to = call.request.queryParameters["to"] ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Aucun destinataire")
+				return@post
+			}
+			val host = call.request.headers["Host"] ?: run {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host")
+				return@post
+			}
+			val invitation = invitationService.getValidInvitation(it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Aucune invitation valide")
+				return@post
+			}
+			if(mailSender.sendLinkMail(to, call.user.username, host, authService.generateLink(call.user, host, invitation))) {
+				call.respond(HttpStatusCode.OK)
+			} else {
+				println("error")
+				call.respond(HttpStatusCode.InternalServerError)
 			}
 		}
 	}

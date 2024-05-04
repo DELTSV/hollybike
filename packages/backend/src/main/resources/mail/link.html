@@ -1,0 +1,49 @@
+<html class="bg-black" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .bg-black {
+            background-color: #2C2B28;
+        }
+        .title {
+            font-style: italic;
+            color: #2C2B28;
+            text-shadow: 2px 0 #FFF, -2px 0 #FFF, 0 2px #FFF, 0 -2px #FFF,
+            1px 1px #FFF, 1px -1px #FFF, -1px -1px #FFF, -1px 1px #FFF,
+            4px 0 #2C2B28, -4px 0 #2C2B28, 0 4px #2C2B28, 0 -4px #2C2B28,
+            2px 2px #2C2B28, 2px -2px #2C2B28, -2px -2px #2C2B28, -2px 2px #2C2B28;
+        }
+        * {
+            color: #EEE;
+            font-family: Inter, sans-serif;
+        }
+        .button {
+            background-color: #EEEEEE;
+            border: none;
+            color: #2C2B28;
+            border-radius: 5px;
+            padding: 0.5rem;
+            font-weight: bold;
+        }
+    </style>
+    <title>Invitation hollybike</title>
+</head>
+<header>
+    <h1 class="title">
+        HOLLYBIKE
+    </h1>
+</header>
+<body>
+<div>
+    Vous avez été invité à rejoindre hollybike.
+</div>
+<div>
+    Sur le domaine {{DOMAIN}}, par {{USERNAME}}
+</div>
+<a href="{{LINK}}">
+    <button class="button">
+        Rejoindre hollybike
+    </button>
+</a>
+</body>
+</html>
