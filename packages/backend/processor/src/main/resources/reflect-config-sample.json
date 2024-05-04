@@ -159,26 +159,6 @@
 		"methods":[{"name":"module","parameterTypes":["io.ktor.server.application.Application"] }]
 	},
 	{
-		"name":"hollybike.api.repository.Association",
-		"methods":[{"name":"<init>","parameterTypes":["org.jetbrains.exposed.dao.id.EntityID"] }]
-	},
-	{
-		"name":"hollybike.api.repository.Invitation",
-		"fields":[{"name":"association$delegate"}],
-		"methods":[{"name":"<init>","parameterTypes":["org.jetbrains.exposed.dao.id.EntityID"] }, {"name":"getAssociation","parameterTypes":[] }, {"name":"setAssociation","parameterTypes":["hollybike.api.repository.Association"] }]
-	},
-	{
-		"name":"hollybike.api.repository.Invitation$Companion"
-	},
-	{
-		"name":"hollybike.api.repository.User",
-		"fields":[{"name":"association$delegate"}],
-		"methods":[{"name":"<init>","parameterTypes":["org.jetbrains.exposed.dao.id.EntityID"] }, {"name":"getAssociation","parameterTypes":[] }, {"name":"setAssociation","parameterTypes":["hollybike.api.repository.Association"] }]
-	},
-	{
-		"name":"hollybike.api.repository.User$Companion"
-	},
-	{
 		"name":"io.ktor.network.selector.InterestSuspensionsMap",
 		"fields":[{"name":"acceptHandlerReference"}, {"name":"connectHandlerReference"}, {"name":"readHandlerReference"}, {"name":"writeHandlerReference"}]
 	},
