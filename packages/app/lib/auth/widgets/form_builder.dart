@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/notification/widgets/error_consumer.dart';
 import 'package:hollybike/shared/widgets/form_title.dart';
 
-import '../../notification/bloc/notification_bloc.dart';
 import '../types/form_field_config.dart';
 import '../types/form_texts.dart';
-import '../../notification/widgets/error_box.dart';
 import 'text_form_builder.dart';
 
 class FormBuilder extends StatefulWidget {
