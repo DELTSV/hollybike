@@ -9,6 +9,10 @@ final class AuthSessionsFound extends AuthEvent {
   AuthSessionsFound({required this.sessionsJson});
 }
 
+final class AuthStoreCurrentSession extends AuthEvent {
+  AuthStoreCurrentSession();
+}
+
 final class AuthLogin extends AuthEvent {
   final String host;
   final LoginDto loginDto;
