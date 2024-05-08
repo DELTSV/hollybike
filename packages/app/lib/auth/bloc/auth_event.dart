@@ -4,7 +4,8 @@ part of 'auth_bloc.dart';
 abstract class AuthEvent {}
 
 final class AuthLogin extends AuthEvent {
+  final String host;
   final LoginDto loginDto;
 
-  AuthLogin({required this.loginDto});
+  AuthLogin({required this.host, required this.loginDto});
 }

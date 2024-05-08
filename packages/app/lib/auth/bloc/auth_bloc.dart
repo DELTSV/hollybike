@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
-import 'package:http/http.dart';
+import 'package:hollybike/notification/types/notification_exception.dart';
 
 part 'auth_event.dart';
 
@@ -18,19 +18,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.notificationRepository,
   }) : super(const AuthInitial()) {
     on<AuthLogin>((event, emit) async {
-      final response = await authRepository.login(
-        "http://192.168.1.191:8080",
-        event.loginDto,
-      );
+      try {
+        final response = await authRepository.login(
+          event.host,
+          event.loginDto,
+        );
+        print("${response.statusCode} ${response.body}");
 
-      if (response.statusCode == 200) {
-        return;
+        if (response.statusCode == 200) {
+          return;
+        }
+        throw NotificationException(response.body);
+      } on NotificationException catch (exception) {
+        notificationRepository.push(
+          exception.message,
+          isError: true,
+          consumerId: "loginForm",
+        );
+      } catch (_) {
+        notificationRepository.push(
+          "Oups! Il semble y avoir une erreur. Veuillez vérifier l'adresse du serveur et réessayer.",
+          isError: true,
+          consumerId: "loginForm",
+        );
       }
-      notificationRepository.push(
-        response.body,
-        isError: true,
-        consumerId: "loginForm",
-      );
     });
   }
 }
