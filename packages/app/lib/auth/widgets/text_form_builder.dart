@@ -31,36 +31,13 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.start,
-          runSpacing: 24,
-          children: _getFormHeader(widget.texts) +
-              _convertFormFieldsToWidgets(widget.formFields) +
-              _getFormFooter(widget.texts),
-        ),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.start,
+        runSpacing: 24,
+        children: _convertFormFieldsToWidgets(widget.formFields) +
+            _getFormFooter(widget.texts),
       ),
     );
-  }
-
-  List<Widget> _getFormHeader(FormTexts texts) {
-    final title = FormTexts.toWidgetArray(
-      texts.title,
-      style: Theme.of(context).textTheme.titleMedium,
-    );
-    final description = FormTexts.toWidgetArray(
-      texts.description,
-      style: Theme.of(context).textTheme.titleSmall,
-    );
-
-    return [
-      Wrap(
-        crossAxisAlignment: WrapCrossAlignment.start,
-        runSpacing: 2,
-        children: title + description,
-      )
-    ];
   }
 
   List<Widget> _getFormFooter(FormTexts texts) {
@@ -125,7 +102,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   List<Widget> _convertFormFieldsToWidgets(FormFields formFields) {
     _formControllers = Map.fromIterables(
       formFields.keys,
-      formFields.values.map((_) => TextEditingController()),
+      formFields.values.map((field) => TextEditingController(text: field.defaultValue)),
     );
 
     return formFields.entries

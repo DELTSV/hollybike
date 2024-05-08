@@ -12,7 +12,7 @@ class NotificationRoute extends StatelessWidget {
     return Scaffold(
       body: BlocListener<NotificationBloc, NotificationState>(
         listener: (context, state) {
-          if (state.notifications.isNotEmpty && state.notifications.first.consumerId == null) {
+          if (state.isConcerned()) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.notifications.first.message),

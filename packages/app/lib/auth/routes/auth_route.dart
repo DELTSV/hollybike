@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
@@ -17,29 +18,26 @@ class AuthRoute extends StatelessWidget {
         if (state.token != null) onAuthSuccess.call();
       },
       builder: (context, state) => Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
         alignment: Alignment.center,
-        child: Wrap(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                border: Border.all(
-                  width: 2,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppBanner(),
-                  AutoRouter(),
-                ],
-              ),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 450),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            border: Border.all(
+              width: 2,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
-          ],
+            borderRadius: BorderRadius.circular(15),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: const Wrap(
+            direction: Axis.horizontal,
+            children: [
+              AppBanner(),
+              AutoRouter(),
+            ],
+          ),
         ),
       ),
     );

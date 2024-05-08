@@ -15,8 +15,7 @@ class SignupRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return TextFormBuilder(
-        onFormSubmit: (formValue) {
-        },
+        onFormSubmit: (formValue) {},
         formFields: {
           "username": FormFieldConfig(
             label: "nom d'utilisateur",
@@ -34,17 +33,13 @@ class SignupRoute extends StatelessWidget {
           ),
         },
         texts: const FormTexts(
-            title: "Rejoignez nous!",
-            description:
-                "Entrez les informations qui serviront à vous connectez plus tard.",
-            link: (
-              description: "Vous avez déja un compte?",
-              buttonText: "Connectez-vous ici",
-              destination: LoginRoute(),
-            ),
-          submit: "S'inscrire"
+          link: (
+            description: "Vous avez déja un compte?",
+            buttonText: "Connectez-vous ici",
+            destination: LoginRoute(),
+          ),
+          submit: "S'inscrire",
         ),
-
       );
     });
   }

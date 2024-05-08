@@ -7,6 +7,11 @@ abstract class NotificationState {
   final List<Notification> notifications;
 
   const NotificationState(this.notifications);
+
+  bool isConcerned({String? consumerId}) =>
+      notifications.isNotEmpty && notifications.first.consumerId == consumerId;
+
+  Notification get notification => notifications.first;
 }
 
 class NotificationInitial extends NotificationState {
