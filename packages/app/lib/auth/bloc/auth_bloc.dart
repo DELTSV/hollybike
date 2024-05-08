@@ -18,10 +18,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required this.authRepository,
     required this.notificationRepository,
-  }) : super(const AuthInitial()) {
+  }) : super(AuthInitial()) {
     _init();
     on<AuthSessionsFound>((event, emit) {
       emit(AuthPersistentSessions(event.sessionsJson));
+    });
+    on<AuthStoreCurrentSession>((event, emit) {
+      emit(AuthStoredSession(state));
     });
     on<AuthLogin>((event, emit) async {
       try {
@@ -35,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
         final session = AuthSession.fromResponseJson(event.host, response.body);
-        emit(AuthNewSession(session));
+        emit(AuthNewSession(session, state));
       } on NotificationException catch (exception) {
         notificationRepository.push(
           exception.message,

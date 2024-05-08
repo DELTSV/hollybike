@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 
 @RoutePage()
@@ -21,6 +22,19 @@ class HomeRoute extends StatelessWidget {
               Text(
                 '${state.currentSession?.host}',
                 style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    BlocProvider.of<AuthBloc>(context)
+                        .add(AuthStoreCurrentSession());
+                    AutoRouter.of(context).push(const LoginRoute());
+                  },
+                  child: const Text("Add an account"),
+                ),
               ),
             ],
           ),
