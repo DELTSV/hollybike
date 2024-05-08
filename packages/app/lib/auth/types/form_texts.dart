@@ -9,14 +9,10 @@ typedef Link = ({
 });
 
 class FormTexts {
-  final String? title;
-  final String? description;
   final Link? link;
   final String? submit;
 
   const FormTexts({
-    this.title,
-    this.description,
     this.link,
     this.submit,
   });

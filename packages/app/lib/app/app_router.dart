@@ -12,26 +12,32 @@ class AppRouter extends $AppRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
-          page: HomeRoute.page,
+          page: NotificationRoute.page,
           initial: true,
-          guards: [AuthGuard(context: context)],
-        ),
-        AutoRoute(
-          page: AuthRoute.page,
-          path: '/auth',
           children: [
-            RedirectRoute(path: '', redirectTo: 'login'),
             AutoRoute(
-              page: LoginRoute.page,
-              path: 'login',
+              page: HomeRoute.page,
+              initial: true,
+              guards: [AuthGuard(context: context)],
             ),
             AutoRoute(
-              page: SignupRoute.page,
-              path: 'signup',
-            ),
-            AutoRoute(
-              page: ForgotPasswordRoute.page,
-              path: 'forgot-password',
+              page: AuthRoute.page,
+              path: 'auth',
+              children: [
+                RedirectRoute(path: '', redirectTo: 'login'),
+                AutoRoute(
+                  page: LoginRoute.page,
+                  path: 'login',
+                ),
+                AutoRoute(
+                  page: SignupRoute.page,
+                  path: 'signup',
+                ),
+                AutoRoute(
+                  page: ForgotPasswordRoute.page,
+                  path: 'forgot-password',
+                ),
+              ],
             ),
           ],
         ),

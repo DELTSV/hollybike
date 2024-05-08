@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/types/form_field_config.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
-import 'package:hollybike/auth/widgets/text_form_builder.dart';
+import 'package:hollybike/auth/types/login_dto.dart';
+import 'package:hollybike/auth/widgets/form_builder.dart';
+
+import '../types/form_field_config.dart';
 
 @RoutePage()
 class LoginRoute extends StatelessWidget {
@@ -12,18 +15,23 @@ class LoginRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-      return TextFormBuilder(
-        texts: const FormTexts(
-          title: "Bienvenue!",
-          description:
-              "Entrez vos identifiants ci-dessous pour accéder à votre compte.",
-          submit: "Se connecter"
-        ),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) => FormBuilder(
+        title: "Bienvenue!",
+        description: "Entrez vos identifiants pour vous connecter.",
+        notificationsConsumerId: "loginForm",
+        formTexts: const FormTexts(submit: "Connexion"),
         onFormSubmit: (formValue) {
-          context.read<AuthBloc>().add(AuthLogin());
+          BlocProvider.of<AuthBloc>(context).add(AuthLogin(
+            host: formValue["host"] as String,
+            loginDto: LoginDto.fromMap(formValue),
+          ));
         },
         formFields: {
+          "host": FormFieldConfig(
+              label: "adresse du serveur",
+              validator: _inputValidator,
+              defaultValue: "https://hollybike.fr"),
           "email": FormFieldConfig(
             label: "adresse mail",
             validator: _inputValidator,
@@ -34,13 +42,13 @@ class LoginRoute extends StatelessWidget {
             isSecured: true,
           ),
         },
-      );
-    });
+      ),
+    );
   }
 
-  String? _inputValidator(String? inputValue) {
-    if (inputValue == null || inputValue.isEmpty) {
-      return 'Ce champ ne peut pas être vide';
+  String? _inputValidator(String? inputText) {
+    if (inputText == null || inputText.isEmpty) {
+      return "Ce champs ne peut pas être vide.";
     }
     return null;
   }

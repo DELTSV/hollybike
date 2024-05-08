@@ -14,32 +14,27 @@ class AuthRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state.token != null) onAuthSuccess.call();
+        if (state.currentSession != null) onAuthSuccess.call();
       },
-      builder: (context, state) => Scaffold(
-        body: Container(
-          padding: const EdgeInsets.all(12),
-          alignment: Alignment.center,
-          child: Wrap(
+      builder: (context, state) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        alignment: Alignment.center,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 450),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            border: Border.all(
+              width: 2,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: const Wrap(
+            direction: Axis.horizontal,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  border: Border.all(
-                    width: 2,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AppBanner(),
-                    AutoRouter(),
-                  ],
-                ),
-              ),
+              AppBanner(),
+              AutoRouter(),
             ],
           ),
         ),
