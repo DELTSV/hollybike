@@ -16,10 +16,10 @@ class HomeRoute extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const Text(
-                'You have pushed the button this many times:',
+                "You'r currently connected to :",
               ),
               Text(
-                '${state.token}',
+                '${state.currentSession?.host}',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ],

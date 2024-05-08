@@ -2,11 +2,16 @@ part of 'auth_bloc.dart';
 
 @immutable
 class AuthState {
-  final String? token;
+  final AuthSession? currentSession;
 
-  const AuthState(this.token);
+  const AuthState({this.currentSession});
 }
 
 class AuthInitial extends AuthState {
-  const AuthInitial() : super(null);
+  const AuthInitial() : super();
+}
+
+class AuthNewSession extends AuthState {
+  const AuthNewSession(AuthSession newSession)
+      : super(currentSession: newSession);
 }

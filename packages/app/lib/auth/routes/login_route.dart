@@ -22,10 +22,9 @@ class LoginRoute extends StatelessWidget {
         notificationsConsumerId: "loginForm",
         formTexts: const FormTexts(submit: "Connexion"),
         onFormSubmit: (formValue) {
-          final loginDto = LoginDto.fromMap(formValue);
           BlocProvider.of<AuthBloc>(context).add(AuthLogin(
             host: formValue["host"] as String,
-            loginDto: loginDto,
+            loginDto: LoginDto.fromMap(formValue),
           ));
         },
         formFields: {
