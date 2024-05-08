@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
 
 part 'notification_event.dart';
 part 'notification_state.dart';
