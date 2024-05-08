@@ -39,6 +39,7 @@ dependencies:
   flutter_bloc: ^8.1.5
   http: ^1.2.1
   auto_route: ^8.1.2
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
