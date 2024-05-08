@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
+import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
@@ -23,12 +24,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           event.host,
           event.loginDto,
         );
-        print("${response.statusCode} ${response.body}");
 
-        if (response.statusCode == 200) {
-          return;
+        if (response.statusCode != 200) {
+          throw NotificationException(response.body);
         }
-        throw NotificationException(response.body);
+
+        final session = AuthSession.fromResponseJson(event.host, response.body);
+        emit(AuthNewSession(session));
       } on NotificationException catch (exception) {
         notificationRepository.push(
           exception.message,

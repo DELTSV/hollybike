@@ -11,8 +11,8 @@ class AuthGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    final token = context.read<AuthBloc>().state.token;
-    if (token != null) {
+    final session = context.read<AuthBloc>().state.currentSession;
+    if (session != null) {
       resolver.next(true);
     } else {
       router.push(AuthRoute(onAuthSuccess: () => resolver.next(true)));

@@ -15,7 +15,7 @@ class AuthRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state.token != null) onAuthSuccess.call();
+        if (state.currentSession != null) onAuthSuccess.call();
       },
       builder: (context, state) => Container(
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),

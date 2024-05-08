@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 
 class AuthApi {
   Future<Response> login(String host, LoginDto dto) {
-    final uri = Uri.parse("$host/api/login");
+    final uri = Uri.parse("$host/api/auth/login");
     return post(
       uri,
       body: dto.asJson(),
