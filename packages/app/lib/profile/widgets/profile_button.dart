@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hollybike/home/widgets/app_navigation_button.dart';
+import 'package:hollybike/hud/widgets/hud_button.dart';
+import 'package:hollybike/profile/widgets/profile_modal.dart';
 
 class ProfileButton extends StatelessWidget {
   const ProfileButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppNavigationButton(
-      onLongPress: _handleLongPress,
+    return HudButton(
+      onLongPress: () => _handleLongPress(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -26,8 +26,11 @@ class ProfileButton extends StatelessWidget {
     );
   }
 
-  void _handleLongPress() {
-    print("long press");
-    HapticFeedback.heavyImpact();
+  void _handleLongPress(context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ProfileModal(),
+    );
   }
 }

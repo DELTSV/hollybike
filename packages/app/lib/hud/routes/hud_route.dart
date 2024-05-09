@@ -1,14 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/home/widgets/app_navigation_bar.dart';
+import 'package:hollybike/hud/widgets/hud_bottom_bar.dart';
 
 @RoutePage()
-class HomeRoute extends StatelessWidget {
-  const HomeRoute({super.key});
+class HudRoute extends StatelessWidget {
+  const HudRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,6 @@ class HomeRoute extends StatelessWidget {
                           onPressed: () {
                             BlocProvider.of<AuthBloc>(context)
                                 .add(AuthStoreCurrentSession());
-                            AutoRouter.of(context).push(const LoginRoute());
                           },
                           child: const Text("Add an account"),
                         ),
@@ -45,7 +42,7 @@ class HomeRoute extends StatelessWidget {
                     ],
                   ),
                 ),
-                const AppNavigationBar(),
+                const HudBottomBar(),
               ],
             ),
           ),
