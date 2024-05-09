@@ -23,6 +23,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSessionsFound>((event, emit) {
       emit(AuthPersistentSessions(event.sessionsJson));
     });
+    on<AuthSessionExpired>((event, emit) {
+      emit(AuthSessionRemove(state, event.expiredSession));
+    });
     on<AuthStoreCurrentSession>((event, emit) {
       emit(AuthStoredSession(state));
     });

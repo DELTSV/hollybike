@@ -13,6 +13,10 @@ class AuthSession {
     });
   }
 
+  bool equal(AuthSession other) {
+    return host == other.host && token == other.token;
+  }
+
   static AuthSession fromJson(String json) {
     final object = jsonDecode(json);
 
