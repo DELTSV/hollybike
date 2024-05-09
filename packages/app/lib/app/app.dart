@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/app/guards/auth_change_notifier.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/app/app_router.dart';
+import 'package:hollybike/auth/guards/auth_stream.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -11,7 +11,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appRouter = AppRouter(context: context);
-    final authChangeNotifier = AuthChangeNotifier(context);
+    final authChangeNotifier = AuthStream(context);
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {

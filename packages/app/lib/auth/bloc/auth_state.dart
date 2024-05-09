@@ -40,6 +40,33 @@ class AuthStoredSession extends AuthState {
   }
 }
 
+class AuthSessionRemove extends AuthState {
+  AuthSessionRemove(AuthState currentState, AuthSession sessionToRemove)
+      : super(
+          currentSession: _filterCurrentSession(currentState, sessionToRemove),
+          storedSessions: _filterStoredSessions(currentState, sessionToRemove),
+        );
+
+  static AuthSession? _filterCurrentSession(
+    AuthState state,
+    AuthSession session,
+  ) {
+    if (state.currentSession == null || state.currentSession!.equal(session)) {
+      return null;
+    }
+    return state.currentSession;
+  }
+
+  static List<AuthSession> _filterStoredSessions(
+    AuthState state,
+    AuthSession session,
+  ) {
+    return state.storedSessions
+        .skipWhile((value) => value.equal(session))
+        .toList();
+  }
+}
+
 class AuthPersistentSessions extends AuthState {
   AuthPersistentSessions(List<String> sessionsJson)
       : super(
