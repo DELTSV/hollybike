@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/guards/auth_change_notifier.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/app/app_router.dart';
 
@@ -10,13 +11,16 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appRouter = AppRouter(context: context);
+    final authChangeNotifier = AuthChangeNotifier(context);
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return MaterialApp.router(
           title: 'Hollybike',
           theme: _getAppTheme(),
-          routerConfig: appRouter.config(),
+          routerConfig: appRouter.config(
+            reevaluateListenable: authChangeNotifier,
+          ),
         );
       },
     );
