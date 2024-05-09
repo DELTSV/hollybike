@@ -7,7 +7,6 @@ class AuthSessionRepository {
   const AuthSessionRepository({required this.authBloc});
 
   void sessionExpired(AuthSession session) {
-    print("expired session");
     authBloc.add(AuthSessionExpired(expiredSession: session));
   }
 }
