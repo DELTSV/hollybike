@@ -17,12 +17,15 @@ class AuthRoute extends StatelessWidget {
         if (state.currentSession != null) onAuthSuccess.call();
       },
       builder: (context, state) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        padding: const EdgeInsets.all(16),
         alignment: Alignment.center,
         child: Container(
           constraints: const BoxConstraints(maxWidth: 450),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          foregroundDecoration: BoxDecoration(
             border: Border.all(
               width: 2,
               color: Theme.of(context).colorScheme.onPrimary,
