@@ -35,6 +35,9 @@ class App extends StatelessWidget {
     return ThemeData(
       useMaterial3: true,
       fontFamily: 'Inter',
+      inputDecorationTheme: const InputDecorationTheme(
+        focusColor: Color(0xffcdd6f4),
+      ),
       colorScheme: const ColorScheme.light(
         error: Color(0xfff38ba8),
         background: Color(0xff11111b),

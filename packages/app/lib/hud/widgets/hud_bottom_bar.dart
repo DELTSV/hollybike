@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/home/widgets/profile_button.dart';
+import 'package:hollybike/profile/widgets/profile_button.dart';
 
-class AppNavigationBar extends StatelessWidget {
-  const AppNavigationBar({super.key});
+class HudBottomBar extends StatelessWidget {
+  const HudBottomBar({super.key});
 
   @override
   Widget build(BuildContext context) {

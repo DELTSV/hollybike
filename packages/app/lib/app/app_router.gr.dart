@@ -14,7 +14,7 @@ import 'package:hollybike/auth/routes/auth_route.dart' as _i1;
 import 'package:hollybike/auth/routes/forgot_password_route.dart' as _i2;
 import 'package:hollybike/auth/routes/login_route.dart' as _i4;
 import 'package:hollybike/auth/routes/signup_route.dart' as _i6;
-import 'package:hollybike/home/home_route.dart' as _i3;
+import 'package:hollybike/hud/routes/hud_route.dart' as _i3;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i5;
 
 abstract class $AppRouter extends _i7.RootStackRouter {
@@ -38,10 +38,10 @@ abstract class $AppRouter extends _i7.RootStackRouter {
         child: const _i2.ForgotPasswordRoute(),
       );
     },
-    HomeRoute.name: (routeData) {
+    HudRoute.name: (routeData) {
       return _i7.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i3.HomeRoute(),
+        child: const _i3.HudRoute(),
       );
     },
     LoginRoute.name: (routeData) {
@@ -118,15 +118,15 @@ class ForgotPasswordRoute extends _i7.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i3.HomeRoute]
-class HomeRoute extends _i7.PageRouteInfo<void> {
-  const HomeRoute({List<_i7.PageRouteInfo>? children})
+/// [_i3.HudRoute]
+class HudRoute extends _i7.PageRouteInfo<void> {
+  const HudRoute({List<_i7.PageRouteInfo>? children})
       : super(
-          HomeRoute.name,
+          HudRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'HomeRoute';
+  static const String name = 'HudRoute';
 
   static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
 }
