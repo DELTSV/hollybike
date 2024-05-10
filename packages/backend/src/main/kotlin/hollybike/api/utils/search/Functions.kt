@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.kotlin.datetime.KotlinInstantColumnType
 
-fun Parameters.getSearchParam(mapper: Map<String, Column<*>>): SearchParam {
+fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 	val page = get("page")?.toIntOrNull() ?: 0
 	val perPage = get("per_page")?.toIntOrNull() ?: 20
 	val query = get("query")
@@ -212,3 +212,13 @@ private infix fun Column<out Any?>.gte(value: String): Op<Boolean>? =
 
 		else -> null
 	}
+
+fun Mapper.getMapperData(): Map<String, String> = this.mapValues {
+	when(it.value.columnType) {
+		is VarCharColumnType -> "String"
+		is IntegerColumnType -> "Int"
+		is KotlinInstantColumnType -> "DateTime"
+		is EntityIDColumnType<*> -> "Int (id)"
+		else -> "Unknown"
+	}
+}

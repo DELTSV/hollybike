@@ -4,6 +4,7 @@ import hollybike.api.exceptions.BadRequestException
 import hollybike.api.exceptions.UserDifferentNewPassword
 import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.plugins.user
+import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
@@ -13,6 +14,7 @@ import hollybike.api.types.user.TUser
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.get
 import hollybike.api.utils.post
+import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -41,6 +43,7 @@ class UserController(
 				uploadMeProfilePicture()
 				uploadUserProfilePicture()
 				getAll()
+				getMetadata()
 			}
 		}
 	}
@@ -147,7 +150,7 @@ class UserController(
 
 	private fun Route.getAll() {
 		get<Users>(EUserScope.Admin) {
-			val param = call.request.queryParameters.getSearchParam(userMapper)
+			val param = call.request.queryParameters.getSearchParam(userMapper + associationMapper)
 			val list = userService.getAll(call.user, param)?.map { TUser(it) }
 			val count = userService.getAllCount(call.user, param)
 			if(list != null && count != null) {
@@ -155,6 +158,12 @@ class UserController(
 			} else {
 				call.respond(HttpStatusCode.Forbidden)
 			}
+		}
+	}
+
+	private fun Route.getMetadata() {
+		get<Users.MetaData>(EUserScope.Admin) {
+			call.respond((userMapper + associationMapper).getMapperData())
 		}
 	}
 }
