@@ -2,10 +2,12 @@ part of 'auth_bloc.dart';
 
 @immutable
 class AuthState {
+  final bool isPersistentSessionsLoaded;
   final AuthSession? currentSession;
   final List<AuthSession> storedSessions;
 
   const AuthState({
+    this.isPersistentSessionsLoaded = true,
     this.currentSession,
     required this.storedSessions,
   });
@@ -22,7 +24,11 @@ class AuthState {
 }
 
 class AuthInitial extends AuthState {
-  AuthInitial() : super(storedSessions: <AuthSession>[]);
+  AuthInitial()
+      : super(
+          isPersistentSessionsLoaded: false,
+          storedSessions: <AuthSession>[],
+        );
 }
 
 class AuthStoredSession extends AuthState {
@@ -68,21 +74,18 @@ class AuthSessionRemove extends AuthState {
 }
 
 class AuthPersistentSessions extends AuthState {
-  AuthPersistentSessions(List<String> sessionsJson)
+  AuthPersistentSessions(List<AuthSession> sessionsJson)
       : super(
           currentSession: _getCurrentSession(sessionsJson),
           storedSessions: _getStoredSessions(sessionsJson),
         );
 
-  static AuthSession _getCurrentSession(List<String> sessionsJson) {
-    return AuthSession.fromJson(sessionsJson.first);
+  static AuthSession _getCurrentSession(List<AuthSession> sessionsJson) {
+    return sessionsJson.first;
   }
 
-  static List<AuthSession> _getStoredSessions(List<String> sessionsJson) {
-    return sessionsJson
-        .sublist(1)
-        .map((session) => AuthSession.fromJson(session))
-        .toList();
+  static List<AuthSession> _getStoredSessions(List<AuthSession> sessionsJson) {
+    return sessionsJson.sublist(1).toList();
   }
 }
 

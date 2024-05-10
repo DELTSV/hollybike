@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app.dart';
 import 'package:hollybike/auth/bloc/auth_api.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
@@ -31,7 +32,10 @@ class MyApp extends StatelessWidget {
             ),
           ),
           RepositoryProvider(
-            create: (context) => AuthRepository(authApi: AuthApi()),
+            create: (context) => AuthRepository(
+              authApi: AuthApi(),
+              authPersistence: AuthPersistence(),
+            ),
           ),
         ],
         child: MultiBlocProvider(
@@ -55,7 +59,8 @@ class MyApp extends StatelessWidget {
               providers: [
                 RepositoryProvider<ProfileRepository>(
                   create: (context) => ProfileRepository(
-                    authSessionRepository: RepositoryProvider.of<AuthSessionRepository>(context),
+                    authSessionRepository:
+                        RepositoryProvider.of<AuthSessionRepository>(context),
                     profileBloc: BlocProvider.of<ProfileBloc>(context),
                     profileApi: ProfileApi(),
                   ),
