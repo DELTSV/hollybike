@@ -1,9 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/profile/types/profile.dart';
-import 'package:hollybike/shared/widgets/loading_gradient.dart';
 import 'package:hollybike/shared/widgets/loading_profile_picture.dart';
 import 'package:hollybike/shared/widgets/loading_text.dart';
 

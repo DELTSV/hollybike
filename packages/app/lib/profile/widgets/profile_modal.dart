@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_add_session_button.dart';
 import 'package:hollybike/profile/widgets/profile_list.dart';
 
