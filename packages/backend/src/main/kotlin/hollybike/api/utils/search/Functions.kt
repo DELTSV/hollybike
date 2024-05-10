@@ -7,7 +7,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import liquibase.exception.DateParseException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
@@ -17,7 +16,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.kotlin.datetime.KotlinInstantColumnType
-import java.time.format.DateTimeParseException
 
 fun Parameters.getSearchParam(mapper: Map<String, Column<*>>): SearchParam {
 	val page = get("page")?.toIntOrNull() ?: 0
