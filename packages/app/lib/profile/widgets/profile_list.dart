@@ -29,7 +29,7 @@ class ProfileList extends StatelessWidget {
     return SingleChildScrollView(
       child: Wrap(
         children: addSeparators(
-          _populateList(state.storedSessions),
+          _populateList(context, state.storedSessions),
           Container(
             constraints: const BoxConstraints.expand(height: 2),
             color: Theme.of(context).colorScheme.primaryContainer,
@@ -39,7 +39,20 @@ class ProfileList extends StatelessWidget {
     );
   }
 
-  List<Widget> _populateList(List<AuthSession> sessions) {
+  List<Widget> _populateList(BuildContext context, List<AuthSession> sessions) {
+    if (sessions.isEmpty) {
+      return [
+        Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            "Vous n'êtes connecté à aucun autre compte.",
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        )
+      ];
+    }
+
     return sessions
         .map((session) => ProfileCardRenderer(session: session))
         .toList();
