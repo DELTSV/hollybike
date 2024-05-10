@@ -1,6 +1,7 @@
 package hollybike.api.repository
 
 import hollybike.api.types.association.EAssociationsStatus
+import hollybike.api.utils.search.Mapper
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -19,3 +20,9 @@ class Association(id: EntityID<Int>) : IntEntity(id) {
 	var status by Associations.status.transform({ it.value }, { EAssociationsStatus[it] })
 	var picture by Associations.picture
 }
+
+val associationMapper: Mapper = mapOf(
+	"id_association" to Associations.id,
+	"name" to Associations.name,
+	"status" to Associations.status
+)

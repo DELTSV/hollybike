@@ -12,13 +12,13 @@ data class SearchParam(
 )
 
 data class Filter(
-	val column: Column<*>,
+	val column: Column<out Any?>,
 	val value: String,
 	val mode: FilterMode
 )
 
 data class Sort(
-	val column: Column<*>,
+	val column: Column<out Any?>,
 	val order: SortOrder
 )
 
@@ -36,3 +36,5 @@ enum class FilterMode(val mode: String) {
 		operator fun contains(mode: String): Boolean = entries.find { it.mode == mode } != null
 	}
 }
+
+typealias Mapper = Map<String, Column<out Any?>>
