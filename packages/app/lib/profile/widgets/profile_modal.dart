@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hollybike/profile/widgets/profile_add_session_button.dart';
 import 'package:hollybike/profile/widgets/profile_list.dart';
 
 class ProfileModal extends StatelessWidget {
@@ -6,33 +7,24 @@ class ProfileModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borderRadius = Radius.circular(16);
-    final borderSide = BorderSide(
-      width: 2,
-      color: Theme.of(context).colorScheme.onPrimary,
-    );
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Container(
-        constraints: const BoxConstraints(minWidth: double.infinity),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: const BorderRadius.only(
-            topLeft: borderRadius,
-            topRight: borderRadius,
-          ),
-          border: Border(
-            top: borderSide,
-            left: borderSide,
-            right: borderSide,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        border: Border(
+          top: BorderSide(
+            width: 2,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+      padding: const EdgeInsets.all(16),
+      constraints: const BoxConstraints.expand(height: 350),
+      child: const SafeArea(
+        child: Column(
           children: [
-            ProfileList()
+            ProfileList(),
+            SizedBox(height: 15),
+            ProfileAddSessionButton(),
           ],
         ),
       ),

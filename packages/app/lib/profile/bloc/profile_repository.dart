@@ -25,7 +25,7 @@ class ProfileRepository {
       final fetchedProfile = await profileApi.getSessionProfile(session);
       profileBloc.add(ProfileSave(session: session, profile: fetchedProfile));
       return fetchedProfile;
-    } on ExpiredTokenException catch(_) {
+    } on ExpiredTokenException catch (_) {
       authSessionRepository.sessionExpired(session);
       rethrow;
     }

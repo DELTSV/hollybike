@@ -20,11 +20,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.notificationRepository,
   }) : super(AuthInitial()) {
     _init();
-    on<AuthSessionsFound>((event, emit) {
+    on<AuthPersistentSessionsLoaded>((event, emit) {
       emit(AuthPersistentSessions(event.sessionsJson));
     });
     on<AuthSessionExpired>((event, emit) {
-      emit(AuthSessionRemove(state, event.expiredSession));
+      emit(AuthSessionSwitched(state, event.expiredSession));
+    });
+    on<AuthSessionSwitch>((event, emit) {
+      emit(AuthSessionSwitched(state, event.newSession));
     });
     on<AuthStoreCurrentSession>((event, emit) {
       emit(AuthStoredSession(state));
@@ -65,11 +68,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _init() async {
-    final prefs = await SharedPreferences.getInstance();
-    final sessionsList = prefs.getStringList("sessions");
+    final persistedSessions = await authRepository.retrievePersistedSessions();
 
-    if (sessionsList != null && sessionsList.isNotEmpty) {
-      add(AuthSessionsFound(sessionsJson: sessionsList));
+    if (persistedSessions.isNotEmpty) {
+      add(AuthPersistentSessionsLoaded(sessionsJson: persistedSessions));
     }
   }
 

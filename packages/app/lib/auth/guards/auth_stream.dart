@@ -5,7 +5,14 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 class AuthStream extends ChangeNotifier {
   AuthStream(BuildContext context) {
     context.watch<AuthBloc>().stream.listen((event) {
-      notifyListeners();
+      switch (event) {
+        case AuthState(
+              isPersistentSessionsLoaded: final isLoaded,
+              currentSession: final session,
+            )
+            when session == null || isLoaded == false:
+          notifyListeners();
+      }
     });
   }
 }

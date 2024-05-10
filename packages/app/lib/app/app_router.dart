@@ -16,6 +16,10 @@ class AppRouter extends $AppRouter {
           initial: true,
           children: [
             AutoRoute(
+              page: LoadingRoute.page,
+              path: 'load',
+            ),
+            AutoRoute(
               guards: [AuthGuard(context: context)],
               page: HudRoute.page,
               initial: true,
