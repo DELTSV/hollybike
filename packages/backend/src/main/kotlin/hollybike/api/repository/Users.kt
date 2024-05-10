@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object Users : IntIdTable("users", "id_user") {
@@ -31,3 +32,12 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 
 	companion object : IntEntityClass<User>(Users)
 }
+
+val userMapper: Map<String, Column<*>> = mapOf(
+	"id_user" to Users.id,
+	"email" to Users.email,
+	"username" to Users.username,
+	"status" to Users.status,
+	"scope" to Users.scope,
+	"last_login" to Users.lastLogin
+)
