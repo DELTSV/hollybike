@@ -5,13 +5,11 @@ import de.nycode.bcrypt.verify
 import hollybike.api.exceptions.BadRequestException
 import hollybike.api.exceptions.UserDifferentNewPassword
 import hollybike.api.exceptions.UserWrongPassword
-import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.user.EUserScope
-import hollybike.api.types.user.TUser
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
@@ -20,8 +18,6 @@ import hollybike.api.utils.search.applyParam
 import io.ktor.util.*
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
