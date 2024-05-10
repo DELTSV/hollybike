@@ -17,8 +17,7 @@ class ProfileButton extends StatelessWidget {
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
-            height: 40,
-            width: 40,
+            constraints: BoxConstraints.tight(const Size.square(40)),
             child: Image.asset("images/placeholder_profile_picture.jpg"),
           ),
         ],
