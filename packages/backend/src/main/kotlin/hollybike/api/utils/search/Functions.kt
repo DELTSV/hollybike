@@ -35,7 +35,7 @@ fun Parameters.getSearchParam(mapper: Map<String, Column<*>>): SearchParam {
 			null
 		}
 	}?.filterNotNull() ?: emptyList()
-	val filter = mapper.filter { (k, _) -> k in this }
+	val filter = mapper.asSequence().filter { (k, _) -> k in this }
 		.map { (k, v) ->
 			getAll(k)!!.map {
 				val (mode, value) = it.split(":", limit = 2)
@@ -57,7 +57,6 @@ fun Parameters.getSearchParam(mapper: Map<String, Column<*>>): SearchParam {
 
 fun Query.applyParam(searchParam: SearchParam): Query {
 	var q = this
-	println(searchParam.sort)
 	q = q.orderBy(*searchParam.sort.map { (c, o) -> c to o }.toTypedArray())
 	q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
 	val filter = searchParamFilter(searchParam.filter)
