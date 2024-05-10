@@ -4,13 +4,16 @@ import hollybike.api.exceptions.BadRequestException
 import hollybike.api.exceptions.UserDifferentNewPassword
 import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.plugins.user
+import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
+import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.get
 import hollybike.api.utils.post
+import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -21,6 +24,7 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.Route
+import kotlin.math.ceil
 
 class UserController(
 	application: Application,
@@ -36,6 +40,7 @@ class UserController(
 				updateMe()
 				uploadMeProfilePicture()
 				uploadUserProfilePicture()
+				getAll()
 			}
 		}
 	}
@@ -137,6 +142,19 @@ class UserController(
 			userService.uploadUserProfilePicture(call.user, user, image.streamProvider().readBytes(), contentType.toString())
 
 			call.respond(HttpStatusCode.OK)
+		}
+	}
+
+	private fun Route.getAll() {
+		get<Users>(EUserScope.Admin) {
+			val param = call.request.queryParameters.getSearchParam(userMapper)
+			val list = userService.getAll(call.user, param)?.map { TUser(it) }
+			val count = userService.getAllCount(call.user, param)
+			if(list != null && count != null) {
+				call.respond(TLists(list, param.page, ceil(count.toDouble() / param.perPage).toInt(), param.perPage, count.toInt()))
+			} else {
+				call.respond(HttpStatusCode.Forbidden)
+			}
 		}
 	}
 }
