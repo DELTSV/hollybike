@@ -95,12 +95,12 @@ class AuthPersistentSessions extends AuthState {
     storedSessions: _getStoredSessions(sessionsJson),
   );
 
-  static AuthSession _getCurrentSession(List<AuthSession> sessionsJson) {
-    return sessionsJson.first;
+  static AuthSession? _getCurrentSession(List<AuthSession> sessionsJson) {
+    return sessionsJson.firstOrNull;
   }
 
   static List<AuthSession> _getStoredSessions(List<AuthSession> sessionsJson) {
-    return sessionsJson.sublist(1).toList();
+    return sessionsJson.isEmpty ? sessionsJson : sessionsJson.sublist(1).toList();
   }
 }
 
