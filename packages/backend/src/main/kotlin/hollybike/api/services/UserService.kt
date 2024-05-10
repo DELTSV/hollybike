@@ -5,13 +5,20 @@ import de.nycode.bcrypt.verify
 import hollybike.api.exceptions.BadRequestException
 import hollybike.api.exceptions.UserDifferentNewPassword
 import hollybike.api.exceptions.UserWrongPassword
+import hollybike.api.repository.Associations
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUserUpdateSelf
+import hollybike.api.utils.search.Filter
+import hollybike.api.utils.search.FilterMode
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.applyParam
 import io.ktor.util.*
+import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
@@ -78,5 +85,31 @@ class UserService(
 			update.username?.let { user.username = it }
 		}
 		return@transaction Result.success(user)
+	}
+
+	fun getAll(caller: User, searchParam: SearchParam): List<User>? {
+		if(caller.scope == EUserScope.User) {
+			return null
+		}
+		if(caller.scope not EUserScope.Root) {
+			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
+		}
+		return transaction(db) {
+			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam))
+				.with(User::association)
+				.toList()
+		}
+	}
+
+	fun getAllCount(caller: User, searchParam: SearchParam): Long? {
+		if(caller.scope == EUserScope.User) {
+			return null
+		}
+		if(caller.scope not EUserScope.Root) {
+			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
+		}
+		return transaction(db) {
+			Users.innerJoin(Associations).selectAll().count()
+		}
 	}
 }

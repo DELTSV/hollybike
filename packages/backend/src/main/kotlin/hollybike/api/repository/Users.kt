@@ -2,6 +2,7 @@ package hollybike.api.repository
 
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
+import hollybike.api.utils.search.Mapper
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -29,5 +30,13 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 	var lastLogin by Users.lastLogin
 	var profilePicture by Users.profilePicture
 
-	companion object : IntEntityClass<User>(Users)
-}
+	companion object : IntEntityClass<User>(Users) }
+
+val userMapper: Mapper = mapOf(
+	"id_user" to Users.id,
+	"email" to Users.email,
+	"username" to Users.username,
+	"status" to Users.status,
+	"scope" to Users.scope,
+	"last_login" to Users.lastLogin
+)
