@@ -15,6 +15,13 @@ final class AuthSessionExpired extends AuthEvent {
   AuthSessionExpired({required this.expiredSession});
 }
 
+final class AuthSessionSwitch extends AuthEvent {
+  final AuthSession newSession;
+
+  AuthSessionSwitch({required this.newSession});
+}
+
+
 final class AuthStoreCurrentSession extends AuthEvent {
   AuthStoreCurrentSession();
 }

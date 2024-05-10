@@ -26,9 +26,14 @@ class ProfileCardRenderer extends StatelessWidget {
     );
   }
 
-  Widget _handleAsynchronousRendering(BuildContext context, AsyncSnapshot<Profile> snapshot) {
-    return switch(snapshot) {
-      AsyncSnapshot<Profile>(data: final profile) when profile != null => ProfileCard(profile: profile),
+  Widget _handleAsynchronousRendering(
+      BuildContext context, AsyncSnapshot<Profile> snapshot) {
+    return switch (snapshot) {
+      AsyncSnapshot<Profile>(data: final profile) when profile != null =>
+        ProfileCard(
+          session: session,
+          profile: profile,
+        ),
       _ => const ProfileLoadingCard(),
     };
   }

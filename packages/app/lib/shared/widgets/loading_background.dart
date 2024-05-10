@@ -11,7 +11,7 @@ class LoadingBackground extends StatefulWidget {
 class _LoadingBackgroundState extends State<LoadingBackground>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 20),
+    duration: const Duration(seconds: 5),
     vsync: this,
   )..repeat();
 
@@ -38,5 +38,11 @@ class _LoadingBackgroundState extends State<LoadingBackground>
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

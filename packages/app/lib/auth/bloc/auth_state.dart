@@ -26,17 +26,17 @@ class AuthState {
 class AuthInitial extends AuthState {
   AuthInitial()
       : super(
-          isPersistentSessionsLoaded: false,
-          storedSessions: <AuthSession>[],
-        );
+    isPersistentSessionsLoaded: false,
+    storedSessions: <AuthSession>[],
+  );
 }
 
 class AuthStoredSession extends AuthState {
   AuthStoredSession(AuthState currentState)
       : super(
-          currentSession: null,
-          storedSessions: _aggregateStateSessions(currentState),
-        );
+    currentSession: null,
+    storedSessions: _aggregateStateSessions(currentState),
+  );
 
   static List<AuthSession> _aggregateStateSessions(AuthState state) {
     final currentSessionList = state.currentSession == null
@@ -49,25 +49,40 @@ class AuthStoredSession extends AuthState {
 class AuthSessionRemove extends AuthState {
   AuthSessionRemove(AuthState currentState, AuthSession sessionToRemove)
       : super(
-          currentSession: _filterCurrentSession(currentState, sessionToRemove),
-          storedSessions: _filterStoredSessions(currentState, sessionToRemove),
-        );
+    currentSession: _filterCurrentSession(currentState, sessionToRemove),
+    storedSessions: _filterStoredSessions(currentState, sessionToRemove),
+  );
 
-  static AuthSession? _filterCurrentSession(
-    AuthState state,
-    AuthSession session,
-  ) {
+  static AuthSession? _filterCurrentSession(AuthState state,
+      AuthSession session,) {
     if (state.currentSession == null || state.currentSession!.equal(session)) {
       return null;
     }
     return state.currentSession;
   }
 
-  static List<AuthSession> _filterStoredSessions(
-    AuthState state,
-    AuthSession session,
-  ) {
+  static List<AuthSession> _filterStoredSessions(AuthState state,
+      AuthSession session,) {
     return state.storedSessions
+        .skipWhile((value) => value.equal(session))
+        .toList();
+  }
+}
+
+class AuthSessionSwitched extends AuthState {
+  AuthSessionSwitched(AuthState currentState, AuthSession sessionToReplace)
+      : super(
+    currentSession: sessionToReplace,
+    storedSessions: _replaceStoredSessions(currentState, sessionToReplace),
+  );
+
+  static List<AuthSession> _replaceStoredSessions(AuthState state,
+      AuthSession session) {
+    final oldSession = state.currentSession == null ? <AuthSession>[] : [
+      state.currentSession as AuthSession
+    ];
+
+    return oldSession + state.storedSessions
         .skipWhile((value) => value.equal(session))
         .toList();
   }
@@ -76,9 +91,9 @@ class AuthSessionRemove extends AuthState {
 class AuthPersistentSessions extends AuthState {
   AuthPersistentSessions(List<AuthSession> sessionsJson)
       : super(
-          currentSession: _getCurrentSession(sessionsJson),
-          storedSessions: _getStoredSessions(sessionsJson),
-        );
+    currentSession: _getCurrentSession(sessionsJson),
+    storedSessions: _getStoredSessions(sessionsJson),
+  );
 
   static AuthSession _getCurrentSession(List<AuthSession> sessionsJson) {
     return sessionsJson.first;
@@ -92,7 +107,7 @@ class AuthPersistentSessions extends AuthState {
 class AuthNewSession extends AuthState {
   AuthNewSession(AuthSession newSession, AuthState currentState)
       : super(
-          currentSession: newSession,
-          storedSessions: currentState.storedSessions,
-        );
+    currentSession: newSession,
+    storedSessions: currentState.storedSessions,
+  );
 }
