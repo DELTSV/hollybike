@@ -15,8 +15,8 @@ abstract class ProfileState {
               element.key.token == session.token &&
               element.key.host == session.host,
         )
-        .firstOrNull!
-        .value;
+        .firstOrNull
+        ?.value;
   }
 }
 
