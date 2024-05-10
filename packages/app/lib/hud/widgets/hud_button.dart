@@ -22,13 +22,17 @@ class HudButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
           ),
-          child: InkWell(
-            onTap: _handleTap,
-            onLongPress: _handleLongPress,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: child,
-            ),
+          child: Stack(
+            children: [
+              InkWell(
+                onTap: _handleTap,
+                onLongPress: _handleLongPress,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: child,
+                ),
+              ),
+            ],
           ),
         ),
       ),
