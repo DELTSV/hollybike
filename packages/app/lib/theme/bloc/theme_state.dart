@@ -4,11 +4,11 @@ part of 'theme_bloc.dart';
 abstract class ThemeState {
   final bool isDark;
 
-  ThemeState({required this.isDark});
+  const ThemeState({required this.isDark});
 }
 
 class ThemeInitial extends ThemeState {
-  ThemeInitial() : super(isDark: false);
+  const ThemeInitial() : super(isDark: true);
 }
 
 class ThemeSwitched extends ThemeState {

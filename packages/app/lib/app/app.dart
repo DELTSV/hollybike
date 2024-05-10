@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/app/app_router.dart';
 import 'package:hollybike/auth/guards/auth_stream.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
@@ -23,11 +22,13 @@ class App extends StatelessWidget {
     final appRouter = AppRouter(context: context);
     final authChangeNotifier = AuthStream(context);
 
-    return MaterialApp.router(
-      title: 'Hollybike',
-      theme: BlocProvider.of<ThemeBloc>(context).getThemeData,
-      routerConfig: appRouter.config(
-        reevaluateListenable: authChangeNotifier,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, state) => MaterialApp.router(
+        title: 'Hollybike',
+        theme: BlocProvider.of<ThemeBloc>(context).getThemeData,
+        routerConfig: appRouter.config(
+          reevaluateListenable: authChangeNotifier,
+        ),
       ),
     );
   }
