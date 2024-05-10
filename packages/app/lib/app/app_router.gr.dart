@@ -8,23 +8,24 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i7;
-import 'package:flutter/material.dart' as _i8;
+import 'package:auto_route/auto_route.dart' as _i8;
+import 'package:flutter/material.dart' as _i9;
 import 'package:hollybike/auth/routes/auth_route.dart' as _i1;
 import 'package:hollybike/auth/routes/forgot_password_route.dart' as _i2;
-import 'package:hollybike/auth/routes/login_route.dart' as _i4;
-import 'package:hollybike/auth/routes/signup_route.dart' as _i6;
+import 'package:hollybike/auth/routes/login_route.dart' as _i5;
+import 'package:hollybike/auth/routes/signup_route.dart' as _i7;
 import 'package:hollybike/hud/routes/hud_route.dart' as _i3;
-import 'package:hollybike/notification/routes/notification_route.dart' as _i5;
+import 'package:hollybike/notification/routes/notification_route.dart' as _i6;
+import 'package:hollybike/shared/routes/loading_route.dart' as _i4;
 
-abstract class $AppRouter extends _i7.RootStackRouter {
+abstract class $AppRouter extends _i8.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
-  final Map<String, _i7.PageFactory> pagesMap = {
+  final Map<String, _i8.PageFactory> pagesMap = {
     AuthRoute.name: (routeData) {
       final args = routeData.argsAs<AuthRouteArgs>();
-      return _i7.AutoRoutePage<dynamic>(
+      return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i1.AuthRoute(
           key: args.key,
@@ -33,33 +34,39 @@ abstract class $AppRouter extends _i7.RootStackRouter {
       );
     },
     ForgotPasswordRoute.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
+      return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i2.ForgotPasswordRoute(),
       );
     },
     HudRoute.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
+      return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i3.HudRoute(),
       );
     },
-    LoginRoute.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
+    LoadingRoute.name: (routeData) {
+      return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i4.LoginRoute(),
+        child: const _i4.LoadingRoute(),
+      );
+    },
+    LoginRoute.name: (routeData) {
+      return _i8.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i5.LoginRoute(),
       );
     },
     NotificationRoute.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
+      return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i5.NotificationRoute(),
+        child: const _i6.NotificationRoute(),
       );
     },
     SignupRoute.name: (routeData) {
-      return _i7.AutoRoutePage<dynamic>(
+      return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i6.SignupRoute(),
+        child: const _i7.SignupRoute(),
       );
     },
   };
@@ -67,11 +74,11 @@ abstract class $AppRouter extends _i7.RootStackRouter {
 
 /// generated route for
 /// [_i1.AuthRoute]
-class AuthRoute extends _i7.PageRouteInfo<AuthRouteArgs> {
+class AuthRoute extends _i8.PageRouteInfo<AuthRouteArgs> {
   AuthRoute({
-    _i8.Key? key,
+    _i9.Key? key,
     required dynamic Function() onAuthSuccess,
-    List<_i7.PageRouteInfo>? children,
+    List<_i8.PageRouteInfo>? children,
   }) : super(
           AuthRoute.name,
           args: AuthRouteArgs(
@@ -83,8 +90,8 @@ class AuthRoute extends _i7.PageRouteInfo<AuthRouteArgs> {
 
   static const String name = 'AuthRoute';
 
-  static const _i7.PageInfo<AuthRouteArgs> page =
-      _i7.PageInfo<AuthRouteArgs>(name);
+  static const _i8.PageInfo<AuthRouteArgs> page =
+      _i8.PageInfo<AuthRouteArgs>(name);
 }
 
 class AuthRouteArgs {
@@ -93,7 +100,7 @@ class AuthRouteArgs {
     required this.onAuthSuccess,
   });
 
-  final _i8.Key? key;
+  final _i9.Key? key;
 
   final dynamic Function() onAuthSuccess;
 
@@ -105,8 +112,8 @@ class AuthRouteArgs {
 
 /// generated route for
 /// [_i2.ForgotPasswordRoute]
-class ForgotPasswordRoute extends _i7.PageRouteInfo<void> {
-  const ForgotPasswordRoute({List<_i7.PageRouteInfo>? children})
+class ForgotPasswordRoute extends _i8.PageRouteInfo<void> {
+  const ForgotPasswordRoute({List<_i8.PageRouteInfo>? children})
       : super(
           ForgotPasswordRoute.name,
           initialChildren: children,
@@ -114,13 +121,13 @@ class ForgotPasswordRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'ForgotPasswordRoute';
 
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i3.HudRoute]
-class HudRoute extends _i7.PageRouteInfo<void> {
-  const HudRoute({List<_i7.PageRouteInfo>? children})
+class HudRoute extends _i8.PageRouteInfo<void> {
+  const HudRoute({List<_i8.PageRouteInfo>? children})
       : super(
           HudRoute.name,
           initialChildren: children,
@@ -128,13 +135,27 @@ class HudRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'HudRoute';
 
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i4.LoginRoute]
-class LoginRoute extends _i7.PageRouteInfo<void> {
-  const LoginRoute({List<_i7.PageRouteInfo>? children})
+/// [_i4.LoadingRoute]
+class LoadingRoute extends _i8.PageRouteInfo<void> {
+  const LoadingRoute({List<_i8.PageRouteInfo>? children})
+      : super(
+          LoadingRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoadingRoute';
+
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i5.LoginRoute]
+class LoginRoute extends _i8.PageRouteInfo<void> {
+  const LoginRoute({List<_i8.PageRouteInfo>? children})
       : super(
           LoginRoute.name,
           initialChildren: children,
@@ -142,13 +163,13 @@ class LoginRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'LoginRoute';
 
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i5.NotificationRoute]
-class NotificationRoute extends _i7.PageRouteInfo<void> {
-  const NotificationRoute({List<_i7.PageRouteInfo>? children})
+/// [_i6.NotificationRoute]
+class NotificationRoute extends _i8.PageRouteInfo<void> {
+  const NotificationRoute({List<_i8.PageRouteInfo>? children})
       : super(
           NotificationRoute.name,
           initialChildren: children,
@@ -156,13 +177,13 @@ class NotificationRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'NotificationRoute';
 
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i6.SignupRoute]
-class SignupRoute extends _i7.PageRouteInfo<void> {
-  const SignupRoute({List<_i7.PageRouteInfo>? children})
+/// [_i7.SignupRoute]
+class SignupRoute extends _i8.PageRouteInfo<void> {
+  const SignupRoute({List<_i8.PageRouteInfo>? children})
       : super(
           SignupRoute.name,
           initialChildren: children,
@@ -170,5 +191,5 @@ class SignupRoute extends _i7.PageRouteInfo<void> {
 
   static const String name = 'SignupRoute';
 
-  static const _i7.PageInfo<void> page = _i7.PageInfo<void>(name);
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
 }
