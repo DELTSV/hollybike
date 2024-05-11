@@ -47,7 +47,9 @@ abstract class TestBase {
 		}
 	}
 
-	fun applicationConfig(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+	fun testApp(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+		System.setProperty("is_test_env", "true")
+
 		val config = Conf(
 			db = databaseConfig!!,
 			security = ConfSecurity(
@@ -63,6 +65,7 @@ abstract class TestBase {
 		application {
 			loadCustomConfig(config)
 			checkTestEnvironment()
+			configureSerialization()
 			checkOnPremise()
 			api()
 		}
