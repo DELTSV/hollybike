@@ -75,7 +75,7 @@ jobs:
 
       - name: Copy app.json
         working-directory: .
-        run: cp app.json packages/backend/app.json
+        run: cp app-test.json packages/backend/app.json
 
       - name: Read rights to gradlew
         run: chmod +x gradlew
