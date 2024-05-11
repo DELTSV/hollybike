@@ -60,7 +60,22 @@ fun Query.applyParam(searchParam: SearchParam): Query {
 	q = q.orderBy(*searchParam.sort.map { (c, o) -> c to o }.toTypedArray())
 	q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
 	val filter = searchParamFilter(searchParam.filter)
-	val query = searchParam.query?.let { query -> q.searchParamQuery(query) }
+	val query = if((searchParam.query?.split(" ")?.size ?: 0) == 2) {
+		val values = searchParam.query!!.split(" ")
+		val val1= q.searchParamQuery(values.joinToString("%") { it.replace("%", "\\%") })
+		val val2 = q.searchParamQuery(values.reversed().joinToString("%") { it.replace("%", "\\%") })
+		if(val1 != null) {
+			if(val2 != null) {
+				val1 or val2
+			} else {
+				val1
+			}
+		} else {
+			val2
+		}
+	} else {
+		searchParam.query?.let { query -> q.searchParamQuery(query.replace("%", "\\%").replace(" ", "%")) }
+	}
 	val where = if(query == null) {
 		filter
 	} else {
