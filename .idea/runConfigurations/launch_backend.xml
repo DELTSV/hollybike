@@ -5,8 +5,6 @@
     <envs>
       <env name="CLOUD" value="true" />
       <env name="DEV" value="true" />
-      <env name="AWS_ACCESS_KEY_ID" value="minio-root-user" />
-      <env name="AWS_SECRET_ACCESS_KEY" value="minio-root-password" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="hollybike.api.ApplicationKt" />
     <module name="hollybike.api.main" />
