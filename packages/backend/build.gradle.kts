@@ -109,6 +109,9 @@ dependencies {
 	testImplementation("io.ktor:ktor-server-tests-jvm")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 	testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
+	testImplementation("org.testcontainers:junit-jupiter:1.19.8")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+	testImplementation("org.testcontainers:postgresql:1.19.7")
 }
 
 liquibase {
@@ -132,6 +135,10 @@ liquibase {
 			)
 	}
 	runList = "main"
+}
+
+tasks.test {
+	useJUnitPlatform()
 }
 
 graalvmNative {
@@ -191,6 +198,7 @@ graalvmNative {
 		enabled.set(true)
 	}
 }
+
 
 tasks.register("printVersion") {
 	doLast {

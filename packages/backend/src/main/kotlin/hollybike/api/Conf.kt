@@ -55,7 +55,11 @@ data class ConfStorage(
 	val ftpDirectory: String? = null
 )
 
-fun parseConf(): Conf {
+fun parseConf(isTestEnv: Boolean): Conf {
+	if (isTestEnv) {
+		return parseSystemConf()
+	}
+
 	val f = File("./app.json")
 	return if (f.exists()) {
 		parseFileConf(f)
@@ -69,6 +73,24 @@ private val json = Json {
 }
 
 private fun parseFileConf(f: File): Conf = json.decodeFromString(f.readText())
+
+private fun parseSystemConf() = Conf(
+	ConfDB(
+		System.getProperty("database.url"),
+		System.getProperty("database.username"),
+		System.getProperty("database.password")
+	),
+	ConfSecurity(
+		System.getProperty("security.audience"),
+		System.getProperty("security.domain"),
+		System.getProperty("security.realm"),
+		System.getProperty("security.secret")
+	),
+	smtp = null,
+	ConfStorage(
+		localPath = System.getProperty("storage.localPath"),
+	),
+)
 
 private fun parseEnvConf() = Conf(
 	ConfDB(
@@ -87,12 +109,13 @@ private fun parseEnvConf() = Conf(
 		System.getenv("STORAGE_S3_URL"),
 		System.getenv("STORAGE_S3_BUCKET_NAME"),
 		System.getenv("STORAGE_S3_REGION"),
+		System.getenv("STORAGE_S3_URL"),
 		System.getenv("STORAGE_LOCAL_PATH"),
 		System.getenv("STORAGE_FTP_SERVER"),
 		System.getenv("STORAGE_FTP_USERNAME"),
 		System.getenv("STORAGE_FTP_PASSWORD"),
-		System.getenv("STORAGE_FTP_DIRECTORY")
-	)
+		System.getenv("STORAGE_FTP_DIRECTORY"),
+	),
 )
 
 private fun parseEnvSMTPConv(): ConfSMTP? {

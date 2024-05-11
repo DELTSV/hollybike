@@ -11,22 +11,27 @@ import kotlinx.serialization.json.Json
 import generated.Constants
 
 fun main() {
-	embeddedServer(
+	run()
+}
+
+fun run(isTestEnv: Boolean = false): ApplicationEngine {
+	return embeddedServer(
 		CIO,
-		port = 8080,
+		port = System.getProperty("port")?.toInt() ?: 8080,
 		host = "0.0.0.0",
 		watchPaths = listOf("classes", "resources"),
 		module = Application::module
-	).start(wait = true)
+	).start(wait = !isTestEnv)
 }
 
 fun Application.module() {
+	checkTestEnvironment()
 	loadConfig()
 	checkOnPremise()
 	configureSerialization()
 	api()
 
-	log.info("Running hollybike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
+	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
 
 	if (isOnPremise) {
 		frontend()
@@ -42,23 +47,40 @@ fun Application.configureSerialization() {
 	}
 }
 
+fun Application.checkTestEnvironment() {
+	log.info("Checking environment...")
+
+	attributes.put(isTestEnvAttributeKey, System.getProperty("is_test_env")?.let {
+		if (it == "true") {
+			log.info("Running in test environment")
+			true
+		} else {
+			if (developmentMode) {
+				log.info("Running in development environment")
+			} else {
+				log.info("Running in production environment")
+			}
+
+			false
+		}
+	} ?: false)
+}
+
 fun Application.loadConfig() {
-	this.attributes.put(confKey, parseConf())
+	this.attributes.put(confKey, parseConf(isTestEnv))
+}
+
+fun Application.loadCustomConfig(customConfig: Conf) {
+	this.attributes.put(confKey, customConfig)
 }
 
 fun Application.checkOnPremise() {
 	attributes.put(onPremiseAttributeKey, Constants.IS_ON_PREMISE)
-
-	if (!isOnPremise) {
-		val conf = attributes.conf
-
-		if (conf.storage.s3BucketName == null) {
-			throw IllegalStateException("Missing storage.s3BucketName in configuration for production mode")
-		}
-	}
 }
 
+val Application.isTestEnv: Boolean get() = attributes[isTestEnvAttributeKey]
 val Application.isOnPremise: Boolean get() = attributes[onPremiseAttributeKey]
 val Application.isCloud: Boolean get() = !isOnPremise
 
 private val onPremiseAttributeKey = AttributeKey<Boolean>("onPremise")
+private val isTestEnvAttributeKey = AttributeKey<Boolean>("isTestEnv")
