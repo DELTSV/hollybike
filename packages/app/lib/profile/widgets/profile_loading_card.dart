@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/shared/widgets/loading_profile_picture.dart';
+import 'package:hollybike/shared/widgets/profile_picture/loading_profile_picture.dart';
 import 'package:hollybike/shared/widgets/loading_text.dart';
 
 class ProfileLoadingCard extends StatelessWidget {

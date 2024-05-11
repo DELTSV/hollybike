@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/shared/widgets/profile_picture/profile_picture.dart';
 
 class ProfileCard extends StatelessWidget {
   final AuthSession session;
@@ -30,7 +31,7 @@ class ProfileCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               clipBehavior: Clip.hardEdge,
-              child: _getProfilePictureImage(),
+              child: ProfilePicture(profile: profile),
             ),
             const SizedBox(width: 16),
             _getProfileName(context),
@@ -42,12 +43,6 @@ class ProfileCard extends StatelessWidget {
 
   void _handleCardTap(BuildContext context) {
     BlocProvider.of<AuthBloc>(context).add(AuthSessionSwitch(newSession: session));
-  }
-
-  Image _getProfilePictureImage() {
-    return profile.profilePicture == null
-        ? Image.asset("images/placeholder_profile_picture.jpg")
-        : Image.network(profile.profilePicture as String);
   }
 
   Widget _getProfileName(BuildContext context) {
