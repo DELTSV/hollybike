@@ -1,6 +1,8 @@
-export type ConnectionDTO = {
-	username: string;
+export interface TLogin {
+	email: string;
 	password: string;
-};
+}
 
-export type LoginDTO = { email: string } & ConnectionDTO;
+export interface TAuthInfo {
+	token: string
+}

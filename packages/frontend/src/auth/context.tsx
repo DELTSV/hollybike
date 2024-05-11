@@ -2,31 +2,60 @@ import {
 	ComponentChildren, createContext,
 } from "preact";
 import type {
-	ConnectionDTO, LoginDTO,
+	TAuthInfo, TLogin,
 } from "./types";
-import { useState } from "preact/hooks";
+import {
+	useCallback, useContext,
+	useEffect, useState,
+} from "preact/hooks";
+import { api } from "../utils/useApi.ts";
 
 type AuthContext = {
-    token?: string;
-    isLoggedIn: boolean;
-    login: (data: LoginDTO) => void;
-    connect: (data: ConnectionDTO) => void;
+	token?: string;
+	isLoggedIn: boolean;
+	login: (data: TLogin) => void;
+	disconnect: () => void
 }
 
-export const Auth = createContext<AuthContext>({
+const Auth = createContext<AuthContext>({
 	token: undefined,
 	isLoggedIn: false,
 	login: _data => void 0,
-	connect: _data => void 0,
+	disconnect: () => {},
 });
+
+export function useAuth() {
+	return useContext(Auth);
+}
 
 type Props = { children: ComponentChildren }
 
 export const AuthContextProvider = ({ children }: Props) => {
-	const [ token, setToken ] = useState<string>();
+	const [token, setToken] = useState<string>();
 
-	const login = (_data: LoginDTO) => setToken("connecter");
-	const connect = (_data: ConnectionDTO) => setToken("connecter");
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token != null)
+			setToken(token);
+	}, []);
+
+	const login = (data: TLogin) => {
+		api<TAuthInfo>("/auth/login", {
+			method: "POST",
+			body: data,
+		}).then((res) => {
+			if (res.status === 200) {
+				localStorage.setItem("token", res.data!.token);
+				setToken(res.data!.token);
+			} else
+				console.log(res.message);
+		});
+	};
+
+	const disconnect = useCallback(() => {
+		localStorage.removeItem("token");
+		setToken(undefined);
+	}, []);
 
 	return (
 		<Auth.Provider
@@ -34,7 +63,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 				token,
 				isLoggedIn: !!token,
 				login,
-				connect,
+				disconnect,
 			}}
 		>
 			{ children }
