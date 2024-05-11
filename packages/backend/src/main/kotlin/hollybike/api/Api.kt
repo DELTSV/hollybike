@@ -26,7 +26,7 @@ fun Application.api() {
 		this.level = Level.INFO
 	}
 
-	val storageService = StorageServiceFactory.getService(conf)
+	val storageService = StorageServiceFactory.getService(conf, developmentMode, isOnPremise)
 
 	log.info("Using ${storageService.mode} storage mode")
 
