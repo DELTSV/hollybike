@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/shared/widgets/loading_placeholders/text_loading_placeholder.dart';
 import 'package:hollybike/shared/widgets/profile_titles/profile_title_container.dart';
 
-class ProfileTitleLoadingPlaceholder extends StatelessWidget {
-  const ProfileTitleLoadingPlaceholder({super.key});
+class LoadingProfileTitle extends StatelessWidget {
+  const LoadingProfileTitle({super.key});
 
   @override
   Widget build(BuildContext context) {

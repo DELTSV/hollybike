@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/widgets/profile_add_session_button.dart';
-import 'package:hollybike/profile/widgets/profile_list.dart';
+import 'package:hollybike/profile/widgets/profile_modal/profile_modal_list.dart';
 import 'package:hollybike/theme/widgets/theme_button.dart';
 
 class ProfileModal extends StatelessWidget {
@@ -37,8 +37,8 @@ class ProfileModal extends StatelessWidget {
                 ThemeButton(),
               ],
             ),
-            SizedBox(height: 15),
-            ProfileList(),
+            SizedBox(height: 8),
+            ProfileModalList(),
             SizedBox(height: 15),
             ProfileAddSessionButton(),
           ],

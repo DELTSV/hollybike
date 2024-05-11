@@ -4,9 +4,9 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/hud/widgets/hud_button.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
-import 'package:hollybike/profile/widgets/profile_modal.dart';
+import 'package:hollybike/profile/widgets/profile_modal/profile_modal.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/future_profile_picture.dart';
-import 'package:hollybike/shared/widgets/loading_placeholders/profile_picture_loading_placeholder.dart';
+import 'package:hollybike/shared/widgets/profile_pictures/loading_profile_picture.dart';
 
 class ProfileButton extends StatelessWidget {
   const ProfileButton({super.key});
@@ -38,7 +38,7 @@ class ProfileButton extends StatelessWidget {
 
   Widget _renderProfilePicture(BuildContext context, AuthSession? session) {
     if (session == null) {
-      return const ProfilePictureLoadingPlaceholder();
+      return const LoadingProfilePicture();
     }
 
     final profile = RepositoryProvider.of<ProfileRepository>(context)
