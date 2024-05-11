@@ -16,7 +16,6 @@ class S3StorageService(
 	private val url: String?,
 	private val bucketName: String,
 	private val bucketRegion: String,
-	private val isDev: Boolean,
 	private val username: String? = null,
 	private val password: String? = null
 ) : StorageService {
@@ -25,7 +24,7 @@ class S3StorageService(
 	private val client = S3Client {
 		endpointUrl = url?.let { Url.parse(url) }
 		region = bucketRegion
-		forcePathStyle = isDev
+		forcePathStyle = url != null
 		if(username != null || password != null) {
 			credentialsProvider = StaticCredentialsProvider {
 				this.accessKeyId = username

@@ -70,6 +70,10 @@ fun Application.loadConfig() {
 	this.attributes.put(confKey, parseConf(isTestEnv))
 }
 
+fun Application.loadCustomConfig(customConfig: Conf) {
+	this.attributes.put(confKey, customConfig)
+}
+
 fun Application.checkOnPremise() {
 	attributes.put(onPremiseAttributeKey, Constants.IS_ON_PREMISE)
 }

@@ -12,7 +12,6 @@ plugins {
 	id("org.graalvm.buildtools.native") version "0.9.19"
 	id("com.google.devtools.ksp") version "1.9.23-1.0.20"
 	id("org.liquibase.gradle") version "2.1.1"
-	id("com.adarshr.test-logger") version "4.0.0"
 }
 
 group = "hollybike.api"
@@ -110,7 +109,8 @@ dependencies {
 	testImplementation("io.ktor:ktor-server-tests-jvm")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 	testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
-	testImplementation("org.testcontainers:junit-jupiter:1.19.7")
+	testImplementation("org.testcontainers:junit-jupiter:1.19.8")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
 	testImplementation("org.testcontainers:postgresql:1.19.7")
 }
 
@@ -135,6 +135,10 @@ liquibase {
 			)
 	}
 	runList = "main"
+}
+
+tasks.test {
+	useJUnitPlatform()
 }
 
 graalvmNative {

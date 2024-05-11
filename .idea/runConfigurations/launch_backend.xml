@@ -12,7 +12,7 @@
     <module name="hollybike.api.main" />
     <shortenClasspath name="NONE" />
     <option name="VM_PARAMETERS" value="-Dio.ktor.development=true -agentlib:native-image-agent=config-output-dir=native-image" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/packages/backend" />
+    <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
     <extension name="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />
