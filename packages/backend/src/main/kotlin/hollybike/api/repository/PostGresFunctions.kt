@@ -8,7 +8,6 @@ fun lower(string: String) = object: ExpressionWithColumnType<String>() {
 
 	override fun toQueryBuilder(queryBuilder: QueryBuilder) {
 		queryBuilder.append("LOWER('", string.replace("'", "\'") ,"')")
-		TODO("Not yet implemented")
 	}
 
 }
