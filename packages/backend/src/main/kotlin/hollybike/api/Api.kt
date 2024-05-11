@@ -4,6 +4,7 @@ import hollybike.api.plugins.configureHTTP
 import hollybike.api.plugins.configureSecurity
 import hollybike.api.repository.configureDatabase
 import hollybike.api.routing.controller.*
+import hollybike.api.services.AssociationService
 import hollybike.api.services.EventService
 import hollybike.api.services.UserService
 import hollybike.api.services.auth.AuthService
@@ -26,21 +27,22 @@ fun Application.api() {
 		this.level = Level.INFO
 	}
 
-	val storageService = StorageServiceFactory.getService(conf, developmentMode, isOnPremise)
+	val storageService = StorageServiceFactory.getService(conf, isOnPremise)
 
 	log.info("Using ${storageService.mode} storage mode")
 
 	val userService = UserService(db, storageService)
 	val invitationService = InvitationService(db)
-	val authService = AuthService(db, conf.security, invitationService)
+	val authService = AuthService(db, conf.security, invitationService, userService)
 	val eventService = EventService(db, storageService)
+	val associationService = AssociationService(db, storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
 	ApiController(this, mailSender)
-	AuthenticationController(this, db, authService)
+	AuthenticationController(this, authService)
 	UserController(this, userService)
-	AssociationController(this, db, storageService)
+	AssociationController(this, associationService)
 	InvitationController(this, authService, invitationService)
 	EventController(this, eventService)
 
