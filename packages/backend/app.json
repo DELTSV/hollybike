@@ -8,7 +8,7 @@
 		"audience": "hollybike.fr",
 		"domain": "http://0.0.0.0:8080",
 		"realm": "realm",
-		"secret": "SECRET"
+		"secret": "test-secret"
 	},
 	"storage": {
 		"s3BucketName": "hollybike",

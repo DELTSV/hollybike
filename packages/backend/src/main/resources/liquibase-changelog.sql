@@ -88,4 +88,8 @@ CREATE TABLE invitations (
     creation TIMESTAMP NOT NULL DEFAULT NOW(),
     uses INTEGER NOT NULL DEFAULT 0,
     max_uses INTEGER DEFAULT NULL
-)
+);
+
+-- changeset loic:3 context:test
+INSERT INTO associations (name) VALUES ('Test Association');
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('root@hollybike.fr', 'root', 'JDJhJDA2JG1BT3RML0R3RGdlV1g1RVQ0Z3c2LmVvZVBFVFpnMDI2Uy56M1lEVmpuaVk1dlBHYlpudm5p', 1, now(), 3);

@@ -2,6 +2,7 @@ package hollybike.api.repository
 
 import hollybike.api.conf
 import hollybike.api.isCloud
+import hollybike.api.isTestEnv
 import io.ktor.server.application.*
 import liquibase.UpdateSummaryEnum
 import liquibase.command.CommandScope
@@ -26,13 +27,13 @@ fun Application.configureDatabase(): Database {
 		databaseConfig = DatabaseConfig {
 			keepLoadedReferencesOutOfTransaction = true
 		}).apply {
-		runMigration(developmentMode, isCloud, this.connector().connection as Connection)
+		runMigration(developmentMode, isCloud, isTestEnv, this.connector().connection as Connection)
 	}
 }
 
-fun runMigration(isDev: Boolean, isCloud: Boolean, connection: Connection) {
+fun runMigration(isDev: Boolean, isCloud: Boolean, isTestEnv: Boolean, connection: Connection) {
 	val changelog = "/liquibase-changelog.sql"
-	val context = (if (isDev) "dev," else "") + (if (isCloud) "cloud" else "premise")
+	val context = (if (isDev) "dev," else "") + (if (isTestEnv) "test," else "") + (if (isCloud) "cloud" else "premise")
 
 	val db = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(JdbcConnection(connection))
 	CommandScope("update").apply {

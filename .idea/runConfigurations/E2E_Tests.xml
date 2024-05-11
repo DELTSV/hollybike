@@ -11,6 +11,9 @@
     <option name="testPath" value="" />
     <option name="packageName" value="" />
     <option name="vmparams" value="" />
+    <envs>
+      <env name="DEV" value="true" />
+    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
