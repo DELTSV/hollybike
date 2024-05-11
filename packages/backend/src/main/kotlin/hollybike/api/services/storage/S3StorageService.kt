@@ -13,7 +13,7 @@ import aws.smithy.kotlin.runtime.net.url.Url
 import kotlinx.coroutines.runBlocking
 
 class S3StorageService(
-	private val url: String,
+	private val url: String?,
 	private val bucketName: String,
 	private val bucketRegion: String,
 	private val isDev: Boolean,
@@ -23,7 +23,7 @@ class S3StorageService(
 	override val mode = StorageMode.S3
 
 	private val client = S3Client {
-		endpointUrl = Url.parse(url)
+		endpointUrl = url?.let { Url.parse(url) }
 		region = bucketRegion
 		forcePathStyle = isDev
 		if(username != null || password != null) {
@@ -37,7 +37,11 @@ class S3StorageService(
 	init {
 		runBlocking {
 			if (!client.bucketExists(bucketName)) {
-				throw Exception("Cannot reach bucket $bucketName, check your IAM permissions")
+				if(url != null) {
+					throw Exception("Cannot reach bucket `$bucketName` in region `$bucketRegion` on url `$url`, check parameters")
+				} else {
+					throw Exception("Cannot reach bucket `$bucketName` in region `$bucketRegion`, check parameters")
+				}
 			}
 		}
 	}

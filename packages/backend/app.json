@@ -12,7 +12,6 @@
 	},
 	"storage": {
 		"localPath": "./storage",
-		"s3Url": "http://localhost:9000",
 		"s3BucketName": "hollybike",
 		"s3Region": "eu-west-3",
 		"s3Username": "minio-root-user",

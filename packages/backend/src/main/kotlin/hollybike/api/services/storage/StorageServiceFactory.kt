@@ -7,7 +7,7 @@ object StorageServiceFactory {
 		return if (isOnPremise) {
 			val isFtp = conf.storage.ftpServer != null
 			val isLocal = conf.storage.localPath != null
-			val isS3 = conf.storage.s3Url != null
+			val isS3 = conf.storage.s3BucketName != null && conf.storage.s3Region != null
 
 			val options = listOf(isFtp, isLocal, isS3)
 
@@ -26,19 +26,15 @@ object StorageServiceFactory {
 				)
 			} else if(isS3){
 				with(conf.storage) {
-					if(s3Url == null || s3BucketName == null || s3Region == null) {
-						throw IllegalArgumentException("When S3 enabled, S3 url, bucket name and region must be provided")
-					} else {
-						S3StorageService(s3Url, s3BucketName, s3Region, isDevMode, s3Username, s3Password)
-					}
+					S3StorageService(s3Url, s3BucketName!!, s3Region!!, isDevMode, s3Username, s3Password)
 				}
 			} else {
 				throw IllegalArgumentException("No storage configuration provided")
 			}
 		} else {
 			with(conf.storage) {
-				if(s3Url == null || s3BucketName == null || s3Region == null) {
-					throw IllegalArgumentException("S3 url, bucket name and region must be provided")
+				if(s3BucketName == null || s3Region == null) {
+					throw IllegalArgumentException("S3 bucket name and region must be provided")
 				} else {
 					S3StorageService(s3Url, s3BucketName, s3Region, isDevMode, s3Username, s3Password)
 				}
