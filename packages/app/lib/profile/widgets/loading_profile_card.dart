@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/shared/widgets/profile_picture/loading_profile_picture.dart';
-import 'package:hollybike/shared/widgets/loading_text.dart';
+import 'package:hollybike/shared/widgets/loading_placeholders/profile_picture_loading_placeholder.dart';
+import 'package:hollybike/shared/widgets/loading_placeholders/text_loading_placeholder.dart';
 
-class ProfileLoadingCard extends StatelessWidget {
-  const ProfileLoadingCard({super.key});
+class LoadingProfileCard extends StatelessWidget {
+  const LoadingProfileCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class ProfileLoadingCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const LoadingProfilePicture(),
+          const ProfilePictureLoadingPlaceholder(),
           const SizedBox(width: 16),
           _getProfileName(context),
         ],
@@ -25,13 +25,13 @@ class ProfileLoadingCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LoadingText(
+        TextLoadingPlaceholder(
           textStyle: Theme.of(context).textTheme.titleSmall,
           minLetters: 4,
           maxLetters: 12,
         ),
         const SizedBox(height: 4),
-        LoadingText(
+        TextLoadingPlaceholder(
           textStyle: Theme.of(context).textTheme.bodySmall,
           minLetters: 13,
           maxLetters: 25,

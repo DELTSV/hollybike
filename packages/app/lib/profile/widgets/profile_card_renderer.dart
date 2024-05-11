@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/profile/widgets/profile_card.dart';
-import 'package:hollybike/profile/widgets/profile_loading_card.dart';
+import 'package:hollybike/profile/widgets/loading_profile_card.dart';
 
 import '../types/profile.dart';
 
@@ -34,7 +34,7 @@ class ProfileCardRenderer extends StatelessWidget {
           session: session,
           profile: profile,
         ),
-      _ => const ProfileLoadingCard(),
+      _ => const LoadingProfileCard(),
     };
   }
 }

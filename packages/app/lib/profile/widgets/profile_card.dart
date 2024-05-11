@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
-import 'package:hollybike/shared/widgets/profile_picture/profile_picture.dart';
+import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
 
 class ProfileCard extends StatelessWidget {
   final AuthSession session;

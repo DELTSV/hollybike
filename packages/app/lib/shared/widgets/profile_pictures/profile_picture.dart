@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/types/profile.dart';
-import 'package:hollybike/shared/widgets/profile_picture/profile_picture_container.dart';
+import 'package:hollybike/shared/widgets/profile_pictures/profile_picture_container.dart';
 
 class ProfilePicture extends StatelessWidget {
   final Profile profile;

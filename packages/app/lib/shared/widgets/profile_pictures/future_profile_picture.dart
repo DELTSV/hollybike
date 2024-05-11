@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/types/profile.dart';
-import 'package:hollybike/shared/widgets/profile_picture/loading_profile_picture.dart';
-import 'package:hollybike/shared/widgets/profile_picture/profile_picture.dart';
+import 'package:hollybike/shared/widgets/loading_placeholders/profile_picture_loading_placeholder.dart';
+import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
 
 class FutureProfilePicture extends StatelessWidget {
   final Future<Profile> profile;
@@ -31,7 +31,7 @@ class FutureProfilePicture extends StatelessWidget {
           profile: profile,
           size: size,
         ),
-      _ => LoadingProfilePicture(size: size),
+      _ => ProfilePictureLoadingPlaceholder(size: size),
     };
   }
 }
