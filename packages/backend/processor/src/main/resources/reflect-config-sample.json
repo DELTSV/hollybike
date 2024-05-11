@@ -1179,6 +1179,10 @@
 		"methods":[{"name":"<init>","parameterTypes":[] }]
 	},
 	{
+		"name":"liquibase.datatype.core.VarcharType",
+		"methods":[{"name":"<init>","parameterTypes":[] }]
+	},
+	{
 		"name":"liquibase.executor.ExecutorService",
 		"methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["liquibase.Scope"] }]
 	},
@@ -1196,6 +1200,10 @@
 	},
 	{
 		"name":"liquibase.logging.mdc.MdcManagerFactory",
+		"methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["liquibase.Scope"] }]
+	},
+	{
+		"name":"liquibase.parser.SqlParserFactory",
 		"methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["liquibase.Scope"] }]
 	},
 	{
