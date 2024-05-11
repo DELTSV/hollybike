@@ -6,18 +6,14 @@ import aws.sdk.kotlin.services.s3.model.GetObjectRequest
 import aws.sdk.kotlin.services.s3.model.HeadBucketRequest
 import aws.sdk.kotlin.services.s3.model.NotFound
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
-import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProvider
-import aws.smithy.kotlin.runtime.auth.awscredentials.CredentialsProviderChain
 import aws.smithy.kotlin.runtime.content.ByteStream
 import aws.smithy.kotlin.runtime.content.toByteArray
 import aws.smithy.kotlin.runtime.http.HttpException
 import aws.smithy.kotlin.runtime.net.url.Url
-import io.ktor.server.auth.*
 import kotlinx.coroutines.runBlocking
-import software.amazon.awssdk.services.s3.internal.s3express.DefaultS3ExpressSessionCredentials
 
 class S3StorageService(
-	private val url: String,
+	private val url: String?,
 	private val bucketName: String,
 	private val bucketRegion: String,
 	private val isDev: Boolean,
@@ -27,7 +23,7 @@ class S3StorageService(
 	override val mode = StorageMode.S3
 
 	private val client = S3Client {
-		endpointUrl = Url.parse(url)
+		endpointUrl = url?.let { Url.parse(url) }
 		region = bucketRegion
 		forcePathStyle = isDev
 		if(username != null || password != null) {
@@ -41,7 +37,11 @@ class S3StorageService(
 	init {
 		runBlocking {
 			if (!client.bucketExists(bucketName)) {
-				throw Exception("Cannot reach bucket $bucketName, check your IAM permissions")
+				if(url != null) {
+					throw Exception("Cannot reach bucket `$bucketName` in region `$bucketRegion` on url `$url`, check parameters")
+				} else {
+					throw Exception("Cannot reach bucket `$bucketName` in region `$bucketRegion`, check parameters")
+				}
 			}
 		}
 	}
