@@ -78,7 +78,7 @@ class Processor(
 						ref = true
 						val capitalizedName = prop.simpleName.asString().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 						methods.add("{\"name\":\"get$capitalizedName\",\"parameterTypes\":[] }, {\"name\":\"set$capitalizedName\",\"parameterTypes\":[\"${propDecl.qualifiedName?.asString()}\"] }")
-						fields.add("{\"name\": \"${prop.simpleName.asString()}\"}")
+						fields.add("{\"name\": \"${prop.simpleName.asString()}${'$'}delegate\"}")
 					}
 				}
 				if(ref) {
