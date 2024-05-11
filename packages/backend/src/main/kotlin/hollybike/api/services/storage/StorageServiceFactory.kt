@@ -3,30 +3,46 @@ package hollybike.api.services.storage
 import hollybike.api.Conf
 
 object StorageServiceFactory {
-	fun getService(conf: Conf): StorageService {
-		val isLocal = conf.storage.localPath != null
-		val isFtp = conf.storage.ftpServer != null
-		val isS3 = conf.storage.s3BucketName != null
+	fun getService(conf: Conf, isDevMode: Boolean, isOnPremise: Boolean): StorageService {
+		return if (isOnPremise) {
+			val isFtp = conf.storage.ftpServer != null
+			val isLocal = conf.storage.localPath != null
+			val isS3 = conf.storage.s3Url != null
 
-		if (!isFtp && !isLocal && !isS3) {
-			throw IllegalArgumentException("No storage configuration provided")
-		}
+			val options = listOf(isFtp, isLocal, isS3)
 
-		if (isFtp && isLocal || isFtp && isS3 || isLocal && isS3) {
-			throw IllegalArgumentException("Configure only one storage mode")
-		}
+			if (options.filter { it }.size > 1) {
+				throw IllegalArgumentException("Too many storage configured, please choose one")
+			}
 
-		return if (isLocal) {
-			LocalStorageService(conf.storage.localPath)
-		} else if (isFtp) {
-			FTPStorageService(
-				conf.storage.ftpServer,
-				conf.storage.ftpUsername,
-				conf.storage.ftpPassword,
-				conf.storage.ftpDirectory,
-			)
+			if (isLocal) {
+				LocalStorageService(conf.storage.localPath)
+			} else if(isFtp) {
+				FTPStorageService(
+					conf.storage.ftpServer,
+					conf.storage.ftpUsername,
+					conf.storage.ftpPassword,
+					conf.storage.ftpDirectory,
+				)
+			} else if(isS3){
+				with(conf.storage) {
+					if(s3Url == null || s3BucketName == null || s3Region == null) {
+						throw IllegalArgumentException("When S3 enabled, S3 url, bucket name and region must be provided")
+					} else {
+						S3StorageService(s3Url, s3BucketName, s3Region, isDevMode, s3Username, s3Password)
+					}
+				}
+			} else {
+				throw IllegalArgumentException("No storage configuration provided")
+			}
 		} else {
-			S3StorageService(conf.storage.s3Url, conf.storage.s3BucketName, conf.storage.s3Region)
+			with(conf.storage) {
+				if(s3Url == null || s3BucketName == null || s3Region == null) {
+					throw IllegalArgumentException("S3 url, bucket name and region must be provided")
+				} else {
+					S3StorageService(s3Url, s3BucketName, s3Region, isDevMode, s3Username, s3Password)
+				}
+			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package hollybike.api.services.storage
 
-interface StorageService {
+sealed interface StorageService {
 	val mode: StorageMode
 
 	suspend fun store(data: ByteArray, path: String, dataContentType: String)
