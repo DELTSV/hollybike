@@ -8,14 +8,22 @@ class ProfileModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final border = BorderSide(
+      width: 3,
+      color: Theme.of(context).colorScheme.onPrimary,
+    );
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
         border: Border(
-          top: BorderSide(
-            width: 2,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
+          top: border,
+          left: border,
+          right: border,
+        ),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(31),
+          topRight: Radius.circular(31),
         ),
       ),
       padding: const EdgeInsets.all(16),
