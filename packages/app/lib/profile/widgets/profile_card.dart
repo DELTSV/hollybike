@@ -4,6 +4,7 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
+import 'package:hollybike/shared/widgets/profile_titles/profile_title.dart';
 
 class ProfileCard extends StatelessWidget {
   final AuthSession session;
@@ -25,16 +26,9 @@ class ProfileCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              constraints: BoxConstraints.tight(const Size.square(40)),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: ProfilePicture(profile: profile),
-            ),
+            ProfilePicture(profile: profile),
             const SizedBox(width: 16),
-            _getProfileName(context),
+            ProfileTitle(profile: profile),
           ],
         ),
       ),
@@ -43,21 +37,5 @@ class ProfileCard extends StatelessWidget {
 
   void _handleCardTap(BuildContext context) {
     BlocProvider.of<AuthBloc>(context).add(AuthSessionSwitch(newSession: session));
-  }
-
-  Widget _getProfileName(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          profile.username,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        Text(
-          profile.email,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-      ],
-    );
   }
 }
