@@ -64,7 +64,7 @@ class AuthService(
 	}
 
 	fun login(login: TLogin): Result<String> {
-		val user = transaction(db) { User.find { Users.email eq login.email }.singleOrNull()?.load(User::association) }
+		val user = transaction(db) { User.find { lower(Users.email) eq lower(login.email) }.singleOrNull()?.load(User::association) }
 			?: return Result.failure(UserNotFoundException())
 		if (!verify(login.password, user.password.decodeBase64Bytes())) {
 			return Result.failure(UserWrongPassword())
@@ -95,7 +95,7 @@ class AuthService(
 		val user = try {
 			transaction(db) {
 				User.new {
-					this.email = signin.email
+					this.email = signin.email.lowercase()
 					this.password = hash(signin.password).encodeBase64String()
 					this.username = signin.username
 					this.association = association
