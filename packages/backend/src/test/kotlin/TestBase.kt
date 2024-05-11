@@ -48,20 +48,20 @@ abstract class TestBase {
 	}
 
 	fun applicationConfig(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+		val config = Conf(
+			db = databaseConfig!!,
+			security = ConfSecurity(
+				audience = "audience",
+				domain = "domain",
+				realm = "realm",
+				secret = "secret"
+			),
+			smtp = null,
+			storage = storageConfig!!
+		)
+
 		application {
-			loadCustomConfig(
-				Conf(
-					db = databaseConfig!!,
-					security = ConfSecurity(
-						audience = "audience",
-						domain = "domain",
-						realm = "realm",
-						secret = "secret"
-					),
-					smtp = null,
-					storage = storageConfig!!
-				)
-			)
+			loadCustomConfig(config)
 			checkTestEnvironment()
 			checkOnPremise()
 			api()

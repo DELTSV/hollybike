@@ -1,13 +1,13 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.services.AssociationService
+import hollybike.api.exceptions.AssociationAlreadyExists
+import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
-import hollybike.api.repository.Association
-import hollybike.api.repository.User
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
 import hollybike.api.routing.resources.Users
-import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TNewAssociation
 import hollybike.api.types.association.TUpdateAssociation
@@ -21,17 +21,11 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.jetbrains.exposed.dao.load
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.postgresql.util.PSQLException
 import kotlin.math.ceil
 
 class AssociationController(
 	application: Application,
-	private val db: Database,
-	private val storageService: StorageService
+	private val associationService: AssociationService
 ) {
 	init {
 		application.routing {
@@ -61,10 +55,12 @@ class AssociationController(
 	private fun Route.updateMyAssociation() {
 		patch<Associations.Me<API>>(EUserScope.Admin) {
 			val update = call.receive<TUpdateAssociation>()
-			transaction(db) {
-				update.name?.let { call.user.association.name = it }
-			}
-			call.respond(TAssociation(call.user.association))
+			val updatedAssociation = associationService.updateMyAssociation(
+				call.user.association,
+				update.name
+			)
+
+			call.respond(TAssociation(updatedAssociation))
 		}
 	}
 
@@ -83,48 +79,49 @@ class AssociationController(
 				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@put
 			}
-			val path = "a/${call.user.association.id}/p"
-			storageService.store(image.streamProvider().readBytes(), path, contentType.contentType)
-			transaction(db) { call.user.association.picture = path }
 
-			call.respond(HttpStatusCode.OK)
+			val association = associationService.updateMyAssociationPicture(
+				call.user.association,
+				image.streamProvider().readBytes(),
+				contentType
+			)
+
+			call.respond(TAssociation(association))
 		}
 	}
 
 	private fun Route.getAll() {
 		get<Associations<API>>(EUserScope.Root) {
 			val listParam = call.listParams
-			val associations = transaction(db) {
-				Association.all().limit(listParam.perPage, offset = (listParam.page * listParam.perPage).toLong())
-					.toList()
-			}
-			val totAssociations = transaction(db) { Association.count() }
+			val associations = associationService.getAll(listParam.page, listParam.perPage)
+			val totAssociations = associationService.countAssociations()
+
 			call.respond(
 				TLists(
 					data = associations.map { TAssociation(it) },
 					page = listParam.page,
 					perPage = listParam.perPage,
 					totalPage = ceil(totAssociations.div(listParam.perPage.toDouble())).toInt(),
-					totalData = totAssociations.toInt()
+					totalData = totAssociations
 				)
 			)
 		}
 	}
 
 	private fun Route.getById() {
-		get<Associations.Id<API>>(EUserScope.Root) {
-			transaction(db) { Association.findById(it.id) }?.let {
+		get<Associations.Id<API>>(EUserScope.Root) { params ->
+			associationService.getById(params.id)?.let {
 				call.respond(TAssociation(it))
 			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
+				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
 			}
 		}
 	}
 
 	private fun Route.getByUser() {
-		get<Associations<Users.Id>>(EUserScope.Root) {
-			transaction(db) { User.findById(it.parent.id)?.load(User::association) }?.let {
-				call.respond(TAssociation(it.association))
+		get<Associations<Users.Id>>(EUserScope.Root) { params ->
+			associationService.getByUser(params.parent.id)?.let {
+				call.respond(TAssociation(it))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -134,45 +131,36 @@ class AssociationController(
 	private fun Route.addAssociation() {
 		post<Associations<API>>(EUserScope.Root) {
 			val new = call.receive<TNewAssociation>()
-			val association = try {
-				transaction(db) {
-					Association.new {
-						this.name = new.name
-					}
+
+			associationService.createAssociation(new.name).onSuccess {
+				call.respond(HttpStatusCode.Created, TAssociation(it))
+			}.onFailure {
+				when (it) {
+					is AssociationAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'association existe déjà")
+					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
 				}
-			} catch (e: PSQLException) {
-				if (e.serverErrorMessage?.constraint == "associations_name_uindex" && e.serverErrorMessage?.detail?.contains(
-						"already exists"
-					) == true
-				) {
-					call.respond(HttpStatusCode.Conflict, "L'associations existe déjà")
-				} else {
-					e.printStackTrace()
-					call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
-				}
-				return@post
 			}
-			call.respond(HttpStatusCode.Created, TAssociation(association))
 		}
 	}
 
 	private fun Route.updateAssociation() {
-		patch<Associations.Id<API>>(EUserScope.Root) {
+		patch<Associations.Id<API>>(EUserScope.Root) { params ->
 			val update = call.receive<TUpdateAssociation>()
-			newSuspendedTransaction(db = db) {
-				val association = Association.findById(it.id) ?: run {
-					call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
-					return@newSuspendedTransaction
-				}
-				update.name?.let { association.name = it }
-				update.status?.let { association.status = it }
-				call.respond(TAssociation(association))
+
+			associationService.updateAssociation(
+				params.id,
+				update.name,
+				update.status
+			).onSuccess {
+				call.respond(TAssociation(it))
+			}.onFailure {
+				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
 			}
 		}
 	}
 
 	private fun Route.updateAssociationPicture() {
-		put<Associations.Id.Picture<API>>(EUserScope.Root) {
+		put<Associations.Id.Picture<API>>(EUserScope.Root) { params ->
 			val multipart = call.receiveMultipart()
 
 			val image = multipart.readPart() as PartData.FileItem
@@ -187,32 +175,38 @@ class AssociationController(
 				return@put
 			}
 
-			val association = transaction(db) { Association.findById(it.id.id) } ?: run {
-				call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
-				return@put
+			associationService.updateAssociationPicture(
+				params.id.id,
+				image.streamProvider().readBytes(),
+				contentType
+			).onSuccess {
+				call.respond(TAssociation(it))
+			}.onFailure {
+				when (it) {
+					is AssociationNotFound -> call.respond(
+						HttpStatusCode.NotFound,
+						"Association ${it.message} inconnue"
+					)
+
+					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
+				}
 			}
-
-			val path = "a/${association.id}/p"
-			storageService.store(image.streamProvider().readBytes(), path, contentType.contentType)
-			transaction(db) { association.picture = path }
-
-			call.respond(HttpStatusCode.OK)
 		}
 	}
 
 	private fun Route.deleteAssociation() {
-		delete<Associations.Id<API>>(EUserScope.Root) {
-			val deleted = transaction(db = db) {
-				val association = Association.findById(it.id) ?: run {
-					return@transaction false
+		delete<Associations.Id<API>>(EUserScope.Root) { params ->
+			associationService.deleteAssociation(params.id).onSuccess {
+				call.respond(HttpStatusCode.OK)
+			}.onFailure {
+				when (it) {
+					is AssociationNotFound -> call.respond(
+						HttpStatusCode.NotFound,
+						it.message ?: "Association inconnue"
+					)
+
+					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
 				}
-				association.delete()
-				return@transaction true
-			}
-			if (deleted) {
-				call.respond(HttpStatusCode.NoContent)
-			} else {
-				call.respond(HttpStatusCode.NotFound, "Association ${it.id} inconnue")
 			}
 		}
 	}

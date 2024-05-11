@@ -3,7 +3,7 @@ package hollybike.api.services.storage
 import hollybike.api.Conf
 
 object StorageServiceFactory {
-	fun getService(conf: Conf, isDevMode: Boolean, isOnPremise: Boolean): StorageService {
+	fun getService(conf: Conf, isOnPremise: Boolean): StorageService {
 		return if (isOnPremise) {
 			val isFtp = conf.storage.ftpServer != null
 			val isLocal = conf.storage.localPath != null

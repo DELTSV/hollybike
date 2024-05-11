@@ -4,7 +4,7 @@ import hollybike.api.types.user.EUserScope
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TSignin(
+data class TSignup(
 	val email: String,
 	val password: String,
 	val username: String,
