@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ProfileCardContainer extends StatelessWidget {
   final Widget profilePicture;
   final Widget profileTitle;
+  final Widget? endChild;
   final void Function()? onTap;
   final bool? clickable;
 
@@ -10,6 +11,7 @@ class ProfileCardContainer extends StatelessWidget {
     super.key,
     required this.profilePicture,
     required this.profileTitle,
+    this.endChild,
     this.onTap,
     this.clickable,
   });
@@ -24,12 +26,18 @@ class ProfileCardContainer extends StatelessWidget {
             : Colors.transparent,
         padding: const EdgeInsets.all(16),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            profilePicture,
-            const SizedBox(width: 16),
-            profileTitle,
-          ],
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    profilePicture,
+                    const SizedBox(width: 16),
+                    profileTitle,
+                  ],
+                ),
+              ] +
+              (endChild != null ? [endChild as Widget] : []),
         ),
       ),
     );

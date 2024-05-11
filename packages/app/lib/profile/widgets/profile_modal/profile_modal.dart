@@ -3,8 +3,15 @@ import 'package:hollybike/profile/widgets/profile_add_session_button.dart';
 import 'package:hollybike/profile/widgets/profile_modal/profile_modal_list.dart';
 import 'package:hollybike/theme/widgets/theme_button.dart';
 
-class ProfileModal extends StatelessWidget {
+class ProfileModal extends StatefulWidget {
   const ProfileModal({super.key});
+
+  @override
+  State<ProfileModal> createState() => _ProfileModalState();
+}
+
+class _ProfileModalState extends State<ProfileModal> {
+  bool inEditMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +35,33 @@ class ProfileModal extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(16),
       constraints: const BoxConstraints.expand(height: 350),
-      child: const SafeArea(
+      child: SafeArea(
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ThemeButton(),
+                ElevatedButton(
+                  onPressed: () => setState(() {
+                    inEditMode = !inEditMode;
+                  }),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                    padding: const EdgeInsets.all(12),
+                  ),
+                  child: Icon(
+                    Icons.edit,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                const ThemeButton(),
               ],
             ),
-            SizedBox(height: 8),
-            ProfileModalList(),
-            SizedBox(height: 15),
-            ProfileAddSessionButton(),
+            const SizedBox(height: 15),
+            ProfileModalList(inEditMode: inEditMode),
+            const SizedBox(height: 15),
+            const ProfileAddSessionButton(),
           ],
         ),
       ),

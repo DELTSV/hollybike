@@ -5,18 +5,21 @@ import 'package:hollybike/shared/widgets/profile_titles/loading_profile_title.da
 
 class LoadingProfileCard extends StatelessWidget {
   final bool clickable;
+  final Widget? endChild;
 
   const LoadingProfileCard({
     super.key,
     this.clickable = false,
+    this.endChild
   });
 
   @override
   Widget build(BuildContext context) {
-    return const ProfileCardContainer(
+    return ProfileCardContainer(
       clickable: true,
-      profilePicture: LoadingProfilePicture(),
-      profileTitle: LoadingProfileTitle(),
+      profilePicture: const LoadingProfilePicture(),
+      profileTitle: const LoadingProfileTitle(),
+      endChild: endChild,
     );
   }
 }

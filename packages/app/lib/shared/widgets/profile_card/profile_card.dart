@@ -8,6 +8,8 @@ import 'package:hollybike/shared/widgets/profile_titles/profile_title.dart';
 class ProfileCard extends StatelessWidget {
   final AuthSession session;
   final Profile profile;
+  final Widget? endChild;
+
   final void Function(
     BuildContext context,
     AuthSession session,
@@ -19,6 +21,7 @@ class ProfileCard extends StatelessWidget {
     required this.session,
     required this.profile,
     this.onTap,
+    this.endChild,
   });
 
   @override
@@ -27,6 +30,7 @@ class ProfileCard extends StatelessWidget {
       onTap: onTap == null ? null : () => _handleCardTap(context),
       profilePicture: ProfilePicture(profile: profile),
       profileTitle: ProfileTitle(profile: profile),
+      endChild: endChild,
     );
   }
 
