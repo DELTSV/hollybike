@@ -27,8 +27,8 @@ ALTER TABLE "users"
     ADD CONSTRAINT "users_associations_id_association_fk" FOREIGN KEY ("association") REFERENCES "associations" ("id_association") ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 -- changeset denis:2 context:dev
--- INSERT INTO associations (name)
--- VALUES ('Motoloup');
+INSERT INTO associations (name)
+VALUES ('Motoloup');
 
 -- changeset denis:3
 ALTER TABLE users
@@ -95,13 +95,13 @@ INSERT INTO associations (name) VALUES ('Root Association');
 INSERT INTO associations (name) VALUES ('Test Association 1');
 INSERT INTO associations (name) VALUES ('Test Association 2');
 
-INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('root@hollybike.fr', 'root', 'JDJhJDA2JG1BT3RML0R3RGdlV1g1RVQ0Z3c2LmVvZVBFVFpnMDI2Uy56M1lEVmpuaVk1dlBHYlpudm5p', 1, now(), 3);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('root@hollybike.fr', 'root', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 1, now(), 3);
 
-INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user1@hollybike.fr', 'user1', 'JDJhJDA2JG1BT3RML0R3RGdlV1g1RVQ0Z3c2LmVvZVBFVFpnMDI2Uy56M1lEVmpuaVk1dlBHYlpudm5p', 2, now(), 1);
-INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user2@hollybike.fr', 'user2', 'JDJhJDA2JG1BT3RML0R3RGdlV1g1RVQ0Z3c2LmVvZVBFVFpnMDI2Uy56M1lEVmpuaVk1dlBHYlpudm5p', 3, now(), 1);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user1@hollybike.fr', 'user1', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 1);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user2@hollybike.fr', 'user2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1);
 
-INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin1@hollybike.fr', 'admin1', 'JDJhJDA2JG1BT3RML0R3RGdlV1g1RVQ0Z3c2LmVvZVBFVFpnMDI2Uy56M1lEVmpuaVk1dlBHYlpudm5p', 2, now(), 2);
-INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin2@hollybike.fr', 'admin2', 'JDJhJDA2JG1BT3RML0R3RGdlV1g1RVQ0Z3c2LmVvZVBFVFpnMDI2Uy56M1lEVmpuaVk1dlBHYlpudm5p', 3, now(), 2);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin1@hollybike.fr', 'admin1', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 2);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin2@hollybike.fr', 'admin2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 2);
 
 -- changeset denis:5
 CREATE EXTENSION unaccent;

@@ -20,7 +20,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class InvitationService(
 	private val db: Database
 ) {
-	fun getInvitation(caller: User, role: EUserScope, association: Association, maxUse: Int? = null, expiration: Instant? = null): Result<Invitation> {
+	private fun getInvitation(caller: User, role: EUserScope, association: Association, maxUse: Int? = null, expiration: Instant? = null): Result<Invitation> {
 		if(caller.scope == EUserScope.User) {
 			return Result.failure(NotAllowedException())
 		}
@@ -47,7 +47,7 @@ class InvitationService(
 	}
 
 	fun createInvitation(caller: User, role: EUserScope, association: Int, maxUses: Int? = null, expiration: Instant? = null): Result<Invitation> {
-		if(caller.scope == EUserScope.User || caller.scope not role) {
+		if(caller.scope == EUserScope.User || caller.scope not role || caller.association.id.value != association) {
 			return Result.failure(NotAllowedException())
 		}
 		val assoc = transaction(db) { Association.findById(association) } ?: run {

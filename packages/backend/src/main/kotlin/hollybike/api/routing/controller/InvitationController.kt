@@ -54,7 +54,13 @@ class InvitationController(
 
 	private fun Route.createInvitation() {
 		post<Invitation>(EUserScope.Admin) {
-			val host = call.request.headers["Host"]!!
+			val host = call.request.headers["Host"]
+
+			if (host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@post
+			}
+
 			val invitationCreation = call.receive<TInvitationCreation>()
 			invitationService.createInvitation(
 				call.user,

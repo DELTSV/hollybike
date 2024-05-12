@@ -1,7 +1,13 @@
 import hollybike.api.*
+import hollybike.api.types.invitation.TInvitation
+import hollybike.api.types.invitation.TInvitationCreation
+import hollybike.api.types.user.EUserScope
 import io.kotest.core.spec.style.FunSpec
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 import org.testcontainers.containers.GenericContainer
@@ -44,6 +50,29 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			Thread.sleep(5000)
 		}
 
+		suspend fun generateInvitation(
+			client: HttpClient,
+			sender: String,
+			role: EUserScope = EUserScope.User,
+			maxUses: Int = 1
+		): Parameters {
+			val response = client.post("/api/invitation") {
+				header("Authorization", "Bearer ${tokenStore.get(sender)}")
+				header("Host", "localhost")
+				contentType(ContentType.Application.Json)
+				setBody(
+					TInvitationCreation(
+						role = role,
+						association = null,
+						maxUses = maxUses,
+						expiration = null
+					),
+				)
+			}
+
+			return response.body<TInvitation>().link?.parseUrlEncodedParameters() ?: throw Exception("No link in the response")
+		}
+
 		fun testApp(block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit) = testApplication {
 			System.setProperty("is_test_env", "true")
 
@@ -64,6 +93,10 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 					audience = "audience", domain = "domain", realm = "realm", secret = "secret"
 				), smtp = null, storage = storageConfig
 			)
+
+			environment {
+				developmentMode = false
+			}
 
 			application {
 				loadCustomConfig(config)
