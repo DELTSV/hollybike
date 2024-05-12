@@ -3,6 +3,8 @@ import "./Header.css";
 import {
 	DropDown, DropDownElement,
 } from "../components/DropDown/DropDown.tsx";
+import { useUser } from "../user/useUser.tsx";
+import { useAuth } from "../auth/context.tsx";
 
 interface HeaderProps {
 	setTheme: (theme: Theme) => void
@@ -10,6 +12,8 @@ interface HeaderProps {
 
 export function Header(props: HeaderProps) {
 	const { setTheme } = props;
+	const { user } = useUser();
+	const { disconnect } = useAuth();
 	return (
 		<header className={"header"}>
 			<p>LOGO</p>
@@ -19,7 +23,9 @@ export function Header(props: HeaderProps) {
 					<DropDownElement onClick={() => setTheme("dark")}>Sombre</DropDownElement>
 					<DropDownElement onClick={() => setTheme("os")}>Système</DropDownElement>
 				</DropDown>
-				<p>User</p>
+				<DropDown text={user?.username}>
+					<DropDownElement onClick={disconnect}>Se déconnecter</DropDownElement>
+				</DropDown>
 			</div>
 		</header>
 	);

@@ -9,6 +9,7 @@ import {
 	useEffect, useState,
 } from "preact/hooks";
 import { api } from "../utils/useApi.ts";
+import { useUser } from "../user/useUser.tsx";
 
 type AuthContext = {
 	token?: string;
@@ -33,10 +34,14 @@ type Props = { children: ComponentChildren }
 export const AuthContextProvider = ({ children }: Props) => {
 	const [token, setToken] = useState<string>();
 
+	const user = useUser();
+
 	useEffect(() => {
 		const token = localStorage.getItem("token");
-		if (token != null)
+		if (token != null) {
 			setToken(token);
+			user.fetchUser();
+		}
 	}, []);
 
 	const login = (data: TLogin) => {
@@ -47,6 +52,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 			if (res.status === 200) {
 				localStorage.setItem("token", res.data!.token);
 				setToken(res.data!.token);
+				user.fetchUser();
 			} else
 				console.log(res.message);
 		});
@@ -55,6 +61,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 	const disconnect = useCallback(() => {
 		localStorage.removeItem("token");
 		setToken(undefined);
+		user.clean();
 	}, []);
 
 	return (

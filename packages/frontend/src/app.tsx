@@ -2,11 +2,11 @@ import {
 	RouterProvider, createBrowserRouter,
 } from "react-router-dom";
 import Login from "./auth/Login.tsx";
-import { Home } from "./home/Home.tsx";
 import { useEffect } from "preact/hooks";
 import { useAuth } from "./auth/context.tsx";
 import { useTheme } from "./theme/context.tsx";
-import { Header } from "./header/Header.tsx";
+import { Root } from "./Root.tsx";
+import { Home } from "./home/Home.tsx";
 
 export function App() {
 	const auth = useAuth();
@@ -14,11 +14,21 @@ export function App() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Home/>,
+			element: <Root/>,
+			children: [
+				{
+					path: "/",
+					element: <Home/>,
+				},
+			],
 		},
 		{
 			path: "/login",
 			element: <Login/>,
+		},
+		{
+			path: "/forbidden",
+			element: <p>"Interdit d'être ici"</p>,
 		},
 	]);
 
@@ -29,7 +39,6 @@ export function App() {
 
 	return (
 		<main className={theme.theme}>
-			<Header setTheme={theme.set}/>
 			<RouterProvider router={ router } />
 		</main>
 	);
