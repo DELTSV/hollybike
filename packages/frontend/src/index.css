@@ -1,5 +1,87 @@
 :root {
 	color-scheme: light dark;
+	--border-radius: 0.5rem
+}
+
+body {
+	margin: 0;
+}
+
+main {
+	width: 100vw;
+	height: 100vh;
+	background-color: var(--bg);
+}
+
+* {
+	color: var(--text-primary);
+	font-family: Inter, sans-serif;
+	font-weight: 800;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #444444;
+		--bg-card: #222222;
+		--bg-card-hover: #333333;
+		--bg-button-hover: #EEEEEE;
+		--bg-button-reversed: #333333;
+		--bg-button-reversed-hover: #222222;
+		--border-card: #080808;
+		--border-button: #EEEEEE;
+		--border-button-reversed: #080808;
+		--text-primary: #EEEEEE;
+		--text-hover: #444444;
+		--text-reversed: #EEEEE;
+		--text-reversed-hover: #EEEEEE;
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--bg: #EEEEEE;
+		--bg-card: #CCCCCC;
+		--bg-card-hover: #BBBBBB;
+		--text-primary: #222222;
+		--border-card: #B8B8B8;
+		--border-button: #282828;
+		--border-button-reversed: #B0B0B0;
+		--bg-hover: #282828;
+		--text-hover: #EEEEEE;
+	}
+}
+
+main.dark {
+	color-scheme: dark;
+	--bg: #444444;
+	--bg-card: #222222;
+	--bg-card-hover: #333333;
+	--bg-button-hover: #EEEEEE;
+	--bg-button-reversed: #333333;
+	--bg-button-reversed-hover: #222222;
+	--border-card: #080808;
+	--border-button: #EEEEEE;
+	--border-button-reversed: #080808;
+	--text-primary: #EEEEEE;
+	--text-hover: #444444;
+	--text-reversed: #EEEEE;
+	--text-reversed-hover: #EEEEEE;
+}
+
+main.light {
+	color-scheme: light;
+	--bg: #EEEEEE;
+	--bg-card: #CCCCCC;
+	--bg-card-hover: #BBBBBB;
+	--text-primary: #222222;
+	--border-card: #B8B8B8;
+	--border-button: #282828;
+	--border-button-reversed: #B0B0B0;
+	--bg-hover: #282828;
+	--text-hover: #EEEEEE;
+}
+:root {
+	color-scheme: light dark;
 }
 
 body {
@@ -41,4 +123,9 @@ main.light {
 	--bg: #EEEEEE;
 	--bg-card: #CCCCCC;
 	--text-primary: #222222;
+}
+
+button {
+	background-color: transparent;
+	border: none;
 }

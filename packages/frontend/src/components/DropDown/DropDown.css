@@ -1,0 +1,38 @@
+.dropdown {
+	position: relative;
+}
+
+.dropdown-content {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.dropdown-content.horizontal {
+	flex-direction: row;
+}
+
+.divider {
+	height: 2px;
+	background-color: var(--border-card);
+	width: 90%;
+}
+
+.horizontal .divider {
+	height: 90%;
+	width: 2px;
+}
+
+.dropdown-element {
+	padding: 0.5rem;
+	text-align: center;
+	cursor: pointer;
+}
+
+.dropdown-element:hover {
+	background-color: var(--bg-card-hover);
+	border-radius: var(--border-radius);
+}

@@ -6,6 +6,7 @@ import { Home } from "./home/Home.tsx";
 import { useEffect } from "preact/hooks";
 import { useAuth } from "./auth/context.tsx";
 import { useTheme } from "./theme/context.tsx";
+import { Header } from "./header/Header.tsx";
 
 export function App() {
 	const auth = useAuth();
@@ -28,9 +29,7 @@ export function App() {
 
 	return (
 		<main className={theme.theme}>
-			<button onClick={() => theme.set("light")}>SetLight</button>
-			<button onClick={() => theme.set("dark")}>SetDark</button>
-			<button onClick={() => theme.set("os")}>SetOS</button>
+			<Header setTheme={theme.set}/>
 			<RouterProvider router={ router } />
 		</main>
 	);

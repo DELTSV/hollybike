@@ -10,6 +10,7 @@
     "lint": "bun run eslint"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "preact": "^10.19.6",
     "react-router-dom": "^6.22.3"
   },

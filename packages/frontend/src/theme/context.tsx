@@ -6,7 +6,7 @@ import {
 	useContext, useEffect, useState,
 } from "preact/hooks";
 
-type Theme = "os" | "light" | "dark"
+export type Theme = "os" | "light" | "dark"
 
 interface ThemeContext {
 	theme: Theme,
