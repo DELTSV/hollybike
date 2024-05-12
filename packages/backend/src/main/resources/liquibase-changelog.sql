@@ -27,8 +27,8 @@ ALTER TABLE "users"
     ADD CONSTRAINT "users_associations_id_association_fk" FOREIGN KEY ("association") REFERENCES "associations" ("id_association") ON UPDATE NO ACTION ON DELETE NO ACTION;
 
 -- changeset denis:2 context:dev
-INSERT INTO associations (name)
-VALUES ('Motoloup');
+-- INSERT INTO associations (name)
+-- VALUES ('Motoloup');
 
 -- changeset denis:3
 ALTER TABLE users

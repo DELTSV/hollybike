@@ -20,7 +20,7 @@ class AuthenticationController(
 	init {
 		application.routing {
 			login()
-			signin()
+			signup()
 		}
 	}
 
@@ -39,14 +39,14 @@ class AuthenticationController(
 		}
 	}
 
-	private fun Route.signin() {
-		post<Auth.Signin> {
-			val signin = call.receive<TSignup>()
+	private fun Route.signup() {
+		post<Auth.Signup> {
+			val signup = call.receive<TSignup>()
 			val host = call.request.headers["Host"] ?: run {
 				call.respond(HttpStatusCode.BadRequest, "Aucun Host")
 				return@post
 			}
-			authService.signup(host, signin).onSuccess {
+			authService.signup(host, signup).onSuccess {
 				call.respond(TAuthInfo(it))
 			}.onFailure {
 				when(it) {

@@ -8,7 +8,7 @@ class Auth(val api: API = API()) {
 	class Login(val auth: Auth = Auth())
 
 	@Resource("/signin")
-	class Signin(val auth: Auth = Auth())
+	class Signup(val auth: Auth = Auth())
 
 	@Resource("/link")
 	class Link(val auth: Auth = Auth())

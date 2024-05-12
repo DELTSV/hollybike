@@ -1,15 +1,15 @@
-import io.ktor.client.call.*
+import io.kotest.matchers.shouldBe
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
-import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
-class RootTest : TestBase() {
-	@Test
-	fun `Should return 200 on root API endpoint`() = testApp {
-		client.get("/api").apply {
-			assertEquals(HttpStatusCode.OK, status)
-			assertEquals("Bienvenue sur l'API hollyBike", body())
+class RootTest : IntegrationSpec({
+	test("Should return 200 on root API endpoint") {
+		testApp {
+			client.get("/api").apply {
+				status shouldBe HttpStatusCode.OK
+				bodyAsText() shouldBe "Bienvenue sur l'API hollyBike"
+			}
 		}
 	}
-}
+})
