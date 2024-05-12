@@ -1,6 +1,6 @@
 import { Theme } from "../theme/context.tsx";
-import "./Header.css";
 import {
+	Divider,
 	DropDown, DropDownElement,
 } from "../components/DropDown/DropDown.tsx";
 import { useUser } from "../user/useUser.tsx";
@@ -15,12 +15,13 @@ export function Header(props: HeaderProps) {
 	const { user } = useUser();
 	const { disconnect } = useAuth();
 	return (
-		<header className={"header"}>
+		<header className={"flex justify-between px-3 py-2"}>
 			<p>LOGO</p>
-			<div className={"left"}>
+			<div className={"flex items-center gap-2"}>
 				<DropDown text={"Theme"}>
 					<DropDownElement onClick={() => setTheme("light")}>Clair</DropDownElement>
 					<DropDownElement onClick={() => setTheme("dark")}>Sombre</DropDownElement>
+					<Divider/>
 					<DropDownElement onClick={() => setTheme("os")}>Système</DropDownElement>
 				</DropDown>
 				<DropDown text={user?.username}>

@@ -26,7 +26,8 @@ fun Application.configureDatabase(): Database {
 		driver = "org.postgresql.Driver",
 		databaseConfig = DatabaseConfig {
 			keepLoadedReferencesOutOfTransaction = true
-		}).apply {
+		}
+	).apply {
 		runMigration(developmentMode, isCloud, isTestEnv, this.connector().connection as Connection)
 	}
 }

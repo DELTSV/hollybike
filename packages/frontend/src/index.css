@@ -1,20 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
 	color-scheme: light dark;
 	--border-radius: 0.5rem
 }
 
-body {
-	margin: 0;
-}
-
-main {
-	width: 100vw;
-	height: 100vh;
-	background-color: var(--bg);
-}
-
 * {
-	color: var(--text-primary);
 	font-family: Inter, sans-serif;
 	font-weight: 800;
 }
@@ -79,53 +72,4 @@ main.light {
 	--border-button-reversed: #B0B0B0;
 	--bg-hover: #282828;
 	--text-hover: #EEEEEE;
-}
-:root {
-	color-scheme: light dark;
-}
-
-body {
-	margin: 0;
-}
-
-main {
-	width: 100vw;
-	height: 100vh;
-	background-color: var(--bg);
-	color: var(--text-primary);
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--bg: #444444;
-		--bg-card: #222222;
-		--text-primary: #EEEEEE;
-	}
-}
-
-@media (prefers-color-scheme: light) {
-	:root {
-		--bg: #EEEEEE;
-		--bg-card: #CCCCCC;
-		--text-primary: #222222;
-	}
-}
-
-main.dark {
-	color-scheme: dark;
-	--bg: #444444;
-	--bg-card: #222222;
-	--text-primary: #EEEEEE;
-}
-
-main.light {
-	color-scheme: light;
-	--bg: #EEEEEE;
-	--bg-card: #CCCCCC;
-	--text-primary: #222222;
-}
-
-button {
-	background-color: transparent;
-	border: none;
 }

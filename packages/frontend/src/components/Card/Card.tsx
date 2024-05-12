@@ -1,5 +1,4 @@
 import { ComponentChildren } from "preact";
-import "./Card.css";
 import { clsx } from "clsx";
 
 interface CardProps {
@@ -9,7 +8,7 @@ interface CardProps {
 
 export function Card(props: CardProps) {
 	return (
-		<div className={clsx("card", props.className)}>
+		<div className={clsx("bg-slate-800 border-2 border-slate-700 rounded-lg", props.className)}>
 			{ props.children }
 		</div>
 	);

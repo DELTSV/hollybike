@@ -1,11 +1,10 @@
 import { ComponentChildren } from "preact";
-import "./DropDown.css";
 import {
 	useEffect, useState,
 } from "preact/hooks";
 import { useRef } from "react";
 import { Card } from "../Card/Card.tsx";
-import { ReversedButton } from "../Button/ReversedButton.tsx";
+import { Button } from "../Button/Button.tsx";
 
 interface DropDownProps {
 	children: ComponentChildren,
@@ -32,16 +31,16 @@ export function DropDown(props: DropDownProps) {
 	}, []);
 
 	return (
-		<div className={"dropdown"} ref={container}>
-			<ReversedButton onClick={() => setVisible(prev => !prev)}>{ props.text }</ReversedButton>
-			{ visible && <Card className={"dropdown-content"}>{ props.children }</Card> }
+		<div className={"relative"} ref={container}>
+			<Button onClick={() => setVisible(prev => !prev)}>{ props.text }</Button>
+			{ visible && <Card className={"flex flex-col absolute top-full left-1/2 -translate-x-1/2"}>{ props.children }</Card> }
 		</div>
 	);
 }
 
 export function Divider() {
 	return (
-		<div className={"divider"}/>
+		<div className={"h-0.5 bg-slate-200 dark:bg-slate-800"}/>
 	);
 }
 
@@ -52,7 +51,7 @@ interface DropDownElementProps {
 
 export function DropDownElement(props: DropDownElementProps) {
 	return (
-		<div className={"dropdown-element"} onClick={props.onClick}>
+		<div className={"p-2 text-center cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 rounded"} onClick={props.onClick}>
 			{ props.children }
 		</div>
 	);
