@@ -1,12 +1,12 @@
-import { Inputs } from "preact-hooks";
 import {
+	Inputs,
 	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { backendBaseUrl } from "../config";
 
-interface UseApiOptions {
+interface UseApiOptions<T> {
 	method?: string,
-	body?: any
+	body?: T
 }
 
 interface APIResponse<T> {
@@ -15,9 +15,9 @@ interface APIResponse<T> {
 	data?: T
 }
 
-interface ApiOptions {
+interface ApiOptions<T> {
 	method?: string,
-	body?: any,
+	body?: T,
 	headers?: Record<string, string>
 }
 
@@ -27,23 +27,23 @@ interface ApiRawOptions {
 	headers?: Record<string, string>
 }
 
-export function useApi<T>(
+export function useApi<T, B>(
 	url: string,
 	deps: Inputs,
-	options: UseApiOptions,
+	options: UseApiOptions<B>,
 ) {
 	const [result, setResult] = useState<APIResponse<T>>({ status: 0 });
 
 	const stringDeps = JSON.stringify(deps);
 
 	const optionsString = JSON.stringify(options);
-	const opt: UseApiOptions | undefined = useMemo(
+	const opt: UseApiOptions<B> | undefined = useMemo(
 		() => optionsString !== undefined ? JSON.parse(optionsString) : undefined,
 		[optionsString],
 	);
 
 	useEffect(() => {
-		api<T>(url, options).then((res) => {
+		api<T, B>(url, options).then((res) => {
 			setResult(res);
 		});
 	}, [
@@ -55,7 +55,7 @@ export function useApi<T>(
 	return result;
 }
 
-export async function api<T>(url: string, options?: ApiOptions): Promise<APIResponse<T>> {
+export async function api<T, B>(url: string, options?: ApiOptions<B>): Promise<APIResponse<T>> {
 	return apiRaw<T>(url, "application/json", {
 		method: options?.method,
 		body: JSON.stringify(options?.body),
