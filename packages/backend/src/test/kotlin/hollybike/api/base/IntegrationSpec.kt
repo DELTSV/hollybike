@@ -1,4 +1,4 @@
-package base
+package hollybike.api.base
 
 import hollybike.api.*
 import hollybike.api.types.invitation.TInvitation

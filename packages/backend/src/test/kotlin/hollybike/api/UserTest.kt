@@ -1,4 +1,6 @@
-import base.IntegrationSpec
+package hollybike.api
+
+import hollybike.api.base.IntegrationSpec
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.user.EUserScope

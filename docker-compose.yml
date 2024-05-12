@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:15
+    image: postgres:16.3
     restart: always
     environment:
       POSTGRES_PASSWORD: password
