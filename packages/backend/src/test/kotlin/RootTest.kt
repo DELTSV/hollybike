@@ -6,7 +6,7 @@ import io.ktor.http.*
 class RootTest : IntegrationSpec({
 	test("Should return 200 on root API endpoint") {
 		testApp {
-			client.get("/api").apply {
+			it.get("/api").apply {
 				status shouldBe HttpStatusCode.OK
 				bodyAsText() shouldBe "Bienvenue sur l'API hollyBike"
 			}

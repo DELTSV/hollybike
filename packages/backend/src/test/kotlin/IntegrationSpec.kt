@@ -1,14 +1,13 @@
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import hollybike.api.*
-import hollybike.api.types.user.EUserScope
 import io.kotest.core.spec.style.FunSpec
+import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.*
 
 @Testcontainers
 abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
@@ -30,38 +29,22 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 		@Container
 		val database: PostgreSQLContainer<*> = PostgreSQLContainer("postgres:16.3").withDatabaseName("hollybike")
 
-		val tokenStore = mutableMapOf<String, String>()
-		private val users = mutableMapOf(
-			"root@hollybike.fr" to EUserScope.Root,
-			"user1@hollybike.fr" to EUserScope.User,
-			"user2@hollybike.fr" to EUserScope.User,
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"admin2@hollybike.fr" to EUserScope.Admin,
-		)
-
 		@Container
 		val minio: GenericContainer<*> =
 			GenericContainer("bitnami/minio:2024.5.10").withEnv("MINIO_ROOT_USER", "minio-test-user")
 				.withEnv("MINIO_ROOT_PASSWORD", "minio-test-password").withEnv("MINIO_DEFAULT_BUCKETS", "hollybike")
 				.withExposedPorts(9000)
 
+		val tokenStore = TokenStore()
+
 		init {
 			database.start()
 			minio.start()
 
-			users.forEach { (email, scope) ->
-				tokenStore[email] = generateJWT(email, scope)
-			}
-
 			Thread.sleep(5000)
 		}
 
-		private fun generateJWT(email: String, scope: EUserScope) =
-			JWT.create().withAudience("audience").withIssuer("domain").withClaim("email", email)
-				.withClaim("scope", scope.value).withExpiresAt(Date(System.currentTimeMillis() + 60000 * 60 * 24))
-				.sign(Algorithm.HMAC256("secret"))
-
-		fun testApp(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+		fun testApp(block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit) = testApplication {
 			System.setProperty("is_test_env", "true")
 
 			val dbConf = ConfDB(
@@ -90,7 +73,13 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				api()
 			}
 
-			block()
+			val client = createClient {
+				install(ContentNegotiation) {
+					json()
+				}
+			}
+
+			block(client)
 		}
 	}
 }

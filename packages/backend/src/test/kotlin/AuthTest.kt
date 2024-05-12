@@ -9,21 +9,13 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.statement.*
 import kotlinx.datetime.Instant
 
 class AuthTest : IntegrationSpec({
 	test("Should not login because the user does not exists") {
 		testApp {
-			val client = createClient {
-				install(ContentNegotiation) {
-					json()
-				}
-			}
-
-			client.post("/api/auth/login") {
+			it.post("/api/auth/login") {
 				contentType(ContentType.Application.Json)
 				setBody(TLogin("notfound@hollybike.fr", "test"))
 			}.apply {
@@ -35,34 +27,20 @@ class AuthTest : IntegrationSpec({
 
 	test("Should not login because of bad credentials") {
 		testApp {
-			val client = createClient {
-				install(ContentNegotiation) {
-					json()
-				}
-			}
-
-			client.post("/api/auth/login") {
+			it.post("/api/auth/login") {
 				contentType(ContentType.Application.Json)
-				setBody(TLogin("notfound@hollybike.fr", "test"))
+				setBody(TLogin("root@hollybike.fr", "test"))
 			}.apply {
-				status shouldBe HttpStatusCode.NotFound
-				bodyAsText() shouldBe "Utilisateur inconnu"
+				status shouldBe HttpStatusCode.Unauthorized
+				bodyAsText() shouldBe "Mauvais mot de passe"
 			}
 		}
 	}
 
 	test("Should return the root user") {
 		testApp {
-			val client = createClient {
-				install(ContentNegotiation) {
-					json()
-				}
-			}
-
-			val token = tokenStore["root@hollybike.fr"] ?: error("Token not found")
-
-			client.get("/api/users/me") {
-				header("Authorization", "Bearer $token")
+			it.get("/api/users/me") {
+				header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 			}.apply {
 				status shouldBe HttpStatusCode.OK
 				body<TUser>().shouldBeEqualToIgnoringFields(
