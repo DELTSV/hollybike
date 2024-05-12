@@ -1,3 +1,4 @@
+import base.IntegrationSpec
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignup

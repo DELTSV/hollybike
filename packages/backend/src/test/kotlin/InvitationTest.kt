@@ -1,3 +1,4 @@
+import base.IntegrationSpec
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation

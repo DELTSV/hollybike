@@ -1,3 +1,5 @@
+package base
+
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import hollybike.api.types.user.EUserScope
