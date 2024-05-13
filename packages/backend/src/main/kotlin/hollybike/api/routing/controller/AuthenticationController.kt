@@ -53,7 +53,6 @@ class AuthenticationController(
 					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalide")
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Aucune invitation valide")
-					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
 					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'utilisateur existe déjà")
 					else -> {
 						it.printStackTrace()

@@ -94,14 +94,23 @@ CREATE TABLE IF NOT EXISTS invitations (
 INSERT INTO associations (name) VALUES ('Root Association');
 INSERT INTO associations (name) VALUES ('Test Association 1');
 INSERT INTO associations (name) VALUES ('Test Association 2');
+INSERT INTO associations (name, status) VALUES ('Disabled Association', -1);
 
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('root@hollybike.fr', 'root', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 1, now(), 3);
 
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user1@hollybike.fr', 'user1', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 1);
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user2@hollybike.fr', 'user2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user3@hollybike.fr', 'user3', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 4, now(), 1);
+
+
+INSERT INTO users (email, username, password, association, last_login, scope, status) VALUES ('disabled1@hollybike.fr', 'disabled1', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 1, -1);
+INSERT INTO users (email, username, password, association, last_login, scope, status) VALUES ('disabled2@hollybike.fr', 'disabled2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1, -1);
+INSERT INTO users (email, username, password, association, last_login, scope, status) VALUES ('disabled3@hollybike.fr', 'disabled3', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1, -1);
+
 
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin1@hollybike.fr', 'admin1', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 2);
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin2@hollybike.fr', 'admin2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 2);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin3@hollybike.fr', 'admin3', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 4, now(), 2);
 
 -- changeset denis:5
 CREATE EXTENSION unaccent;
