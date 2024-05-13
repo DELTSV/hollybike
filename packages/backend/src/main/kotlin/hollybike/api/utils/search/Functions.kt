@@ -55,10 +55,12 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 	)
 }
 
-fun Query.applyParam(searchParam: SearchParam): Query {
+fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Query {
 	var q = this
 	q = q.orderBy(*searchParam.sort.map { (c, o) -> c to o }.toTypedArray())
-	q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
+	if(pagination) {
+		q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
+	}
 	val filter = searchParamFilter(searchParam.filter)
 	val query = if((searchParam.query?.split(" ")?.size ?: 0) == 2) {
 		val values = searchParam.query!!.split(" ")

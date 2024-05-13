@@ -5,6 +5,7 @@ import hollybike.api.exceptions.AssociationAlreadyExists
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
+import hollybike.api.repository.associationMapper
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
 import hollybike.api.routing.resources.Users
@@ -14,6 +15,7 @@ import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
+import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -92,16 +94,22 @@ class AssociationController(
 
 	private fun Route.getAll() {
 		get<Associations<API>>(EUserScope.Root) {
-			val listParam = call.listParams
-			val associations = associationService.getAll(listParam.page, listParam.perPage)
-			val totAssociations = associationService.countAssociations()
+			val searchParam = call.request.queryParameters.getSearchParam(associationMapper)
+			val associations = associationService.getAll(call.user, searchParam).getOrElse {
+				call.respond(HttpStatusCode.Forbidden)
+				return@get
+			}
+			val totAssociations = associationService.countAssociations(call.user, searchParam).getOrElse {
+				call.respond(HttpStatusCode.Forbidden)
+				return@get
+			}
 
 			call.respond(
 				TLists(
 					data = associations.map { TAssociation(it) },
-					page = listParam.page,
-					perPage = listParam.perPage,
-					totalPage = ceil(totAssociations.div(listParam.perPage.toDouble())).toInt(),
+					page = searchParam.page,
+					perPage = searchParam.perPage,
+					totalPage = ceil(totAssociations.div(searchParam.perPage.toDouble())).toInt(),
 					totalData = totAssociations
 				)
 			)

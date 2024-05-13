@@ -154,7 +154,7 @@ class UserService(
 			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
 		}
 		return transaction(db) {
-			Users.innerJoin(Associations).selectAll().count()
+			Users.innerJoin(Associations).selectAll().applyParam(searchParam, false).count()
 		}
 	}
 }
