@@ -113,7 +113,6 @@ private fun Query.searchParamQuery(query: String): Op<Boolean>? {
 
 private fun searchParamFilter(filter: List<Filter>): Op<Boolean>? = filter
 	.mapNotNull {
-		it.column
 		when (it.mode) {
 			FilterMode.EQUAL -> it.column equal it.value
 			FilterMode.NOT_EQUAL -> it.column nEqual it.value
@@ -139,7 +138,13 @@ private infix fun Column<out Any?>.equal(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) eq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) eq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -156,7 +161,13 @@ private infix fun Column<out Any?>.nEqual(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) neq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) neq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -173,7 +184,13 @@ private infix fun Column<out Any?>.lt(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) less it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) less it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -190,7 +207,13 @@ private infix fun Column<out Any?>.gt(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) greater it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) greater it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -207,7 +230,13 @@ private infix fun Column<out Any?>.lte(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) lessEq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) lessEq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -224,7 +253,13 @@ private infix fun Column<out Any?>.gte(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) greaterEq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) greaterEq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
