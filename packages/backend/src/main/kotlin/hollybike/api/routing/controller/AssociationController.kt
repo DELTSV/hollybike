@@ -7,7 +7,6 @@ import hollybike.api.isCloud
 import hollybike.api.plugins.user
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
-import hollybike.api.routing.resources.Users
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TNewAssociation
 import hollybike.api.types.association.TUpdateAssociation
@@ -36,7 +35,6 @@ class AssociationController(
 				if (application.isCloud) {
 					getAll()
 					getById()
-					getByUser()
 					addAssociation()
 					updateAssociation()
 					updateAssociationPicture()
@@ -55,29 +53,34 @@ class AssociationController(
 	private fun Route.updateMyAssociation() {
 		patch<Associations.Me<API>>(EUserScope.Admin) {
 			val update = call.receive<TUpdateAssociation>()
-			val updatedAssociation = associationService.updateMyAssociation(
+			associationService.updateMyAssociation(
 				call.user.association,
 				update.name
-			)
-
-			call.respond(TAssociation(updatedAssociation))
+			).onSuccess {
+				call.respond(TAssociation(it))
+			}.onFailure {
+				when (it) {
+					is AssociationAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'association existe déjà")
+					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
+				}
+			}
 		}
 	}
 
 	private fun Route.updateMyAssociationPicture() {
-		put<Associations.Me.Picture<API>>(EUserScope.Admin) {
+		patch<Associations.Me.Picture<API>>(EUserScope.Admin) {
 			val multipart = call.receiveMultipart()
 
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
 				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
-				return@put
+				return@patch
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
 				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
-				return@put
+				return@patch
 			}
 
 			val association = associationService.updateMyAssociationPicture(
@@ -118,16 +121,6 @@ class AssociationController(
 		}
 	}
 
-	private fun Route.getByUser() {
-		get<Associations<Users.Id>>(EUserScope.Root) { params ->
-			associationService.getByUser(params.parent.id)?.let {
-				call.respond(TAssociation(it))
-			} ?: run {
-				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
-			}
-		}
-	}
-
 	private fun Route.addAssociation() {
 		post<Associations<API>>(EUserScope.Root) {
 			val new = call.receive<TNewAssociation>()
@@ -154,25 +147,37 @@ class AssociationController(
 			).onSuccess {
 				call.respond(TAssociation(it))
 			}.onFailure {
-				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
+				when (it) {
+					is AssociationNotFound -> call.respond(
+						HttpStatusCode.NotFound,
+						"Association ${params.id} inconnue"
+					)
+
+					is AssociationAlreadyExists -> call.respond(
+						HttpStatusCode.Conflict,
+						"L'association existe déjà"
+					)
+
+					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
+				}
 			}
 		}
 	}
 
 	private fun Route.updateAssociationPicture() {
-		put<Associations.Id.Picture<API>>(EUserScope.Root) { params ->
+		patch<Associations.Id.Picture<API>>(EUserScope.Root) { params ->
 			val multipart = call.receiveMultipart()
 
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
 				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
-				return@put
+				return@patch
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
 				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
-				return@put
+				return@patch
 			}
 
 			associationService.updateAssociationPicture(
@@ -185,7 +190,7 @@ class AssociationController(
 				when (it) {
 					is AssociationNotFound -> call.respond(
 						HttpStatusCode.NotFound,
-						"Association ${it.message} inconnue"
+						it.message ?: "Association inconnue"
 					)
 
 					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")

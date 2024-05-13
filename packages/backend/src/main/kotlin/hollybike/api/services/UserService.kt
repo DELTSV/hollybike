@@ -18,6 +18,7 @@ import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.util.*
 import kotlinx.datetime.Clock
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
@@ -146,6 +147,10 @@ class UserService(
 			}).with(User::association).toList()
 		}
 	}
+
+	fun getUserAssociation(id: Int): Association? = transaction(db) {
+		User.findById(id)?.load(User::association)
+	}?.association
 
 	fun getAllCount(caller: User, searchParam: SearchParam): Long? {
 		if (caller.scope == EUserScope.User) {

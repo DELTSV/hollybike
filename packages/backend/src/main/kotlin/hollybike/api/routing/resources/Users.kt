@@ -14,6 +14,9 @@ class Users(val api: API = API()) {
 	class Id(val users: Users = Users(), val id: Int) {
 		@Resource("profile-picture")
 		class UploadProfilePicture(val id: Id)
+
+		@Resource("association")
+		class Association(val id: Id)
 	}
 
 	@Resource("username/{username}")

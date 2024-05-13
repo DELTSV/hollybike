@@ -20,29 +20,63 @@ import kotlinx.datetime.Instant
 import java.io.File
 
 class UserTest : IntegrationSpec({
-	test("Should return the me") {
+
+	test("Should get association by user id") {
 		testApp {
-			it.get("/api/users/me") {
+			it.get("/api/users/2/association") {
 				header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 			}.apply {
 				status shouldBe HttpStatusCode.OK
-				body<TUser>().shouldBeEqualToIgnoringFields(
-					TUser(
-						id = 1,
-						email = "root@hollybike.fr",
-						username = "root",
-						scope = EUserScope.Root,
-						status = EUserStatus.Enabled,
-						lastLogin = Instant.DISTANT_PAST,
-						association = TAssociation(
-							id = 1,
-							name = "Root Association",
-							status = EAssociationsStatus.Enabled,
-						),
-						profilePicture = null
+
+				body<TAssociation>().shouldBeEqualToIgnoringFields(
+					TAssociation(
+						id = 2,
+						name = "Test Association 1",
+						status = EAssociationsStatus.Enabled,
+						picture = null
 					),
-					TUser::lastLogin
+					TAssociation::id
 				)
+			}
+		}
+	}
+
+	mapOf(
+		"admin1@hollybike.fr" to EUserScope.Admin,
+		"user1@hollybike.fr" to EUserScope.User,
+	).forEach { (email, scope) ->
+		test("Should not get association by user id if $scope") {
+			testApp {
+				it.get("/api/users/2/association") {
+					header("Authorization", "Bearer ${tokenStore.get(email)}")
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
+				}
+			}
+		}
+	}
+
+	///////////////////////////
+
+	mapOf(
+		"root@hollybike.fr" to EUserScope.Root,
+		"admin1@hollybike.fr" to EUserScope.Admin,
+		"user1@hollybike.fr" to EUserScope.User,
+	).forEach { (email, scope) ->
+		run {
+			test("Should return myself for role $scope") {
+				testApp {
+					it.get("/api/users/me") {
+						header("Authorization", "Bearer ${tokenStore.get(email)}")
+					}.apply {
+						status shouldBe HttpStatusCode.OK
+						val body = body<TUser>();
+
+						body.email shouldBe email
+						body.scope shouldBe scope
+					}
+				}
 			}
 		}
 	}
@@ -327,9 +361,11 @@ class UserTest : IntegrationSpec({
 			it.patch("/api/users/me") {
 				header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				contentType(ContentType.Application.Json)
-				setBody(TUserUpdateSelf(
-					username = "user-modified"
-				))
+				setBody(
+					TUserUpdateSelf(
+						username = "user-modified"
+					)
+				)
 			}.apply {
 				status shouldBe HttpStatusCode.OK
 				body<TUser>().username shouldBe "user-modified"
@@ -342,11 +378,13 @@ class UserTest : IntegrationSpec({
 			it.patch("/api/users/me") {
 				header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				contentType(ContentType.Application.Json)
-				setBody(TUserUpdateSelf(
-					oldPassword = "test",
-					newPassword = "newpassword",
-					newPasswordAgain = "newpassword"
-				))
+				setBody(
+					TUserUpdateSelf(
+						oldPassword = "test",
+						newPassword = "newpassword",
+						newPasswordAgain = "newpassword"
+					)
+				)
 			}.apply {
 				status shouldBe HttpStatusCode.OK
 			}
@@ -358,11 +396,13 @@ class UserTest : IntegrationSpec({
 			it.patch("/api/users/me") {
 				header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				contentType(ContentType.Application.Json)
-				setBody(TUserUpdateSelf(
-					oldPassword = "wrongpassword",
-					newPassword = "newpassword",
-					newPasswordAgain = "newpassword"
-				))
+				setBody(
+					TUserUpdateSelf(
+						oldPassword = "wrongpassword",
+						newPassword = "newpassword",
+						newPasswordAgain = "newpassword"
+					)
+				)
 			}.apply {
 				status shouldBe HttpStatusCode.Unauthorized
 				bodyAsText() shouldBe "Mauvais old_password"
@@ -375,11 +415,13 @@ class UserTest : IntegrationSpec({
 			it.patch("/api/users/me") {
 				header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				contentType(ContentType.Application.Json)
-				setBody(TUserUpdateSelf(
-					oldPassword = "test",
-					newPassword = "newpassword",
-					newPasswordAgain = "differentpassword"
-				))
+				setBody(
+					TUserUpdateSelf(
+						oldPassword = "test",
+						newPassword = "newpassword",
+						newPasswordAgain = "differentpassword"
+					)
+				)
 			}.apply {
 				status shouldBe HttpStatusCode.BadRequest
 				bodyAsText() shouldBe "new_password et _new_password_again sont différent"
@@ -717,7 +759,9 @@ class UserTest : IntegrationSpec({
 				header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 			}.apply {
 				status shouldBe HttpStatusCode.OK
-				body<TLists<TUser>>().shouldBeEqualToIgnoringFields(
+				val body = body<TLists<TUser>>()
+
+				body.shouldBeEqualToIgnoringFields(
 					TLists(
 						data = listOf(),
 						page = 0,
@@ -728,7 +772,7 @@ class UserTest : IntegrationSpec({
 					TLists<TUser>::data
 				)
 
-				body<TLists<TUser>>().data.size shouldBe 10
+				body.data.size shouldBe 10
 			}
 		}
 	}
