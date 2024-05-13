@@ -8,7 +8,10 @@ interface CardProps {
 
 export function Card(props: CardProps) {
 	return (
-		<div className={clsx("bg-slate-800 border-2 border-slate-700 rounded-lg", props.className)}>
+		<div
+			className={clsx("border-2 bg-slate-100 border-slate-300 dark:bg-slate-800 dark:border-slate-700"
+				+ " rounded hover:shadow transition-shadow px-2 py-1", props.className)}
+		>
 			{ props.children }
 		</div>
 	);

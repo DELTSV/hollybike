@@ -15,9 +15,9 @@ export function Header(props: HeaderProps) {
 	const { user } = useUser();
 	const { disconnect } = useAuth();
 	return (
-		<header className={"flex justify-between px-3 py-2"}>
-			<p>LOGO</p>
-			<div className={"flex items-center gap-2"}>
+		<header className={"flex justify-between"}>
+			<p className={"w-48 bg-black text-white"}>LOGO</p>
+			<div className={"flex items-center gap-2 px-3 py-2"}>
 				<DropDown text={"Theme"}>
 					<DropDownElement onClick={() => setTheme("light")}>Clair</DropDownElement>
 					<DropDownElement onClick={() => setTheme("dark")}>Sombre</DropDownElement>
