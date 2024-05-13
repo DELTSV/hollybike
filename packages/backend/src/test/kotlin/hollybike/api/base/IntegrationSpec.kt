@@ -56,7 +56,8 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			client: HttpClient,
 			sender: String,
 			role: EUserScope = EUserScope.User,
-			maxUses: Int = 1
+			maxUses: Int = 1,
+			disabled: Boolean = false
 		): Parameters {
 			val response = client.post("/api/invitation") {
 				header("Authorization", "Bearer ${tokenStore.get(sender)}")
@@ -72,7 +73,33 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				)
 			}
 
-			return response.body<TInvitation>().link?.parseUrlEncodedParameters() ?: throw Exception("No link in the response")
+			if (response.status != HttpStatusCode.OK) {
+				throw Exception("Error while generating the invitation")
+			}
+
+			val body = response.body<TInvitation>()
+
+			if (disabled) {
+				disableInvitation(client, sender, body.id)
+			}
+
+			return body.link?.parseUrlEncodedParameters() ?: throw Exception("No link in the response")
+		}
+
+		private suspend fun disableInvitation(
+			client: HttpClient,
+			sender: String,
+			invitationId: Int
+		) {
+			val response = client.patch("/api/invitation/$invitationId/disable") {
+				header("Authorization", "Bearer ${tokenStore.get(sender)}")
+				header("Host", "localhost")
+				contentType(ContentType.Application.Json)
+			}
+
+			if (response.status != HttpStatusCode.OK) {
+				throw Exception("Error while disabling the invitation")
+			}
 		}
 
 		fun testApp(block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit) = testApplication {

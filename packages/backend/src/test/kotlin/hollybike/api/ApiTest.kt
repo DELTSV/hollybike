@@ -6,7 +6,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 
-class RootTest : IntegrationSpec({
+class ApiTest : IntegrationSpec({
 	test("Should return 200 on root API endpoint") {
 		testApp {
 			it.get("/api").apply {
