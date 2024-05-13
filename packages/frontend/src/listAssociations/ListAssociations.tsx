@@ -13,6 +13,7 @@ import {
 } from "preact";
 import { clsx } from "clsx";
 import { Search } from "@material-ui/icons";
+import { TList } from "../types/TList.ts";
 
 export function ListAssociations() {
 	const { user } = useUser();

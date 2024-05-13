@@ -1,4 +1,4 @@
-interface TList<T> {
+export interface TList<T> {
 	data: T[],
 	page: number,
 	per_page: number,

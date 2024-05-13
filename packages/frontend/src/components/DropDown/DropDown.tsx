@@ -54,7 +54,10 @@ interface DropDownElementProps {
 
 export function DropDownElement(props: DropDownElementProps) {
 	return (
-		<div className={"p-2 text-center cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 rounded"} onClick={props.onClick}>
+		<div
+			className={"p-2 text-center cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 rounded"}
+			onClick={props.onClick}
+		>
 			{ props.children }
 		</div>
 	);
