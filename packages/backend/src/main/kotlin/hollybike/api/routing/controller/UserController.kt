@@ -65,7 +65,7 @@ class UserController(
 	}
 
 	private fun Route.getByUserName() {
-		get<Users.Username> {
+		get<Users.Username>(EUserScope.Admin) {
 			userService.getUserByUsername(call.user, it.username)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {
@@ -75,7 +75,7 @@ class UserController(
 	}
 
 	private fun Route.getByEmail() {
-		get<Users.Email> {
+		get<Users.Email>(EUserScope.Admin) {
 			userService.getUserByEmail(call.user, it.email)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {

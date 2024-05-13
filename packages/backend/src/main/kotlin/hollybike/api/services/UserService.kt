@@ -21,6 +21,7 @@ import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
@@ -31,13 +32,16 @@ class UserService(
 	private val db: Database,
 	private val storageService: StorageService,
 ) {
-	fun getUser(caller: User?, id: Int): User? = transaction(db) {
-		val user = User.find { Users.id eq id }.singleOrNull()
-		if (caller != null && caller.association != user?.association && caller.scope == EUserScope.User) {
-			null
-		} else {
-			user
+	private fun checkUserScope(caller: User, user: User?): User? {
+		if ((caller.scope == EUserScope.User && caller.id != user?.id) || (caller.association != user?.association && caller.scope != EUserScope.Root)) {
+			return null
 		}
+		return user
+	}
+
+	fun getUser(caller: User, id: Int): User? = transaction(db) {
+		val user = User.find { Users.id eq id }.singleOrNull()
+		checkUserScope(caller, user)
 	}
 
 	suspend fun uploadUserProfilePicture(
@@ -46,9 +50,10 @@ class UserService(
 		image: ByteArray,
 		imageContentType: String,
 	): Boolean {
-		if (caller.id != user.id && caller.scope == EUserScope.User) {
+		if (checkUserScope(caller, user) == null) {
 			return false
 		}
+
 		val path = "u/${user.id}/p"
 		storageService.store(image, path, imageContentType)
 		transaction(db) { user.profilePicture = path }
@@ -95,22 +100,14 @@ class UserService(
 		}
 	}
 
-	fun getUserByEmail(caller: User?, email: String): User? = transaction(this.db) {
+	fun getUserByEmail(caller: User, email: String): User? = transaction(this.db) {
 		val user = User.find { Users.email eq email }.singleOrNull()
-		if (caller != null && caller.association != user?.association && caller.scope == EUserScope.User) {
-			null
-		} else {
-			user
-		}
+		checkUserScope(caller, user)
 	}
 
-	fun getUserByUsername(caller: User?, username: String): User? = transaction(db) {
+	fun getUserByUsername(caller: User, username: String): User? = transaction(db) {
 		val user = User.find { Users.username eq username }.singleOrNull()
-		if (caller != null && caller.association != user?.association && caller.scope == EUserScope.User) {
-			null
-		} else {
-			user
-		}
+		checkUserScope(caller, user)
 	}
 
 	fun updateMe(user: User, update: TUserUpdateSelf): Result<User> = transaction(db) {
@@ -140,9 +137,13 @@ class UserService(
 			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
 		}
 		return transaction(db) {
-			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam))
-				.with(User::association)
-				.toList()
+			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam).andWhere {
+				if (caller.scope not EUserScope.Root) {
+					Associations.id eq caller.association.id
+				} else {
+					Associations.id neq null
+				}
+			}).with(User::association).toList()
 		}
 	}
 
@@ -150,11 +151,15 @@ class UserService(
 		if (caller.scope == EUserScope.User) {
 			return null
 		}
-		if (caller.scope not EUserScope.Root) {
-			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
-		}
+
 		return transaction(db) {
-			Users.innerJoin(Associations).selectAll().count()
+			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam).andWhere {
+				if (caller.scope not EUserScope.Root) {
+					Associations.id eq caller.association.id
+				} else {
+					Associations.id neq null
+				}
+			}).with(User::association).count()
 		}
 	}
 }
