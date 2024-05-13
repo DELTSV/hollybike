@@ -11,6 +11,7 @@ import { Root } from "./Root.tsx";
 import { Home } from "./home/Home.tsx";
 import { clsx } from "clsx";
 import { useSystemDarkMode } from "./utils/systemDarkMode.ts";
+import { ListAssociations } from "./listAssociations/ListAssociations.tsx";
 
 export function App() {
 	const auth = useAuth();
@@ -24,6 +25,10 @@ export function App() {
 				{
 					path: "/",
 					element: <Home/>,
+				},
+				{
+					path: "list-asso",
+					element: <ListAssociations/>,
 				},
 			],
 		},

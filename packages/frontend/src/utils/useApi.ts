@@ -29,8 +29,8 @@ interface ApiRawOptions {
 
 export function useApi<T, B>(
 	url: string,
-	deps: Inputs,
-	options: UseApiOptions<B>,
+	deps?: Inputs,
+	options?: UseApiOptions<B>,
 ) {
 	const [result, setResult] = useState<APIResponse<T>>({ status: 0 });
 
