@@ -97,7 +97,7 @@ class AssociationTest : IntegrationSpec({
 				header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				contentType(ContentType.Application.Json)
 				setBody(TUpdateAssociation(
-					name = "Test Association 1",
+					name = "Test Association 2",
 				))
 			}.apply {
 				status shouldBe HttpStatusCode.Conflict

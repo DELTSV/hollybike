@@ -3,6 +3,8 @@ package hollybike.api.services
 import hollybike.api.exceptions.AssociationAlreadyExists
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.repository.Association
+import hollybike.api.repository.User
+import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
 import io.ktor.http.*
@@ -33,21 +35,6 @@ class AssociationService(
 		} else {
 			e.printStackTrace()
 			false
-		}
-	}
-
-	fun updateMyAssociation(association: Association, name: String?): Result<Association> {
-		return try {
-			transaction(db) {
-				name?.let { association.name = it }
-				Result.success(association)
-			}
-		} catch (e: ExposedSQLException) {
-			if (checkAlreadyExistsException(e)) {
-				return Result.failure(AssociationAlreadyExists())
-			}
-
-			return Result.failure(e)
 		}
 	}
 
@@ -132,6 +119,9 @@ class AssociationService(
 		val association = Association.findById(id) ?: run {
 			return@transaction Result.failure(AssociationNotFound("Association $id inconnue"))
 		}
+
+		User.find { Users.association eq association.id.value }.forEach { it.delete() }
+
 		association.delete()
 
 		return@transaction Result.success(Unit)

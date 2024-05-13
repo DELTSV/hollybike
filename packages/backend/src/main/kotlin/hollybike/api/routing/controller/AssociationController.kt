@@ -53,9 +53,10 @@ class AssociationController(
 	private fun Route.updateMyAssociation() {
 		patch<Associations.Me<API>>(EUserScope.Admin) {
 			val update = call.receive<TUpdateAssociation>()
-			associationService.updateMyAssociation(
-				call.user.association,
-				update.name
+			associationService.updateAssociation(
+				call.user.association.id.value,
+				update.name,
+				null
 			).onSuccess {
 				call.respond(TAssociation(it))
 			}.onFailure {
