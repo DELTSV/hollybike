@@ -20,7 +20,7 @@ class AuthenticationController(
 	init {
 		application.routing {
 			login()
-			signin()
+			signup()
 		}
 	}
 
@@ -39,21 +39,20 @@ class AuthenticationController(
 		}
 	}
 
-	private fun Route.signin() {
-		post<Auth.Signin> {
-			val signin = call.receive<TSignup>()
+	private fun Route.signup() {
+		post<Auth.Signup> {
+			val signup = call.receive<TSignup>()
 			val host = call.request.headers["Host"] ?: run {
 				call.respond(HttpStatusCode.BadRequest, "Aucun Host")
 				return@post
 			}
-			authService.signup(host, signin).onSuccess {
+			authService.signup(host, signup).onSuccess {
 				call.respond(TAuthInfo(it))
 			}.onFailure {
 				when(it) {
 					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalide")
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Aucune invitation valide")
-					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
 					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'utilisateur existe déjà")
 					else -> {
 						it.printStackTrace()

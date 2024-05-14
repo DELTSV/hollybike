@@ -2,6 +2,7 @@ package hollybike.api.routing.controller
 
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.InvitationAlreadyExist
+import hollybike.api.exceptions.InvitationNotFoundException
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.plugins.user
 import hollybike.api.routing.resources.Invitation
@@ -38,7 +39,13 @@ class InvitationController(
 
 	private fun Route.listInvitations() {
 		get<Invitation>(EUserScope.Admin) {
-			val host = call.request.headers["Host"]!!
+			val host = call.request.headers["Host"]
+
+			if (host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@get
+			}
+
 			invitationService.listInvitation(call.user, call.user.association).onSuccess {
 				val dto = it.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
@@ -54,7 +61,13 @@ class InvitationController(
 
 	private fun Route.createInvitation() {
 		post<Invitation>(EUserScope.Admin) {
-			val host = call.request.headers["Host"]!!
+			val host = call.request.headers["Host"]
+
+			if (host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@post
+			}
+
 			val invitationCreation = call.receive<TInvitationCreation>()
 			invitationService.createInvitation(
 				call.user,
@@ -80,12 +93,19 @@ class InvitationController(
 
 	private fun Route.disableInvitation() {
 		patch<Invitation.Id.Disable>(EUserScope.Admin) {
+			val host = call.request.headers["Host"]
+
+			if (host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@patch
+			}
+
 			invitationService.disableInvitation(call.user, it.id.id).onSuccess {  i ->
 				call.respond(TInvitation(i))
 			}.onFailure {  e ->
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
+					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Invitation inconnue")
 					else -> {
 						e.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)

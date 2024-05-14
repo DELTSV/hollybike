@@ -33,7 +33,13 @@ export function DropDown(props: DropDownProps) {
 	return (
 		<div className={"relative"} ref={container}>
 			<Button onClick={() => setVisible(prev => !prev)}>{ props.text }</Button>
-			{ visible && <Card className={"flex flex-col absolute top-full left-1/2 -translate-x-1/2"}>{ props.children }</Card> }
+			{ visible && <Card
+                className={
+					"flex flex-col absolute top-full left-1/2 -translate-x-1/2"
+				}
+			>
+				{ props.children }
+                </Card> }
 		</div>
 	);
 }
@@ -51,7 +57,10 @@ interface DropDownElementProps {
 
 export function DropDownElement(props: DropDownElementProps) {
 	return (
-		<div className={"p-2 text-center cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 rounded"} onClick={props.onClick}>
+		<div
+			className={"p-2 text-center cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 rounded"}
+			onClick={props.onClick}
+		>
 			{ props.children }
 		</div>
 	);

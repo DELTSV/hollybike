@@ -6,8 +6,10 @@ import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
+import hollybike.api.routing.resources.Associations
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
+import hollybike.api.types.association.TAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
@@ -35,6 +37,7 @@ class UserController(
 	init {
 		application.routing {
 			authenticate {
+				getUserAssociation()
 				getMe()
 				getUserById()
 				getByUserName()
@@ -44,6 +47,16 @@ class UserController(
 				uploadUserProfilePicture()
 				getAll()
 				getMetadata()
+			}
+		}
+	}
+
+	private fun Route.getUserAssociation() {
+		get<Users.Id.Association>(EUserScope.Root) { params ->
+			userService.getUserAssociation(params.id.id)?.let {
+				call.respond(TAssociation(it))
+			} ?: run {
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
 		}
 	}
@@ -65,7 +78,7 @@ class UserController(
 	}
 
 	private fun Route.getByUserName() {
-		get<Users.Username> {
+		get<Users.Username>(EUserScope.Admin) {
 			userService.getUserByUsername(call.user, it.username)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {
@@ -75,7 +88,7 @@ class UserController(
 	}
 
 	private fun Route.getByEmail() {
-		get<Users.Email> {
+		get<Users.Email>(EUserScope.Admin) {
 			userService.getUserByEmail(call.user, it.email)?.let { user ->
 				call.respond(TUser(user))
 			} ?: run {

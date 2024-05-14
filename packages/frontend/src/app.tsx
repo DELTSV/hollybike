@@ -45,8 +45,13 @@ export function App() {
 	const themeDark = useMemo(() => theme.theme === "dark" || theme.theme === "os" && systemDark, [theme.theme]);
 
 	return (
-		<main className={clsx(themeDark && "dark", "bg-slate-200 dark:bg-gray-900 w-screen h-screen text-slate-950 dark:text-slate-100")}>
-			<RouterProvider router={ router } />
+		<main
+			className={clsx(
+				themeDark && "dark",
+				"bg-slate-200 dark:bg-gray-900 w-screen h-screen text-slate-950 dark:text-slate-100",
+			)}
+		>
+			<RouterProvider router={router}/>
 		</main>
 	);
 }
