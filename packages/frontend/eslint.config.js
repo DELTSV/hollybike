@@ -31,7 +31,6 @@ export default [
     rules: {
       "@stylistic/js/array-bracket-newline": ["error", {multiline: true, minItems: 3}],
       "@stylistic/js/array-element-newline": ["error", {multiline: true, minItems: 3}],
-      "@stylistic/js/array-bracket-spacing": ["error", "always", {singleValue: false, objectsInArrays: false, arraysInArrays: false}],
       "@stylistic/js/arrow-parens": ["error", "as-needed", {requireForBlockBody: true}],
       "@stylistic/js/arrow-spacing": ["error", {before: true, after: true}],
       "@stylistic/js/block-spacing": ["error", "always"],
@@ -51,7 +50,7 @@ export default [
       "@stylistic/js/key-spacing": ["error", {beforeColon: false, afterColon: true, mode: "strict",}],
       "@stylistic/js/keyword-spacing": ["error", {before: true, after: true}],
       "@stylistic/js/linebreak-style": ["error", "unix"],
-      "@stylistic/js/max-len": ["error", {code: 90, tabWidth: 2}],
+      "@stylistic/js/max-len": ["error", {code: 120, tabWidth: 2}],
       "@stylistic/js/no-extra-parens": ["error", "all"],
       "@stylistic/js/no-extra-semi": ["error"],
       "@stylistic/js/no-floating-decimal": ["error"],
@@ -80,9 +79,8 @@ export default [
     rules: {
       "@stylistic/jsx/jsx-closing-bracket-location": ["error", "line-aligned"],
       "@stylistic/jsx/jsx-closing-tag-location": ["error"],
-      "@stylistic/jsx/jsx-curly-brace-presence": ["error", "always"],
       "@stylistic/jsx/jsx-curly-newline": ["error", "consistent"],
-      "@stylistic/jsx/jsx-curly-spacing": ["error", {when: "always", children: true, allowMultiline: false, spacing: { objectLiterals: "never" }}],
+      "@stylistic/jsx/jsx-curly-spacing": ["error", {when: "always", children: true, allowMultiline: false, spacing: { objectLiterals: "never" }, attributes: false}],
       "@stylistic/jsx/jsx-first-prop-new-line": ["error", "multiline"],
       "@stylistic/jsx/jsx-wrap-multilines": ["error", {return: "parens-new-line"}]
     },
