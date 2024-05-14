@@ -52,6 +52,10 @@ class EventService(
 			return Result.failure(InvalidDateException("Format de la date de début invalide"))
 		}
 
+		if (parsedStartDate < Clock.System.now()) {
+			return Result.failure(InvalidDateException("La date de début doit être dans le futur"))
+		}
+
 		if (endDate == null) {
 			return Result.success(Unit)
 		}
@@ -59,12 +63,7 @@ class EventService(
 		val parsedEndDate = try {
 			Instant.parse(endDate)
 		} catch (e: IllegalArgumentException) {
-			e.printStackTrace()
 			return Result.failure(InvalidDateException("Format de la date de fin invalide"))
-		}
-
-		if (parsedStartDate < Clock.System.now()) {
-			return Result.failure(InvalidDateException("La date de début doit être dans le futur"))
 		}
 
 		if (parsedStartDate >= parsedEndDate) {
@@ -78,7 +77,7 @@ class EventService(
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(user)
 		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return Result.failure(
-			EventNotFoundException("Event not found")
+			EventNotFoundException("Event $eventId introuvable")
 		)
 
 		val participation = event.participants.find { it.user.id == user.id }

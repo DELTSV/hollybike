@@ -47,13 +47,21 @@ class EventController(
 
 	private suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
 		when (exception) {
-			is EventNotFoundException -> call.respond(HttpStatusCode.NotFound, "Event not found")
+			is EventNotFoundException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Event not found"
+			)
+
 			is EventActionDeniedException -> call.respond(
 				HttpStatusCode.Forbidden,
 				exception.message ?: "Action denied"
 			)
 
-			is InvalidDateException -> call.respond(HttpStatusCode.BadRequest, exception.message ?: "Invalid date")
+			is InvalidDateException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid date"
+			)
+
 			is InvalidEventNameException -> call.respond(
 				HttpStatusCode.BadRequest,
 				exception.message ?: "Invalid event name"
