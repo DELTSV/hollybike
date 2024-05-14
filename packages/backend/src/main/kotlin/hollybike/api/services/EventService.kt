@@ -193,7 +193,7 @@ class EventService(
 		when (status) {
 			EEventStatus.PENDING -> {
 				if (event.owner.id != caller.id) {
-					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut mettre l'événement en attente"))
+					return@transaction Result.failure(EventActionDeniedException("Seul le propriétaire peut mettre l'événement en attente"))
 				}
 			}
 

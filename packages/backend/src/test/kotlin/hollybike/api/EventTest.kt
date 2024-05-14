@@ -620,4 +620,355 @@ class EventTest : IntegrationSpec({
 			}
 		}
 	}
+
+	context("Schedule event") {
+		test("Should schedule pending event") {
+			onPremiseTestApp {
+				it.patch("/api/events/1/schedule") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not schedule the already scheduled event") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/schedule") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Event déjà scheduled"
+				}
+			}
+		}
+
+		test("Should not schedule event because it does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/20/schedule") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not schedule event if the user is not participating") {
+			onPremiseTestApp {
+				it.patch("/api/events/6/schedule") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne participez pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not update an event if the user is not an organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/schedule") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+	}
+
+	context("Cancel event") {
+		test("Should cancel the scheduled event") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not cancel the pending event") {
+			onPremiseTestApp {
+				it.patch("/api/events/1/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul un événement planifié peut être annulé"
+				}
+			}
+		}
+
+		test("Should not cancel the already canceled event") {
+			onPremiseTestApp {
+				it.patch("/api/events/3/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Event déjà cancelled"
+				}
+			}
+		}
+
+		test("Should not cancel the terminated event") {
+			onPremiseTestApp {
+				it.patch("/api/events/4/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul un événement planifié peut être annulé"
+				}
+			}
+		}
+
+		test("Should not cancel event because it does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/20/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not cancel event if the user is not participating") {
+			onPremiseTestApp {
+				it.patch("/api/events/6/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne participez pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not cancel event if the user is not an organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/cancel") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+	}
+
+	context("Pend event") {
+		test("Should pend the scheduled event") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not pend the already pending event") {
+			onPremiseTestApp {
+				it.patch("/api/events/1/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Event déjà pending"
+				}
+			}
+		}
+
+		test("Should not pend event because it does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/20/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not pend event if the user is not participating") {
+			onPremiseTestApp {
+				it.patch("/api/events/6/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne participez pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not pend event if the user is not an organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+
+		test("Should not pend event if the user is not an organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+
+		test("Should not pend event if the user is not the owner") {
+			onPremiseTestApp {
+				it.patch("/api/events/7/pend") {
+					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul le propriétaire peut mettre l'événement en attente"
+				}
+			}
+		}
+	}
+
+	context("Finish event") {
+		test("Should finish the scheduled event") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not finish the already finished event") {
+			onPremiseTestApp {
+				it.patch("/api/events/4/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Event déjà finished"
+				}
+			}
+		}
+
+		test("Should not finish the pending event") {
+			onPremiseTestApp {
+				it.patch("/api/events/1/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul un événement planifié peut être terminé"
+				}
+			}
+		}
+
+		test("Should not finish the canceled event") {
+			onPremiseTestApp {
+				it.patch("/api/events/3/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul un événement planifié peut être terminé"
+				}
+			}
+		}
+
+		test("Should not finish event because it does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/20/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not finish event if the user is not participating") {
+			onPremiseTestApp {
+				it.patch("/api/events/6/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne participez pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not finish event if the user is not an organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+
+		test("Should not finish event if the user is not an organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/finish") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+	}
 })

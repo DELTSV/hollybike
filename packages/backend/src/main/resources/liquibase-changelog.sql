@@ -116,7 +116,6 @@ INSERT INTO users (email, username, password, association, last_login, scope) VA
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 1 - Asso 1 - User 1 - PENDING', 'Description 1', 2, null, 1, 2, now(), now());
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 1, 2);
-INSERT INTO users_participate_events ("user", event, role) VALUES (3, 1, 2);
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 2 - Asso 1 - User 1 - SCHEDULED', 'Description 2', 2, null, 2, 2, now(), now());
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 2, 2);
@@ -136,6 +135,7 @@ INSERT INTO users_participate_events ("user", event, role) VALUES (3, 6, 2);
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 1 - Asso 2 - User 3 - SCHEDULED', 'Description 1', 3, null, 2, 4, now(), now());
 INSERT INTO users_participate_events ("user", event, role) VALUES (4, 7, 2);
+INSERT INTO users_participate_events ("user", event, role) VALUES (5, 7, 2);
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 1 - Asso 2 - User 4 - PENDING', 'Description 1', 3, null, 1, 5, now(), now());
 INSERT INTO users_participate_events ("user", event, role) VALUES (5, 8, 2);
