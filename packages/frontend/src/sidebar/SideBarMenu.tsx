@@ -1,5 +1,5 @@
-import {useNavigate} from "react-router-dom";
-import {ComponentChildren} from "preact";
+import { useNavigate } from "react-router-dom";
+import { ComponentChildren } from "preact";
 
 interface SideBarMenuProps {
 	to: string,
@@ -16,7 +16,7 @@ export function SideBarMenu(props: SideBarMenuProps) {
 			}
 			onClick={() => navigate(props.to)}
 		>
-			{props.children}
+			{ props.children }
 		</a>
 	);
 }
