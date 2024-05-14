@@ -72,6 +72,16 @@ class EventController(
 				exception.message ?: "Invalid event description"
 			)
 
+			is AlreadyParticipatingToEventException -> call.respond(
+				HttpStatusCode.Conflict,
+				exception.message ?: "Already participating to event"
+			)
+
+			is NotParticipatingToEventException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Not participating to event"
+			)
+
 			else -> {
 				exception.printStackTrace()
 				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
@@ -194,12 +204,12 @@ class EventController(
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
 				return@patch
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@patch
 			}
 

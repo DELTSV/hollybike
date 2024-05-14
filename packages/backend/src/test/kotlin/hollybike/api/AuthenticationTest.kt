@@ -53,7 +53,7 @@ class AuthenticationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
-					setBody(TLogin("user4@hollybike.fr", "test"))
+					setBody(TLogin("user6@hollybike.fr", "test"))
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 				}

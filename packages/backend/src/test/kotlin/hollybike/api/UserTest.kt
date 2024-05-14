@@ -772,12 +772,12 @@ class UserTest : IntegrationSpec({
 							page = 0,
 							totalPage = 1,
 							perPage = 20,
-							totalData = 11
+							totalData = 13
 						),
 						TLists<TUser>::data
 					)
 
-					body.data.size shouldBe 11
+					body.data.size shouldBe 13
 				}
 			}
 		}

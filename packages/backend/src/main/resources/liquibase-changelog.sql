@@ -102,7 +102,8 @@ INSERT INTO users (email, username, password, association, last_login, scope) VA
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user2@hollybike.fr', 'user2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 1);
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user3@hollybike.fr', 'user3', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1);
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user4@hollybike.fr', 'user4', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1);
-INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user5@hollybike.fr', 'user5', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 4, now(), 1);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user5@hollybike.fr', 'user5', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 1);
+INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('user6@hollybike.fr', 'user6', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 4, now(), 1);
 
 
 INSERT INTO users (email, username, password, association, last_login, scope, status) VALUES ('disabled1@hollybike.fr', 'disabled1', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 2, now(), 1, -1);
@@ -143,6 +144,15 @@ INSERT INTO users_participate_events ("user", event, role) VALUES (5, 8, 2);
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 2 - Asso 2 - User 4 - SCHEDULED', 'Description 2', 3, null, 2, 5, now(), now());
 INSERT INTO users_participate_events ("user", event, role) VALUES (5, 9, 2);
 
+INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 3 - Asso 2 - User 4 - SCHEDULED', 'Description 2', 3, null, 2, 5, now(), now());
+INSERT INTO users_participate_events ("user", event, role) VALUES (5, 10, 2);
+INSERT INTO users_participate_events ("user", event, role) VALUES (4, 10, 1);
+INSERT INTO users_participate_events ("user", event, role) VALUES (6, 10, 1);
+
+INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 4 - Asso 2 - User 4 - SCHEDULED', 'Description 2', 3, null, 2, 5, now(), now());
+INSERT INTO users_participate_events ("user", event, role) VALUES (5, 11, 2);
+INSERT INTO users_participate_events ("user", event, role) VALUES (4, 11, 2);
+INSERT INTO users_participate_events ("user", event, role) VALUES (6, 11, 1);
 
 
 

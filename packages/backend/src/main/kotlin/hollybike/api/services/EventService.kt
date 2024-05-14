@@ -302,7 +302,7 @@ class EventService(
 			Result.success(
 				EventParticipation.find {
 					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
-				}.firstOrNull()?.apply {
+				}.with(EventParticipation::user).firstOrNull()?.apply {
 					if (role == EEventRole.MEMBER) {
 						role = EEventRole.ORGANIZER
 					} else {
@@ -335,7 +335,7 @@ class EventService(
 			Result.success(
 				EventParticipation.find {
 					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
-				}.firstOrNull()?.apply {
+				}.with(EventParticipation::user).firstOrNull()?.apply {
 					if (role == EEventRole.ORGANIZER) {
 						role = EEventRole.MEMBER
 					} else {

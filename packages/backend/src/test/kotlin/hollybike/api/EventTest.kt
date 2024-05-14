@@ -1,6 +1,7 @@
 package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.services.storage.StorageMode
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
@@ -10,9 +11,11 @@ import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.datetime.*
+import java.io.File
 
 class EventTest : IntegrationSpec({
 	val workingCreateDate = Clock.System.now().plus(
@@ -41,12 +44,12 @@ class EventTest : IntegrationSpec({
 							page = 0,
 							totalPage = 1,
 							perPage = 20,
-							totalData = 2
+							totalData = 4
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 2
+					body.data.size shouldBe 4
 
 					body.data.map { event -> event.status } shouldNotContain EEventStatus.PENDING
 				}
@@ -68,12 +71,12 @@ class EventTest : IntegrationSpec({
 							page = 0,
 							totalPage = 1,
 							perPage = 20,
-							totalData = 3
+							totalData = 5
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 3
+					body.data.size shouldBe 5
 
 					body.data.map { event -> event.status } shouldContain EEventStatus.PENDING
 				}
@@ -967,6 +970,502 @@ class EventTest : IntegrationSpec({
 					status shouldBe HttpStatusCode.Forbidden
 
 					bodyAsText() shouldBe "Seul l'organisateur peut modifier le statut de l'événement"
+				}
+			}
+		}
+	}
+
+	context("Upload event picture") {
+		listOf(
+			"image/jpeg",
+			"image/png"
+		).forEach { contentType ->
+			listOf(
+				StorageMode.S3,
+				StorageMode.LOCAL,
+				StorageMode.FTP
+			).forEach { storageMode ->
+				test("Should upload event $contentType picture with $storageMode storage mode") {
+					onPremiseTestApp(storageMode) {
+						val file = File(
+							javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+						)
+
+						it.patch("/api/events/1/image") {
+							val boundary = "WebAppBoundary"
+							header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+							setBody(
+								MultiPartFormDataContent(
+									formData {
+										append("file", file.readBytes(), Headers.build {
+											append(HttpHeaders.ContentType, contentType)
+											append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+										})
+									},
+									boundary,
+									ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+								)
+							)
+						}.apply {
+							status shouldBe HttpStatusCode.OK
+						}
+					}
+				}
+			}
+		}
+
+		listOf(
+			"image/gif",
+			"image/svg+xml",
+			"image/webp",
+			"application/javascript",
+		).forEach { contentType ->
+			test("Should not upload event $contentType picture") {
+				onPremiseTestApp {
+					val file = File(
+						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+					)
+
+					it.patch("/api/events/1/image") {
+						val boundary = "WebAppBoundary"
+						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+						setBody(
+							MultiPartFormDataContent(
+								formData {
+									append("file", file.readBytes(), Headers.build {
+										append(HttpHeaders.ContentType, contentType)
+										append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+									})
+								},
+								boundary,
+								ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+							)
+						)
+					}.apply {
+						status shouldBe HttpStatusCode.BadRequest
+
+						bodyAsText() shouldBe "Image invalide (JPEG et PNG seulement)"
+					}
+				}
+			}
+		}
+
+		test("Should not upload event picture without content type") {
+			onPremiseTestApp {
+				val file = File(
+					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+				)
+
+				it.patch("/api/events/1/image") {
+					val boundary = "WebAppBoundary"
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					setBody(
+						MultiPartFormDataContent(
+							formData {
+								append("file", file.readBytes(), Headers.build {
+									append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+								})
+							},
+							boundary,
+							ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+						)
+					)
+				}.apply {
+					status shouldBe HttpStatusCode.BadRequest
+
+					bodyAsText() shouldBe "Type de contenu de l'image manquant"
+				}
+			}
+		}
+
+		test("Should not upload event picture if the user is not organizer") {
+			onPremiseTestApp {
+				val file = File(
+					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+				)
+
+				it.patch("/api/events/2/image") {
+					val boundary = "WebAppBoundary"
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					setBody(
+						MultiPartFormDataContent(
+							formData {
+								append("file", file.readBytes(), Headers.build {
+									append(HttpHeaders.ContentType, "image/jpeg")
+									append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+								})
+							},
+							boundary,
+							ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+						)
+					)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut modifier l'événement"
+				}
+			}
+		}
+
+		test("Should not upload event picture if the user is not participating") {
+			onPremiseTestApp {
+				val file = File(
+					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+				)
+
+				it.patch("/api/events/6/image") {
+					val boundary = "WebAppBoundary"
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					setBody(
+						MultiPartFormDataContent(
+							formData {
+								append("file", file.readBytes(), Headers.build {
+									append(HttpHeaders.ContentType, "image/jpeg")
+									append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+								})
+							},
+							boundary,
+							ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+						)
+					)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne participez pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not upload event picture if the event does not exist") {
+			onPremiseTestApp {
+				val file = File(
+					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+				)
+
+				it.patch("/api/events/20/image") {
+					val boundary = "WebAppBoundary"
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					setBody(
+						MultiPartFormDataContent(
+							formData {
+								append("file", file.readBytes(), Headers.build {
+									append(HttpHeaders.ContentType, "image/jpeg")
+									append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+								})
+							},
+							boundary,
+							ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+						)
+					)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+	}
+
+	context("Participate event") {
+		test("Should participate to the event") {
+			onPremiseTestApp {
+				it.post("/api/events/6/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Created
+
+					body<TEventParticipation>().role shouldBe EEventRole.MEMBER
+				}
+			}
+		}
+
+		test("Should not participate to the event because you are already participating") {
+			onPremiseTestApp {
+				it.post("/api/events/1/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Conflict
+
+					bodyAsText() shouldBe "Vous participez déjà à cet événement"
+				}
+			}
+		}
+
+		test("Should not participate to the event because it does not exist") {
+			onPremiseTestApp {
+				it.post("/api/events/20/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not participate to the event because you are not in the same association") {
+			onPremiseTestApp {
+				it.post("/api/events/8/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 8 introuvable"
+				}
+			}
+		}
+	}
+
+	context("Leave event") {
+		test("Should leave the event") {
+			onPremiseTestApp {
+				it.delete("/api/events/2/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not leave the event because you are the owner") {
+			onPremiseTestApp {
+				it.delete("/api/events/1/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Le propriétaire ne peut pas quitter l'événement"
+				}
+			}
+		}
+
+		test("Should not leave the event because it does not exist") {
+			onPremiseTestApp {
+				it.delete("/api/events/20/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not leave the event because you are not participating") {
+			onPremiseTestApp {
+				it.delete("/api/events/9/participations") {
+					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Vous ne participez pas à cet événement"
+				}
+			}
+		}
+	}
+
+	context("Promote event participant") {
+		test("Should promote the participant") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/participations/3/promote") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					body<TEventParticipation>().role shouldBe EEventRole.ORGANIZER
+				}
+			}
+		}
+
+		test("Should not promote the participant because the event does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/20/participations/3/promote") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not promote the participant because you are not organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/10/participations/6/promote") {
+					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut promouvoir un participant"
+				}
+			}
+		}
+
+		test("Should not promote yourself") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/participations/2/promote") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne pouvez pas vous promouvoir"
+				}
+			}
+		}
+
+		test("Should not promote the participant because he is not participating") {
+			onPremiseTestApp {
+				it.patch("/api/events/9/participations/4/promote") {
+					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "L'utilisateur ne participe pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not promote the participant because the user is already organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/11/participations/4/promote") {
+					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul un membre peut être promu"
+				}
+			}
+		}
+	}
+
+	context("Demote event participant") {
+		test("Should demote the participant") {
+			onPremiseTestApp {
+				it.patch("/api/events/7/participations/5/demote") {
+					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					body<TEventParticipation>().role shouldBe EEventRole.MEMBER
+				}
+			}
+		}
+
+		test("Should not demote the participant because the event does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/20/participations/5/demote") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
+				}
+			}
+		}
+
+		test("Should not demote the participant because you are not organizer") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/participations/2/demote") {
+					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul l'organisateur peut rétrograder un participant"
+				}
+			}
+		}
+
+		test("Should not demote yourself") {
+			onPremiseTestApp {
+				it.patch("/api/events/1/participations/2/demote") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Vous ne pouvez pas vous rétrograder"
+				}
+			}
+		}
+
+		test("Should not demote the participant because he is not participating") {
+			onPremiseTestApp {
+				it.patch("/api/events/9/participations/4/demote") {
+					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "L'utilisateur ne participe pas à cet événement"
+				}
+			}
+		}
+
+		test("Should not promote the participant because the user is already member") {
+			onPremiseTestApp {
+				it.patch("/api/events/2/participations/3/demote") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul un organisateur peut être rétrogradé"
+				}
+			}
+		}
+	}
+
+	context("Delete event") {
+		test("Should delete the event") {
+			onPremiseTestApp {
+				it.delete("/api/events/1") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not delete the event because im not the owner") {
+			onPremiseTestApp {
+				it.delete("/api/events/6") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.Forbidden
+
+					bodyAsText() shouldBe "Seul le propriétaire peut supprimer l'événement"
+				}
+			}
+		}
+
+		test("Should not delete the event because it does not exist") {
+			onPremiseTestApp {
+				it.delete("/api/events/20") {
+					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+
+					bodyAsText() shouldBe "Event 20 introuvable"
 				}
 			}
 		}
