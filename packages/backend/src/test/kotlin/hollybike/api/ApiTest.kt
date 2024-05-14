@@ -15,4 +15,22 @@ class ApiTest : IntegrationSpec({
 			}
 		}
 	}
+
+	test("Should return service unavailable on SMTP API endpoint") {
+		testApp {
+			it.get("/api/smtp").apply {
+				status shouldBe HttpStatusCode.ServiceUnavailable
+				bodyAsText() shouldBe "Service SMTP indisponible, configurer un server SMTP pour accéder à cette fonctionnalité"
+			}
+		}
+	}
+
+	test("Should return 404 on unknown API endpoint") {
+		testApp {
+			it.get("/api/unknown").apply {
+				status shouldBe HttpStatusCode.NotFound
+				bodyAsText() shouldBe "Chemin unknown inconnu"
+			}
+		}
+	}
 })
