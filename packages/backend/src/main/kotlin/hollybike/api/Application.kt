@@ -30,12 +30,9 @@ fun Application.module() {
 	checkOnPremise()
 	configureSerialization()
 	api()
+	frontend()
 
 	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
-
-	if (isOnPremise) {
-		frontend()
-	}
 }
 
 fun Application.configureSerialization() {

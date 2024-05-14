@@ -8,7 +8,7 @@ import io.ktor.http.*
 
 class ApiTest : IntegrationSpec({
 	test("Should return 200 on root API endpoint") {
-		testApp {
+		onPremiseTestApp {
 			it.get("/api").apply {
 				status shouldBe HttpStatusCode.OK
 				bodyAsText() shouldBe "Bienvenue sur l'API hollyBike"
@@ -17,7 +17,7 @@ class ApiTest : IntegrationSpec({
 	}
 
 	test("Should return service unavailable on SMTP API endpoint") {
-		testApp {
+		onPremiseTestApp {
 			it.get("/api/smtp").apply {
 				status shouldBe HttpStatusCode.ServiceUnavailable
 				bodyAsText() shouldBe "Service SMTP indisponible, configurer un server SMTP pour accéder à cette fonctionnalité"
@@ -26,7 +26,7 @@ class ApiTest : IntegrationSpec({
 	}
 
 	test("Should return 404 on unknown API endpoint") {
-		testApp {
+		onPremiseTestApp {
 			it.get("/api/unknown").apply {
 				status shouldBe HttpStatusCode.NotFound
 				bodyAsText() shouldBe "Chemin unknown inconnu"

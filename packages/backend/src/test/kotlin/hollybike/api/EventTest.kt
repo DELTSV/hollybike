@@ -8,7 +8,7 @@ import io.ktor.http.*
 
 class EventTest : IntegrationSpec({
 	test("Should return 200 on root API endpoint") {
-		testApp {
+		onPremiseTestApp {
 			it.get("/api").apply {
 				status shouldBe HttpStatusCode.OK
 				bodyAsText() shouldBe "Bienvenue sur l'API hollyBike"

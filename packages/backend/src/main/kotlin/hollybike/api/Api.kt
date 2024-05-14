@@ -9,12 +9,14 @@ import hollybike.api.services.EventService
 import hollybike.api.services.UserService
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
+import hollybike.api.services.storage.StorageService
 import hollybike.api.utils.MailSender
 import hollybike.api.services.storage.StorageServiceFactory
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
 import org.slf4j.event.Level
+import kotlin.system.measureTimeMillis
 
 fun Application.api() {
 	val conf = attributes.conf
@@ -27,9 +29,12 @@ fun Application.api() {
 		this.level = Level.INFO
 	}
 
-	val storageService = StorageServiceFactory.getService(conf, isOnPremise)
+	val storageService: StorageService
+	val storageInitTime = measureTimeMillis {
+		storageService = StorageServiceFactory.getService(conf, isOnPremise)
+	}
 
-	log.info("Using ${storageService.mode} storage mode")
+	log.info("Storage service in mode ${storageService.mode} initialized in $storageInitTime ms")
 
 	val userService = UserService(db, storageService)
 	val invitationService = InvitationService(db)

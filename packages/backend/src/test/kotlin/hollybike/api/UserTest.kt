@@ -1,6 +1,5 @@
 package hollybike.api
 
-import hollybike.api.base.BaseConfig
 import hollybike.api.base.IntegrationSpec
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.types.association.EAssociationsStatus
@@ -24,7 +23,7 @@ import java.io.File
 class UserTest : IntegrationSpec({
 	context("Get association by user id") {
 		test("Should get association by user id") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/2/association") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -48,7 +47,7 @@ class UserTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not get association by user id if $scope") {
-				testApp {
+				onPremiseTestApp {
 					it.get("/api/users/2/association") {
 						header("Authorization", "Bearer ${tokenStore.get(email)}")
 					}.apply {
@@ -66,7 +65,7 @@ class UserTest : IntegrationSpec({
 		).forEach { (email, scope) ->
 			run {
 				test("Should return myself for role $scope") {
-					testApp {
+					onPremiseTestApp {
 						it.get("/api/users/me") {
 							header("Authorization", "Bearer ${tokenStore.get(email)}")
 						}.apply {
@@ -84,7 +83,7 @@ class UserTest : IntegrationSpec({
 
 	context("Get user by id") {
 		test("Should return the user by id") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/2") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -112,7 +111,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should return the user by id cross association if root") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -140,7 +139,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not return the user by id if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/2") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				}.apply {
@@ -151,7 +150,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not found the user by id if not in the same association") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/3") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -162,7 +161,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not found the user by id if it does not exist") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/20") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -175,7 +174,7 @@ class UserTest : IntegrationSpec({
 
 	context("Get user by email") {
 		test("Should return the user by email") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/email/user1@hollybike.fr") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -203,7 +202,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should return the user by email cross association if root") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/email/user1@hollybike.fr") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -231,7 +230,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not return the user by email if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/email/user1@hollybike.fr") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				}.apply {
@@ -242,7 +241,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not found the user by email if not in the same association") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/email/user2@hollybike.fr") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -253,7 +252,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not found the user by email if it does not exist") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/email/notexists@hollybike.fr") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -266,7 +265,7 @@ class UserTest : IntegrationSpec({
 
 	context("Get user by username") {
 		test("Should return the user by username") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/username/user1") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -294,7 +293,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should return the user by username cross association if root") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/username/user1") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -322,7 +321,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not return the user by username if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/username/user1") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				}.apply {
@@ -333,7 +332,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not found the user by username if not in the same association") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/username/user2") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -344,7 +343,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not found the user by username if it does not exist") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/username/notexists") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -357,7 +356,7 @@ class UserTest : IntegrationSpec({
 
 	context("Update myself") {
 		test("Should update my username") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/users/me") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -374,7 +373,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should update my password") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/users/me") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -392,7 +391,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not update my password if the old password is wrong") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/users/me") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -411,7 +410,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not update my password if the new password is different") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/users/me") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -443,7 +442,7 @@ class UserTest : IntegrationSpec({
 			)
 		).forEach { update ->
 			test("Should not update my password because one element is missing") {
-				testApp {
+				onPremiseTestApp {
 					it.patch("/api/users/me") {
 						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 						contentType(ContentType.Application.Json)
@@ -468,7 +467,7 @@ class UserTest : IntegrationSpec({
 				StorageMode.FTP
 			).forEach { storageMode ->
 				test("Should upload my profile $contentType picture in $storageMode mode") {
-					testApp(BaseConfig(storageMode = storageMode, isOnPremise = storageMode != StorageMode.S3)) {
+					onPremiseTestApp(storageMode) {
 						val file = File(
 							javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 						)
@@ -503,7 +502,7 @@ class UserTest : IntegrationSpec({
 			"application/javascript",
 		).forEach { contentType ->
 			test("Should not upload my profile $contentType picture") {
-				testApp {
+				onPremiseTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -532,7 +531,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not upload my profile picture with no content type") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -565,7 +564,7 @@ class UserTest : IntegrationSpec({
 			"image/png"
 		).forEach { contentType ->
 			test("Should upload user profile $contentType picture by id") {
-				testApp {
+				onPremiseTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -599,7 +598,7 @@ class UserTest : IntegrationSpec({
 			"application/javascript",
 		).forEach { contentType ->
 			test("Should not upload user profile $contentType picture by id") {
-				testApp {
+				onPremiseTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -628,7 +627,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not upload user profile picture with no content type by id") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -655,7 +654,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not upload user profile picture if the user does not exist") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -682,7 +681,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not upload user profile picture if the user is not in the same association") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -709,7 +708,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not upload user profile picture if the user is not admin") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -738,7 +737,7 @@ class UserTest : IntegrationSpec({
 
 	context("Get all users") {
 		test("Should return list of association users") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -760,7 +759,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should return all users if root") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -784,7 +783,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not return list of association users if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				}.apply {
@@ -798,7 +797,7 @@ class UserTest : IntegrationSpec({
 
 	context("User meta-data") {
 		test("Should get user meta-data") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/meta-data") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -809,7 +808,7 @@ class UserTest : IntegrationSpec({
 		}
 
 		test("Should not get user meta-data if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/users/meta-data") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				}.apply {

@@ -13,10 +13,12 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
+import org.testcontainers.containers.FixedHostPortGenericContainer
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.net.ServerSocket
 
 @Testcontainers
 abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
@@ -44,11 +46,31 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				.withEnv("MINIO_ROOT_PASSWORD", "minio-test-password").withEnv("MINIO_DEFAULT_BUCKETS", "hollybike")
 				.withExposedPorts(9000)
 
+		@Container
+		val ftp: FixedHostPortGenericContainer<*> =
+			FixedHostPortGenericContainer("fauria/vsftpd:latest").withEnv("FTP_USER", "ftp-test-user")
+				.withEnv("FTP_PASS", "ftp-test-password")
+
 		val tokenStore = TokenStore()
 
 		init {
 			database.start()
 			minio.start()
+
+			ftp.withExposedPorts(21)
+
+			var freePort: Int
+			ServerSocket(0).use { socket ->
+				freePort = socket.getLocalPort()
+			}
+
+			ftp.withFixedExposedPort(freePort, freePort)
+				.withEnv("PASV_MIN_PORT", freePort.toString())
+				.withEnv("PASV_MAX_PORT", freePort.toString())
+
+			ftp.start()
+
+			println("Initialized the containers")
 
 			Thread.sleep(5000)
 		}
@@ -103,14 +125,17 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			}
 		}
 
-		fun testApp(baseConfig: BaseConfig = BaseConfig(), block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit) = testApplication {
+		private fun testApp(
+			baseConfig: BaseConfig,
+			block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit
+		) = testApplication {
 			System.setProperty("is_test_env", "true")
 
 			val dbConf = ConfDB(
 				url = database.jdbcUrl, username = database.username, password = database.password
 			)
 
-			val storageConfig = when(baseConfig.storageMode) {
+			val storageConfig = when (baseConfig.storageMode) {
 				StorageMode.S3 -> ConfStorage(
 					s3Url = "http://${minio.host}:${minio.getMappedPort(9000)}",
 					s3BucketName = "hollybike",
@@ -122,8 +147,12 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				StorageMode.LOCAL -> ConfStorage(
 					localPath = "storage/tests"
 				)
+
 				StorageMode.FTP -> ConfStorage(
-					localPath = "storage/tests"
+					ftpServer = "ftp://${ftp.host}:${ftp.getMappedPort(21)}",
+					ftpUsername = "ftp-test-user",
+					ftpPassword = "ftp-test-password",
+					ftpDirectory = "storage"
 				)
 			}
 
@@ -143,6 +172,7 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				configureSerialization()
 				forceMode(isOnPremise = baseConfig.isOnPremise)
 				api()
+				frontend()
 			}
 
 			val client = createClient {
@@ -153,5 +183,14 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 
 			block(client)
 		}
+
+		fun cloudTestApp(
+			block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit
+		) = testApp(BaseConfig(StorageMode.S3, isOnPremise = false), block)
+
+		fun onPremiseTestApp(
+			storageMode: StorageMode = StorageMode.LOCAL,
+			block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit
+		) = testApp(BaseConfig(storageMode), block)
 	}
 }

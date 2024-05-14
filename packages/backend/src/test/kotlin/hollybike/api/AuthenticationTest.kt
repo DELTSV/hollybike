@@ -15,7 +15,7 @@ import io.ktor.client.statement.*
 class AuthenticationTest : IntegrationSpec({
 	context("Login user") {
 		test("Should not login because the user does not exists") {
-			testApp {
+			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
 					setBody(TLogin("notfound@hollybike.fr", "test"))
@@ -27,7 +27,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not login because of bad credentials") {
-			testApp {
+			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
 					setBody(TLogin("root@hollybike.fr", "password"))
@@ -39,7 +39,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not login because the user is disabled") {
-			testApp {
+			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
 					setBody(TLogin("disabled1@hollybike.fr", "test"))
@@ -50,7 +50,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not login because the association is disabled") {
-			testApp {
+			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
 					setBody(TLogin("user3@hollybike.fr", "test"))
@@ -61,7 +61,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should login the user and return the token") {
-			testApp {
+			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
 					setBody(TLogin("root@hollybike.fr", "test"))
@@ -75,7 +75,7 @@ class AuthenticationTest : IntegrationSpec({
 
 	context("Sign up user") {
 		test("Should sign up the user to the association") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -100,7 +100,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user with invalid email address") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -125,7 +125,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user if the email is already used") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -150,7 +150,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user if no host is provided") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -174,7 +174,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user with bad invitation id") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -198,7 +198,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user with bad association id") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -222,7 +222,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user with bad user scope") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -246,7 +246,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user with bad verify signature") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr")
 
 				it.post("/api/auth/signin") {
@@ -270,7 +270,7 @@ class AuthenticationTest : IntegrationSpec({
 		}
 
 		test("Should not sign up the user with used invitation") {
-			testApp {
+			onPremiseTestApp {
 				val invitation = generateInvitation(it, "admin1@hollybike.fr", maxUses = 0)
 
 				it.post("/api/auth/signin") {

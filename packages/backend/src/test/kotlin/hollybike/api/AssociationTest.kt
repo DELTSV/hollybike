@@ -1,6 +1,5 @@
 package hollybike.api
 
-import hollybike.api.base.BaseConfig
 import hollybike.api.base.IntegrationSpec
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.types.association.EAssociationsStatus
@@ -21,7 +20,7 @@ import java.io.File
 class AssociationTest : IntegrationSpec({
 	context("Get my association") {
 		test("Should return the my association") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/associations/me") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
@@ -40,7 +39,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not return my association if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.get("/api/associations/me") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 				}.apply {
@@ -53,7 +52,7 @@ class AssociationTest : IntegrationSpec({
 
 	context("Update my association") {
 		test("Should update my association") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/associations/me") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -78,7 +77,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not update my association if not admin") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/associations/me") {
 					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -95,7 +94,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not update my association if the name already exists") {
-			testApp {
+			onPremiseTestApp {
 				it.patch("/api/associations/me") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -121,7 +120,7 @@ class AssociationTest : IntegrationSpec({
 				StorageMode.FTP
 			).forEach { storageMode ->
 				test("Should upload my association $contentType picture in $storageMode mode") {
-					testApp(BaseConfig(storageMode = storageMode, isOnPremise = storageMode != StorageMode.S3)) {
+					onPremiseTestApp(storageMode) {
 						val file = File(
 							javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 						)
@@ -150,7 +149,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not upload my association picture if not admin") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -184,7 +183,7 @@ class AssociationTest : IntegrationSpec({
 			"application/javascript",
 		).forEach { contentType ->
 			test("Should not upload my association $contentType picture") {
-				testApp {
+				onPremiseTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -213,7 +212,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not upload my association picture with no content type") {
-			testApp {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -242,7 +241,7 @@ class AssociationTest : IntegrationSpec({
 
 	context("Get all associations") {
 		test("Should get all associations") {
-			testApp {
+			cloudTestApp {
 				it.get("/api/associations") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -271,7 +270,7 @@ class AssociationTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not get all associations if $scope") {
-				testApp {
+				cloudTestApp {
 					it.get("/api/associations") {
 						header("Authorization", "Bearer ${tokenStore.get(email)}")
 					}.apply {
@@ -283,7 +282,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not get all associations if on premise mode") {
-			testApp(BaseConfig(isOnPremise = true)) {
+			onPremiseTestApp {
 				it.get("/api/associations") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -295,7 +294,7 @@ class AssociationTest : IntegrationSpec({
 
 	context("Get association by id") {
 		test("Should get association by id") {
-			testApp {
+			cloudTestApp {
 				it.get("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -319,7 +318,7 @@ class AssociationTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not get association by id if $scope") {
-				testApp {
+				cloudTestApp {
 					it.get("/api/associations") {
 						header("Authorization", "Bearer ${tokenStore.get(email)}")
 					}.apply {
@@ -331,7 +330,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not get association by id if it does not exist") {
-			testApp {
+			cloudTestApp {
 				it.get("/api/associations/20") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -343,7 +342,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not get association by id if on premise mode") {
-			testApp(BaseConfig(isOnPremise = true)) {
+			onPremiseTestApp {
 				it.get("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -355,7 +354,7 @@ class AssociationTest : IntegrationSpec({
 
 	context("Create new association") {
 		test("Should create an association") {
-			testApp {
+			cloudTestApp {
 				it.post("/api/associations") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -383,7 +382,7 @@ class AssociationTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not create an association if $scope") {
-				testApp {
+				cloudTestApp {
 					it.post("/api/associations") {
 						header("Authorization", "Bearer ${tokenStore.get(email)}")
 						contentType(ContentType.Application.Json)
@@ -400,7 +399,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not create an association if the name already exists") {
-			testApp {
+			cloudTestApp {
 				it.post("/api/associations") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -414,11 +413,25 @@ class AssociationTest : IntegrationSpec({
 				}
 			}
 		}
+
+		test("Should not create an association if on premise mode") {
+			onPremiseTestApp {
+				it.post("/api/associations") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+					setBody(TNewAssociation(
+						name = "New Association"
+					))
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+				}
+			}
+		}
 	}
 
 	context("Update an association") {
 		test("Should update an association") {
-			testApp {
+			cloudTestApp {
 				it.patch("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -447,7 +460,7 @@ class AssociationTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not update an association if $scope") {
-				testApp {
+				cloudTestApp {
 					it.patch("/api/associations/2") {
 						header("Authorization", "Bearer ${tokenStore.get(email)}")
 						contentType(ContentType.Application.Json)
@@ -465,7 +478,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not update an association if the name already exists") {
-			testApp {
+			cloudTestApp {
 				it.patch("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -480,7 +493,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not update an association if it does not exist") {
-			testApp {
+			cloudTestApp {
 				it.patch("/api/associations/20") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -496,7 +509,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not update an association if on premise mode") {
-			testApp(BaseConfig(isOnPremise = true)) {
+			onPremiseTestApp {
 				it.patch("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 					contentType(ContentType.Application.Json)
@@ -517,7 +530,7 @@ class AssociationTest : IntegrationSpec({
 			"image/png"
 		).forEach { contentType ->
 			test("Should upload association $contentType picture") {
-				testApp {
+				cloudTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -549,7 +562,7 @@ class AssociationTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not upload association picture if $scope") {
-				testApp {
+				cloudTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -584,7 +597,7 @@ class AssociationTest : IntegrationSpec({
 			"application/javascript",
 		).forEach { contentType ->
 			test("Should not upload association $contentType picture") {
-				testApp {
+				cloudTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
@@ -613,7 +626,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not upload association picture with no content type") {
-			testApp {
+			cloudTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -640,7 +653,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not upload association picture if it does not exist") {
-			testApp {
+			cloudTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -668,7 +681,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not upload association picture if on premise mode") {
-			testApp(BaseConfig(isOnPremise = true)) {
+			onPremiseTestApp {
 				val file = File(
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
@@ -697,7 +710,7 @@ class AssociationTest : IntegrationSpec({
 
 	context("Delete an association") {
 		test("Should delete an association") {
-			testApp {
+			cloudTestApp {
 				it.delete("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -711,7 +724,7 @@ class AssociationTest : IntegrationSpec({
 			"user1@hollybike.fr" to EUserScope.User,
 		).forEach { (email, scope) ->
 			test("Should not delete an association if $scope") {
-				testApp {
+				cloudTestApp {
 					it.delete("/api/associations/2") {
 						header("Authorization", "Bearer ${tokenStore.get(email)}")
 					}.apply {
@@ -724,7 +737,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not delete an association if it does not exist") {
-			testApp {
+			cloudTestApp {
 				it.delete("/api/associations/20") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
@@ -735,7 +748,7 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		test("Should not delete an association in on premise mode") {
-			testApp(BaseConfig(isOnPremise = true)) {
+			onPremiseTestApp {
 				it.delete("/api/associations/2") {
 					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
 				}.apply {
