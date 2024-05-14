@@ -6,10 +6,12 @@ import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
 import hollybike.api.types.user.EUserScope
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
@@ -18,6 +20,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.io.File
 import java.net.ServerSocket
 
 @Testcontainers
@@ -73,6 +76,31 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			println("Initialized the containers")
 
 			Thread.sleep(5000)
+		}
+
+		suspend fun uploadProfileImageInStorage(client: HttpClient, sender: String) {
+			val file = File(
+				javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+			)
+
+			client.post("/api/users/me/profile-picture") {
+				val boundary = "WebAppBoundary"
+				header("Authorization", "Bearer ${tokenStore.get(sender)}")
+				setBody(
+					MultiPartFormDataContent(
+						formData {
+							append("file", file.readBytes(), Headers.build {
+								append(HttpHeaders.ContentType, "image/jpeg")
+								append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+							})
+						},
+						boundary,
+						ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+					)
+				)
+			}.apply {
+				status shouldBe HttpStatusCode.OK
+			}
 		}
 
 		suspend fun generateInvitation(

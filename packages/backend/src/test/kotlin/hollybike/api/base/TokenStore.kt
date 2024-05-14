@@ -11,6 +11,8 @@ class TokenStore {
 		"root@hollybike.fr" to EUserScope.Root,
 		"user1@hollybike.fr" to EUserScope.User,
 		"user2@hollybike.fr" to EUserScope.User,
+		"user3@hollybike.fr" to EUserScope.User,
+		"user4@hollybike.fr" to EUserScope.User,
 		"admin1@hollybike.fr" to EUserScope.Admin,
 		"admin2@hollybike.fr" to EUserScope.Admin,
 	)

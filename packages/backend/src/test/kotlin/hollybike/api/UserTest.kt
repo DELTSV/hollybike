@@ -151,7 +151,7 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by id if not in the same association") {
 			onPremiseTestApp {
-				it.get("/api/users/3") {
+				it.get("/api/users/4") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -242,7 +242,7 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by email if not in the same association") {
 			onPremiseTestApp {
-				it.get("/api/users/email/user2@hollybike.fr") {
+				it.get("/api/users/email/user3@hollybike.fr") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -333,7 +333,7 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by username if not in the same association") {
 			onPremiseTestApp {
-				it.get("/api/users/username/user2") {
+				it.get("/api/users/username/user3") {
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -686,7 +686,7 @@ class UserTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.post("/api/users/3/profile-picture") {
+				it.post("/api/users/4/profile-picture") {
 					val boundary = "WebAppBoundary"
 					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
 					setBody(
@@ -702,7 +702,7 @@ class UserTest : IntegrationSpec({
 					)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Utilisateur 3 inconnu"
+					bodyAsText() shouldBe "Utilisateur 4 inconnu"
 				}
 			}
 		}
@@ -748,12 +748,12 @@ class UserTest : IntegrationSpec({
 							page = 0,
 							totalPage = 1,
 							perPage = 20,
-							totalData = 3
+							totalData = 4
 						),
 						TLists<TUser>::data
 					)
 
-					body<TLists<TUser>>().data.size shouldBe 3
+					body<TLists<TUser>>().data.size shouldBe 4
 				}
 			}
 		}
@@ -772,12 +772,12 @@ class UserTest : IntegrationSpec({
 							page = 0,
 							totalPage = 1,
 							perPage = 20,
-							totalData = 10
+							totalData = 11
 						),
 						TLists<TUser>::data
 					)
 
-					body.data.size shouldBe 10
+					body.data.size shouldBe 11
 				}
 			}
 		}
