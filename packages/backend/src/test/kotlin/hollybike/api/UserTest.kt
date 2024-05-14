@@ -1,6 +1,8 @@
 package hollybike.api
 
+import hollybike.api.base.BaseConfig
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.services.storage.StorageMode
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.lists.TLists
@@ -460,29 +462,35 @@ class UserTest : IntegrationSpec({
 			"image/jpeg",
 			"image/png"
 		).forEach { contentType ->
-			test("Should upload my profile $contentType picture") {
-				testApp {
-					val file = File(
-						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
-					)
-
-					it.post("/api/users/me/profile-picture") {
-						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
-						setBody(
-							MultiPartFormDataContent(
-								formData {
-									append("file", file.readBytes(), Headers.build {
-										append(HttpHeaders.ContentType, contentType)
-										append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
-									})
-								},
-								boundary,
-								ContentType.MultiPart.FormData.withParameter("boundary", boundary)
-							)
+			listOf(
+				StorageMode.S3,
+				StorageMode.LOCAL,
+				StorageMode.FTP
+			).forEach { storageMode ->
+				test("Should upload my profile $contentType picture in $storageMode mode") {
+					testApp(BaseConfig(storageMode = storageMode, isOnPremise = storageMode != StorageMode.S3)) {
+						val file = File(
+							javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 						)
-					}.apply {
-						status shouldBe HttpStatusCode.OK
+
+						it.post("/api/users/me/profile-picture") {
+							val boundary = "WebAppBoundary"
+							header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+							setBody(
+								MultiPartFormDataContent(
+									formData {
+										append("file", file.readBytes(), Headers.build {
+											append(HttpHeaders.ContentType, contentType)
+											append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+										})
+									},
+									boundary,
+									ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+								)
+							)
+						}.apply {
+							status shouldBe HttpStatusCode.OK
+						}
 					}
 				}
 			}

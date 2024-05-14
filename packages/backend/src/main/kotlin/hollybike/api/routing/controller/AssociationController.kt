@@ -32,6 +32,7 @@ class AssociationController(
 				getMyAssociation()
 				updateMyAssociation()
 				updateMyAssociationPicture()
+
 				if (application.isCloud) {
 					getAll()
 					getById()

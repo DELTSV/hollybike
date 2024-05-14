@@ -1,6 +1,7 @@
 package hollybike.api.base
 
 import hollybike.api.*
+import hollybike.api.services.storage.StorageMode
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
 import hollybike.api.types.user.EUserScope
@@ -102,20 +103,29 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			}
 		}
 
-		fun testApp(block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit) = testApplication {
+		fun testApp(baseConfig: BaseConfig = BaseConfig(), block: suspend ApplicationTestBuilder.(c: HttpClient) -> Unit) = testApplication {
 			System.setProperty("is_test_env", "true")
 
 			val dbConf = ConfDB(
 				url = database.jdbcUrl, username = database.username, password = database.password
 			)
 
-			val storageConfig = ConfStorage(
-				s3Url = "http://${minio.host}:${minio.getMappedPort(9000)}",
-				s3BucketName = "hollybike",
-				s3Region = "us-east-1",
-				s3Password = "minio-test-password",
-				s3Username = "minio-test-user"
-			)
+			val storageConfig = when(baseConfig.storageMode) {
+				StorageMode.S3 -> ConfStorage(
+					s3Url = "http://${minio.host}:${minio.getMappedPort(9000)}",
+					s3BucketName = "hollybike",
+					s3Region = "us-east-1",
+					s3Password = "minio-test-password",
+					s3Username = "minio-test-user"
+				)
+
+				StorageMode.LOCAL -> ConfStorage(
+					localPath = "storage/tests"
+				)
+				StorageMode.FTP -> ConfStorage(
+					localPath = "storage/tests"
+				)
+			}
 
 			val config = Conf(
 				db = dbConf, security = ConfSecurity(
@@ -131,7 +141,7 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				loadCustomConfig(config)
 				checkTestEnvironment()
 				configureSerialization()
-				checkOnPremise()
+				forceMode(isOnPremise = baseConfig.isOnPremise)
 				api()
 			}
 

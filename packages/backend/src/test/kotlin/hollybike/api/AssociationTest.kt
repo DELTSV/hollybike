@@ -1,6 +1,8 @@
 package hollybike.api
 
+import hollybike.api.base.BaseConfig
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.services.storage.StorageMode
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TNewAssociation
@@ -113,29 +115,35 @@ class AssociationTest : IntegrationSpec({
 			"image/jpeg",
 			"image/png"
 		).forEach { contentType ->
-			test("Should upload my association $contentType picture") {
-				testApp {
-					val file = File(
-						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
-					)
-
-					it.patch("/api/associations/me/picture") {
-						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
-						setBody(
-							MultiPartFormDataContent(
-								formData {
-									append("file", file.readBytes(), Headers.build {
-										append(HttpHeaders.ContentType, contentType)
-										append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
-									})
-								},
-								boundary,
-								ContentType.MultiPart.FormData.withParameter("boundary", boundary)
-							)
+			listOf(
+				StorageMode.S3,
+				StorageMode.LOCAL,
+				StorageMode.FTP
+			).forEach { storageMode ->
+				test("Should upload my association $contentType picture in $storageMode mode") {
+					testApp(BaseConfig(storageMode = storageMode, isOnPremise = storageMode != StorageMode.S3)) {
+						val file = File(
+							javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 						)
-					}.apply {
-						status shouldBe HttpStatusCode.OK
+
+						it.patch("/api/associations/me/picture") {
+							val boundary = "WebAppBoundary"
+							header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+							setBody(
+								MultiPartFormDataContent(
+									formData {
+										append("file", file.readBytes(), Headers.build {
+											append(HttpHeaders.ContentType, contentType)
+											append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+										})
+									},
+									boundary,
+									ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+								)
+							)
+						}.apply {
+							status shouldBe HttpStatusCode.OK
+						}
 					}
 				}
 			}
@@ -273,6 +281,16 @@ class AssociationTest : IntegrationSpec({
 				}
 			}
 		}
+
+		test("Should not get all associations if on premise mode") {
+			testApp(BaseConfig(isOnPremise = true)) {
+				it.get("/api/associations") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+				}
+			}
+		}
 	}
 
 	context("Get association by id") {
@@ -320,6 +338,16 @@ class AssociationTest : IntegrationSpec({
 					status shouldBe HttpStatusCode.NotFound
 
 					bodyAsText() shouldBe "Association 20 inconnue"
+				}
+			}
+		}
+
+		test("Should not get association by id if on premise mode") {
+			testApp(BaseConfig(isOnPremise = true)) {
+				it.get("/api/associations/2") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
 				}
 			}
 		}
@@ -463,6 +491,21 @@ class AssociationTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Association 20 inconnue"
+				}
+			}
+		}
+
+		test("Should not update an association if on premise mode") {
+			testApp(BaseConfig(isOnPremise = true)) {
+				it.patch("/api/associations/2") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					contentType(ContentType.Application.Json)
+					setBody(TUpdateAssociation(
+						name = "Updated Association",
+						status = EAssociationsStatus.Disabled
+					))
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
 				}
 			}
 		}
@@ -623,6 +666,33 @@ class AssociationTest : IntegrationSpec({
 				}
 			}
 		}
+
+		test("Should not upload association picture if on premise mode") {
+			testApp(BaseConfig(isOnPremise = true)) {
+				val file = File(
+					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+				)
+
+				it.patch("/api/associations/20/picture") {
+					val boundary = "WebAppBoundary"
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					setBody(
+						MultiPartFormDataContent(
+							formData {
+								append("file", file.readBytes(), Headers.build {
+									append(HttpHeaders.ContentType, "image/jpeg")
+									append(HttpHeaders.ContentDisposition, "filename=\"profile.jpg\"")
+								})
+							},
+							boundary,
+							ContentType.MultiPart.FormData.withParameter("boundary", boundary)
+						)
+					)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+				}
+			}
+		}
 	}
 
 	context("Delete an association") {
@@ -660,6 +730,16 @@ class AssociationTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Association 20 inconnue"
+				}
+			}
+		}
+
+		test("Should not delete an association in on premise mode") {
+			testApp(BaseConfig(isOnPremise = true)) {
+				it.delete("/api/associations/2") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
 				}
 			}
 		}

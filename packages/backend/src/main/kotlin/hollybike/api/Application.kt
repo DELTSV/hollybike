@@ -78,6 +78,10 @@ fun Application.checkOnPremise() {
 	attributes.put(onPremiseAttributeKey, Constants.IS_ON_PREMISE)
 }
 
+fun Application.forceMode(isOnPremise: Boolean) {
+	attributes.put(onPremiseAttributeKey, isOnPremise)
+}
+
 val Application.isTestEnv: Boolean get() = attributes[isTestEnvAttributeKey]
 val Application.isOnPremise: Boolean get() = attributes[onPremiseAttributeKey]
 val Application.isCloud: Boolean get() = !isOnPremise
