@@ -6,12 +6,16 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
+import 'package:hollybike/event/bloc/event_bloc.dart';
+import 'package:hollybike/event/bloc/event_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
+
+import 'event/bloc/event_api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,6 +42,11 @@ class MyApp extends StatelessWidget {
               authPersistence: AuthPersistence(),
             ),
           ),
+          RepositoryProvider(
+            create: (context) => EventRepository(
+              eventApi: EventApi(),
+            ),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -53,6 +62,11 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<ProfileBloc>(
               create: (context) => ProfileBloc(),
+            ),
+            BlocProvider<EventBloc>(
+              create: (context) => EventBloc(
+                eventRepository: RepositoryProvider.of<EventRepository>(context),
+              ),
             ),
           ],
           child: RepositoryProvider<AuthSessionRepository>(
