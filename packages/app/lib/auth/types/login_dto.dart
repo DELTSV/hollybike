@@ -10,8 +10,8 @@ class LoginDto {
     const String emailKey = "email";
     const String passwordKey = "password";
 
-    final missingValues = [emailKey, passwordKey].skipWhile(
-      (keyName) => map[keyName] != null,
+    final missingValues = [emailKey, passwordKey].where(
+      (keyName) => map[keyName] == null,
     );
     if (missingValues.isNotEmpty) {
       const String separator = "\n- ";

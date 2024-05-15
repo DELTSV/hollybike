@@ -45,13 +45,10 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
       children: [
         Expanded(
           child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.onPrimary),
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             onPressed: _handleFormSubmit,
@@ -102,7 +99,8 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   List<Widget> _convertFormFieldsToWidgets(FormFields formFields) {
     _formControllers = Map.fromIterables(
       formFields.keys,
-      formFields.values.map((field) => TextEditingController(text: field.defaultValue)),
+      formFields.values
+          .map((field) => TextEditingController(text: field.defaultValue)),
     );
 
     return formFields.entries
