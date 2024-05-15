@@ -22,7 +22,7 @@ class ProfileCardContainer extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: onTap != null || clickable == true
-            ? Theme.of(context).colorScheme.background
+            ? Theme.of(context).colorScheme.surface
             : Colors.transparent,
         padding: const EdgeInsets.all(16),
         child: Row(

@@ -36,7 +36,6 @@ class ProfileModalList extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context, AuthState state) {
-    print("rebuild");
     return SingleChildScrollView(
       child: Wrap(
         children: addSeparators(
