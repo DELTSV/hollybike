@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class LoadingGradient extends StatefulWidget {
+class GradientLoadingPlaceholder extends StatefulWidget {
   final Widget? child;
-  const LoadingGradient({super.key, this.child});
+  const GradientLoadingPlaceholder({super.key, this.child});
 
   @override
-  State<LoadingGradient> createState() => _LoadingGradientState();
+  State<GradientLoadingPlaceholder> createState() => _GradientLoadingPlaceholderState();
 }
 
-class _LoadingGradientState extends State<LoadingGradient>
+class _GradientLoadingPlaceholderState extends State<GradientLoadingPlaceholder>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Alignment> _beginAlignment;

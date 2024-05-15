@@ -19,15 +19,10 @@ class HudBottomBar extends StatelessWidget {
         ),
       ),
       clipBehavior: Clip.hardEdge,
-      child: Material(
-        child: Ink(
-          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(16)), color: Colors.red,),
-          child: const Row(
-            children: [
-              ProfileButton(),
-            ],
-          ),
-        ),
+      child: const Row(
+        children: [
+          ProfileButton(),
+        ],
       ),
     );
   }
