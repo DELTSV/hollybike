@@ -34,7 +34,11 @@ export function Head(props: HeadProps) {
 		props.sortable,
 	]);
 	return (
-		<th className={clsx("text-center px-2 py-1", props.sortable && props.sort && props.setSortOrder && "cursor-pointer")} onClick={onClick}>
+		<th
+			className={
+				clsx("text-center px-2 py-1", props.sortable && props.sort && props.setSortOrder && "cursor-pointer")
+			} onClick={onClick}
+		>
 			{ props.children }
 			{ props.sortable &&
 				( props.sort?.order === "asc" ? <ArrowDropUp/> : props.sort?.order === "desc" && <ArrowDropDown/> ) }
