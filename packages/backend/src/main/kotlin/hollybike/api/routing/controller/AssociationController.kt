@@ -15,6 +15,7 @@ import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
+import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -37,6 +38,7 @@ class AssociationController(
 				updateMyAssociationPicture()
 				if (application.isCloud) {
 					getAll()
+					getMetaData()
 					getById()
 					getByUser()
 					addAssociation()
@@ -216,6 +218,12 @@ class AssociationController(
 					else -> call.respond(HttpStatusCode.InternalServerError, "Erreur serveur interne")
 				}
 			}
+		}
+	}
+
+	private fun Route.getMetaData() {
+		get<Associations.MetaData<API>>(EUserScope.Root) {
+			call.respond(associationMapper.getMapperData())
 		}
 	}
 }
