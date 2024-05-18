@@ -22,7 +22,6 @@ import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
