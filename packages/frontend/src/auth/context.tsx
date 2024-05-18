@@ -25,6 +25,8 @@ const Auth = createContext<AuthContext>({
 	disconnect: () => {},
 });
 
+export let externalDisconnect = () => {};
+
 export function useAuth() {
 	return useContext(Auth);
 }
@@ -63,6 +65,8 @@ export const AuthContextProvider = ({ children }: Props) => {
 		setToken(undefined);
 		user.clean();
 	}, []);
+
+	externalDisconnect = disconnect;
 
 	return (
 		<Auth.Provider

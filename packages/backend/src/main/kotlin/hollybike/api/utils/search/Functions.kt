@@ -55,10 +55,12 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 	)
 }
 
-fun Query.applyParam(searchParam: SearchParam): Query {
+fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Query {
 	var q = this
 	q = q.orderBy(*searchParam.sort.map { (c, o) -> c to o }.toTypedArray())
-	q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
+	if(pagination) {
+		q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
+	}
 	val filter = searchParamFilter(searchParam.filter)
 	val query = if((searchParam.query?.split(" ")?.size ?: 0) == 2) {
 		val values = searchParam.query!!.split(" ")
@@ -113,7 +115,6 @@ private fun Query.searchParamQuery(query: String): Op<Boolean>? {
 
 private fun searchParamFilter(filter: List<Filter>): Op<Boolean>? = filter
 	.mapNotNull {
-		it.column
 		when (it.mode) {
 			FilterMode.EQUAL -> it.column equal it.value
 			FilterMode.NOT_EQUAL -> it.column nEqual it.value
@@ -139,7 +140,13 @@ private infix fun Column<out Any?>.equal(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) eq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "SERIAL") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) eq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -156,7 +163,13 @@ private infix fun Column<out Any?>.nEqual(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) neq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) neq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -173,7 +186,13 @@ private infix fun Column<out Any?>.lt(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) less it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) less it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -190,7 +209,13 @@ private infix fun Column<out Any?>.gt(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) greater it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) greater it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -207,7 +232,13 @@ private infix fun Column<out Any?>.lte(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) lessEq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) lessEq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 
@@ -224,7 +255,13 @@ private infix fun Column<out Any?>.gte(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) greaterEq it }
-
+		is EntityIDColumnType<*> -> {
+			if(columnType.sqlType() == "INT") {
+				value.toIntOrNull()?.let { (this as Column<Int?>) greaterEq it }
+			} else {
+				null
+			}
+		}
 		else -> null
 	}
 

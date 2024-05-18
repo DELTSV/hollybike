@@ -15,4 +15,7 @@ class Associations<T>(val parent: T) {
 		@Resource("picture")
 		class Picture<T>(val me: Me<T>)
 	}
+
+	@Resource("meta-data")
+	class MetaData<T>(val associations: Associations<T>)
 }

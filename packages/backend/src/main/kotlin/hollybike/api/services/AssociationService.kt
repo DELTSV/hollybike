@@ -2,14 +2,20 @@ package hollybike.api.services
 
 import hollybike.api.exceptions.AssociationAlreadyExists
 import hollybike.api.exceptions.AssociationNotFound
+import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.Association
+import hollybike.api.repository.Associations
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
+import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
 import java.sql.BatchUpdateException
@@ -50,13 +56,18 @@ class AssociationService(
 		return association
 	}
 
-	fun getAll(page: Int, perPage: Int): List<Association> = transaction(db) {
-		Association.all().limit(perPage, offset = (page * perPage).toLong())
-			.toList()
+	fun getAll(caller: User, searchParam: SearchParam): Result<List<Association>> = transaction(db) {
+		if(caller.scope not EUserScope.Root) {
+			return@transaction Result.failure(NotAllowedException())
+		}
+		Result.success(Association.wrapRows(Associations.selectAll().applyParam(searchParam)).toList())
 	}
 
-	fun countAssociations(): Int = transaction(db) {
-		Association.all().count().toInt()
+	fun countAssociations(caller: User, searchParam: SearchParam): Result<Int> = transaction(db) {
+		if(caller.scope not EUserScope.Root) {
+			return@transaction Result.failure(NotAllowedException())
+		}
+		Result.success(Associations.selectAll().applyParam(searchParam, false).count().toInt())
 	}
 
 	fun getById(id: Int): Association? = transaction(db) {

@@ -17,9 +17,9 @@ export function DropDown(props: DropDownProps) {
 
 	const handleOut = (e: MouseEvent) => {
 		if (
+			container.current &&
+			!container.current.contains(e.target as Node) &&
 			container.current
-			&& !container.current.contains(e.target as Node)
-			&& container.current
 		)
 			setVisible(false);
 	};
@@ -33,20 +33,17 @@ export function DropDown(props: DropDownProps) {
 	return (
 		<div className={"relative"} ref={container}>
 			<Button onClick={() => setVisible(prev => !prev)}>{ props.text }</Button>
-			{ visible && <Card
-                className={
-					"flex flex-col absolute top-full left-1/2 -translate-x-1/2"
-				}
-			>
-				{ props.children }
-                </Card> }
+			{ visible &&
+				<Card className={"flex flex-col absolute top-full left-1/2 -translate-x-1/2"}>
+					{ props.children }
+				</Card> }
 		</div>
 	);
 }
 
 export function Divider() {
 	return (
-		<div className={"h-0.5 bg-slate-200 dark:bg-slate-800"}/>
+		<div className={"h-0.5 bg-slate-200 dark:bg-slate-600"}/>
 	);
 }
 

@@ -11,6 +11,9 @@ import { Root } from "./Root.tsx";
 import { Home } from "./home/Home.tsx";
 import { clsx } from "clsx";
 import { useSystemDarkMode } from "./utils/systemDarkMode.ts";
+import { ListAssociations } from "./associations/listAssociations/ListAssociations.tsx";
+import { Association } from "./associations/Association.tsx";
+import { ListUser } from "./user/listUser/ListUser.tsx";
 
 export function App() {
 	const auth = useAuth();
@@ -24,6 +27,18 @@ export function App() {
 				{
 					path: "/",
 					element: <Home/>,
+				},
+				{
+					path: "associations",
+					element: <ListAssociations/>,
+				},
+				{
+					path: "associations/:id",
+					element: <Association/>,
+				},
+				{
+					path: "users",
+					element: <ListUser/>,
 				},
 			],
 		},
@@ -46,12 +61,10 @@ export function App() {
 
 	return (
 		<main
-			className={clsx(
-				themeDark && "dark",
-				"bg-slate-200 dark:bg-gray-900 w-screen h-screen text-slate-950 dark:text-slate-100",
-			)}
+			className={clsx(themeDark && "dark", "bg-slate-200 dark:bg-gray-900 w-screen h-screen" +
+				" text-slate-950 dark:text-slate-100")}
 		>
-			<RouterProvider router={router}/>
+			<RouterProvider router={ router } />
 		</main>
 	);
 }
