@@ -16,3 +16,10 @@ class RefreshEvents extends EventEvent {
 
   RefreshEvents({required this.session});
 }
+
+class LoadEventDetails extends EventEvent {
+  final AuthSession session;
+  final int eventId;
+
+  LoadEventDetails({required this.session, required this.eventId});
+}

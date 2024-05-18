@@ -2,6 +2,7 @@ import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/bloc/event_api.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
+import '../types/event.dart';
 import '../types/minimal_event.dart';
 
 class EventRepository {
@@ -15,5 +16,9 @@ class EventRepository {
     int eventsPerPage,
   ) async {
     return eventApi.getEvents(session, page, eventsPerPage);
+  }
+
+  Future<Event> fetchEvent(AuthSession session, int eventId) async {
+    return eventApi.getEvent(session, eventId);
   }
 }

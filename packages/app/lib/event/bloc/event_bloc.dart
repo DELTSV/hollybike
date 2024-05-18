@@ -12,6 +12,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
   EventBloc({required this.eventRepository}) : super(EventInitial()) {
     on<LoadEventsNextPage>(_onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
+    on<LoadEventDetails>(_onLoadEventDetails);
   }
 
   Future<void> _onLoadEventsNextPage(
@@ -52,5 +53,21 @@ class EventBloc extends Bloc<EventEvent, EventState> {
       hasMore: page.items.length == numberOfEventsPerRequest,
       nextPage: 1,
     ));
+  }
+
+  Future<void> _onLoadEventDetails(
+    LoadEventDetails event,
+    Emitter<EventState> emit,
+  ) async {
+    emit(state.loadInProgress);
+
+    final eventDetails = await eventRepository.fetchEvent(
+      event.session,
+      event.eventId,
+    );
+
+    emit(state.copyWith(
+      event: eventDetails,
+    ).loadSuccess);
   }
 }
