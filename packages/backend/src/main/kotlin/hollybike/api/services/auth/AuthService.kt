@@ -6,7 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm
 import de.nycode.bcrypt.verify
 import hollybike.api.ConfSecurity
 import hollybike.api.exceptions.*
-import hollybike.api.repository.*
+import hollybike.api.repository.Invitation
+import hollybike.api.repository.User
+import hollybike.api.repository.Users
+import hollybike.api.repository.lower
 import hollybike.api.services.UserService
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.auth.TLogin
@@ -89,14 +92,14 @@ class AuthService(
 			return Result.failure(InvitationNotFoundException())
 		}
 
-		val user = userService.createUser(
+		return userService.createUser(
 			signup.email,
 			signup.password,
 			signup.username,
 			signup.association,
 			signup.role
-		).getOrThrow()
-
-		return Result.success(generateJWT(user.email, user.scope))
+		).map { generateJWT(it.email, it.scope) }.onFailure {
+			return Result.failure(it)
+		}
 	}
 }

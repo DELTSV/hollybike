@@ -6,11 +6,7 @@ class AuthStream extends ChangeNotifier {
   AuthStream(BuildContext context) {
     context.watch<AuthBloc>().stream.listen((event) {
       switch (event) {
-        case AuthState(
-              isPersistentSessionsLoaded: final isLoaded,
-              currentSession: final session,
-            )
-            when session == null || isLoaded == false:
+        case AuthState(currentSession: final session) when session == null:
           notifyListeners();
       }
     });

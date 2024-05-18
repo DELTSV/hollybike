@@ -7,12 +7,14 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.frontend() {
-	routing {
-		get("/{...}") {
-			this::class.java.getResource("/front/index.html")?.readText()?.let {
-				call.respondText(it, ContentType.Text.Html)
+	if (isOnPremise) {
+		routing {
+			get("/{...}") {
+				this::class.java.getResource("/front/index.html")?.readText()?.let {
+					call.respondText(it, ContentType.Text.Html)
+				}
 			}
+			staticResources("/assets", "front/assets")
 		}
-		staticResources("/assets", "front/assets")
 	}
 }

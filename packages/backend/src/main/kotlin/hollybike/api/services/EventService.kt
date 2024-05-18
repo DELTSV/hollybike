@@ -10,6 +10,7 @@ import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
@@ -26,19 +27,19 @@ class EventService(
 ) {
 	private fun checkEventTextFields(name: String, description: String?): Result<Unit> {
 		if (name.isBlank()) {
-			return Result.failure(InvalidEventNameException("Event name cannot be empty"))
+			return Result.failure(InvalidEventNameException("Le nom de l'événement ne peut pas être vide"))
 		}
 
 		if (name.length > 100) {
-			return Result.failure(InvalidEventNameException("Event name cannot be longer than 100 characters"))
+			return Result.failure(InvalidEventNameException("Le nom de l'événement ne peut pas dépasser 100 caractères"))
 		}
 
 		if (description != null && description.isBlank()) {
-			return Result.failure(InvalidEventDescriptionException("Event description cannot be empty"))
+			return Result.failure(InvalidEventDescriptionException("La description de l'événement ne peut pas être vide"))
 		}
 
 		if (description != null && description.length > 1000) {
-			return Result.failure(InvalidEventDescriptionException("Event description cannot be longer than 1000 characters"))
+			return Result.failure(InvalidEventDescriptionException("La description de l'événement ne peut pas dépasser 1000 caractères"))
 		}
 
 		return Result.success(Unit)
@@ -48,7 +49,11 @@ class EventService(
 		val parsedStartDate = try {
 			Instant.parse(startDate)
 		} catch (e: IllegalArgumentException) {
-			return Result.failure(InvalidDateException("Invalid start date format"))
+			return Result.failure(InvalidDateException("Format de la date de début invalide"))
+		}
+
+		if (parsedStartDate < Clock.System.now()) {
+			return Result.failure(InvalidDateException("La date de début doit être dans le futur"))
 		}
 
 		if (endDate == null) {
@@ -58,13 +63,13 @@ class EventService(
 		val parsedEndDate = try {
 			Instant.parse(endDate)
 		} catch (e: IllegalArgumentException) {
-			e.printStackTrace()
-			return Result.failure(InvalidDateException("Invalid end date format"))
+			return Result.failure(InvalidDateException("Format de la date de fin invalide"))
 		}
 
-		if (parsedStartDate > parsedEndDate) {
-			return Result.failure(InvalidDateException("Start date must be before end date"))
+		if (parsedStartDate >= parsedEndDate) {
+			return Result.failure(InvalidDateException("La date de fin doit être après la date de début"))
 		}
+
 		return Result.success(Unit)
 	}
 
@@ -72,14 +77,14 @@ class EventService(
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(user)
 		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return Result.failure(
-			EventNotFoundException("Event not found")
+			EventNotFoundException("Event $eventId introuvable")
 		)
 
 		val participation = event.participants.find { it.user.id == user.id }
-			?: return Result.failure(EventActionDeniedException("Not participating to this event"))
+			?: return Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
 
 		if (participation.role != EEventRole.ORGANIZER) {
-			return Result.failure(EventActionDeniedException("Only an organizer can update event"))
+			return Result.failure(EventActionDeniedException("Seul l'organisateur peut modifier l'événement"))
 		}
 
 		return Result.success(event)
@@ -170,37 +175,37 @@ class EventService(
 	fun updateEventStatus(caller: User, eventId: Int, status: EEventStatus): Result<Unit> = transaction(db) {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val participation = EventParticipation.find {
 			(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 		}.firstOrNull()
-			?: return@transaction Result.failure(EventActionDeniedException("Not participating to this event"))
+			?: return@transaction Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
 
 		if (participation.role != EEventRole.ORGANIZER) {
-			return@transaction Result.failure(EventActionDeniedException("Only an organizer can change event status"))
+			return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut modifier le statut de l'événement"))
 		}
 
 		if (status == event.status) {
-			return@transaction Result.failure(EventActionDeniedException("Event already ${status.name.lowercase()}"))
+			return@transaction Result.failure(EventActionDeniedException("Event déjà ${status.name.lowercase()}"))
 		}
 
 		when (status) {
 			EEventStatus.PENDING -> {
 				if (event.owner.id != caller.id) {
-					return@transaction Result.failure(EventActionDeniedException("Only owner can change status to pending"))
+					return@transaction Result.failure(EventActionDeniedException("Seul le propriétaire peut mettre l'événement en attente"))
 				}
 			}
 
 			EEventStatus.CANCELLED -> {
 				if (event.status != EEventStatus.SCHEDULED) {
-					return@transaction Result.failure(EventActionDeniedException("Only scheduled event can be cancelled"))
+					return@transaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être annulé"))
 				}
 			}
 
 			EEventStatus.FINISHED -> {
 				if (event.status != EEventStatus.SCHEDULED) {
-					return@transaction Result.failure(EventActionDeniedException("Only scheduled event can be finished"))
+					return@transaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être terminé"))
 				}
 			}
 
@@ -230,10 +235,10 @@ class EventService(
 	fun deleteEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		if (event.owner.id != caller.id) {
-			return@transaction Result.failure(EventActionDeniedException("Only owner can delete event"))
+			return@transaction Result.failure(EventActionDeniedException("Seul le propriétaire peut supprimer l'événement"))
 		}
 
 		Result.success(event.delete())
@@ -242,12 +247,12 @@ class EventService(
 	fun participateEvent(caller: User, eventId: Int): Result<EventParticipation> = transaction(db) {
 		Event.find {
 			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		EventParticipation.find {
 			(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 		}.firstOrNull()?.let {
-			return@transaction Result.failure(AlreadyParticipatingToEventException("Already participating to this event"))
+			return@transaction Result.failure(AlreadyParticipatingToEventException("Vous participez déjà à cet événement"))
 		}
 
 		Result.success(
@@ -262,82 +267,82 @@ class EventService(
 	fun leaveEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		if (event.owner.id == caller.id) {
-			return@transaction Result.failure(EventActionDeniedException("Owner cannot leave event"))
+			return@transaction Result.failure(EventActionDeniedException("Le propriétaire ne peut pas quitter l'événement"))
 		}
 
 		Result.success(
 			EventParticipation.find {
 				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 			}.firstOrNull()?.delete()
-				?: return@transaction Result.failure(NotParticipatingToEventException("Not participating to this event"))
+				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 		)
 	}
 
 	fun promoteParticipant(caller: User, eventId: Int, userId: Int): Result<EventParticipation> {
 		if (caller.id.value == userId) {
-			return Result.failure(EventActionDeniedException("Cannot promote yourself"))
+			return Result.failure(EventActionDeniedException("Vous ne pouvez pas vous promouvoir"))
 		}
 
 		return transaction(db) {
 			Event.find {
 				Events.id eq eventId and eventUserCondition(caller)
-			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 			EventParticipation.find {
 				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 			}.firstOrNull()?.apply {
 				if (role != EEventRole.ORGANIZER) {
-					return@transaction Result.failure(EventActionDeniedException("Only organizer can promote participant"))
+					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut promouvoir un participant"))
 				}
-			} ?: return@transaction Result.failure(NotParticipatingToEventException("Not participating to this event"))
+			} ?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
 			Result.success(
 				EventParticipation.find {
 					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
-				}.firstOrNull()?.apply {
+				}.with(EventParticipation::user).firstOrNull()?.apply {
 					if (role == EEventRole.MEMBER) {
 						role = EEventRole.ORGANIZER
 					} else {
-						return@transaction Result.failure(EventActionDeniedException("Only member can be promoted"))
+						return@transaction Result.failure(EventActionDeniedException("Seul un membre peut être promu"))
 					}
 				}
-					?: return@transaction Result.failure(NotParticipatingToEventException("User not participating to this event"))
+					?: return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
 			)
 		}
 	}
 
 	fun demoteParticipant(caller: User, eventId: Int, userId: Int): Result<EventParticipation> {
 		if (caller.id.value == userId) {
-			return Result.failure(EventActionDeniedException("Cannot demote yourself"))
+			return Result.failure(EventActionDeniedException("Vous ne pouvez pas vous rétrograder"))
 		}
 
 		return transaction(db) {
 			Event.find {
 				Events.id eq eventId and eventUserCondition(caller)
-			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event not found"))
+			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 			EventParticipation.find {
 				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 			}.firstOrNull()?.apply {
 				if (role != EEventRole.ORGANIZER) {
-					return@transaction Result.failure(EventActionDeniedException("Only organizer can demote participant"))
+					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut rétrograder un participant"))
 				}
-			} ?: return@transaction Result.failure(NotParticipatingToEventException("Not participating to this event"))
+			} ?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
 			Result.success(
 				EventParticipation.find {
 					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
-				}.firstOrNull()?.apply {
+				}.with(EventParticipation::user).firstOrNull()?.apply {
 					if (role == EEventRole.ORGANIZER) {
 						role = EEventRole.MEMBER
 					} else {
-						return@transaction Result.failure(EventActionDeniedException("Only an organizer can be demoted"))
+						return@transaction Result.failure(EventActionDeniedException("Seul un organisateur peut être rétrogradé"))
 					}
 				}
-					?: return@transaction Result.failure(NotParticipatingToEventException("User not participating to this event"))
+					?: return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
 			)
 		}
 	}

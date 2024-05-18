@@ -47,13 +47,21 @@ class EventController(
 
 	private suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
 		when (exception) {
-			is EventNotFoundException -> call.respond(HttpStatusCode.NotFound, "Event not found")
+			is EventNotFoundException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Event not found"
+			)
+
 			is EventActionDeniedException -> call.respond(
 				HttpStatusCode.Forbidden,
 				exception.message ?: "Action denied"
 			)
 
-			is InvalidDateException -> call.respond(HttpStatusCode.BadRequest, exception.message ?: "Invalid date")
+			is InvalidDateException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid date"
+			)
+
 			is InvalidEventNameException -> call.respond(
 				HttpStatusCode.BadRequest,
 				exception.message ?: "Invalid event name"
@@ -62,6 +70,16 @@ class EventController(
 			is InvalidEventDescriptionException -> call.respond(
 				HttpStatusCode.BadRequest,
 				exception.message ?: "Invalid event description"
+			)
+
+			is AlreadyParticipatingToEventException -> call.respond(
+				HttpStatusCode.Conflict,
+				exception.message ?: "Already participating to event"
+			)
+
+			is NotParticipatingToEventException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Not participating to event"
 			)
 
 			else -> {
@@ -186,12 +204,12 @@ class EventController(
 			val image = multipart.readPart() as PartData.FileItem
 
 			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Missing image content type")
+				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
 				return@patch
 			}
 
 			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Invalid image content type (only JPEG and PNG are supported)")
+				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
 				return@patch
 			}
 

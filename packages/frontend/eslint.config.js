@@ -45,7 +45,7 @@ export default [
       "@stylistic/js/function-call-spacing": ["error", "never"],
       "@stylistic/js/function-paren-newline": ["error", "multiline"],
       "@stylistic/js/generator-star-spacing": ["error", "before"],
-      "@stylistic/js/indent": ["error", "tab"],
+      "@stylistic/js/indent": ["off", "tab"],
       "@stylistic/js/jsx-quotes": ["error", "prefer-double"],
       "@stylistic/js/key-spacing": ["error", {beforeColon: false, afterColon: true, mode: "strict",}],
       "@stylistic/js/keyword-spacing": ["error", {before: true, after: true}],

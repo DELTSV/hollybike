@@ -9,13 +9,13 @@ class ThemeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) {
-        return IconButton(
+        return ElevatedButton(
           onPressed: () => _handleTap(context),
-          style: IconButton.styleFrom(
+          style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             padding: const EdgeInsets.all(12),
           ),
-          icon: Icon(
+          child: Icon(
             state.isDark ? Icons.sunny : Icons.nights_stay_sharp,
             color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),

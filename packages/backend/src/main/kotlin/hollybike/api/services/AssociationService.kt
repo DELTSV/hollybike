@@ -6,26 +6,42 @@ import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
+import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
-import org.jetbrains.exposed.dao.load
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
+import java.sql.BatchUpdateException
 
 class AssociationService(
 	private val db: Database,
 	private val storageService: StorageService,
 ) {
-	fun updateMyAssociation(association: Association, name: String?): Association = transaction(db) {
-		name?.let { association.name = it }
+	private fun checkAlreadyExistsException(e: ExposedSQLException): Boolean {
+		val cause = if (e.cause is BatchUpdateException && (e.cause as BatchUpdateException).cause is PSQLException) {
+			(e.cause as BatchUpdateException).cause as PSQLException
+		} else if (e.cause is PSQLException) {
+			e.cause as PSQLException
+		} else {
+			return false
+		}
 
-		association
+		return if (
+			cause.serverErrorMessage?.constraint == "associations_name_uindex" &&
+			cause.serverErrorMessage?.detail?.contains("already exists") == true
+		) {
+			true
+		} else {
+			e.printStackTrace()
+			false
+		}
 	}
 
 	suspend fun updateMyAssociationPicture(
@@ -58,10 +74,6 @@ class AssociationService(
 		Association.findById(id)
 	}
 
-	fun getByUser(userId: Int): Association? = transaction(db) {
-		User.findById(userId)?.load(User::association)
-	}?.association
-
 	fun createAssociation(name: String): Result<Association> {
 		return try {
 			transaction(db) {
@@ -71,27 +83,33 @@ class AssociationService(
 					}
 				)
 			}
-		} catch (e: PSQLException) {
-			return if (e.serverErrorMessage?.constraint == "associations_name_uindex" && e.serverErrorMessage?.detail?.contains(
-					"already exists"
-				) == true
-			) {
-				Result.failure(AssociationAlreadyExists())
-			} else {
-				e.printStackTrace()
-				Result.failure(e)
+		} catch (e: ExposedSQLException) {
+			if (checkAlreadyExistsException(e)) {
+				return Result.failure(AssociationAlreadyExists())
 			}
+
+			return Result.failure(e)
 		}
 	}
 
-	fun updateAssociation(id: Int, name: String?, status: EAssociationsStatus?): Result<Association> = transaction {
-		val association = Association.findById(id) ?: run {
-			return@transaction Result.failure(AssociationNotFound("Association not found"))
-		}
-		name?.let { association.name = it }
-		status?.let { association.status = it }
+	fun updateAssociation(id: Int, name: String?, status: EAssociationsStatus?): Result<Association> {
+		return try {
+			transaction {
+				val association = Association.findById(id) ?: run {
+					return@transaction Result.failure(AssociationNotFound("Association not found"))
+				}
+				name?.let { association.name = it }
+				status?.let { association.status = it }
 
-		Result.success(association)
+				Result.success(association)
+			}
+		} catch (e: ExposedSQLException) {
+			if (checkAlreadyExistsException(e)) {
+				return Result.failure(AssociationAlreadyExists())
+			}
+
+			return Result.failure(e)
+		}
 	}
 
 	suspend fun updateAssociationPicture(id: Int, image: ByteArray, contentType: ContentType): Result<Association> {
@@ -100,7 +118,7 @@ class AssociationService(
 
 		return transaction {
 			val association = Association.findById(id) ?: run {
-				return@transaction Result.failure(AssociationNotFound("Association not found"))
+				return@transaction Result.failure(AssociationNotFound("Association $id inconnue"))
 			}
 			association.picture = path
 
@@ -110,8 +128,11 @@ class AssociationService(
 
 	fun deleteAssociation(id: Int): Result<Unit> = transaction {
 		val association = Association.findById(id) ?: run {
-			return@transaction Result.failure(AssociationNotFound("Association not found"))
+			return@transaction Result.failure(AssociationNotFound("Association $id inconnue"))
 		}
+
+		User.find { Users.association eq association.id.value }.forEach { it.delete() }
+
 		association.delete()
 
 		return@transaction Result.success(Unit)

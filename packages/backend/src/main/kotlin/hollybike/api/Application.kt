@@ -30,12 +30,9 @@ fun Application.module() {
 	checkOnPremise()
 	configureSerialization()
 	api()
+	frontend()
 
 	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
-
-	if (isOnPremise) {
-		frontend()
-	}
 }
 
 fun Application.configureSerialization() {
@@ -76,6 +73,10 @@ fun Application.loadCustomConfig(customConfig: Conf) {
 
 fun Application.checkOnPremise() {
 	attributes.put(onPremiseAttributeKey, Constants.IS_ON_PREMISE)
+}
+
+fun Application.forceMode(isOnPremise: Boolean) {
+	attributes.put(onPremiseAttributeKey, isOnPremise)
 }
 
 val Application.isTestEnv: Boolean get() = attributes[isTestEnvAttributeKey]
