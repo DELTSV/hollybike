@@ -8,10 +8,10 @@ import { TAssociation } from "../types/TAssociation.ts";
 
 interface SideBardContext {
 	association?: TAssociation;
-	setAssociation: (association: TAssociation) => void;
+	setAssociation: (association?: TAssociation) => void;
 }
 
-const SideBar = createContext<SideBardContext>({ setAssociation: (_: TAssociation) => {} });
+const SideBar = createContext<SideBardContext>({ setAssociation: (_?: TAssociation) => {} });
 
 export function useSideBar() {
 	return useContext(SideBar);

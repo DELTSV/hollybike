@@ -8,20 +8,24 @@ export function SideBar() {
 	const { association } = useSideBar();
 
 	const content = useMemo(() => {
-		if (user?.scope === "Root")
-			return [
+		if (user?.scope === "Root") {
+			const asso = association !== undefined ?
+				[
+					<SideBarMenu to={`/associations/${association.id}`}>
+						{ association?.name }
+					</SideBarMenu>,
+				] : [];
+			const menus = [
 				<SideBarMenu to={"/associations"}>
 					Associations
 				</SideBarMenu>,
 				<SideBarMenu to={"/users"}>
 					Utilisateurs
 				</SideBarMenu>,
-				association !== undefined &&
-					<SideBarMenu to={`/associations/${ association.id}`}>
-						{ association?.name }
-					</SideBarMenu>,
 			];
-		 else
+			menus.push(...asso);
+			return menus;
+		} else
 			 return [
 				 <SideBarMenu to={`/associations/${ user?.association.id}`}>
 					 Mon Association

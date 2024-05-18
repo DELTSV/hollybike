@@ -1,9 +1,9 @@
-import { useUser } from "../user/useUser.tsx";
+import { useUser } from "../../user/useUser.tsx";
 import { useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
-import { TAssociation } from "../types/TAssociation.ts";
-import { List } from "../components/List/List.tsx";
-import { Cell } from "../components/List/Cell.tsx";
+import { TAssociation } from "../../types/TAssociation.ts";
+import { List } from "../../components/List/List.tsx";
+import { Cell } from "../../components/List/Cell.tsx";
 import { OpenInNew } from "@material-ui/icons";
 
 export function ListAssociations() {
