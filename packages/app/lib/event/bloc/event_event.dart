@@ -5,9 +5,14 @@ import '../../auth/types/auth_session.dart';
 @immutable
 abstract class EventEvent {}
 
-class LoadEvents extends EventEvent {
-  final int page;
+class LoadEventsNextPage extends EventEvent {
   final AuthSession session;
 
-  LoadEvents({required this.page, required this.session});
+  LoadEventsNextPage({required this.session});
+}
+
+class RefreshEvents extends EventEvent {
+  final AuthSession session;
+
+  RefreshEvents({required this.session});
 }

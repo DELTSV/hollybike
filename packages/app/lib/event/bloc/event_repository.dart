@@ -9,7 +9,11 @@ class EventRepository {
 
   EventRepository({required this.eventApi});
 
-  Future<PaginatedList<Event>> fetchEvents(AuthSession session) async {
-    return eventApi.getEvents(session);
+  Future<PaginatedList<Event>> fetchEvents(
+    AuthSession session,
+    int page,
+    int eventsPerPage,
+  ) async {
+    return eventApi.getEvents(session, page, eventsPerPage);
   }
 }

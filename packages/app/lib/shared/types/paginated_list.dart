@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 class PaginatedList<T> {
   final int page;
@@ -20,7 +21,7 @@ class PaginatedList<T> {
     Map<String, dynamic> json,
     T Function(Map<String, dynamic>) fromItemJson,
   ) {
-    return PaginatedList(
+    return PaginatedList<T>(
       items: (json["data"] as List)
           .map((item) => fromItemJson(item))
           .toList(),
@@ -32,9 +33,9 @@ class PaginatedList<T> {
   }
 
   factory PaginatedList.fromResponseJson(
-    String response, T Function(Map<String, dynamic>) fromItemJson,
+      Uint8List response, T Function(Map<String, dynamic>) fromItemJson,
   ) {
-    final object = jsonDecode(response);
+    final object = jsonDecode(utf8.decode(response));
     verifyObjectAttributeNotNull(String attribute) {
       if (object[attribute] == null) {
         throw FormatException("Missing $attribute inside server response");

@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:hollybike/event/types/minimal_user.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
-enum EventStatus {
+enum EventStatusState {
   pending,
   scheduled,
   canceled,
@@ -15,7 +16,7 @@ class Event {
   final String? description;
   final String? image;
   final MinimalUser owner;
-  final EventStatus status;
+  final EventStatusState status;
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
@@ -24,13 +25,13 @@ class Event {
   static fromStringStatus(String status) {
     switch (status) {
       case "PENDING":
-        return EventStatus.pending;
+        return EventStatusState.pending;
       case "SCHEDULED":
-        return EventStatus.scheduled;
+        return EventStatusState.scheduled;
       case "CANCELED":
-        return EventStatus.canceled;
+        return EventStatusState.canceled;
       case "FINISHED":
-        return EventStatus.finished;
+        return EventStatusState.finished;
       default:
         throw const FormatException("Invalid status string");
     }
@@ -64,8 +65,8 @@ class Event {
     );
   }
 
-  factory Event.fromResponseJson(String response) {
-    final object = jsonDecode(response);
+  factory Event.fromResponseJson(Uint8List response) {
+    final object = jsonDecode(utf8.decode(response));
     verifyObjectAttributeNotNull(String attribute) {
       if (object[attribute] == null) {
         throw FormatException("Missing $attribute inside server response");

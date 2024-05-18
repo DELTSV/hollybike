@@ -5,15 +5,20 @@ import 'package:http/http.dart';
 import '../../auth/types/auth_session.dart';
 
 class EventApi {
-  Future<PaginatedList<Event>> getEvents(AuthSession session) async {
+  Future<PaginatedList<Event>> getEvents(
+    AuthSession session,
+    int page,
+    int eventsPerPage,
+  ) async {
     final AuthSession(:host, :token) = session;
-    final uri = Uri.parse("$host/api/events");
+    final uri =
+        Uri.parse("$host/api/events?page=$page&per_page=$eventsPerPage");
 
     final response = await get(
       uri,
       headers: {'Authorization': "Bearer $token"},
     );
 
-    return PaginatedList.fromResponseJson(response.body, Event.fromJson);
+    return PaginatedList.fromResponseJson(response.bodyBytes, Event.fromJson);
   }
 }

@@ -63,6 +63,7 @@ flutter:
   assets:
     - images/wallpaper.jpg
     - images/placeholder_profile_picture.jpg
+    - images/placeholder_event_image.jpg
 
   fonts:
     - family: Inter
