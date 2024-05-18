@@ -1,67 +1,36 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:hollybike/user/types/minimal_user.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 
-enum EventStatusState {
-  pending,
-  scheduled,
-  canceled,
-  finished,
-}
-
-class Event {
-  final int id;
-  final String name;
-  final String? description;
-  final String? image;
-  final MinimalUser owner;
-  final EventStatusState status;
-  final DateTime startDate;
-  final DateTime? endDate;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  static fromStringStatus(String status) {
-    switch (status) {
-      case "PENDING":
-        return EventStatusState.pending;
-      case "SCHEDULED":
-        return EventStatusState.scheduled;
-      case "CANCELED":
-        return EventStatusState.canceled;
-      case "FINISHED":
-        return EventStatusState.finished;
-      default:
-        throw const FormatException("Invalid status string");
-    }
-  }
-
-  const Event({
-    required this.id,
-    required this.name,
-    required this.status,
-    required this.owner,
-    required this.startDate,
-    required this.endDate,
-    required this.createdAt,
-    required this.updatedAt,
-    this.description,
-    this.image,
+class Event extends MinimalEvent {
+  Event({
+    required super.id,
+    required super.name,
+    required super.status,
+    required super.owner,
+    required super.startDate,
+    required super.endDate,
+    required super.createdAt,
+    required super.updatedAt,
+    super.description,
+    super.image,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
+    MinimalEvent event = MinimalEvent.fromJson(json);
+
     return Event(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      image: json['image'],
-      owner: MinimalUser.fromJson(json['owner']),
-      status: fromStringStatus(json['status']),
-      startDate: DateTime.parse(json['start_date_time']),
-      endDate: DateTime.parse(json['end_date_time']),
-      createdAt: DateTime.parse(json['create_date_time']),
-      updatedAt: DateTime.parse(json['update_date_time']),
+      id: event.id,
+      name: event.name,
+      description: event.description,
+      image: event.image,
+      owner: event.owner,
+      status: event.status,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt,
     );
   }
 
@@ -84,18 +53,5 @@ class Event {
     ].forEach(verifyObjectAttributeNotNull);
 
     return Event.fromJson(object);
-  }
-
-  String get placeholderImage {
-    // Choose the image depending on the season of the start date
-    if (startDate.month >= 3 && startDate.month <= 5) {
-      return "images/placeholder_event_image_spring.jpg";
-    } else if (startDate.month >= 6 && startDate.month <= 8) {
-      return "images/placeholder_event_image_summer.jpg";
-    } else if (startDate.month >= 9 && startDate.month <= 11) {
-      return "images/placeholder_event_image_autumn.jpg";
-    } else {
-      return "images/placeholder_event_image_winter.jpg";
-    }
   }
 }

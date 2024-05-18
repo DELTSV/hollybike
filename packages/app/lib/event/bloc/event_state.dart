@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 
 enum EventStatus { initial, loading, success, error }
 
 @immutable
 class EventState {
-  final List<Event> events;
+  final List<MinimalEvent> events;
   final EventStatus status;
 
   final bool hasMore;
@@ -19,7 +19,7 @@ class EventState {
   });
 
   EventState copyWith({
-    List<Event>? events,
+    List<MinimalEvent>? events,
     EventStatus? status,
     bool? hasMore,
     int? nextPage,
@@ -77,7 +77,7 @@ class EventLoadFailure extends EventState {
 
   const EventLoadFailure(
       {required this.errorMessage,
-      required List<Event> events,
+      required List<MinimalEvent> events,
       required bool hasMore,
       required int nextPage})
       : super(status: EventStatus.error);

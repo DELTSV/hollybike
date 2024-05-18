@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 
 @RoutePage()
-class EventDetailsScreen extends StatelessWidget {
+class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({
     super.key,
     @PathParam('eventId') required this.eventId,
@@ -13,6 +13,18 @@ class EventDetailsScreen extends StatelessWidget {
 
   final int eventId;
   final EventImage eventImage;
+
+  @override
+  State<EventDetailsScreen> createState() => _EventDetailsScreenState();
+}
+
+class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +36,7 @@ class EventDetailsScreen extends StatelessWidget {
             height: 160,
             width: double.infinity,
             child: Hero(
-              tag: eventId,
+              tag: widget.eventId,
               child: Container(
                 foregroundDecoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -36,7 +48,7 @@ class EventDetailsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                child: eventImage,
+                child: widget.eventImage,
               ),
             ),
           ),

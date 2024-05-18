@@ -1,11 +1,11 @@
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:http/http.dart';
 
 import '../../auth/types/auth_session.dart';
 
 class EventApi {
-  Future<PaginatedList<Event>> getEvents(
+  Future<PaginatedList<MinimalEvent>> getEvents(
     AuthSession session,
     int page,
     int eventsPerPage,
@@ -19,6 +19,6 @@ class EventApi {
       headers: {'Authorization': "Bearer $token"},
     );
 
-    return PaginatedList.fromResponseJson(response.bodyBytes, Event.fromJson);
+    return PaginatedList.fromResponseJson(response.bodyBytes, MinimalEvent.fromJson);
   }
 }

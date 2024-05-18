@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 
 class EventImage extends StatelessWidget {
   const EventImage({super.key, required this.event});
 
-  final Event event;
+  final MinimalEvent event;
 
   @override
   Widget build(BuildContext context) {

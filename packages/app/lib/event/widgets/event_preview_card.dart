@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 
 class EventPreviewCard extends StatelessWidget {
-  final Event event;
+  final MinimalEvent event;
   final void Function() onTap;
 
   const EventPreviewCard({

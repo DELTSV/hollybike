@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_bloc.dart';
 import 'package:hollybike/event/bloc/event_event.dart';
 import 'package:hollybike/event/bloc/event_state.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
@@ -61,7 +61,7 @@ class _EventsRouteState extends State<EventsScreen> {
 
   void _navigateToEventDetails(
     BuildContext context,
-    Event event,
+    MinimalEvent event,
   ) {
     // delay 200 ms to allow the animation to finish
     Future.delayed(const Duration(milliseconds: 200), () {

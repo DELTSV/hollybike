@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/event_event.dart';
 import 'package:hollybike/event/bloc/event_repository.dart';
 import 'package:hollybike/event/bloc/event_state.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 class EventBloc extends Bloc<EventEvent, EventState> {
@@ -23,7 +23,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
     }
 
     emit(state.loadInProgress);
-    PaginatedList<Event> page = await eventRepository.fetchEvents(
+    PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
       event.session,
       state.nextPage,
       numberOfEventsPerRequest,
@@ -42,7 +42,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
   ) async {
     emit(state.initial);
     emit(state.loadInProgress);
-    PaginatedList<Event> page = await eventRepository.fetchEvents(
+    PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
       event.session,
       0,
       numberOfEventsPerRequest,

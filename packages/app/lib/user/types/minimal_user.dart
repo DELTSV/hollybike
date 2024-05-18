@@ -1,13 +1,5 @@
-enum UserStatus {
-  enabled,
-  disabled,
-}
-
-enum UserScope {
-  root,
-  admin,
-  user,
-}
+import 'package:hollybike/user/types/user_scope.dart';
+import 'package:hollybike/user/types/user_status.dart';
 
 class MinimalUser {
   final int id;
