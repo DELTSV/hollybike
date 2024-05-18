@@ -134,17 +134,12 @@ class UserService(
 		if (caller.scope == EUserScope.User) {
 			return null
 		}
+		val param = searchParam.copy(filter = searchParam.filter.toMutableList())
 		if (caller.scope not EUserScope.Root) {
-			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
+			param.filter.add(Filter(Associations.id, caller.association.id.value.toString(), FilterMode.EQUAL))
 		}
 		return transaction(db) {
-			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam).andWhere {
-				if (caller.scope not EUserScope.Root) {
-					Associations.id eq caller.association.id
-				} else {
-					Associations.id neq null
-				}
-			}).with(User::association).toList()
+			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(param)).with(User::association).toList()
 		}
 	}
 
@@ -156,11 +151,12 @@ class UserService(
 		if (caller.scope == EUserScope.User) {
 			return null
 		}
+		val param = searchParam.copy(filter = searchParam.filter.toMutableList())
 		if (caller.scope not EUserScope.Root) {
-			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
+			param.filter.add(Filter(Associations.id, caller.association.id.value.toString(), FilterMode.EQUAL))
 		}
 		return transaction(db) {
-			Users.innerJoin(Associations).selectAll().applyParam(searchParam, false).count()
+			Users.innerJoin(Associations).selectAll().applyParam(param, false).count()
 		}
 	}
 }
