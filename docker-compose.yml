@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
   minio:
     image: 'bitnami/minio:2024.5.10'
     ports:
@@ -19,3 +19,5 @@ services:
       - MINIO_ROOT_USER=minio-root-user
       - MINIO_ROOT_PASSWORD=minio-root-password
       - MINIO_DEFAULT_BUCKETS=hollybike
+volumes:
+  db:
