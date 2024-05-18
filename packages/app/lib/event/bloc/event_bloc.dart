@@ -40,6 +40,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
     RefreshEvents event,
     Emitter<EventState> emit,
   ) async {
+    emit(state.initial);
     emit(state.loadInProgress);
     PaginatedList<Event> page = await eventRepository.fetchEvents(
       event.session,

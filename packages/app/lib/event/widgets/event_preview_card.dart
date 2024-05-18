@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/widgets/event_image.dart';
 
 class EventPreviewCard extends StatelessWidget {
   final Event event;
+  final void Function() onTap;
 
-  const EventPreviewCard({super.key, required this.event});
+  const EventPreviewCard({
+    super.key,
+    required this.event,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +31,16 @@ class EventPreviewCard extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 140,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.horizontal(
-                          left: Radius.circular(10),
+                      child: Hero(
+                        tag: event.id,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.horizontal(
+                            left: Radius.circular(10),
+                          ),
+                          child: EventImage(
+                            event: event,
+                          ),
                         ),
-                        child: event.image == null
-                            ? Image.asset(
-                                "images/placeholder_event_image.jpg",
-                                fit: BoxFit.cover,
-                              )
-                            : Image.network(
-                                event.image!,
-                                fit: BoxFit.cover,
-                              ),
                       ),
                     ),
                     Expanded(
@@ -58,7 +61,7 @@ class EventPreviewCard extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  onTap: () => {},
+                  onTap: onTap,
                 ),
               ),
             ),

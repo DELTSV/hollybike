@@ -85,4 +85,17 @@ class Event {
 
     return Event.fromJson(object);
   }
+
+  String get placeholderImage {
+    // Choose the image depending on the season of the start date
+    if (startDate.month >= 3 && startDate.month <= 5) {
+      return "images/placeholder_event_image_spring.jpg";
+    } else if (startDate.month >= 6 && startDate.month <= 8) {
+      return "images/placeholder_event_image_summer.jpg";
+    } else if (startDate.month >= 9 && startDate.month <= 11) {
+      return "images/placeholder_event_image_autumn.jpg";
+    } else {
+      return "images/placeholder_event_image_winter.jpg";
+    }
+  }
 }

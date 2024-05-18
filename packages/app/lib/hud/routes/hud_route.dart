@@ -8,13 +8,15 @@ class HudRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
+    return SafeArea(
       child: Column(
         children: [
           Expanded(
-            child: AutoRouter(),
+            child: AutoRouter(
+              navigatorObservers: () => [HeroController()],
+            ),
           ),
-          HudBottomBar(),
+          const HudBottomBar(),
         ],
       ),
     );

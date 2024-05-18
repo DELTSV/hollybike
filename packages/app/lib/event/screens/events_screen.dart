@@ -1,24 +1,27 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_bloc.dart';
 import 'package:hollybike/event/bloc/event_event.dart';
 import 'package:hollybike/event/bloc/event_state.dart';
 import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
+import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../widgets/event_preview_card.dart';
 
 @RoutePage()
-class EventsRoute extends StatefulWidget {
-  const EventsRoute({super.key});
+class EventsScreen extends StatefulWidget {
+  const EventsScreen({super.key});
 
   @override
-  State<EventsRoute> createState() => _EventsRouteState();
+  State<EventsScreen> createState() => _EventsRouteState();
 }
 
-class _EventsRouteState extends State<EventsRoute> {
+class _EventsRouteState extends State<EventsScreen> {
   late ScrollController _scrollController;
 
   @override
@@ -56,12 +59,23 @@ class _EventsRouteState extends State<EventsRoute> {
     });
   }
 
+  void _navigateToEventDetails(
+    BuildContext context,
+    Event event,
+  ) {
+    // delay 200 ms to allow the animation to finish
+    Future.delayed(const Duration(milliseconds: 200), () {
+      context.router.push(EventDetailsRoute(
+        eventId: event.id,
+        eventImage: EventImage(event: event),
+      ));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       triggerMode: RefreshIndicatorTriggerMode.anywhere,
-      backgroundColor: const Color(0xff1E2A47),
-      color: Colors.white,
       onRefresh: () async {
         _refreshEvents();
       },
@@ -73,12 +87,6 @@ class _EventsRouteState extends State<EventsRoute> {
         },
         child: BlocBuilder<EventBloc, EventState>(
           builder: (context, state) {
-            // if (state is EventLoadInProgress) {
-            //   return const Center(
-            //     child: CircularProgressIndicator(),
-            //   );
-            // }
-
             if (state.events.isEmpty) {
               switch (state.status) {
                 case EventStatus.initial:
@@ -98,40 +106,49 @@ class _EventsRouteState extends State<EventsRoute> {
               }
             }
 
-            return ListView.builder(
-              controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              itemCount: state.events.length + (state.hasMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == state.events.length) {
-                  if (state.status == EventStatus.error) {
-                    return const Center(
-                      child: Text('Oups, une erreur est survenue.'),
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 16.0,
+              ),
+              child: ListView.builder(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(),
+                itemCount: state.events.length + (state.hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == state.events.length) {
+                    if (state.status == EventStatus.error) {
+                      return const Center(
+                        child: Text('Oups, une erreur est survenue.'),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
                   }
-                }
 
-                final event = state.events[index];
+                  final event = state.events[index];
 
-                return TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: 1),
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.ease,
-                  builder: (context, double value, child) {
-                    return Transform.translate(
-                      offset: Offset(50 * (1 - value), 0),
-                      child: Opacity(
-                        opacity: value,
-                        child: EventPreviewCard(event: event),
-                      ),
-                    );
-                  }
-                );
-              },
+                  return TweenAnimationBuilder(
+                      tween: Tween<double>(begin: 0, end: 1),
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.ease,
+                      builder: (context, double value, child) {
+                        return Transform.translate(
+                          offset: Offset(50 * (1 - value), 0),
+                          child: Opacity(
+                            opacity: value,
+                            child: EventPreviewCard(
+                                event: event,
+                                onTap: () {
+                                  _navigateToEventDetails(context, event);
+                                }),
+                          ),
+                        );
+                      });
+                },
+              ),
             );
           },
         ),
