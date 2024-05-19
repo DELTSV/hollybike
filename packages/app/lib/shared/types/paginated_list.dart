@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'paginated_list.g.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hollybike/shared/types/json_map.dart';
 
 part 'paginated_list.freezed.dart';
+part 'paginated_list.g.dart';
 
 @Freezed(genericArgumentFactories: true)
 class PaginatedList<T> with _$PaginatedList<T> {
@@ -17,18 +18,18 @@ class PaginatedList<T> with _$PaginatedList<T> {
   }) = _PaginatedList;
 
   factory PaginatedList.fromJson(
-    Map<String, dynamic> json,
+    JsonMap json,
     T Function(Object? json) fromJson,
   ) =>
       _$PaginatedListFromJson(json, fromJson);
 
   factory PaginatedList.fromResponseJson(
     Uint8List response,
-    T Function(Map<String, dynamic> json) fromItemJson,
+    T Function(JsonMap json) fromItemJson,
   ) {
     return PaginatedList.fromJson(
       jsonDecode(utf8.decode(response)),
-      (Object? test) => fromItemJson(test as Map<String, dynamic>),
+      (Object? test) => fromItemJson(test as JsonMap),
     );
   }
 }

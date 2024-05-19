@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/event/types/event.dart';
 
+import '../../shared/types/json_map.dart';
 import '../../user/types/minimal_user.dart';
 import 'event_status_state.dart';
 
@@ -27,7 +28,7 @@ class MinimalEvent with _$MinimalEvent {
     String? image,
   }) = _MinimalEvent;
 
-  factory MinimalEvent.fromJson(Map<String, dynamic> json) => _$MinimalEventFromJson(json);
+  factory MinimalEvent.fromJson(JsonMap json) => _$MinimalEventFromJson(json);
 
   String get placeholderImage => Event.placeholderImageFromDateTime(startDate);
 }
