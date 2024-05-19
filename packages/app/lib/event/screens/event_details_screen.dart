@@ -15,10 +15,12 @@ class EventDetailsScreen extends StatefulWidget {
     super.key,
     required this.eventId,
     required this.eventImage,
+    required this.eventName,
   });
 
   final int eventId;
   final EventImage eventImage;
+  final String eventName;
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
@@ -48,21 +50,44 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           SizedBox(
             height: 160,
             width: double.infinity,
-            child: Hero(
-              tag: widget.eventId,
-              child: Container(
-                foregroundDecoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Theme.of(context).scaffoldBackgroundColor,
-                    ],
+            child: Stack(
+              children: [
+                Hero(
+                  tag: "event-image-${widget.eventId}",
+                  child: Container(
+                    width: double.infinity,
+                    foregroundDecoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Theme.of(context).scaffoldBackgroundColor,
+                        ],
+                      ),
+                    ),
+                    child: widget.eventImage,
                   ),
                 ),
-                child: widget.eventImage,
-              ),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Hero(
+                      tag: "event-name-${widget.eventId}",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.eventName,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           BlocBuilder<EventBloc, EventState>(builder: (context, state) {
@@ -73,7 +98,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
               return Column(
                 children: [
-                  Text(state.event!.name),
                   Text(state.event!.startDate.toString()),
                 ],
               );

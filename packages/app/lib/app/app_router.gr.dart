@@ -9,6 +9,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i10;
+import 'package:flutter/cupertino.dart' as _i12;
 import 'package:flutter/material.dart' as _i11;
 import 'package:hollybike/auth/routes/auth_route.dart' as _i1;
 import 'package:hollybike/auth/routes/forgot_password_route.dart' as _i4;
@@ -16,7 +17,7 @@ import 'package:hollybike/auth/routes/login_route.dart' as _i7;
 import 'package:hollybike/auth/routes/signup_route.dart' as _i9;
 import 'package:hollybike/event/screens/event_details_screen.dart' as _i2;
 import 'package:hollybike/event/screens/events_screen.dart' as _i3;
-import 'package:hollybike/event/widgets/event_image.dart' as _i12;
+import 'package:hollybike/event/widgets/event_image.dart' as _i13;
 import 'package:hollybike/hud/routes/hud_route.dart' as _i5;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i8;
 import 'package:hollybike/shared/routes/loading_route.dart' as _i6;
@@ -44,6 +45,7 @@ abstract class $AppRouter extends _i10.RootStackRouter {
           key: args.key,
           eventId: args.eventId,
           eventImage: args.eventImage,
+          eventName: args.eventName,
         ),
       );
     },
@@ -134,9 +136,10 @@ class AuthRouteArgs {
 /// [_i2.EventDetailsScreen]
 class EventDetailsRoute extends _i10.PageRouteInfo<EventDetailsRouteArgs> {
   EventDetailsRoute({
-    _i11.Key? key,
+    _i12.Key? key,
     required int eventId,
-    required _i12.EventImage eventImage,
+    required _i13.EventImage eventImage,
+    required String eventName,
     List<_i10.PageRouteInfo>? children,
   }) : super(
           EventDetailsRoute.name,
@@ -144,6 +147,7 @@ class EventDetailsRoute extends _i10.PageRouteInfo<EventDetailsRouteArgs> {
             key: key,
             eventId: eventId,
             eventImage: eventImage,
+            eventName: eventName,
           ),
           initialChildren: children,
         );
@@ -159,17 +163,20 @@ class EventDetailsRouteArgs {
     this.key,
     required this.eventId,
     required this.eventImage,
+    required this.eventName,
   });
 
-  final _i11.Key? key;
+  final _i12.Key? key;
 
   final int eventId;
 
-  final _i12.EventImage eventImage;
+  final _i13.EventImage eventImage;
+
+  final String eventName;
 
   @override
   String toString() {
-    return 'EventDetailsRouteArgs{key: $key, eventId: $eventId, eventImage: $eventImage}';
+    return 'EventDetailsRouteArgs{key: $key, eventId: $eventId, eventImage: $eventImage, eventName: $eventName}';
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
@@ -32,7 +33,7 @@ class EventPreviewCard extends StatelessWidget {
                     SizedBox(
                       width: 140,
                       child: Hero(
-                        tag: event.id,
+                        tag: "event-image-${event.id}",
                         child: ClipRRect(
                           borderRadius: const BorderRadius.horizontal(
                             left: Radius.circular(10),
@@ -44,12 +45,26 @@ class EventPreviewCard extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(event.name),
-                          Text(event.startDate.toString()),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Hero(
+                              tag: "event-name-${event.id}",
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    event.name,
+                                    style: Theme.of(context).textTheme.titleSmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(event.startDate.toString()),
+                          ],
+                        ),
                       ),
                     )
                   ],

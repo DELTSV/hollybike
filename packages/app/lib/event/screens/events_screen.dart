@@ -67,6 +67,7 @@ class _EventsScreenState extends State<EventsScreen> {
       context.router.push(EventDetailsRoute(
         eventId: event.id,
         eventImage: EventImage(event: event),
+        eventName: event.name,
       ));
     });
   }
