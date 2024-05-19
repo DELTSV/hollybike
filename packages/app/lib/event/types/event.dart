@@ -1,54 +1,54 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/minimal_event.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../user/types/minimal_user.dart';
 import 'event_status_state.dart';
 
+part 'event.freezed.dart';
+
 part 'event.g.dart';
 
-@immutable
-@JsonSerializable()
-class Event extends MinimalEvent {
-  const Event({
-    required super.id,
-    required super.name,
-    required super.status,
-    required super.owner,
-    required super.startDate,
-    required super.endDate,
-    required super.createdAt,
-    required super.updatedAt,
-    super.description,
-    super.image,
-  });
+@freezed
+class Event with _$Event {
+  const Event._();
 
-  factory Event.fromResponseJson(Uint8List response) {
-    final object = jsonDecode(utf8.decode(response));
-    verifyObjectAttributeNotNull(String attribute) {
-      if (object[attribute] == null) {
-        throw FormatException("Missing $attribute inside server response");
-      }
-    }
+  const factory Event.a({
+    required int id,
+    required String name,
+    required MinimalUser owner,
+    required EventStatusState status,
 
-    [
-      "id",
-      "name",
-      "owner",
-      "status",
-      "start_date_time",
-      "create_date_time",
-      "update_date_time",
-    ].forEach(verifyObjectAttributeNotNull);
+    @JsonKey(name: "start_date_time") required DateTime startDate,
+    @JsonKey(name: "end_date_time") DateTime? endDate,
+    @JsonKey(name: "create_date_time") required DateTime createdAt,
+    @JsonKey(name: "update_date_time") required DateTime updatedAt,
 
-    return Event.fromJson(object);
-  }
+    String? description,
+    String? image,
+  }) = _Event;
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
-  /// Connect the generated [_$PersonToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$EventToJson(this);
+  factory Event.fromResponseJson(
+      Uint8List response,
+      ) {
+    return Event.fromJson(jsonDecode(utf8.decode(response)));
+  }
+
+  String get placeholderImage => placeholderImageFromDateTime(startDate);
+
+  static String placeholderImageFromDateTime(DateTime startDate) {
+    // Choose the image depending on the season of the start date
+    if (startDate.month >= 3 && startDate.month <= 5) {
+      return "images/placeholder_event_image_spring.jpg";
+    } else if (startDate.month >= 6 && startDate.month <= 8) {
+      return "images/placeholder_event_image_summer.jpg";
+    } else if (startDate.month >= 9 && startDate.month <= 11) {
+      return "images/placeholder_event_image_autumn.jpg";
+    } else {
+      return "images/placeholder_event_image_winter.jpg";
+    }
+  }
 }

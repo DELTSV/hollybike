@@ -6,11 +6,12 @@ part of 'minimal_event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MinimalEvent _$MinimalEventFromJson(Map<String, dynamic> json) => MinimalEvent(
+_$MinimalEventImpl _$$MinimalEventImplFromJson(Map<String, dynamic> json) =>
+    _$MinimalEventImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
-      status: $enumDecode(_$EventStatusStateEnumMap, json['status']),
       owner: MinimalUser.fromJson(json['owner'] as Map<String, dynamic>),
+      status: $enumDecode(_$EventStatusStateEnumMap, json['status']),
       startDate: DateTime.parse(json['start_date_time'] as String),
       endDate: json['end_date_time'] == null
           ? null
@@ -21,18 +22,18 @@ MinimalEvent _$MinimalEventFromJson(Map<String, dynamic> json) => MinimalEvent(
       image: json['image'] as String?,
     );
 
-Map<String, dynamic> _$MinimalEventToJson(MinimalEvent instance) =>
+Map<String, dynamic> _$$MinimalEventImplToJson(_$MinimalEventImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'description': instance.description,
-      'image': instance.image,
       'owner': instance.owner,
       'status': _$EventStatusStateEnumMap[instance.status]!,
       'start_date_time': instance.startDate.toIso8601String(),
       'end_date_time': instance.endDate?.toIso8601String(),
       'create_date_time': instance.createdAt.toIso8601String(),
       'update_date_time': instance.updatedAt.toIso8601String(),
+      'description': instance.description,
+      'image': instance.image,
     };
 
 const _$EventStatusStateEnumMap = {

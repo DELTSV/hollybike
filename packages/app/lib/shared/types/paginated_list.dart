@@ -1,65 +1,34 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'paginated_list.g.dart';
 
-@immutable
-@JsonSerializable(genericArgumentFactories: true)
-class PaginatedList<T> {
-  final int page;
+part 'paginated_list.freezed.dart';
 
-  @JsonKey(name: "total_page")
-  final int totalPages;
-
-  @JsonKey(name: "per_page")
-  final int perPage;
-
-  @JsonKey(name: "total_data")
-  final int totalItems;
-
-  @JsonKey(name: "data")
-  final List<T> items;
-
-  const PaginatedList({
-    required this.page,
-    required this.totalPages,
-    required this.perPage,
-    required this.totalItems,
-    required this.items,
-  });
-
-  factory PaginatedList.fromResponseJson(
-    Uint8List response,
-    T Function(Object? json) fromItemJson,
-  ) {
-    final object = jsonDecode(utf8.decode(response));
-    verifyObjectAttributeNotNull(String attribute) {
-      if (object[attribute] == null) {
-        throw FormatException("Missing $attribute inside server response");
-      }
-    }
-
-    [
-      "page",
-      "total_page",
-      "per_page",
-      "total_data",
-      "data",
-    ].forEach(verifyObjectAttributeNotNull);
-
-    return PaginatedList.fromJson(object, fromItemJson);
-  }
+@Freezed(genericArgumentFactories: true)
+class PaginatedList<T> with _$PaginatedList<T> {
+  const factory PaginatedList({
+    required int page,
+    @JsonKey(name: "total_page") required int totalPages,
+    @JsonKey(name: "per_page") required int perPage,
+    @JsonKey(name: "total_data") required int totalItems,
+    @JsonKey(name: "data") required List<T> items,
+  }) = _PaginatedList;
 
   factory PaginatedList.fromJson(
     Map<String, dynamic> json,
-    T Function(Object? json) fromItemJson,
+    T Function(Object? json) fromJson,
   ) =>
-      _$PaginatedListFromJson(json, fromItemJson);
+      _$PaginatedListFromJson(json, fromJson);
 
-  Map<String, dynamic> toJson(
-    Object? Function(T value) toJson,
-  ) =>
-      _$PaginatedListToJson(this, toJson);
+  factory PaginatedList.fromResponseJson(
+    Uint8List response,
+    T Function(Map<String, dynamic> json) fromItemJson,
+  ) {
+    return PaginatedList.fromJson(
+      jsonDecode(utf8.decode(response)),
+      (Object? test) => fromItemJson(test as Map<String, dynamic>),
+    );
+  }
 }

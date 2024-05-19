@@ -20,7 +20,7 @@ class EventApi {
       headers: {'Authorization': "Bearer $token"},
     );
 
-    return PaginatedList.fromResponseJson(response.bodyBytes, MinimalEvent.fromJsonModel);
+    return PaginatedList.fromResponseJson(response.bodyBytes, MinimalEvent.fromJson);
   }
 
   Future<Event> getEvent(AuthSession session, int eventId) async {

@@ -6,11 +6,11 @@ part of 'event.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Event _$EventFromJson(Map<String, dynamic> json) => Event(
+_$EventImpl _$$EventImplFromJson(Map<String, dynamic> json) => _$EventImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
-      status: $enumDecode(_$EventStatusStateEnumMap, json['status']),
       owner: MinimalUser.fromJson(json['owner'] as Map<String, dynamic>),
+      status: $enumDecode(_$EventStatusStateEnumMap, json['status']),
       startDate: DateTime.parse(json['start_date_time'] as String),
       endDate: json['end_date_time'] == null
           ? null
@@ -21,17 +21,18 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       image: json['image'] as String?,
     );
 
-Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
+Map<String, dynamic> _$$EventImplToJson(_$EventImpl instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'description': instance.description,
-      'image': instance.image,
       'owner': instance.owner,
       'status': _$EventStatusStateEnumMap[instance.status]!,
       'start_date_time': instance.startDate.toIso8601String(),
       'end_date_time': instance.endDate?.toIso8601String(),
       'create_date_time': instance.createdAt.toIso8601String(),
       'update_date_time': instance.updatedAt.toIso8601String(),
+      'description': instance.description,
+      'image': instance.image,
     };
 
 const _$EventStatusStateEnumMap = {

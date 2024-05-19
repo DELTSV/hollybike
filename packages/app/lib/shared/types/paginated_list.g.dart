@@ -6,11 +6,11 @@ part of 'paginated_list.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PaginatedList<T> _$PaginatedListFromJson<T>(
+_$PaginatedListImpl<T> _$$PaginatedListImplFromJson<T>(
   Map<String, dynamic> json,
   T Function(Object? json) fromJsonT,
 ) =>
-    PaginatedList<T>(
+    _$PaginatedListImpl<T>(
       page: (json['page'] as num).toInt(),
       totalPages: (json['total_page'] as num).toInt(),
       perPage: (json['per_page'] as num).toInt(),
@@ -18,8 +18,8 @@ PaginatedList<T> _$PaginatedListFromJson<T>(
       items: (json['data'] as List<dynamic>).map(fromJsonT).toList(),
     );
 
-Map<String, dynamic> _$PaginatedListToJson<T>(
-  PaginatedList<T> instance,
+Map<String, dynamic> _$$PaginatedListImplToJson<T>(
+  _$PaginatedListImpl<T> instance,
   Object? Function(T value) toJsonT,
 ) =>
     <String, dynamic>{
