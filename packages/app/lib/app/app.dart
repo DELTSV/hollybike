@@ -24,6 +24,7 @@ class App extends StatelessWidget {
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) => MaterialApp.router(
+        locale: const Locale('fr', 'FR'),
         title: 'Hollybike',
         theme: BlocProvider.of<ThemeBloc>(context).getThemeData,
         routerConfig: appRouter.config(

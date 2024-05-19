@@ -14,10 +14,12 @@ import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'event/bloc/event_api.dart';
 
 void main() {
+  initializeDateFormatting("fr_FR").then((value) => Intl.defaultLocale = "fr_FR");
   runApp(const MyApp());
 }
 

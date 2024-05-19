@@ -7,9 +7,13 @@ part 'theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   final _textTheme = const TextTheme(
+    titleLarge: TextStyle(
+      fontVariations: [FontVariation.weight(900)],
+      fontSize: 28,
+    ),
     titleMedium: TextStyle(
       fontVariations: [FontVariation.weight(800)],
-      fontSize: 28,
+      fontSize: 18,
     ),
     titleSmall: TextStyle(
       fontVariations: [FontVariation.weight(700)],

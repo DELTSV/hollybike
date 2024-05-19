@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
+import 'package:hollybike/shared/utils/dates.dart';
 
 class EventPreviewCard extends StatelessWidget {
   final MinimalEvent event;
@@ -47,23 +48,32 @@ class EventPreviewCard extends StatelessWidget {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Hero(
-                              tag: "event-name-${event.id}",
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    event.name,
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(event.startDate.toString()),
-                          ],
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Hero(
+                                      tag: "event-name-${event.id}",
+                                      child: SizedBox(
+                                        width: constraints.maxWidth,
+                                        child: Text(
+                                          event.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context).textTheme.titleMedium,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(formatReadableDate(event.startDate)),
+                              ],
+                            );
+                          }
                         ),
                       ),
                     )
