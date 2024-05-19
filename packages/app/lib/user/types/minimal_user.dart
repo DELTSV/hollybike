@@ -1,13 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:hollybike/user/types/user_scope.dart';
 import 'package:hollybike/user/types/user_status.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'minimal_user.g.dart';
+
+@immutable
+@JsonSerializable()
 class MinimalUser {
   final int id;
   final String username;
   final String scope;
   final String status;
 
-  MinimalUser({
+  const MinimalUser({
     required this.id,
     required this.username,
     required this.scope,
@@ -38,12 +44,16 @@ class MinimalUser {
     }
   }
 
-  factory MinimalUser.fromJson(Map<String, dynamic> json) {
-    return MinimalUser(
-      id: json['id'],
-      username: json['username'],
-      scope: json['scope'],
-      status: json['status'],
-    );
-  }
+  factory MinimalUser.fromJson(Map<String, dynamic> json) => _$MinimalUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MinimalUserToJson(this);
+
+  // factory MinimalUser.fromJson(Map<String, dynamic> json) {
+  //   return MinimalUser(
+  //     id: json['id'],
+  //     username: json['username'],
+  //     scope: json['scope'],
+  //     status: json['status'],
+  //   );
+  // }
 }

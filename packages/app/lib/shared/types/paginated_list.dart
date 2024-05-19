@@ -1,12 +1,25 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'paginated_list.g.dart';
+
+@immutable
+@JsonSerializable(genericArgumentFactories: true)
 class PaginatedList<T> {
   final int page;
+
+  @JsonKey(name: "total_page")
   final int totalPages;
+
+  @JsonKey(name: "per_page")
   final int perPage;
+
+  @JsonKey(name: "total_data")
   final int totalItems;
 
+  @JsonKey(name: "data")
   final List<T> items;
 
   const PaginatedList({
@@ -17,23 +30,9 @@ class PaginatedList<T> {
     required this.items,
   });
 
-  factory PaginatedList.fromJson(
-    Map<String, dynamic> json,
-    T Function(Map<String, dynamic>) fromItemJson,
-  ) {
-    return PaginatedList<T>(
-      items: (json["data"] as List)
-          .map((item) => fromItemJson(item))
-          .toList(),
-      page: json["page"],
-      totalPages: json["total_page"],
-      perPage: json["per_page"],
-      totalItems: json["total_data"],
-    );
-  }
-
   factory PaginatedList.fromResponseJson(
-      Uint8List response, T Function(Map<String, dynamic>) fromItemJson,
+    Uint8List response,
+    T Function(Object? json) fromItemJson,
   ) {
     final object = jsonDecode(utf8.decode(response));
     verifyObjectAttributeNotNull(String attribute) {
@@ -52,4 +51,15 @@ class PaginatedList<T> {
 
     return PaginatedList.fromJson(object, fromItemJson);
   }
+
+  factory PaginatedList.fromJson(
+    Map<String, dynamic> json,
+    T Function(Object? json) fromItemJson,
+  ) =>
+      _$PaginatedListFromJson(json, fromItemJson);
+
+  Map<String, dynamic> toJson(
+    Object? Function(T value) toJson,
+  ) =>
+      _$PaginatedListToJson(this, toJson);
 }

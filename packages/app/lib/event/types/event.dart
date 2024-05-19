@@ -1,10 +1,19 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+import '../../user/types/minimal_user.dart';
+import 'event_status_state.dart';
+
+part 'event.g.dart';
+
+@immutable
+@JsonSerializable()
 class Event extends MinimalEvent {
-  Event({
+  const Event({
     required super.id,
     required super.name,
     required super.status,
@@ -16,23 +25,6 @@ class Event extends MinimalEvent {
     super.description,
     super.image,
   });
-
-  factory Event.fromJson(Map<String, dynamic> json) {
-    MinimalEvent event = MinimalEvent.fromJson(json);
-
-    return Event(
-      id: event.id,
-      name: event.name,
-      description: event.description,
-      image: event.image,
-      owner: event.owner,
-      status: event.status,
-      startDate: event.startDate,
-      endDate: event.endDate,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt,
-    );
-  }
 
   factory Event.fromResponseJson(Uint8List response) {
     final object = jsonDecode(utf8.decode(response));
@@ -54,4 +46,9 @@ class Event extends MinimalEvent {
 
     return Event.fromJson(object);
   }
+
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
+  /// Connect the generated [_$PersonToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$EventToJson(this);
 }

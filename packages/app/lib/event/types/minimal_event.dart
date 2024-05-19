@@ -1,9 +1,16 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+
 import '../../user/types/minimal_user.dart';
 import 'event_status_state.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'minimal_event.g.dart';
+
+@immutable
+@JsonSerializable()
 class MinimalEvent {
   final int id;
   final String name;
@@ -11,25 +18,18 @@ class MinimalEvent {
   final String? image;
   final MinimalUser owner;
   final EventStatusState status;
-  final DateTime startDate;
-  final DateTime? endDate;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
-  static fromStringStatus(String status) {
-    switch (status) {
-      case "PENDING":
-        return EventStatusState.pending;
-      case "SCHEDULED":
-        return EventStatusState.scheduled;
-      case "CANCELED":
-        return EventStatusState.canceled;
-      case "FINISHED":
-        return EventStatusState.finished;
-      default:
-        throw const FormatException("Invalid status string");
-    }
-  }
+  @JsonKey(name: "start_date_time")
+  final DateTime startDate;
+
+  @JsonKey(name: "end_date_time")
+  final DateTime? endDate;
+
+  @JsonKey(name: "create_date_time")
+  final DateTime createdAt;
+
+  @JsonKey(name: "update_date_time")
+  final DateTime updatedAt;
 
   const MinimalEvent({
     required this.id,
@@ -43,21 +43,6 @@ class MinimalEvent {
     this.description,
     this.image,
   });
-
-  factory MinimalEvent.fromJson(Map<String, dynamic> json) {
-    return MinimalEvent(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      image: json['image'],
-      owner: MinimalUser.fromJson(json['owner']),
-      status: fromStringStatus(json['status']),
-      startDate: DateTime.parse(json['start_date_time']),
-      endDate: DateTime.parse(json['end_date_time']),
-      createdAt: DateTime.parse(json['create_date_time']),
-      updatedAt: DateTime.parse(json['update_date_time']),
-    );
-  }
 
   factory MinimalEvent.fromResponseJson(Uint8List response) {
     final object = jsonDecode(utf8.decode(response));
@@ -79,6 +64,11 @@ class MinimalEvent {
 
     return MinimalEvent.fromJson(object);
   }
+
+  factory MinimalEvent.fromJson(Map<String, dynamic> json) => _$MinimalEventFromJson(json);
+  static MinimalEvent fromJsonModel(Object? json) => MinimalEvent.fromJson(json as Map<String,dynamic>);
+
+  Map<String, dynamic> toJson() => _$MinimalEventToJson(this);
 
   String get placeholderImage {
     // Choose the image depending on the season of the start date

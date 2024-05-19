@@ -40,6 +40,7 @@ dependencies:
   http: ^1.2.1
   auto_route: ^8.1.2
   shared_preferences: ^2.2.3
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +53,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   auto_route_generator: ^8.0.0
+  json_serializable: ^6.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
