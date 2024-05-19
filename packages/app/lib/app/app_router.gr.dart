@@ -145,7 +145,6 @@ class EventDetailsRoute extends _i10.PageRouteInfo<EventDetailsRouteArgs> {
             eventId: eventId,
             eventImage: eventImage,
           ),
-          rawPathParams: {'eventId': eventId},
           initialChildren: children,
         );
 

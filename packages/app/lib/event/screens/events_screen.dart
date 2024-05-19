@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,10 +17,10 @@ class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
 
   @override
-  State<EventsScreen> createState() => _EventsRouteState();
+  State<EventsScreen> createState() => _EventsScreenState();
 }
 
-class _EventsRouteState extends State<EventsScreen> {
+class _EventsScreenState extends State<EventsScreen> {
   late ScrollController _scrollController;
 
   @override

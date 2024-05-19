@@ -13,7 +13,7 @@ import '../bloc/event_event.dart';
 class EventDetailsScreen extends StatefulWidget {
   const EventDetailsScreen({
     super.key,
-    @PathParam('eventId') required this.eventId,
+    required this.eventId,
     required this.eventImage,
   });
 
