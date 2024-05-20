@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
@@ -19,12 +18,13 @@ class EventPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).cardColor,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
       child: SizedBox(
-        height: 130,
+        height: 110,
         child: Stack(
           children: [
             Positioned.fill(
@@ -34,16 +34,39 @@ class EventPreviewCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(
-                      width: 140,
+                      width: 110,
                       child: Hero(
                         tag: "event-image-${event.id}",
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.horizontal(
-                            left: Radius.circular(10),
-                          ),
-                          child: EventImage(
-                            event: event,
-                          ),
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                              height: double.infinity,
+                              child: Container(
+                                foregroundDecoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Theme.of(context).cardColor.withOpacity(0.5),
+                                      Theme.of(context).cardColor,
+                                    ],
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.horizontal(
+                                    left: Radius.circular(10),
+                                  ),
+                                  child: EventImage(
+                                    event: event,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: EventDate(date: event.startDate),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -72,7 +95,6 @@ class EventPreviewCard extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                EventDate(),
                                 Text(formatReadableDate(event.startDate)),
                               ],
                             );

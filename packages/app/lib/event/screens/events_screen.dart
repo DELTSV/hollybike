@@ -10,6 +10,7 @@ import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../shared/utils/dates.dart';
 import '../widgets/event_preview_card.dart';
 
 @RoutePage()
@@ -72,6 +73,33 @@ class _EventsScreenState extends State<EventsScreen> {
     });
   }
 
+  Widget getPreviewWithColumn(MinimalEvent event, bool showHeader) {
+    final previewCard = EventPreviewCard(
+      event: event,
+      onTap: () {
+        _navigateToEventDetails(context, event);
+      },
+    );
+
+    if (!showHeader) {
+      return previewCard;
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Text(
+          getMonthWithDistantYear(event.startDate),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
+        previewCard,
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -109,10 +137,12 @@ class _EventsScreenState extends State<EventsScreen> {
             return Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
-                vertical: 16.0,
               ),
               child: ListView.builder(
                 controller: _scrollController,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16.0,
+                ),
                 physics: const BouncingScrollPhysics(),
                 itemCount: state.events.length + (state.hasMore ? 1 : 0),
                 itemBuilder: (context, index) {
@@ -130,23 +160,27 @@ class _EventsScreenState extends State<EventsScreen> {
 
                   final event = state.events[index];
 
+                  final columnWithHeader = getPreviewWithColumn(
+                    event,
+                    index == 0 ||
+                        event.startDate.month !=
+                            state.events[index - 1].startDate.month,
+                  );
+
                   return TweenAnimationBuilder(
-                      tween: Tween<double>(begin: 0, end: 1),
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                      builder: (context, double value, child) {
-                        return Transform.translate(
-                          offset: Offset(50 * (1 - value), 0),
-                          child: Opacity(
-                            opacity: value,
-                            child: EventPreviewCard(
-                                event: event,
-                                onTap: () {
-                                  _navigateToEventDetails(context, event);
-                                }),
-                          ),
-                        );
-                      });
+                    tween: Tween<double>(begin: 0, end: 1),
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.ease,
+                    builder: (context, double value, child) {
+                      return Transform.translate(
+                        offset: Offset(50 * (1 - value), 0),
+                        child: Opacity(
+                          opacity: value,
+                          child: columnWithHeader,
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             );

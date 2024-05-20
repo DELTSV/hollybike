@@ -98,6 +98,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       textTheme: _textTheme,
       colorScheme: _colorScheme,
       inputDecorationTheme: _inputDecorationTheme,
+      cardColor: _colorScheme.primaryContainer,
       textSelectionTheme: _textSelectionTheme,
     );
   }
