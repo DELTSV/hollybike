@@ -10,7 +10,6 @@ import kotlinx.serialization.json.Json
 
 import generated.Constants
 import hollybike.api.utils.configureRestart
-import io.ktor.events.EventDefinition
 
 var engine: ApplicationEngine? = null
 
