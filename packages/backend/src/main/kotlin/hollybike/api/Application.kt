@@ -12,16 +12,6 @@ import generated.Constants
 import hollybike.api.utils.configureRestart
 import io.ktor.events.EventDefinition
 
-class ApplicationRestart: EventDefinition<Boolean>() {
-	companion object {
-		val value = ApplicationRestart()
-	}
-}
-
-class RestartException(val restart: Boolean): Exception()
-
-var restart = true
-
 var engine: ApplicationEngine? = null
 
 fun main() {
@@ -47,9 +37,6 @@ fun run(isTestEnv: Boolean = false): ApplicationEngine {
 }
 
 fun Application.module() {
-	environment.monitor.subscribe(ApplicationRestart.value) { restart ->
-		throw RestartException(restart)
-	}
 	checkEnvironment()
 	if(loadConfig()) {
 		checkOnPremise()
