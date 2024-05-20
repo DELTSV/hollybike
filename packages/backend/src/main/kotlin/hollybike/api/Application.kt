@@ -9,9 +9,27 @@ import io.ktor.util.*
 import kotlinx.serialization.json.Json
 
 import generated.Constants
+import hollybike.api.utils.configureRestart
+import io.ktor.events.EventDefinition
+
+class ApplicationRestart: EventDefinition<Boolean>() {
+	companion object {
+		val value = ApplicationRestart()
+	}
+}
+
+class RestartException(val restart: Boolean): Exception()
+
+var restart = true
+
+var engine: ApplicationEngine? = null
 
 fun main() {
-	run()
+	while (true) {
+		println("Start API")
+		engine = run()
+		println("Stopping API")
+	}
 }
 
 fun run(isTestEnv: Boolean = false): ApplicationEngine {
@@ -20,17 +38,31 @@ fun run(isTestEnv: Boolean = false): ApplicationEngine {
 		port = System.getProperty("port")?.toInt() ?: 8080,
 		host = "0.0.0.0",
 		watchPaths = listOf("classes", "resources"),
-		module = Application::module
-	).start(wait = !isTestEnv)
+		module = Application::module,
+	).apply {
+		environment.monitor.subscribe(ApplicationStopPreparing) {
+			stop()
+		}
+	}.start(wait = !isTestEnv)
 }
 
 fun Application.module() {
-	checkTestEnvironment()
-	loadConfig()
-	checkOnPremise()
-	configureSerialization()
-	api()
-	frontend()
+	environment.monitor.subscribe(ApplicationRestart.value) { restart ->
+		throw RestartException(restart)
+	}
+	checkEnvironment()
+	if(loadConfig()) {
+		checkOnPremise()
+		configureSerialization()
+		api()
+		frontend()
+		configureRestart(false)
+	} else {
+		println("Starting in conf mode")
+		configureSerialization()
+		confMode()
+		configureRestart(true)
+	}
 
 	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
 }
@@ -44,7 +76,7 @@ fun Application.configureSerialization() {
 	}
 }
 
-fun Application.checkTestEnvironment() {
+fun Application.checkEnvironment() {
 	log.info("Checking environment...")
 
 	attributes.put(isTestEnvAttributeKey, System.getProperty("is_test_env")?.let {
@@ -57,14 +89,18 @@ fun Application.checkTestEnvironment() {
 			} else {
 				log.info("Running in production environment")
 			}
-
 			false
 		}
 	} ?: false)
 }
 
-fun Application.loadConfig() {
-	this.attributes.put(confKey, parseConf(isTestEnv))
+fun Application.loadConfig(): Boolean {
+	val conf = parseConf(isTestEnv) ?: run {
+		println("Unable to get conf from file or env")
+		return false
+	}
+	this.attributes.put(confKey, conf)
+	return true
 }
 
 fun Application.loadCustomConfig(customConfig: Conf) {

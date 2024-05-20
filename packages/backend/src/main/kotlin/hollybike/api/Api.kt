@@ -44,7 +44,7 @@ fun Application.api() {
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
-	ApiController(this, mailSender)
+	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
 	UserController(this, userService)
 	AssociationController(this, associationService)

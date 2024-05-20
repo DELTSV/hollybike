@@ -9,4 +9,10 @@ class API {
 
 	@Resource("smtp")
 	class SMTP(val api: API = API())
+
+	@Resource("conf-done")
+	class ConfDone(val api: API = API())
+
+	@Resource("restart")
+	class Restart(val api: API = API())
 }

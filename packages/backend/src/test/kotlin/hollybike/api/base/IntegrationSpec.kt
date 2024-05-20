@@ -196,7 +196,7 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 
 			application {
 				loadCustomConfig(config)
-				checkTestEnvironment()
+				checkEnvironment()
 				configureSerialization()
 				forceMode(isOnPremise = baseConfig.isOnPremise)
 				api()
