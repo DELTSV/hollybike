@@ -17,11 +17,12 @@ export function Input(props: InputProps) {
 		<div
 			className={clsx("bg-slate-100 dark:bg-slate-800 rounded flex", props.className)}
 		>
+			{ props.icon &&
 			<i
 				className={"h-full flex items-center border-2 border-slate-950 dark:border-slate-700 rounded-l p-1"}
 			>
 				{ props.icon }
-			</i>
+			</i> }
 			<input
 				value={props.value} onInput={props.onInput} type={props.type} placeholder={props.placeholder}
 				className={clsx("w-full h-full py-2 px-2 bg-transparent rounded" +

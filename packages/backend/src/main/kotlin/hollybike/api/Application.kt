@@ -37,17 +37,19 @@ fun run(isTestEnv: Boolean = false): ApplicationEngine {
 
 fun Application.module() {
 	checkEnvironment()
+	checkOnPremise()
 	if(loadConfig()) {
-		checkOnPremise()
 		configureSerialization()
 		api()
 		frontend()
 		configureRestart(false)
-	} else {
+	} else if(isOnPremise) {
 		println("Starting in conf mode")
 		configureSerialization()
 		confMode()
 		configureRestart(true)
+	} else {
+		println("Cannot start API")
 	}
 
 	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")

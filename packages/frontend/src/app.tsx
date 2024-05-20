@@ -14,6 +14,9 @@ import { useSystemDarkMode } from "./utils/systemDarkMode.ts";
 import { ListAssociations } from "./associations/listAssociations/ListAssociations.tsx";
 import { Association } from "./associations/Association.tsx";
 import { ListUser } from "./user/listUser/ListUser.tsx";
+import { useApi } from "./utils/useApi.ts";
+import { TConfDone } from "./types/GConfDone.ts";
+import { Conf } from "./conf/Conf.tsx";
 
 export function App() {
 	const auth = useAuth();
@@ -50,7 +53,18 @@ export function App() {
 			path: "/forbidden",
 			element: <p>"Interdit d'être ici"</p>,
 		},
+		{
+			path: "/conf",
+			element: <Conf/>,
+		},
 	]);
+
+	const confMode = useApi<TConfDone, never>("/conf-done");
+
+	useEffect(() => {
+		if (!confMode.data?.conf_done)
+			router.navigate("/conf");
+	}, [confMode]);
 
 	useEffect(() => {
 		if (!auth.isLoggedIn)

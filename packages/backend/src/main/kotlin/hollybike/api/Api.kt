@@ -53,5 +53,6 @@ fun Application.api() {
 
 	if (isOnPremise) {
 		StorageController(this, storageService)
+		ConfController(this, false)
 	}
 }
