@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_bloc.dart';
 import 'package:hollybike/event/bloc/event_state.dart';
+import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
+import 'package:hollybike/event/widgets/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../bloc/event_event.dart';
@@ -105,10 +108,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 return const Text("Event not found");
               }
 
-              return Column(
-                children: [
-                  Text(state.event!.startDate.toString()),
-                ],
+              final Event event = state.event!;
+
+              List<Widget> children = [
+                Text(event.startDate.toString()),
+              ];
+
+              if (event.status == EventStatusState.pending) {
+                children.insert(0, EventPendingWarning(onAction: () => {},));
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: children,
+                ),
               );
             }
 

@@ -37,11 +37,6 @@ String fromDateToDuration(DateTime date) {
   final now = DateTime.now();
   final difference = date.difference(now);
 
-  // This is for the future events
-  // The event could be in a year or more
-  // Should tell "Dans un mois et 3 jours" instead of "Dans 33 jours"
-  // should tell "Dans un an et 3 mois" instead of "Dans 15 mois"
-
   if (difference.inDays > 365) {
     final years = difference.inDays ~/ 365;
     final months = (difference.inDays % 365) ~/ 30;
