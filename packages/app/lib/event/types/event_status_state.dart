@@ -5,7 +5,7 @@ enum EventStatusState {
   pending,
   @JsonValue('SCHEDULED')
   scheduled,
-  @JsonValue('CANCELED')
+  @JsonValue('CANCELLED')
   canceled,
   @JsonValue('FINISHED')
   finished,

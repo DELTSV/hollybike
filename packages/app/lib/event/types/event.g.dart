@@ -38,6 +38,6 @@ Map<String, dynamic> _$$EventImplToJson(_$EventImpl instance) =>
 const _$EventStatusStateEnumMap = {
   EventStatusState.pending: 'PENDING',
   EventStatusState.scheduled: 'SCHEDULED',
-  EventStatusState.canceled: 'CANCELED',
+  EventStatusState.canceled: 'CANCELLED',
   EventStatusState.finished: 'FINISHED',
 };
