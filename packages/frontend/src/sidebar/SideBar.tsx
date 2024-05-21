@@ -34,7 +34,10 @@ export function SideBar() {
 	}, [user, association]);
 
 	return (
-		<aside className={"w-48 bg-gradient-to-b from-slate-50/50 dark:from-slate-800/50 bg-opacity-50 flex flex-col"}>
+		<aside
+			className={"w-48 min-w-48 bg-gradient-to-b from-slate-50/50 dark:from-slate-800/50" +
+			" bg-opacity-50 flex flex-col"}
+		>
 			{ content }
 		</aside>
 	);

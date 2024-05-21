@@ -14,6 +14,7 @@ import { useUser } from "../user/useUser.tsx";
 type AuthContext = {
 	token?: string;
 	isLoggedIn: boolean;
+	loading: boolean;
 	login: (data: TLogin) => void;
 	disconnect: () => void
 }
@@ -21,6 +22,7 @@ type AuthContext = {
 const Auth = createContext<AuthContext>({
 	token: undefined,
 	isLoggedIn: false,
+	loading: true,
 	login: _data => void 0,
 	disconnect: () => {},
 });
@@ -34,6 +36,8 @@ export function useAuth() {
 type Props = { children: ComponentChildren }
 
 export const AuthContextProvider = ({ children }: Props) => {
+	const [loading, setLoading] = useState<boolean>(false);
+
 	const [token, setToken] = useState<string>();
 
 	const user = useUser();
@@ -42,8 +46,11 @@ export const AuthContextProvider = ({ children }: Props) => {
 		const token = localStorage.getItem("token");
 		if (token != null) {
 			setToken(token);
-			user.fetchUser();
-		}
+			user.fetchUser().then(() => {
+				setLoading(false);
+			});
+		} else
+			setLoading(false);
 	}, []);
 
 	const login = (data: TLogin) => {
@@ -73,6 +80,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 			value={{
 				token,
 				isLoggedIn: !!token,
+				loading: loading,
 				login,
 				disconnect,
 			}}

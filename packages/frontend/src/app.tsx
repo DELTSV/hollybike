@@ -3,7 +3,7 @@ import {
 } from "react-router-dom";
 import Login from "./auth/Login.tsx";
 import {
-	useEffect, useMemo,
+	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { useAuth } from "./auth/context.tsx";
 import { useTheme } from "./theme/context.tsx";
@@ -19,6 +19,7 @@ import { TConfDone } from "./types/GConfDone.ts";
 import { Conf } from "./conf/Conf.tsx";
 
 export function App() {
+	const [loaded, setLoaded] = useState(false);
 	const auth = useAuth();
 	const theme = useTheme();
 	const systemDark = useSystemDarkMode();
@@ -43,6 +44,10 @@ export function App() {
 					path: "users",
 					element: <ListUser/>,
 				},
+				{
+					path: "conf",
+					element: <Conf/>,
+				},
 			],
 		},
 		{
@@ -62,16 +67,17 @@ export function App() {
 	const confMode = useApi<TConfDone, never>("/conf-done");
 
 	useEffect(() => {
-		if (!confMode.data?.conf_done)
-			router.navigate("/conf-mode");
-		else
-			router.navigate("/");
-	}, [confMode]);
+		if (!auth.loading)
+			setLoaded(true);
+	}, [auth.loading]);
 
 	useEffect(() => {
-		if (!auth.isLoggedIn)
-			router.navigate("/login");
-	}, [auth.isLoggedIn]);
+		if (loaded)
+			if (confMode.data?.conf_done === false)
+				router.navigate("/conf-mode");
+			else if (!auth.isLoggedIn)
+				router.navigate("/login");
+	}, [confMode, auth.isLoggedIn]);
 
 	const themeDark = useMemo(() => theme.theme === "dark" || theme.theme === "os" && systemDark, [theme.theme]);
 

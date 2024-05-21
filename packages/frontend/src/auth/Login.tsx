@@ -3,6 +3,8 @@ import {
 } from "preact/hooks";
 import { useAuth } from "./context.tsx";
 import { useNavigate } from "react-router-dom";
+import { Input } from "../components/Input/Input.tsx";
+import { Button } from "../components/Button/Button.tsx";
 
 export default function () {
 	const [email, setEmail] = useState("");
@@ -29,27 +31,25 @@ export default function () {
 	}, [auth.isLoggedIn]);
 
 	return (
-		<form onSubmit={e => e.preventDefault()}>
-			<input
+		<form className={"flex flex-col items-start"} onSubmit={e => e.preventDefault()}>
+			<Input
 				type={"email"}
-				name={"email"}
 				placeholder="Email"
 				value={email}
-				onChange={e => setEmail(e.currentTarget.value)}
+				onInput={e => setEmail(e.currentTarget.value)}
 			/>
-			<input
+			<Input
 				type={"password"}
-				name={"password"}
 				placeholder="Mot de passe" value={password}
-				onChange={e => setPassword(e.currentTarget.value)}
+				onInput={e => setPassword(e.currentTarget.value)}
 			/>
-			<button
+			<Button
 				onClick={() => {
 					login();
 				}}
 			>
 				Valider
-			</button>
+			</Button>
 		</form>
 	);
 }
