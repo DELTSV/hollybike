@@ -1,13 +1,12 @@
-import { Input } from "../components/Input/Input.tsx";
-import { Card } from "../components/Card/Card.tsx";
 import { ConfProps } from "./Conf.tsx";
-import { useState } from "preact/hooks";
 import {
-	DeleteOutlined,
-	Visibility, VisibilityOff,
+	DeleteOutlined, Visibility, VisibilityOff,
 } from "@material-ui/icons";
+import { Card } from "../components/Card/Card.tsx";
+import { useState } from "preact/hooks";
+import { Input } from "../components/Input/Input.tsx";
 
-export function ConfDB(props: ConfProps) {
+export function ConfSecurity(props: ConfProps) {
 	const {
 		conf, setConf,
 	} = props;
@@ -22,43 +21,46 @@ export function ConfDB(props: ConfProps) {
 					className={"cursor-pointer"}
 					onClick={() => setConf(prev => ({
 						...prev,
-						db: {},
+						security: {},
 					}))}
 				/>
 			</div>
 			<div className={"grid grid-cols-2 gap-2 items-center"}>
-				<p>URL:</p><Input
-					onInput={e => setConf(prev => (
-						{
-							...prev,
-							db: {
-								...prev?.db,
-								url: e.currentTarget.value,
-							},
-						}
-					))}
-					value={conf?.db?.url ?? ""}
+				<p>Audience:</p><Input
+					onInput={e => setConf(prev => ({
+						...prev,
+						security: {
+							...prev?.security,
+							audience: e.currentTarget.value,
+						},
+					}))} value={conf?.security?.audience ?? ""}
 				/>
-				<p>Nom d'utilisateur:</p><Input
-					onInput={e => setConf(prev => (
-						{
-							...prev,
-							db: {
-								...prev?.db,
-								username: e.currentTarget.value,
-							},
-						}
-					))}
-					value={conf?.db?.username ?? ""}
+				<p>Domaine:</p><Input
+					onInput={e => setConf(prev => ({
+						...prev,
+						security: {
+							...prev?.security,
+							domain: e.currentTarget.value,
+						},
+					}))} value={conf?.security?.domain ?? ""}
 				/>
-				<p>Mot de passe:</p><Input
+				<p>Realm:</p><Input
+					onInput={e => setConf(prev => ({
+						...prev,
+						security: {
+							...prev?.security,
+							realm: e.currentTarget.value,
+						},
+					}))} value={conf?.security?.realm ?? ""}
+				/>
+				<p>Secret:</p><Input
 					type={visiblePassword ? "text" : "password"}
 					onInput={e => setConf(prev => (
 						{
 							...prev,
-							db: {
-								...prev?.db,
-								password: e.currentTarget.value,
+							security: {
+								...prev?.security,
+								secret: e.currentTarget.value,
 							},
 						}
 					))}
@@ -67,9 +69,9 @@ export function ConfDB(props: ConfProps) {
 							setConf(prev => (
 								{
 									...prev,
-									db: {
-										...prev?.db,
-										password: "",
+									security: {
+										...prev?.security,
+										secret: "",
 									},
 								}
 							));
@@ -79,14 +81,14 @@ export function ConfDB(props: ConfProps) {
 							setConf(prev => (
 								{
 									...prev,
-									db: {
-										...prev?.db,
-										password: "******",
+									security: {
+										...prev?.security,
+										secret: "******",
 									},
 								}
 							));
 					}}
-					value={conf?.db?.password ?? ""}
+					value={conf?.security?.secret ?? ""}
 					rightIcon={visiblePassword ?
 						<VisibilityOff className={"cursor-pointer"} onClick={() => setVisiblePassword(false)}/> :
 						<Visibility className={"cursor-pointer"} onClick={() => setVisiblePassword(true)}/>}

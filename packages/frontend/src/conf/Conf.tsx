@@ -1,14 +1,15 @@
 import {
-api, useApi,
+	api, useApi,
 } from "../utils/useApi.ts";
 import { Card } from "../components/Card/Card.tsx";
 import { Input } from "../components/Input/Input.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import {
-useEffect, useState,
+	useEffect, useState,
 } from "preact/hooks";
 import { TConf } from "../types/TConf.ts";
 import { ConfDB } from "./ConfDB.tsx";
+import { ConfSecurity } from "./ConfSecurity.tsx";
 
 export interface ConfProps {
 	conf?: TConf
@@ -28,15 +29,7 @@ export function Conf() {
 		<div className={"flex p-2 gap-2 flex-col items-start"}>
 			<div className={"flex gap-2"}>
 				<ConfDB conf={conf} setConf={setConf} baseConf={confAPI.data}/>
-				<Card>
-					<h1 className={"text-xl pb-4"}>Sécurité (obligatoire)</h1>
-					<div className={"grid grid-cols-2 gap-2 items-center"}>
-						<p>Audience:</p><Input onInput={() => {}} value={conf?.security?.audience ?? ""}/>
-						<p>Domaine:</p><Input onInput={() => {}} value={conf?.security?.domain ?? ""}/>
-						<p>Realm:</p><Input onInput={() => {}} value={conf?.security?.realm ?? ""}/>
-						<p>Secret:</p><Input onInput={() => {}} value={conf?.security?.secret ?? ""}/>
-					</div>
-				</Card>
+				<ConfSecurity conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 				<Card>
 					<h1 className={"text-xl pb-4"}>SMTP</h1>
 					<div className={"grid grid-cols-2 gap-2 items-center"}>

@@ -39,11 +39,9 @@ export function Input(props: InputProps) {
 				)}
 			/>
 			{ props.rightIcon &&
-                <i
-                    className={"flex items-center border-2 border-slate-950 dark:border-slate-700 rounded-r p-1"}
-                >
+				<i className={"flex items-center border-2 border-slate-950 dark:border-slate-700 rounded-r p-1"}>
 					{ props.rightIcon }
-                </i> }
+				</i> }
 		</div>
 	);
 }
