@@ -10,6 +10,7 @@ import {
 import { TConf } from "../types/TConf.ts";
 import { ConfDB } from "./ConfDB.tsx";
 import { ConfSecurity } from "./ConfSecurity.tsx";
+import { ConfSMTP } from "./ConfSMTP.tsx";
 
 export interface ConfProps {
 	conf?: TConf
@@ -30,16 +31,7 @@ export function Conf() {
 			<div className={"flex gap-2"}>
 				<ConfDB conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 				<ConfSecurity conf={conf} setConf={setConf} baseConf={confAPI.data}/>
-				<Card>
-					<h1 className={"text-xl pb-4"}>SMTP</h1>
-					<div className={"grid grid-cols-2 gap-2 items-center"}>
-						<p>URL:</p><Input onInput={() => {}} value={conf?.smtp?.url ?? ""}/>
-						<p>Port:</p><Input onInput={() => {}} value={conf?.smtp?.url ?? ""}/>
-						<p>Envoyeur:</p><Input onInput={() => {}} value={conf?.smtp?.url ?? ""}/>
-						<p>Utilisateur:</p><Input onInput={() => {}} value={conf?.smtp?.url ?? ""}/>
-						<p>Mot de passe:</p><Input onInput={() => {}} value={conf?.smtp?.url ?? ""}/>
-					</div>
-				</Card>
+				<ConfSMTP conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 			</div>
 			<div className={"flex gap-2"}>
 				<Card>
