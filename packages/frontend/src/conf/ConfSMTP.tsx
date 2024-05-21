@@ -21,7 +21,7 @@ export function ConfSMTP(props: ConfProps) {
 					className={"cursor-pointer"}
 					onClick={() => setConf(prev => ({
 						...prev,
-						smtp: {},
+						smtp: undefined,
 					}))}
 				/>
 			</div>
