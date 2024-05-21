@@ -11,6 +11,7 @@ import { TConf } from "../types/TConf.ts";
 import { ConfDB } from "./ConfDB.tsx";
 import { ConfSecurity } from "./ConfSecurity.tsx";
 import { ConfSMTP } from "./ConfSMTP.tsx";
+import { ConfS3 } from "./ConfS3.tsx";
 
 export interface ConfProps {
 	conf?: TConf
@@ -19,8 +20,9 @@ export interface ConfProps {
 }
 
 export function Conf() {
+	const [reload, setReload] = useState(false);
 	const [conf, setConf] = useState<TConf>();
-	const confAPI = useApi<TConf, never>("/conf");
+	const confAPI = useApi<TConf, never>("/conf", [reload]);
 
 	useEffect(() => {
 		setConf(confAPI.data);
@@ -34,16 +36,7 @@ export function Conf() {
 				<ConfSMTP conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 			</div>
 			<div className={"flex gap-2"}>
-				<Card>
-					<h1 className={"text-xl pb-4"}>S3</h1>
-					<div className={"grid grid-cols-2 gap-2 items-center"}>
-						<p>URL:</p><Input onInput={() => {}} value={conf?.storage?.s3Url ?? ""}/>
-						<p>Bucket:</p><Input onInput={() => {}} value={conf?.storage?.s3Bucket ?? ""}/>
-						<p>Region:</p><Input onInput={() => {}} value={conf?.storage?.s3Region ?? ""}/>
-						<p>Utilisateur:</p><Input onInput={() => {}} value={conf?.storage?.s3Username ?? ""}/>
-						<p>Mot de passe:</p><Input onInput={() => {}} value={conf?.storage?.s3Password ?? ""}/>
-					</div>
-				</Card>
+				<ConfS3 conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 				<Card>
 					<h1 className={"text-xl pb-4"}>FTP</h1>
 					<div className={"grid grid-cols-2 gap-2 items-center"}>
@@ -69,6 +62,7 @@ export function Conf() {
 							body: conf,
 						},
 					).then(() => {
+						setReload(prev => !prev);
 						// api("/restart", { method: "DELETE" });
 					});
 				}}
