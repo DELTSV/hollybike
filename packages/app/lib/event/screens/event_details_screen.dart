@@ -34,14 +34,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   void initState() {
     super.initState();
 
-    withCurrentSession(context, (session) {
-      context.read<EventBloc>().add(
-            LoadEventDetails(
-              eventId: widget.eventId,
-              session: session,
-            ),
-          );
-    });
+    withCurrentSession(
+      context,
+      (session) {
+        context.read<EventBloc>().add(
+              LoadEventDetails(
+                eventId: widget.eventId,
+                session: session,
+              ),
+            );
+      },
+    );
   }
 
   @override
@@ -76,27 +79,25 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                   alignment: Alignment.bottomLeft,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Hero(
-                              tag: "event-name-${widget.eventId}",
-                              child: SizedBox(
-                                width: constraints.maxWidth - 20,
-                                child: Text(
-                                  widget.eventName,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
+                    child: LayoutBuilder(builder: (context, constraints) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Hero(
+                            tag: "event-name-${widget.eventId}",
+                            child: SizedBox(
+                              width: constraints.maxWidth - 20,
+                              child: Text(
+                                widget.eventName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ),
-                          ],
-                        );
-                      }
-                    ),
+                          ),
+                        ],
+                      );
+                    }),
                   ),
                 ),
               ],
@@ -115,7 +116,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               ];
 
               if (event.status == EventStatusState.pending) {
-                children.insert(0, EventPendingWarning(onAction: () => {},));
+                children.insert(
+                    0,
+                    EventPendingWarning(
+                      onAction: () => {},
+                    ));
               }
 
               return Padding(

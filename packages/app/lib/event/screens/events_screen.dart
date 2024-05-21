@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:hollybike/shared/utils/with_current_session.dart';
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../shared/utils/dates.dart';
+import '../widgets/event_creation_modal.dart';
 import '../widgets/event_preview_card.dart';
 
 @RoutePage()
@@ -102,91 +105,124 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      triggerMode: RefreshIndicatorTriggerMode.anywhere,
-      onRefresh: () async {
-        _refreshEvents();
-      },
-      child: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthSessionSwitched) {
+    return Stack(
+      children: [
+        RefreshIndicator(
+          triggerMode: RefreshIndicatorTriggerMode.anywhere,
+          onRefresh: () async {
             _refreshEvents();
-          }
-        },
-        child: BlocBuilder<EventBloc, EventState>(
-          builder: (context, state) {
-            if (state.events.isEmpty) {
-              switch (state.status) {
-                case EventStatus.initial:
-                  return const SizedBox();
-                case EventStatus.loading:
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                case EventStatus.error:
-                  return const Center(
-                    child: Text('Oups, une erreur est survenue.'),
-                  );
-                case EventStatus.success:
-                  return const Center(
-                    child: Text('Aucun post trouvé.'),
-                  );
+          },
+          child: BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthSessionSwitched) {
+                _refreshEvents();
               }
-            }
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-              ),
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16.0,
-                ),
-                physics: const BouncingScrollPhysics(),
-                itemCount: state.events.length + (state.hasMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == state.events.length) {
-                    if (state.status == EventStatus.error) {
-                      return const Center(
-                        child: Text('Oups, une erreur est survenue.'),
-                      );
-                    } else {
+            },
+            child: BlocBuilder<EventBloc, EventState>(
+              builder: (context, state) {
+                if (state.events.isEmpty) {
+                  switch (state.status) {
+                    case EventStatus.initial:
+                      return const SizedBox();
+                    case EventStatus.loading:
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    }
+                    case EventStatus.error:
+                      return const Center(
+                        child: Text('Oups, une erreur est survenue.'),
+                      );
+                    case EventStatus.success:
+                      return const Center(
+                        child: Text('Aucun post trouvé.'),
+                      );
                   }
+                }
 
-                  final event = state.events[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                  ),
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16.0,
+                    ),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: state.events.length + (state.hasMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == state.events.length) {
+                        if (state.status == EventStatus.error) {
+                          return const Center(
+                            child: Text('Oups, une erreur est survenue.'),
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }
 
-                  final columnWithHeader = getPreviewWithColumn(
-                    event,
-                    index == 0 ||
-                        event.startDate.month !=
-                            state.events[index - 1].startDate.month,
-                  );
+                      final event = state.events[index];
 
-                  return TweenAnimationBuilder(
-                    tween: Tween<double>(begin: 0, end: 1),
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.ease,
-                    builder: (context, double value, child) {
-                      return Transform.translate(
-                        offset: Offset(50 * (1 - value), 0),
-                        child: Opacity(
-                          opacity: value,
-                          child: columnWithHeader,
-                        ),
+                      final columnWithHeader = getPreviewWithColumn(
+                        event,
+                        index == 0 ||
+                            event.startDate.month !=
+                                state.events[index - 1].startDate.month,
+                      );
+
+                      return TweenAnimationBuilder(
+                        tween: Tween<double>(begin: 0, end: 1),
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.ease,
+                        builder: (context, double value, child) {
+                          return Transform.translate(
+                            offset: Offset(50 * (1 - value), 0),
+                            child: Opacity(
+                              opacity: value,
+                              child: columnWithHeader,
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
-            );
-          },
+                  ),
+                );
+              },
+            ),
+          ),
         ),
-      ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                Timer(const Duration(milliseconds: 100), () {
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const EventCreationModal();
+                    },
+                  );
+                });
+              },
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              label: Text(
+                'Ajouter',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+              splashColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.2),
+              icon:
+                  Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
