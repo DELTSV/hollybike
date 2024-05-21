@@ -1,8 +1,6 @@
 import {
 	api, useApi,
 } from "../utils/useApi.ts";
-import { Card } from "../components/Card/Card.tsx";
-import { Input } from "../components/Input/Input.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import {
 	useEffect, useState,
@@ -13,6 +11,7 @@ import { ConfSecurity } from "./ConfSecurity.tsx";
 import { ConfSMTP } from "./ConfSMTP.tsx";
 import { ConfS3 } from "./ConfS3.tsx";
 import { ConfFTP } from "./ConfFTP.tsx";
+import { ConfLocal } from "./ConfLocal.tsx";
 
 export interface ConfProps {
 	conf?: TConf
@@ -39,12 +38,7 @@ export function Conf() {
 			<div className={"flex gap-2"}>
 				<ConfS3 conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 				<ConfFTP conf={conf} setConf={setConf} baseConf={confAPI.data}/>
-				<Card>
-					<h1 className={"text-xl pb-4"}>Local</h1>
-					<div className={"grid grid-cols-2 gap-2 items-center"}>
-						<p>Chemin local:</p><Input onInput={() => {}} value={conf?.storage?.localPath ?? ""}/>
-					</div>
-				</Card>
+				<ConfLocal conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 			</div>
 			<Button
 				onClick={() => {
