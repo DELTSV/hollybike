@@ -1,23 +1,23 @@
 export interface TConf {
-	db: {
+	db?: {
 		url?: string,
 		username?: string,
 		password?: string
 	},
-	security: {
+	security?: {
 		audience?: string,
 		domain?: string,
 		realm?: string,
 		secret?: string
 	},
-	smtp: {
+	smtp?: {
 		url?: string,
 		port?: number,
 		sender?: string,
 		username?: string,
 		password?: string
 	},
-	storage: {
+	storage?: {
 		s3Url?: string,
 		s3Bucket?: string,
 		s3Region?: string,

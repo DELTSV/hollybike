@@ -54,7 +54,7 @@ export function App() {
 			element: <p>"Interdit d'être ici"</p>,
 		},
 		{
-			path: "/conf",
+			path: "/conf-mode",
 			element: <Conf/>,
 		},
 	]);
@@ -63,7 +63,9 @@ export function App() {
 
 	useEffect(() => {
 		if (!confMode.data?.conf_done)
-			router.navigate("/conf");
+			router.navigate("/conf-mode");
+		else
+			router.navigate("/");
 	}, [confMode]);
 
 	useEffect(() => {

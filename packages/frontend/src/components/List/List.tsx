@@ -82,7 +82,7 @@ export function List<T>(props: ListProps<T>) {
 		<div className={"px-2 flex flex-col grow gap-2"}>
 			<Input
 				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
-				placeholder={"Recherche"} className={"self-start"} icon={<Search/>}
+				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
 			/>
 			<table className={"rounded bg-slate-100 dark:bg-slate-800"}>
 				<thead>
