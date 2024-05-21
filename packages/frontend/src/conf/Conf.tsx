@@ -12,6 +12,7 @@ import { ConfDB } from "./ConfDB.tsx";
 import { ConfSecurity } from "./ConfSecurity.tsx";
 import { ConfSMTP } from "./ConfSMTP.tsx";
 import { ConfS3 } from "./ConfS3.tsx";
+import { ConfFTP } from "./ConfFTP.tsx";
 
 export interface ConfProps {
 	conf?: TConf
@@ -37,15 +38,7 @@ export function Conf() {
 			</div>
 			<div className={"flex gap-2"}>
 				<ConfS3 conf={conf} setConf={setConf} baseConf={confAPI.data}/>
-				<Card>
-					<h1 className={"text-xl pb-4"}>FTP</h1>
-					<div className={"grid grid-cols-2 gap-2 items-center"}>
-						<p>URL:</p><Input onInput={() => {}} value={conf?.storage?.ftpServer ?? ""}/>
-						<p>Chemin distant:</p><Input onInput={() => {}} value={conf?.storage?.ftpDirectory ?? ""}/>
-						<p>Utilisateur:</p><Input onInput={() => {}} value={conf?.storage?.ftpUsername ?? ""}/>
-						<p>Mot de passe:</p><Input onInput={() => {}} value={conf?.storage?.ftpPassword ?? ""}/>
-					</div>
-				</Card>
+				<ConfFTP conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 				<Card>
 					<h1 className={"text-xl pb-4"}>Local</h1>
 					<div className={"grid grid-cols-2 gap-2 items-center"}>
