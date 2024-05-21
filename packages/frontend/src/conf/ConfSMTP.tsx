@@ -16,7 +16,7 @@ export function ConfSMTP(props: ConfProps) {
 	return (
 		<Card>
 			<div className={"flex justify-between"}>
-				<h1 className={"text-xl pb-4"}>Base de données (obligatoire)</h1>
+				<h1 className={"text-xl pb-4"}>SMTP</h1>
 				<DeleteOutlined
 					className={"cursor-pointer"}
 					onClick={() => setConf(prev => ({

@@ -5,6 +5,7 @@ import {
 import { Card } from "../components/Card/Card.tsx";
 import { useState } from "preact/hooks";
 import { Input } from "../components/Input/Input.tsx";
+import { RedStar } from "../components/RedStar/RedStar.tsx";
 
 export function ConfSecurity(props: ConfProps) {
 	const {
@@ -16,7 +17,7 @@ export function ConfSecurity(props: ConfProps) {
 	return (
 		<Card>
 			<div className={"flex justify-between"}>
-				<h1 className={"text-xl pb-4"}>Base de données (obligatoire)</h1>
+				<h1 className={"text-xl pb-4"}>Sécurité (obligatoire)</h1>
 				<DeleteOutlined
 					className={"cursor-pointer"}
 					onClick={() => setConf(prev => ({
@@ -26,7 +27,7 @@ export function ConfSecurity(props: ConfProps) {
 				/>
 			</div>
 			<div className={"grid grid-cols-2 gap-2 items-center"}>
-				<p>Audience:</p><Input
+				<p>Audience: <RedStar/></p><Input
 					onInput={e => setConf(prev => ({
 						...prev,
 						security: {
@@ -35,7 +36,7 @@ export function ConfSecurity(props: ConfProps) {
 						},
 					}))} value={conf?.security?.audience ?? ""}
 				/>
-				<p>Domaine:</p><Input
+				<p>Domaine: <RedStar/></p><Input
 					onInput={e => setConf(prev => ({
 						...prev,
 						security: {
@@ -44,7 +45,7 @@ export function ConfSecurity(props: ConfProps) {
 						},
 					}))} value={conf?.security?.domain ?? ""}
 				/>
-				<p>Realm:</p><Input
+				<p>Realm: <RedStar/></p><Input
 					onInput={e => setConf(prev => ({
 						...prev,
 						security: {
@@ -53,7 +54,7 @@ export function ConfSecurity(props: ConfProps) {
 						},
 					}))} value={conf?.security?.realm ?? ""}
 				/>
-				<p>Secret:</p><Input
+				<p>Secret: <RedStar/></p><Input
 					type={visiblePassword ? "text" : "password"}
 					onInput={e => setConf(prev => (
 						{

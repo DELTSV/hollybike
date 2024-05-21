@@ -6,6 +6,7 @@ import {
 	DeleteOutlined,
 	Visibility, VisibilityOff,
 } from "@material-ui/icons";
+import { RedStar } from "../components/RedStar/RedStar.tsx";
 
 export function ConfDB(props: ConfProps) {
 	const {
@@ -27,7 +28,7 @@ export function ConfDB(props: ConfProps) {
 				/>
 			</div>
 			<div className={"grid grid-cols-2 gap-2 items-center"}>
-				<p>URL:</p><Input
+				<p>URL: <RedStar/></p><Input
 					onInput={e => setConf(prev => (
 						{
 							...prev,
@@ -39,7 +40,7 @@ export function ConfDB(props: ConfProps) {
 					))}
 					value={conf?.db?.url ?? ""}
 				/>
-				<p>Nom d'utilisateur:</p><Input
+				<p>Nom d'utilisateur: <RedStar/></p><Input
 					onInput={e => setConf(prev => (
 						{
 							...prev,
@@ -51,7 +52,7 @@ export function ConfDB(props: ConfProps) {
 					))}
 					value={conf?.db?.username ?? ""}
 				/>
-				<p>Mot de passe:</p><Input
+				<p>Mot de passe: <RedStar/></p><Input
 					type={visiblePassword ? "text" : "password"}
 					onInput={e => setConf(prev => (
 						{
