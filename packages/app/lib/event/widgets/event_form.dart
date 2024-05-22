@@ -20,11 +20,13 @@ class EventForm extends StatefulWidget {
   ) onSubmit;
 
   final void Function() onClose;
+  final void Function() onTouched;
 
   final String submitButtonText;
 
   const EventForm({
     super.key,
+    required this.onTouched,
     required this.onSubmit,
     required this.onClose,
     required this.submitButtonText,
@@ -50,10 +52,14 @@ class _EventFormState extends State<EventForm> {
   var _endTime = TimeOfDay.now();
   var _selectEndDate = false;
 
+  var touched = false;
+
   @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _scrollController.dispose();
+    _formKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -72,9 +78,21 @@ class _EventFormState extends State<EventForm> {
     );
 
     _endTime = _startTime.replacing(hour: _startTime.hour + 1);
+
+    _nameController.addListener(_onTouch);
+    _descriptionController.addListener(_onTouch);
+  }
+
+  void _onTouch() {
+    if (!touched) {
+      touched = true;
+      widget.onTouched();
+    }
   }
 
   void _onDateRangeChanged(DateTimeRange dateRange) {
+    _onTouch();
+
     setState(() {
       _dateRange = dateRange;
       _date = _dateRange.start;
@@ -82,6 +100,8 @@ class _EventFormState extends State<EventForm> {
   }
 
   void _onDateChanged(DateTime date) {
+    _onTouch();
+
     setState(() {
       _date = date;
       _dateRange = DateTimeRange(
@@ -107,6 +127,8 @@ class _EventFormState extends State<EventForm> {
         }
       }
     }
+
+    _onTouch();
 
     setState(() {
       _startTime = time;
@@ -137,6 +159,8 @@ class _EventFormState extends State<EventForm> {
         );
       });
     }
+
+    _onTouch();
 
     setState(() {
       _selectEndDate = value;

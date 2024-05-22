@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/event_discard_changes_dialog.dart';
 import 'package:hollybike/event/widgets/event_form.dart';
 
-class EventCreationModal extends StatelessWidget {
+class EventCreationModal extends StatefulWidget {
   const EventCreationModal({super.key});
+
+  @override
+  State<EventCreationModal> createState() => _EventCreationModalState();
+}
+
+class _EventCreationModalState extends State<EventCreationModal> {
+  var touched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +23,12 @@ class EventCreationModal extends StatelessWidget {
       canPop: false,
       onPopInvoked: (canPop) {
         if (canPop) return;
+
+        if (!touched) {
+          Navigator.of(context).pop();
+          return;
+        }
+
         showEventDiscardChangesDialog(context, () {
           Navigator.of(context).pop();
         });
@@ -43,8 +56,18 @@ class EventCreationModal extends StatelessWidget {
           child: EventForm(
             submitButtonText: "Créer",
             onClose: () {
+              if (!touched) {
+                Navigator.of(context).pop();
+                return;
+              }
+
               showEventDiscardChangesDialog(context, () {
                 Navigator.of(context).pop();
+              });
+            },
+            onTouched: () {
+              setState(() {
+                touched = true;
               });
             },
             onSubmit: (
