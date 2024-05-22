@@ -105,121 +105,130 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        RefreshIndicator(
-          triggerMode: RefreshIndicatorTriggerMode.anywhere,
-          onRefresh: () async {
-            _refreshEvents();
-          },
-          child: BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthSessionSwitched) {
-                _refreshEvents();
-              }
+    return BlocListener<EventBloc, EventState>(
+      listener: (context, state) {
+        if (state.status == EventStatus.loading) {
+          print("loading");
+        } else if (state.status == EventStatus.success) {
+          print("success");
+        }
+      },
+      child: Stack(
+        children: [
+          RefreshIndicator(
+            triggerMode: RefreshIndicatorTriggerMode.anywhere,
+            onRefresh: () async {
+              _refreshEvents();
             },
-            child: BlocBuilder<EventBloc, EventState>(
-              builder: (context, state) {
-                if (state.events.isEmpty) {
-                  switch (state.status) {
-                    case EventStatus.initial:
-                      return const SizedBox();
-                    case EventStatus.loading:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case EventStatus.error:
-                      return const Center(
-                        child: Text('Oups, une erreur est survenue.'),
-                      );
-                    case EventStatus.success:
-                      return const Center(
-                        child: Text('Aucun post trouvé.'),
-                      );
-                  }
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthSessionSwitched) {
+                  _refreshEvents();
                 }
+              },
+              child: BlocBuilder<EventBloc, EventState>(
+                builder: (context, state) {
+                  if (state.events.isEmpty) {
+                    switch (state.status) {
+                      case EventStatus.initial:
+                        return const SizedBox();
+                      case EventStatus.loading:
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case EventStatus.error:
+                        return const Center(
+                          child: Text('Oups, une erreur est survenue.'),
+                        );
+                      case EventStatus.success:
+                        return const Center(
+                          child: Text('Aucun post trouvé.'),
+                        );
+                    }
+                  }
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                  ),
-                  child: ListView.builder(
-                    controller: _scrollController,
+                  return Padding(
                     padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
+                      horizontal: 8.0,
                     ),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: state.events.length + (state.hasMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == state.events.length) {
-                        if (state.status == EventStatus.error) {
-                          return const Center(
-                            child: Text('Oups, une erreur est survenue.'),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                      ),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: state.events.length + (state.hasMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == state.events.length) {
+                          if (state.status == EventStatus.error) {
+                            return const Center(
+                              child: Text('Oups, une erreur est survenue.'),
+                            );
+                          } else {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
                         }
-                      }
 
-                      final event = state.events[index];
+                        final event = state.events[index];
 
-                      final columnWithHeader = getPreviewWithColumn(
-                        event,
-                        index == 0 ||
-                            event.startDate.month !=
-                                state.events[index - 1].startDate.month,
-                      );
+                        final columnWithHeader = getPreviewWithColumn(
+                          event,
+                          index == 0 ||
+                              event.startDate.month !=
+                                  state.events[index - 1].startDate.month,
+                        );
 
-                      return TweenAnimationBuilder(
-                        tween: Tween<double>(begin: 0, end: 1),
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.ease,
-                        builder: (context, double value, child) {
-                          return Transform.translate(
-                            offset: Offset(50 * (1 - value), 0),
-                            child: Opacity(
-                              opacity: value,
-                              child: columnWithHeader,
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                Timer(const Duration(milliseconds: 100), () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    enableDrag: false,
-                    builder: (BuildContext context) {
-                      return const EventCreationModal();
-                    },
-                  );
-                });
-              },
-              label: Text(
-                'Ajouter',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
+                        return TweenAnimationBuilder(
+                          tween: Tween<double>(begin: 0, end: 1),
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.ease,
+                          builder: (context, double value, child) {
+                            return Transform.translate(
+                              offset: Offset(50 * (1 - value), 0),
+                              child: Opacity(
+                                opacity: value,
+                                child: columnWithHeader,
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
+                  );
+                },
               ),
-              icon: const Icon(Icons.add),
             ),
           ),
-        ),
-      ],
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                  Timer(const Duration(milliseconds: 100), () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      enableDrag: false,
+                      builder: (BuildContext context) {
+                        return const EventCreationModal();
+                      },
+                    );
+                  });
+                },
+                label: Text(
+                  'Ajouter',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                icon: const Icon(Icons.add),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -70,6 +70,10 @@ class _EventFormState extends State<EventForm> {
     if (DateTime.now().hour >= 22) {
       _date = DateTime.now().add(const Duration(days: 1));
       _startTime = const TimeOfDay(hour: 8, minute: 30);
+    } else {
+      _startTime = _startTime.replacing(
+        hour: DateTime.now().hour + 1,
+      );
     }
 
     _dateRange = DateTimeRange(
@@ -169,11 +173,6 @@ class _EventFormState extends State<EventForm> {
 
   void _onSubmit() {
     if (_formKey.currentState!.validate()) {
-      if (_dateRange.start.isBefore(DateTime.now())) {
-        showEventDateWarningDialog(context);
-        return;
-      }
-
       final description = _descriptionController.text.isNotEmpty
           ? _descriptionController.text
           : null;
@@ -182,6 +181,11 @@ class _EventFormState extends State<EventForm> {
         hour: _startTime.hour,
         minute: _startTime.minute,
       );
+
+      if (startDate.isBefore(DateTime.now())) {
+        showEventDateWarningDialog(context);
+        return;
+      }
 
       final endDate = _selectEndDate
           ? _dateRange.end.copyWith(

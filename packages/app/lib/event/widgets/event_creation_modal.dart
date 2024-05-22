@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/event_discard_changes_dialog.dart';
 import 'package:hollybike/event/widgets/event_form.dart';
+import 'package:hollybike/shared/utils/with_current_session.dart';
+
+import '../bloc/event_bloc.dart';
+import '../bloc/event_event.dart';
 
 class EventCreationModal extends StatefulWidget {
   const EventCreationModal({super.key});
@@ -11,6 +16,27 @@ class EventCreationModal extends StatefulWidget {
 
 class _EventCreationModalState extends State<EventCreationModal> {
   var touched = false;
+
+  void _onSubmit(
+    String name,
+    String? description,
+    DateTime startDate,
+    DateTime? endDate,
+  ) {
+    withCurrentSession(context, (session) {
+      context.read<EventBloc>().add(
+        CreateEvent(
+          session: session,
+          name: name,
+          description: description,
+          startDate: startDate,
+          endDate: endDate,
+        ),
+      );
+    });
+
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,18 +96,7 @@ class _EventCreationModalState extends State<EventCreationModal> {
                 touched = true;
               });
             },
-            onSubmit: (
-              String name,
-              String? description,
-              DateTime startDate,
-              DateTime? endDate,
-            ) {
-              // print("Event created");
-              // print("Name: $name");
-              // print("Description: $description");
-              // print("Start date: $startDate");
-              // print("End date: $endDate");
-            },
+            onSubmit: _onSubmit,
           ),
         ),
       ),

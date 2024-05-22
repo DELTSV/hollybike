@@ -13,6 +13,7 @@ class EventBloc extends Bloc<EventEvent, EventState> {
     on<LoadEventsNextPage>(_onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
     on<LoadEventDetails>(_onLoadEventDetails);
+    on<CreateEvent>(_onCreateEvent);
   }
 
   Future<void> _onLoadEventsNextPage(
@@ -66,8 +67,24 @@ class EventBloc extends Bloc<EventEvent, EventState> {
       event.eventId,
     );
 
+    emit(state
+        .copyWith(
+          event: eventDetails,
+        )
+        .loadSuccess);
+  }
+
+  Future<void> _onCreateEvent(
+    CreateEvent event,
+    Emitter<EventState> emit,
+  ) async {
+    emit(state.loadInProgress);
+
+    // Delay to simulate network request
+    await Future.delayed(const Duration(seconds: 2));
+
     emit(state.copyWith(
-      event: eventDetails,
+      events: [...state.events],
     ).loadSuccess);
   }
 }

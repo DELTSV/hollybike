@@ -23,3 +23,19 @@ class LoadEventDetails extends EventEvent {
 
   LoadEventDetails({required this.session, required this.eventId});
 }
+
+class CreateEvent extends EventEvent {
+  final AuthSession session;
+  final String name;
+  final String? description;
+  final DateTime startDate;
+  final DateTime? endDate;
+
+  CreateEvent({
+    required this.session,
+    required this.name,
+    this.description,
+    required this.startDate,
+    this.endDate,
+  });
+}
