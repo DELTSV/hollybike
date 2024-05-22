@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/event_date_input.dart';
 import 'package:hollybike/event/widgets/event_date_range_input.dart';
+import 'package:hollybike/event/widgets/event_form_description_field.dart';
+import 'package:hollybike/event/widgets/event_form_name_field.dart';
 import 'package:hollybike/event/widgets/event_time_input.dart';
 
 import '../../shared/utils/dates.dart';
@@ -10,9 +12,23 @@ import 'event_date_warning_dialog.dart';
 import 'event_select_end_date_switch.dart';
 
 class EventForm extends StatefulWidget {
-  final void Function() scrollToBottom;
+  final void Function(
+    String name,
+    String? description,
+    DateTime startDate,
+    DateTime? endDate,
+  ) onSubmit;
 
-  const EventForm({super.key, required this.scrollToBottom});
+  final void Function() onClose;
+
+  final String submitButtonText;
+
+  const EventForm({
+    super.key,
+    required this.onSubmit,
+    required this.onClose,
+    required this.submitButtonText,
+  });
 
   @override
   State<EventForm> createState() => _EventFormState();
@@ -23,17 +39,15 @@ class _EventFormState extends State<EventForm> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
+  final ScrollController _scrollController = ScrollController();
+
   var _dateRange = DateTimeRange(
     start: DateTime.now(),
     end: DateTime.now(),
   );
-
   var _date = DateTime.now();
-
   var _startTime = TimeOfDay.now();
-
   var _endTime = TimeOfDay.now();
-
   var _selectEndDate = false;
 
   @override
@@ -46,17 +60,18 @@ class _EventFormState extends State<EventForm> {
   @override
   void initState() {
     super.initState();
-    _endTime = initialEndTime;
-  }
 
-  TimeOfDay get initialEndTime {
-    return _startTime.hour == 23
-        ? const TimeOfDay(hour: 23, minute: 59)
-        : _startTime.replacing(hour: _startTime.hour + 1);
-  }
+    if (DateTime.now().hour >= 22) {
+      _date = DateTime.now().add(const Duration(days: 1));
+      _startTime = const TimeOfDay(hour: 8, minute: 30);
+    }
 
-  String formatTime(TimeOfDay time) {
-    return time.format(context);
+    _dateRange = DateTimeRange(
+      start: _date,
+      end: _date,
+    );
+
+    _endTime = _startTime.replacing(hour: _startTime.hour + 1);
   }
 
   void _onDateRangeChanged(DateTimeRange dateRange) {
@@ -110,13 +125,49 @@ class _EventFormState extends State<EventForm> {
   void _onSelectEndDateSwitchChanged(bool value) {
     if (value) {
       Timer(const Duration(milliseconds: 100), () {
-        widget.scrollToBottom();
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
       });
     }
 
     setState(() {
       _selectEndDate = value;
     });
+  }
+
+  void _onSubmit() {
+    if (_formKey.currentState!.validate()) {
+      if (_dateRange.start.isBefore(DateTime.now())) {
+        showEventDateWarningDialog(context);
+        return;
+      }
+
+      final description = _descriptionController.text.isNotEmpty
+          ? _descriptionController.text
+          : null;
+
+      final startDate = _dateRange.start.copyWith(
+        hour: _startTime.hour,
+        minute: _startTime.minute,
+      );
+
+      final endDate = _selectEndDate
+          ? _dateRange.end.copyWith(
+              hour: _endTime.hour,
+              minute: _endTime.minute,
+            )
+          : null;
+
+      widget.onSubmit(
+        _nameController.text,
+        description,
+        startDate,
+        endDate,
+      );
+    }
   }
 
   Widget buildDatesInputs() {
@@ -167,50 +218,60 @@ class _EventFormState extends State<EventForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: widget.onClose,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _onSubmit();
+              },
+              child: Text(widget.submitButtonText),
+            )
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 15,
+                top: 12,
               ),
-              labelText: "Nom de l'événement",
-              fillColor: Theme.of(context).colorScheme.primaryContainer,
-              filled: true,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    EventFormNameField(nameController: _nameController),
+                    const SizedBox(height: 15),
+                    EventFormDescriptionField(
+                      descriptionController: _descriptionController,
+                    ),
+                    const SizedBox(height: 10),
+                    EventSelectEndDateSwitch(
+                      value: _selectEndDate,
+                      onChange: () {
+                        _onSelectEndDateSwitchChanged(!_selectEndDate);
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    buildDatesInputs(),
+                  ],
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 15),
-          TextField(
-            controller: _descriptionController,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              labelText: "Description (optionnel)",
-              fillColor: Theme.of(context).colorScheme.primaryContainer,
-              filled: true,
-              suffixIcon: const Icon(Icons.description),
-            ),
-          ),
-          const SizedBox(height: 10),
-          EventSelectEndDateSwitch(
-            value: _selectEndDate,
-            onChange: () {
-              _onSelectEndDateSwitchChanged(!_selectEndDate);
-            },
-          ),
-          const SizedBox(height: 15),
-          buildDatesInputs(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

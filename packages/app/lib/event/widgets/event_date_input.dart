@@ -17,12 +17,12 @@ class EventDateInput extends StatelessWidget {
 
   String formatDate(DateTime date) {
     DateTime today = DateTime.now();
-    DateFormat fullDateFormatter = DateFormat.yMMMMd();
+    DateFormat fullDateFormatter = DateFormat.yMMMd();
 
     if (checkSameDate(date, today)) {
       return "Aujourd'hui";
     } else {
-      return "Le ${fullDateFormatter.format(date)}";
+      return fullDateFormatter.format(date);
     }
   }
 

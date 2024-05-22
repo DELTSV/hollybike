@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/event_discard_changes_dialog.dart';
-
-import 'event_form.dart';
+import 'package:hollybike/event/widgets/event_form.dart';
 
 class EventCreationModal extends StatelessWidget {
-  final ScrollController _controller = ScrollController();
-
-  EventCreationModal({super.key});
+  const EventCreationModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,49 +40,25 @@ class EventCreationModal extends StatelessWidget {
             left: 16,
             right: 16,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => {
-                      showEventDiscardChangesDialog(context, () {
-                        Navigator.of(context).pop();
-                      }),
-                    },
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text("Créer"),
-                  )
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _controller,
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 15,
-                      top: 12,
-                    ),
-                    child: EventForm(
-                      scrollToBottom: () {
-                        _controller.animateTo(
-                          _controller.position.maxScrollExtent,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          child: EventForm(
+            submitButtonText: "Créer",
+            onClose: () {
+              showEventDiscardChangesDialog(context, () {
+                Navigator.of(context).pop();
+              });
+            },
+            onSubmit: (
+              String name,
+              String? description,
+              DateTime startDate,
+              DateTime? endDate,
+            ) {
+              print("Event created");
+              print("Name: $name");
+              print("Description: $description");
+              print("Start date: $startDate");
+              print("End date: $endDate");
+            },
           ),
         ),
       ),
