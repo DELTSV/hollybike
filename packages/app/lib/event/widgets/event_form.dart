@@ -77,12 +77,17 @@ class _EventFormState extends State<EventForm> {
   void _onDateRangeChanged(DateTimeRange dateRange) {
     setState(() {
       _dateRange = dateRange;
+      _date = _dateRange.start;
     });
   }
 
   void _onDateChanged(DateTime date) {
     setState(() {
       _date = date;
+      _dateRange = DateTimeRange(
+        start: date,
+        end: date,
+      );
     });
   }
 

@@ -53,11 +53,11 @@ class EventCreationModal extends StatelessWidget {
               DateTime startDate,
               DateTime? endDate,
             ) {
-              print("Event created");
-              print("Name: $name");
-              print("Description: $description");
-              print("Start date: $startDate");
-              print("End date: $endDate");
+              // print("Event created");
+              // print("Name: $name");
+              // print("Description: $description");
+              // print("Start date: $startDate");
+              // print("End date: $endDate");
             },
           ),
         ),

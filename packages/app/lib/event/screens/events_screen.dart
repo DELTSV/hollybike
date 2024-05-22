@@ -204,7 +204,7 @@ class _EventsScreenState extends State<EventsScreen> {
                     context: context,
                     enableDrag: false,
                     builder: (BuildContext context) {
-                      return EventCreationModal();
+                      return const EventCreationModal();
                     },
                   );
                 });
