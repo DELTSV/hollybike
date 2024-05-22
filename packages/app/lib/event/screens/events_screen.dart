@@ -202,23 +202,20 @@ class _EventsScreenState extends State<EventsScreen> {
                 Timer(const Duration(milliseconds: 100), () {
                   showModalBottomSheet<void>(
                     context: context,
+                    enableDrag: false,
                     builder: (BuildContext context) {
-                      return const EventCreationModal();
+                      return EventCreationModal();
                     },
                   );
                 });
               },
-              backgroundColor: Theme.of(context).colorScheme.onPrimary,
               label: Text(
                 'Ajouter',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
               ),
-              splashColor:
-                  Theme.of(context).colorScheme.primary.withOpacity(0.2),
-              icon:
-                  Icon(Icons.add, color: Theme.of(context).colorScheme.primary),
+              icon: const Icon(Icons.add),
             ),
           ),
         ),

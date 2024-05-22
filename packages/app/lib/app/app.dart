@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app_router.dart';
 import 'package:hollybike/auth/guards/auth_stream.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -24,7 +25,10 @@ class App extends StatelessWidget {
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) => MaterialApp.router(
-        locale: const Locale('fr', 'FR'),
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        supportedLocales: const [
+          Locale('fr', 'FR'),
+        ],
         title: 'Hollybike',
         theme: BlocProvider.of<ThemeBloc>(context).getThemeData,
         routerConfig: appRouter.config(
