@@ -3,28 +3,21 @@ import 'package:flutter/material.dart';
 import '../../auth/types/auth_session.dart';
 
 @immutable
-abstract class EventEvent {}
+abstract class EventsEvent {}
 
-class LoadEventsNextPage extends EventEvent {
+class LoadEventsNextPage extends EventsEvent {
   final AuthSession session;
 
   LoadEventsNextPage({required this.session});
 }
 
-class RefreshEvents extends EventEvent {
+class RefreshEvents extends EventsEvent {
   final AuthSession session;
 
   RefreshEvents({required this.session});
 }
 
-class LoadEventDetails extends EventEvent {
-  final AuthSession session;
-  final int eventId;
-
-  LoadEventDetails({required this.session, required this.eventId});
-}
-
-class CreateEvent extends EventEvent {
+class CreateEvent extends EventsEvent {
   final AuthSession session;
   final String name;
   final String? description;

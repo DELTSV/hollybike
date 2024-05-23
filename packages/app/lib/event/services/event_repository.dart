@@ -1,9 +1,9 @@
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/event/bloc/event_api.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 import '../types/event.dart';
 import '../types/minimal_event.dart';
+import 'event_api.dart';
 
 class EventRepository {
   final EventApi eventApi;

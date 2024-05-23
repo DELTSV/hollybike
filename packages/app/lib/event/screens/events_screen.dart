@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_bloc.dart';
-import 'package:hollybike/event/bloc/event_event.dart';
-import 'package:hollybike/event/bloc/event_state.dart';
+import 'package:hollybike/event/bloc/events_bloc.dart';
+import 'package:hollybike/event/bloc/events_event.dart';
+import 'package:hollybike/event/bloc/events_state.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
@@ -33,6 +33,8 @@ class _EventsScreenState extends State<EventsScreen> {
 
     _loadNextPage();
 
+    print("EventsScreen: initState: _loadNextPage");
+
     _scrollController = ScrollController();
 
     _scrollController.addListener(() {
@@ -52,13 +54,13 @@ class _EventsScreenState extends State<EventsScreen> {
 
   void _loadNextPage() {
     withCurrentSession(context, (session) {
-      context.read<EventBloc>().add(LoadEventsNextPage(session: session));
+      context.read<EventsBloc>().add(LoadEventsNextPage(session: session));
     });
   }
 
   void _refreshEvents() {
     withCurrentSession(context, (session) {
-      context.read<EventBloc>().add(RefreshEvents(session: session));
+      context.read<EventsBloc>().add(RefreshEvents(session: session));
     });
   }
 
@@ -105,13 +107,13 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<EventBloc, EventState>(
+    return BlocListener<EventsBloc, EventsState>(
       listener: (context, state) {
-        if (state.status == EventStatus.loading) {
-          print("loading");
-        } else if (state.status == EventStatus.success) {
-          print("success");
-        }
+        // if (state.status == EventStatus.loading) {
+        //   print("loading");
+        // } else if (state.status == EventStatus.success) {
+        //   print("success");
+        // }
       },
       child: Stack(
         children: [
@@ -126,8 +128,19 @@ class _EventsScreenState extends State<EventsScreen> {
                   _refreshEvents();
                 }
               },
-              child: BlocBuilder<EventBloc, EventState>(
+              child: BlocBuilder<EventsBloc, EventsState>(
                 builder: (context, state) {
+                  if (state is EventPageLoadSuccess) {
+                    print(state.status);
+                    print("success event load");
+                  }
+
+                  if (state is EventPageLoadInProgress) {
+                    print(state.status);
+                    print("loading event load in progress");
+                  }
+
+
                   if (state.events.isEmpty) {
                     switch (state.status) {
                       case EventStatus.initial:
