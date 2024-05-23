@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:hollybike/event/types/minimal_event.dart';
+import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
-import 'package:http/http.dart';
 
 import '../../auth/types/auth_session.dart';
 import '../types/create_event.dart';
@@ -14,47 +12,41 @@ class EventApi {
     int page,
     int eventsPerPage,
   ) async {
-    final AuthSession(:host, :token) = session;
-    final uri =
-        Uri.parse("$host/api/events?page=$page&per_page=$eventsPerPage");
-
-    final response = await get(
-      uri,
-      headers: {'Authorization': "Bearer $token"},
+    final response = await DioClient(session).dio.get(
+      '/events',
+      queryParameters: {
+        'page': page,
+        'per_page': eventsPerPage,
+      },
     );
 
-    return PaginatedList.fromResponseJson(response.bodyBytes, MinimalEvent.fromJson);
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch events");
+    }
+
+    return PaginatedList.fromJson(response.data, MinimalEvent.fromJson);
   }
 
   Future<Event> getEvent(AuthSession session, int eventId) async {
-    final AuthSession(:host, :token) = session;
-    final uri = Uri.parse("$host/api/events/$eventId");
+    final response = await DioClient(session).dio.get('/events/$eventId');
 
-    final response = await get(
-      uri,
-      headers: {'Authorization': "Bearer $token"},
-    );
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch event");
+    }
 
-    return Event.fromResponseJson(response.bodyBytes);
+    return Event.fromJson(response.data);
   }
 
   Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {
-    final AuthSession(:host, :token) = session;
-    final uri = Uri.parse("$host/api/events");
-
-    final response = await post(
-      uri,
-      headers: {
-        'Authorization': "Bearer $token",
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(event.toJson()),
+    final response = await DioClient(session).dio.post(
+      '/events',
+      data: event.toJson(),
     );
 
     if (response.statusCode != 201) {
       throw Exception("Failed to create event");
     }
 
-    return Event.fromResponseJson(response.bodyBytes);
+    return Event.fromJson(response.data);
   }
 }

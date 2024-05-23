@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/shared/types/json_map.dart';
 
@@ -19,17 +16,10 @@ class PaginatedList<T> with _$PaginatedList<T> {
 
   factory PaginatedList.fromJson(
     JsonMap json,
-    T Function(Object? json) fromJson,
-  ) =>
-      _$PaginatedListFromJson(json, fromJson);
-
-  factory PaginatedList.fromResponseJson(
-    Uint8List response,
     T Function(JsonMap json) fromItemJson,
-  ) {
-    return PaginatedList.fromJson(
-      jsonDecode(utf8.decode(response)),
-      (Object? test) => fromItemJson(test as JsonMap),
-    );
-  }
+  ) =>
+      _$PaginatedListFromJson(
+        json,
+        (Object? test) => fromItemJson(test as JsonMap),
+      );
 }

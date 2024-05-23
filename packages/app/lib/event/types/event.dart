@@ -30,12 +30,6 @@ class Event with _$Event {
 
   factory Event.fromJson(JsonMap json) => _$EventFromJson(json);
 
-  factory Event.fromResponseJson(
-    Uint8List response,
-  ) {
-    return Event.fromJson(jsonDecode(utf8.decode(response)));
-  }
-
   String get placeholderImage => placeholderImageFromDateTime(startDate);
 
   MinimalEvent toMinimalEvent() {
