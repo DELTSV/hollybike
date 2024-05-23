@@ -68,8 +68,8 @@ class EventPageLoadFailure extends EventsState {
         );
 }
 
-class EventCreatingInProgress extends EventsState {
-  EventCreatingInProgress(EventsState state)
+class EventCreationInProgress extends EventsState {
+  EventCreationInProgress(EventsState state)
       : super(
           events: state.events,
           hasMore: state.hasMore,

@@ -34,71 +34,7 @@ mixin _$Event {
   DateTime get updatedAt => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(
-            int id,
-            String name,
-            MinimalUser owner,
-            EventStatusState status,
-            @JsonKey(name: "start_date_time") DateTime startDate,
-            @JsonKey(name: "end_date_time") DateTime? endDate,
-            @JsonKey(name: "create_date_time") DateTime createdAt,
-            @JsonKey(name: "update_date_time") DateTime updatedAt,
-            String? description,
-            String? image)
-        a,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            int id,
-            String name,
-            MinimalUser owner,
-            EventStatusState status,
-            @JsonKey(name: "start_date_time") DateTime startDate,
-            @JsonKey(name: "end_date_time") DateTime? endDate,
-            @JsonKey(name: "create_date_time") DateTime createdAt,
-            @JsonKey(name: "update_date_time") DateTime updatedAt,
-            String? description,
-            String? image)?
-        a,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            int id,
-            String name,
-            MinimalUser owner,
-            EventStatusState status,
-            @JsonKey(name: "start_date_time") DateTime startDate,
-            @JsonKey(name: "end_date_time") DateTime? endDate,
-            @JsonKey(name: "create_date_time") DateTime createdAt,
-            @JsonKey(name: "update_date_time") DateTime updatedAt,
-            String? description,
-            String? image)?
-        a,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Event value) a,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Event value)? a,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Event value)? a,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $EventCopyWith<Event> get copyWith => throw _privateConstructorUsedError;
@@ -337,7 +273,7 @@ class _$EventImpl extends _Event {
 
   @override
   String toString() {
-    return 'Event.a(id: $id, name: $name, owner: $owner, status: $status, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, image: $image)';
+    return 'Event(id: $id, name: $name, owner: $owner, status: $status, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, image: $image)';
   }
 
   @override
@@ -371,98 +307,6 @@ class _$EventImpl extends _Event {
   @pragma('vm:prefer-inline')
   _$$EventImplCopyWith<_$EventImpl> get copyWith =>
       __$$EventImplCopyWithImpl<_$EventImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(
-            int id,
-            String name,
-            MinimalUser owner,
-            EventStatusState status,
-            @JsonKey(name: "start_date_time") DateTime startDate,
-            @JsonKey(name: "end_date_time") DateTime? endDate,
-            @JsonKey(name: "create_date_time") DateTime createdAt,
-            @JsonKey(name: "update_date_time") DateTime updatedAt,
-            String? description,
-            String? image)
-        a,
-  }) {
-    return a(id, name, owner, status, startDate, endDate, createdAt, updatedAt,
-        description, image);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(
-            int id,
-            String name,
-            MinimalUser owner,
-            EventStatusState status,
-            @JsonKey(name: "start_date_time") DateTime startDate,
-            @JsonKey(name: "end_date_time") DateTime? endDate,
-            @JsonKey(name: "create_date_time") DateTime createdAt,
-            @JsonKey(name: "update_date_time") DateTime updatedAt,
-            String? description,
-            String? image)?
-        a,
-  }) {
-    return a?.call(id, name, owner, status, startDate, endDate, createdAt,
-        updatedAt, description, image);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(
-            int id,
-            String name,
-            MinimalUser owner,
-            EventStatusState status,
-            @JsonKey(name: "start_date_time") DateTime startDate,
-            @JsonKey(name: "end_date_time") DateTime? endDate,
-            @JsonKey(name: "create_date_time") DateTime createdAt,
-            @JsonKey(name: "update_date_time") DateTime updatedAt,
-            String? description,
-            String? image)?
-        a,
-    required TResult orElse(),
-  }) {
-    if (a != null) {
-      return a(id, name, owner, status, startDate, endDate, createdAt,
-          updatedAt, description, image);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_Event value) a,
-  }) {
-    return a(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_Event value)? a,
-  }) {
-    return a?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_Event value)? a,
-    required TResult orElse(),
-  }) {
-    if (a != null) {
-      return a(this);
-    }
-    return orElse();
-  }
 
   @override
   Map<String, dynamic> toJson() {

@@ -1,4 +1,5 @@
 import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/event/types/create_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 import '../types/event.dart';
@@ -20,5 +21,9 @@ class EventRepository {
 
   Future<Event> fetchEvent(AuthSession session, int eventId) async {
     return eventApi.getEvent(session, eventId);
+  }
+
+  Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {
+    return eventApi.createEvent(session, event);
   }
 }

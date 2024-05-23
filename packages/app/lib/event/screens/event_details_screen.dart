@@ -1,6 +1,8 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_state.dart';
@@ -19,11 +21,13 @@ class EventDetailsScreen extends StatefulWidget {
     required this.eventId,
     required this.eventImage,
     required this.eventName,
+    this.animate = true,
   });
 
   final int eventId;
   final EventImage eventImage;
   final String eventName;
+  final bool animate;
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
@@ -58,21 +62,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             width: double.infinity,
             child: Stack(
               children: [
-                Hero(
-                  tag: "event-image-${widget.eventId}",
-                  child: Container(
-                    width: double.infinity,
-                    foregroundDecoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Theme.of(context).scaffoldBackgroundColor,
-                        ],
+                HeroMode(
+                  enabled: widget.animate,
+                  child: Hero(
+                    tag: "event-image-${widget.eventId}",
+                    child: Container(
+                      width: double.infinity,
+                      foregroundDecoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Theme.of(context).scaffoldBackgroundColor,
+                          ],
+                        ),
                       ),
+                      child: widget.eventImage,
                     ),
-                    child: widget.eventImage,
                   ),
                 ),
                 Align(
@@ -83,15 +90,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Hero(
-                            tag: "event-name-${widget.eventId}",
-                            child: SizedBox(
-                              width: constraints.maxWidth - 20,
-                              child: Text(
-                                widget.eventName,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.titleLarge,
+                          HeroMode(
+                            enabled: widget.animate,
+                            child: Hero(
+                              tag: "event-name-${widget.eventId}",
+                              child: SizedBox(
+                                width: constraints.maxWidth - 20,
+                                child: Text(
+                                  widget.eventName,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
                               ),
                             ),
                           ),

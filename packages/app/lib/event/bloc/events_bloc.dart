@@ -2,8 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/events_event.dart';
 import 'package:hollybike/event/services/event_repository.dart';
 import 'package:hollybike/event/bloc/events_state.dart';
+import 'package:hollybike/event/types/create_event.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+
+import 'dart:developer';
+
 
 class EventsBloc extends Bloc<EventsEvent, EventsState> {
   final EventRepository eventRepository;
@@ -61,13 +65,21 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     CreateEvent event,
     Emitter<EventsState> emit,
   ) async {
-    // emit(state.loadInProgress);
-    //
-    // // Delay to simulate network request
-    // await Future.delayed(const Duration(seconds: 2));
-    //
-    // emit(state.copyWith(
-    //   events: [...state.events],
-    // ).loadSuccess);
+    emit(EventCreationInProgress(state));
+
+    try {
+      final createdEvent = await eventRepository.createEvent(event.session, CreateEventDTO(
+        name: event.name,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        description: event.description,
+      ));
+
+      emit(EventSuccessfullyCreated(state, createdEvent: createdEvent));
+    } catch (e) {
+      log('Error while creating event: $e');
+      emit(EventCreateError(state, errorMessage: 'Une erreur est survenue.'));
+      return;
+    }
   }
 }

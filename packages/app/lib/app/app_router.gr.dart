@@ -45,6 +45,7 @@ abstract class $AppRouter extends _i10.RootStackRouter {
           eventId: args.eventId,
           eventImage: args.eventImage,
           eventName: args.eventName,
+          animate: args.animate,
         ),
       );
     },
@@ -139,6 +140,7 @@ class EventDetailsRoute extends _i10.PageRouteInfo<EventDetailsRouteArgs> {
     required int eventId,
     required _i12.EventImage eventImage,
     required String eventName,
+    bool animate = true,
     List<_i10.PageRouteInfo>? children,
   }) : super(
           EventDetailsRoute.name,
@@ -147,6 +149,7 @@ class EventDetailsRoute extends _i10.PageRouteInfo<EventDetailsRouteArgs> {
             eventId: eventId,
             eventImage: eventImage,
             eventName: eventName,
+            animate: animate,
           ),
           initialChildren: children,
         );
@@ -163,6 +166,7 @@ class EventDetailsRouteArgs {
     required this.eventId,
     required this.eventImage,
     required this.eventName,
+    this.animate = true,
   });
 
   final _i11.Key? key;
@@ -173,9 +177,11 @@ class EventDetailsRouteArgs {
 
   final String eventName;
 
+  final bool animate;
+
   @override
   String toString() {
-    return 'EventDetailsRouteArgs{key: $key, eventId: $eventId, eventImage: $eventImage, eventName: $eventName}';
+    return 'EventDetailsRouteArgs{key: $key, eventId: $eventId, eventImage: $eventImage, eventName: $eventName, animate: $animate}';
   }
 }
 

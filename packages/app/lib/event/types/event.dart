@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 
 import '../../shared/types/json_map.dart';
 import '../../user/types/minimal_user.dart';
@@ -14,7 +15,7 @@ part 'event.g.dart';
 class Event with _$Event {
   const Event._();
 
-  const factory Event.a({
+  const factory Event({
     required int id,
     required String name,
     required MinimalUser owner,
@@ -36,6 +37,20 @@ class Event with _$Event {
   }
 
   String get placeholderImage => placeholderImageFromDateTime(startDate);
+
+  MinimalEvent toMinimalEvent() {
+    return MinimalEvent(
+      id: id,
+      name: name,
+      owner: owner,
+      status: status,
+      startDate: startDate,
+      endDate: endDate,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      image: image,
+    );
+  }
 
   static String placeholderImageFromDateTime(DateTime startDate) {
     if (startDate.month >= 3 && startDate.month <= 5) {
