@@ -12,6 +12,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   EventDetailsBloc({required this.eventRepository})
       : super(const EventDetailsState()) {
     on<LoadEventDetails>(_onLoadEventDetails);
+    on<PublishEvent>(_onPublishEvent);
   }
 
   Future<void> _onLoadEventDetails(
@@ -32,6 +33,25 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     } catch (e) {
       log('Error while loading event details', error: e);
       emit(EventDetailsLoadFailure(state, errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onPublishEvent(
+    PublishEvent event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    emit(EventOperationInProgress(state));
+
+    try {
+      await eventRepository.publishEvent(
+        event.session,
+        event.eventId,
+      );
+
+      emit(EventOperationSuccess(state));
+    } catch (e) {
+      log('Error while publishing event', error: e);
+      emit(EventOperationFailure(state, errorMessage: e.toString()));
     }
   }
 }

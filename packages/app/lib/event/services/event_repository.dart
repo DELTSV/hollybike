@@ -26,4 +26,8 @@ class EventRepository {
   Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {
     return eventApi.createEvent(session, event);
   }
+
+  Future<void> publishEvent(AuthSession session, int eventId) async {
+    return eventApi.publishEvent(session, eventId);
+  }
 }

@@ -39,14 +39,24 @@ class EventApi {
 
   Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {
     final response = await DioClient(session).dio.post(
-      '/events',
-      data: event.toJson(),
-    );
+          '/events',
+          data: event.toJson(),
+        );
 
     if (response.statusCode != 201) {
       throw Exception("Failed to create event");
     }
 
     return Event.fromJson(response.data);
+  }
+
+  Future<void> publishEvent(AuthSession session, int eventId) async {
+    final response = await DioClient(session).dio.patch(
+          '/events/$eventId/schedule',
+        );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to publish event");
+    }
   }
 }

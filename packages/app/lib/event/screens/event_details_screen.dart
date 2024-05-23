@@ -51,6 +51,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
+  void _onPublish() {
+    withCurrentSession(
+      context,
+      (session) {
+        context.read<EventDetailsBloc>().add(
+              PublishEvent(
+                eventId: widget.eventId,
+                session: session,
+              ),
+            );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -117,34 +131,40 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             context,
             state,
           ) {
-            if (state is EventDetailsLoadSuccess) {
-              if (state.event == null) {
-                return const Text("Event not found");
-              }
-
-              final Event event = state.event!;
-
-              List<Widget> children = [
-                Text(event.startDate.toString()),
-              ];
-
-              if (event.status == EventStatusState.pending) {
-                children.insert(
-                    0,
-                    EventPendingWarning(
-                      onAction: () => {},
-                    ));
-              }
-
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: children,
-                ),
-              );
+            if (state is EventDetailsLoadInProgress) {
+              return const CircularProgressIndicator();
             }
 
-            return const CircularProgressIndicator();
+            if (state is EventDetailsLoadFailure) {
+              return const Text("Error while loading event details");
+            }
+
+            if (state.event == null) {
+              return const Text("Event not found");
+            }
+
+            final Event event = state.event!;
+
+            List<Widget> children = [
+              Text(event.startDate.toString()),
+            ];
+
+            if (event.status == EventStatusState.pending) {
+              children.insert(
+                  0,
+                  EventPendingWarning(
+                    onAction: () => {
+                      _onPublish(),
+                    },
+                  ));
+            }
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: children,
+              ),
+            );
           }),
         ],
       ),

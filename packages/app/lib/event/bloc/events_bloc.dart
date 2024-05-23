@@ -94,10 +94,10 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
             description: event.description,
           ));
 
-      emit(EventSuccessfullyCreated(state, createdEvent: createdEvent));
+      emit(EventCreationSuccess(state, createdEvent: createdEvent));
     } catch (e) {
       log('Error while creating event', error: e);
-      emit(EventCreateError(
+      emit(EventCreationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));

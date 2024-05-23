@@ -78,10 +78,10 @@ class EventCreationInProgress extends EventsState {
         );
 }
 
-class EventSuccessfullyCreated extends EventsState {
+class EventCreationSuccess extends EventsState {
   final Event createdEvent;
 
-  EventSuccessfullyCreated(EventsState state, {required this.createdEvent})
+  EventCreationSuccess(EventsState state, {required this.createdEvent})
       : super(
           events: state.events,
           hasMore: state.hasMore,
@@ -90,10 +90,10 @@ class EventSuccessfullyCreated extends EventsState {
         );
 }
 
-class EventCreateError extends EventsState {
+class EventCreationFailure extends EventsState {
   final String errorMessage;
 
-  EventCreateError(EventsState state, {required this.errorMessage})
+  EventCreationFailure(EventsState state, {required this.errorMessage})
       : super(
           events: state.events,
           hasMore: state.hasMore,

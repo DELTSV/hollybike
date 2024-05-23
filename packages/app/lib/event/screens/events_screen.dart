@@ -124,7 +124,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 },
               ),
               BlocListener<EventsBloc, EventsState>(listener: (context, event) {
-                if (event is EventSuccessfullyCreated) {
+                if (event is EventCreationSuccess) {
                   Future.delayed(const Duration(milliseconds: 50), () {
                     _navigateToEventDetails(
                         context, event.createdEvent.toMinimalEvent(), false);
@@ -135,7 +135,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   });
                 }
 
-                if (event is EventCreateError) {
+                if (event is EventCreationFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(event.errorMessage),

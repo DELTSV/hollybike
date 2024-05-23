@@ -51,3 +51,29 @@ class EventDetailsLoadFailure extends EventDetailsState {
           status: EventDetailsStatus.error,
         );
 }
+
+class EventOperationInProgress extends EventDetailsState {
+  EventOperationInProgress(EventDetailsState state)
+      : super(
+          event: state.event,
+          status: EventDetailsStatus.loading,
+        );
+}
+
+class EventOperationSuccess extends EventDetailsState {
+  EventOperationSuccess(EventDetailsState state)
+      : super(
+          event: state.event,
+          status: EventDetailsStatus.success,
+        );
+}
+
+class EventOperationFailure extends EventDetailsState {
+  final String errorMessage;
+
+  EventOperationFailure(EventDetailsState state, {required this.errorMessage})
+      : super(
+          event: state.event,
+          status: EventDetailsStatus.error,
+        );
+}

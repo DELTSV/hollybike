@@ -11,3 +11,10 @@ class LoadEventDetails extends EventDetailsEvent {
 
   LoadEventDetails({required this.session, required this.eventId});
 }
+
+class PublishEvent extends EventDetailsEvent {
+  final AuthSession session;
+  final int eventId;
+
+  PublishEvent({required this.session, required this.eventId});
+}
