@@ -17,6 +17,8 @@ import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'event/bloc/event_details_event.dart';
+import 'event/bloc/events_event.dart';
 import 'event/services/event_api.dart';
 
 void main() {
@@ -69,12 +71,12 @@ class MyApp extends StatelessWidget {
             BlocProvider<EventsBloc>(
               create: (context) => EventsBloc(
                 eventRepository: RepositoryProvider.of<EventRepository>(context),
-              ),
+              )..add(SubscribeToEvents()),
             ),
             BlocProvider<EventDetailsBloc>(
               create: (context) => EventDetailsBloc(
                 eventRepository: RepositoryProvider.of<EventRepository>(context),
-              ),
+              )..add(SubscribeToEvent()),
             ),
           ],
           child: RepositoryProvider<AuthSessionRepository>(

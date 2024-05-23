@@ -5,6 +5,10 @@ import '../../auth/types/auth_session.dart';
 @immutable
 abstract class EventsEvent {}
 
+class SubscribeToEvents extends EventsEvent {
+  SubscribeToEvents();
+}
+
 class LoadEventsNextPage extends EventsEvent {
   final AuthSession session;
 

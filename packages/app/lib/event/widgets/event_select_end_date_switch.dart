@@ -22,7 +22,7 @@ class EventSelectEndDateSwitch extends StatelessWidget {
             value: value,
             activeColor: Theme.of(context).colorScheme.onPrimary,
             inactiveTrackColor: Theme.of(context).colorScheme.primaryContainer,
-            trackOutlineColor: MaterialStateProperty.all(Theme.of(context)
+            trackOutlineColor: WidgetStateProperty.all(Theme.of(context)
                 .colorScheme
                 .primaryContainer
                 .withOpacity(0.5)),

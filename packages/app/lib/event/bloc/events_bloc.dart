@@ -13,9 +13,28 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
   final int numberOfEventsPerRequest = 10;
 
   EventsBloc({required this.eventRepository}) : super(const EventsState()) {
+    on<SubscribeToEvents>(_onSubscribeToEvents);
     on<LoadEventsNextPage>(_onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
     on<CreateEvent>(_onCreateEvent);
+  }
+
+  @override
+  Future<void> close() async {
+    await eventRepository.close();
+    return super.close();
+  }
+
+  Future<void> _onSubscribeToEvents(
+    SubscribeToEvents event,
+    Emitter<EventsState> emit,
+  ) async {
+    await emit.forEach<List<MinimalEvent>>(
+      eventRepository.eventsStream,
+      onData: (events) => state.copyWith(
+        events: events,
+      ),
+    );
   }
 
   Future<void> _onLoadEventsNextPage(
@@ -36,7 +55,6 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       );
 
       emit(EventPageLoadSuccess(state.copyWith(
-        events: [...state.events, ...page.items],
         hasMore: page.items.length == numberOfEventsPerRequest,
         nextPage: state.nextPage + 1,
       )));
@@ -57,14 +75,12 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     emit(EventPageLoadInProgress(const EventsState()));
 
     try {
-      PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
+      PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
         event.session,
-        0,
         numberOfEventsPerRequest,
       );
 
       emit(EventPageLoadSuccess(state.copyWith(
-        events: page.items,
         hasMore: page.items.length == numberOfEventsPerRequest,
         nextPage: 1,
       )));
