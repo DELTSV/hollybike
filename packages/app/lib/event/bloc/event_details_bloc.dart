@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/event_details_event.dart';
 import 'package:hollybike/event/bloc/event_details_state.dart';
@@ -18,13 +20,18 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   ) async {
     emit(EventDetailsLoadInProgress(state));
 
-    final eventDetails = await eventRepository.fetchEvent(
-      event.session,
-      event.eventId,
-    );
+    try {
+      final eventDetails = await eventRepository.fetchEvent(
+        event.session,
+        event.eventId,
+      );
 
-    emit(EventDetailsLoadSuccess(state.copyWith(
-      event: eventDetails,
-    )));
+      emit(EventDetailsLoadSuccess(state.copyWith(
+        event: eventDetails,
+      )));
+    } catch (e) {
+      log('Error while loading event details', error: e);
+      emit(EventDetailsLoadFailure(state, errorMessage: e.toString()));
+    }
   }
 }
