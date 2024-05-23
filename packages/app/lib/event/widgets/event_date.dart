@@ -1,33 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/shared/utils/dates.dart';
 
-class BirthDayCardClipper extends CustomClipper<Path> {
-  final double cornerRadius;
-  final double cornerRadius2;
-
-  BirthDayCardClipper({required this.cornerRadius, required this.cornerRadius2});
-
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-
-    path.moveTo(0, cornerRadius);
-    path.lineTo(0, (size.height - cornerRadius));
-    path.quadraticBezierTo(0, size.height, cornerRadius, size.height);
-    path.lineTo(size.width - cornerRadius2, size.height);
-    path.lineTo(size.width, size.height - cornerRadius2);
-    path.lineTo(size.width, 0 + cornerRadius2);
-    path.quadraticBezierTo(size.width, 0, size.width - cornerRadius, 0);
-    path.lineTo(cornerRadius, 0);
-    path.quadraticBezierTo(0, 0, 0, cornerRadius);
-
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
+import 'event_date_clipper.dart';
 
 class EventDate extends StatelessWidget {
   final DateTime date;
@@ -42,7 +16,7 @@ class EventDate extends StatelessWidget {
       child: Stack(
         children: [
           ClipPath(
-            clipper: BirthDayCardClipper(cornerRadius: 8, cornerRadius2: 15),
+            clipper: EventDateClipper(cornerRadius: 8, cornerRadius2: 15),
             child: Container(
               color: Theme.of(context).colorScheme.onPrimaryContainer,
               child: Center(
@@ -56,7 +30,7 @@ class EventDate extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: ClipPath(
-              clipper: BirthDayCardClipper(cornerRadius: 5, cornerRadius2: 12),
+              clipper: EventDateClipper(cornerRadius: 5, cornerRadius2: 12),
               child: Container(
                 color: Theme.of(context).cardColor,
                 height: 40,
@@ -68,14 +42,14 @@ class EventDate extends StatelessWidget {
                       Text(
                         getMinimalDay(date),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontSize: 10,
-                        ),
+                              fontSize: 10,
+                            ),
                       ),
                       Text(
                         date.day.toString(),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontSize: 14,
-                        ),
+                              fontSize: 14,
+                            ),
                       ),
                     ],
                   ),

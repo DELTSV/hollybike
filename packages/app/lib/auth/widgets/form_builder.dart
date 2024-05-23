@@ -29,14 +29,14 @@ class FormBuilder extends StatefulWidget {
 }
 
 class _FormBuilderState extends State<FormBuilder> {
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraint) {
         final height = MediaQuery.of(context).size.height;
         return ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: height < 500 ? height-150 : 500),
+          constraints:
+              BoxConstraints(maxHeight: height < 500 ? height - 150 : 500),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -63,7 +63,9 @@ class _FormBuilderState extends State<FormBuilder> {
 
   List<Widget> _renderError() {
     return <Widget>[
-      ErrorConsumer(notificationsConsumerId: widget.notificationsConsumerId,),
+      ErrorConsumer(
+        notificationsConsumerId: widget.notificationsConsumerId,
+      ),
     ];
   }
 

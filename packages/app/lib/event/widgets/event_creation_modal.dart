@@ -25,14 +25,14 @@ class _EventCreationModalState extends State<EventCreationModal> {
   ) {
     withCurrentSession(context, (session) {
       context.read<EventsBloc>().add(
-        CreateEvent(
-          session: session,
-          name: name,
-          description: description,
-          startDate: startDate,
-          endDate: endDate,
-        ),
-      );
+            CreateEvent(
+              session: session,
+              name: name,
+              description: description,
+              startDate: startDate,
+              endDate: endDate,
+            ),
+          );
     });
 
     Navigator.of(context).pop();

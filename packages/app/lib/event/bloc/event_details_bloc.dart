@@ -10,7 +10,8 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   final EventRepository _eventRepository;
 
   EventDetailsBloc({required EventRepository eventRepository})
-      : _eventRepository = eventRepository, super(const EventDetailsState()) {
+      : _eventRepository = eventRepository,
+        super(const EventDetailsState()) {
     on<SubscribeToEvent>(_onSubscribeToEvent);
     on<LoadEventDetails>(_onLoadEventDetails);
     on<PublishEvent>(_onPublishEvent);

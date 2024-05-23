@@ -22,7 +22,8 @@ import 'event/bloc/events_event.dart';
 import 'event/services/event_api.dart';
 
 void main() {
-  initializeDateFormatting("fr_FR").then((value) => Intl.defaultLocale = "fr_FR");
+  initializeDateFormatting("fr_FR")
+      .then((value) => Intl.defaultLocale = "fr_FR");
   runApp(const MyApp());
 }
 
@@ -70,12 +71,14 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<EventsBloc>(
               create: (context) => EventsBloc(
-                eventRepository: RepositoryProvider.of<EventRepository>(context),
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvents()),
             ),
             BlocProvider<EventDetailsBloc>(
               create: (context) => EventDetailsBloc(
-                eventRepository: RepositoryProvider.of<EventRepository>(context),
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvent()),
             ),
           ],

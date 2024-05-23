@@ -17,7 +17,8 @@ class TextLoadingPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberOfLetters = minLetters + (Random()).nextInt(maxLetters - minLetters);
+    final numberOfLetters =
+        minLetters + (Random()).nextInt(maxLetters - minLetters);
     final string = List.filled(numberOfLetters, "  ").join();
 
     return Container(

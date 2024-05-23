@@ -18,12 +18,10 @@ class MinimalEvent with _$MinimalEvent {
     required String name,
     required MinimalUser owner,
     required EventStatusState status,
-
     @JsonKey(name: "start_date_time") required DateTime startDate,
     @JsonKey(name: "end_date_time") DateTime? endDate,
     @JsonKey(name: "create_date_time") required DateTime createdAt,
     @JsonKey(name: "update_date_time") required DateTime updatedAt,
-
     String? description,
     String? image,
   }) = _MinimalEvent;

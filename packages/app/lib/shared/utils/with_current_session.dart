@@ -4,7 +4,8 @@ import 'package:hollybike/auth/types/auth_session.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
 
-void withCurrentSession(BuildContext context, void Function(AuthSession session) callback) {
+void withCurrentSession(
+    BuildContext context, void Function(AuthSession session) callback) {
   final authBloc = BlocProvider.of<AuthBloc>(context);
 
   if (authBloc.state.currentSession == null) {

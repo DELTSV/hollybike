@@ -16,5 +16,6 @@ class MinimalUser with _$MinimalUser {
     required UserStatus status,
   }) = _MinimalUser;
 
-  factory MinimalUser.fromJson(Map<String, dynamic> json) => _$MinimalUserFromJson(json);
+  factory MinimalUser.fromJson(Map<String, dynamic> json) =>
+      _$MinimalUserFromJson(json);
 }

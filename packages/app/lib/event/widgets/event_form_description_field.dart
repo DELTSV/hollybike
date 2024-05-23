@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class EventFormDescriptionField extends StatelessWidget {
   final TextEditingController descriptionController;
 
-  const EventFormDescriptionField({super.key, required this.descriptionController});
+  const EventFormDescriptionField(
+      {super.key, required this.descriptionController});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +28,7 @@ class EventFormDescriptionField extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
         labelText: "Description (optionnel)",
-        fillColor:
-        Theme.of(context).colorScheme.primaryContainer,
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
         filled: true,
         suffixIcon: const Icon(Icons.description),
       ),

@@ -6,6 +6,7 @@ import '../../user/types/minimal_user.dart';
 import 'event_status_state.dart';
 
 part 'event.freezed.dart';
+
 part 'event.g.dart';
 
 @freezed

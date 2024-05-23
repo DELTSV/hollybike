@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../shared/types/json_map.dart';
 
 part 'create_event.freezed.dart';
+
 part 'create_event.g.dart';
 
 @freezed

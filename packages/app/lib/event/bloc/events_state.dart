@@ -39,21 +39,21 @@ class EventInitial extends EventsState {}
 class EventPageLoadInProgress extends EventsState {
   EventPageLoadInProgress(EventsState state)
       : super(
-          events: state.events,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventStatus.loading,
-        );
+    events: state.events,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: EventStatus.loading,
+  );
 }
 
 class EventPageLoadSuccess extends EventsState {
   EventPageLoadSuccess(EventsState state)
       : super(
-          events: state.events,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventStatus.success,
-        );
+    events: state.events,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: EventStatus.success,
+  );
 }
 
 class EventPageLoadFailure extends EventsState {
@@ -61,21 +61,21 @@ class EventPageLoadFailure extends EventsState {
 
   EventPageLoadFailure(EventsState state, {required this.errorMessage})
       : super(
-          events: state.events,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventStatus.error,
-        );
+    events: state.events,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: EventStatus.error,
+  );
 }
 
 class EventCreationInProgress extends EventsState {
   EventCreationInProgress(EventsState state)
       : super(
-          events: state.events,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventStatus.error,
-        );
+    events: state.events,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: EventStatus.error,
+  );
 }
 
 class EventCreationSuccess extends EventsState {
@@ -83,11 +83,11 @@ class EventCreationSuccess extends EventsState {
 
   EventCreationSuccess(EventsState state, {required this.createdEvent})
       : super(
-          events: state.events,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventStatus.error,
-        );
+    events: state.events,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: EventStatus.error,
+  );
 }
 
 class EventCreationFailure extends EventsState {
@@ -95,9 +95,9 @@ class EventCreationFailure extends EventsState {
 
   EventCreationFailure(EventsState state, {required this.errorMessage})
       : super(
-          events: state.events,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventStatus.error,
-        );
+    events: state.events,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: EventStatus.error,
+  );
 }

@@ -47,7 +47,9 @@ class EventPreviewCard extends StatelessWidget {
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
-                                      Theme.of(context).cardColor.withOpacity(0.5),
+                                      Theme.of(context)
+                                          .cardColor
+                                          .withOpacity(0.5),
                                       Theme.of(context).cardColor,
                                     ],
                                   ),
@@ -73,33 +75,34 @@ class EventPreviewCard extends StatelessWidget {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Hero(
-                                      tag: "event-name-${event.id}",
-                                      child: SizedBox(
-                                        width: constraints.maxWidth,
-                                        child: Text(
-                                          event.name,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: Theme.of(context).textTheme.titleMedium,
-                                        ),
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Hero(
+                                    tag: "event-name-${event.id}",
+                                    child: SizedBox(
+                                      width: constraints.maxWidth,
+                                      child: Text(
+                                        event.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
                                       ),
                                     ),
-                                  ],
-                                ),
-                                EventStatusIndicator(event: event),
-                              ],
-                            );
-                          }
-                        ),
+                                  ),
+                                ],
+                              ),
+                              EventStatusIndicator(event: event),
+                            ],
+                          );
+                        }),
                       ),
                     )
                   ],

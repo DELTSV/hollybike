@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class SecuredTextFormField extends StatefulWidget {
   final TextEditingController? controller;
   final String? Function(String?) validator;
-  final InputDecoration Function({required IconButton iconButton}) getDecoration;
+  final InputDecoration Function({required IconButton iconButton})
+      getDecoration;
 
   const SecuredTextFormField({
     super.key,

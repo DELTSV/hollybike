@@ -10,12 +10,12 @@ class EventImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return event.image == null
         ? Image.asset(
-      event.placeholderImage,
-      fit: BoxFit.cover,
-    )
+            event.placeholderImage,
+            fit: BoxFit.cover,
+          )
         : Image.network(
-      event.image!,
-      fit: BoxFit.cover,
-    );
+            event.image!,
+            fit: BoxFit.cover,
+          );
   }
 }
