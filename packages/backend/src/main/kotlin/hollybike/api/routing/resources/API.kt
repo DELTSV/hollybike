@@ -15,4 +15,7 @@ class API {
 
 	@Resource("restart")
 	class Restart(val api: API = API())
+
+	@Resource("on-premise")
+	class OnPremise(val api: API = API())
 }

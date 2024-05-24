@@ -9,6 +9,8 @@ import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
+import hollybike.api.types.association.TOnboardingUpdate
+import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
@@ -24,6 +26,12 @@ class AssociationService(
 	private val db: Database,
 	private val storageService: StorageService,
 ) {
+	fun authorizeUpdate(caller: User, association: Association) = when(caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == association.id
+		EUserScope.User -> false
+	}
+
 	private fun checkAlreadyExistsException(e: ExposedSQLException): Boolean {
 		val cause = if (e.cause is BatchUpdateException && (e.cause as BatchUpdateException).cause is PSQLException) {
 			(e.cause as BatchUpdateException).cause as PSQLException
@@ -110,6 +118,18 @@ class AssociationService(
 
 			return Result.failure(e)
 		}
+	}
+
+	fun updateAssociationOnboarding(caller: User, association: Association, update: TOnboardingUpdate): Result<Association> {
+		if(!authorizeUpdate(caller, association)) {
+			return Result.failure(NotAllowedException())
+		}
+		transaction(db) {
+			update.updateDefaultUser?.let { association.updateDefaultUser = it }
+			update.updateAssociation?.let { association.updateAssociation = it }
+			update.createInvitation?.let { association.createInvitation = it }
+		}
+		return Result.success(association)
 	}
 
 	suspend fun updateAssociationPicture(id: Int, image: ByteArray, contentType: ContentType): Result<Association> {

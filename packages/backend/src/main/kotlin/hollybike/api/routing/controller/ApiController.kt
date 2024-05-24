@@ -1,7 +1,9 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.isOnPremise
 import hollybike.api.routing.resources.API
 import hollybike.api.types.api.TConfDone
+import hollybike.api.types.api.TOnPremise
 import hollybike.api.utils.MailSender
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -20,6 +22,7 @@ class ApiController(
 			notFound()
 			getSMTPStatus()
 			getConfDone()
+			getOnPremise()
 		}
 	}
 
@@ -48,6 +51,12 @@ class ApiController(
 	private fun Route.getConfDone() {
 		get<API.ConfDone> {
 			call.respond(TConfDone(confDone))
+		}
+	}
+
+	private fun Route.getOnPremise() {
+		get<API.OnPremise> {
+			call.respond(TOnPremise(application.isOnPremise))
 		}
 	}
 }

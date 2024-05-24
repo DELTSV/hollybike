@@ -1,8 +1,6 @@
 package hollybike.api.routing.controller
 
-import hollybike.api.exceptions.BadRequestException
-import hollybike.api.exceptions.UserDifferentNewPassword
-import hollybike.api.exceptions.UserWrongPassword
+import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
@@ -13,8 +11,10 @@ import hollybike.api.types.association.TAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
+import hollybike.api.types.user.TUserUpdate
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.get
+import hollybike.api.utils.patch
 import hollybike.api.utils.post
 import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
@@ -42,6 +42,7 @@ class UserController(
 				getUserById()
 				getByUserName()
 				getByEmail()
+				update()
 				updateMe()
 				uploadMeProfilePicture()
 				uploadUserProfilePicture()
@@ -53,7 +54,7 @@ class UserController(
 
 	private fun Route.getUserAssociation() {
 		get<Users.Id.Association>(EUserScope.Root) { params ->
-			userService.getUserAssociation(params.id.id)?.let {
+			userService.getUserAssociation(call.user, params.id.id)?.let {
 				call.respond(TAssociation(it))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
@@ -97,16 +98,41 @@ class UserController(
 		}
 	}
 
+	private fun Route.update() {
+		this.patch<Users.Id>(EUserScope.Admin) {
+			val update = call.receive<TUserUpdate>()
+			val user = userService.getUser(call.user, it.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+				return@patch
+			}
+			userService.updateUser(call.user, user, update).onSuccess { u ->
+				call.respond(TUser(u))
+			}.onFailure { e ->
+				when (e) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, e.message ?: "")
+				}
+			}
+		}
+	}
+
 	private fun Route.updateMe() {
 		this.patch<Users.Me> {
 			val update = call.receive<TUserUpdateSelf>()
 			userService.updateMe(call.user, update).onSuccess {
 				call.respond(TUser(it))
 			}.onFailure {
-				when(it) {
-					is BadRequestException -> call.respond(HttpStatusCode.BadRequest, "Changer de mot de passe nécessite new_password, new_password_again et old_password")
+				when (it) {
+					is BadRequestException -> call.respond(
+						HttpStatusCode.BadRequest,
+						"Changer de mot de passe nécessite new_password, new_password_again et old_password"
+					)
+
 					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais old_password")
-					is UserDifferentNewPassword -> call.respond(HttpStatusCode.BadRequest, "new_password et _new_password_again sont différent")
+					is UserDifferentNewPassword -> call.respond(
+						HttpStatusCode.BadRequest,
+						"new_password et _new_password_again sont différent"
+					)
 				}
 			}
 		}
@@ -128,7 +154,12 @@ class UserController(
 				return@post
 			}
 
-			userService.uploadUserProfilePicture(call.user, call.user, image.streamProvider().readBytes(), contentType.toString())
+			userService.uploadUserProfilePicture(
+				call.user,
+				call.user,
+				image.streamProvider().readBytes(),
+				contentType.toString()
+			)
 
 			call.respond(HttpStatusCode.OK)
 		}
@@ -155,7 +186,12 @@ class UserController(
 				return@post
 			}
 
-			userService.uploadUserProfilePicture(call.user, user, image.streamProvider().readBytes(), contentType.toString())
+			userService.uploadUserProfilePicture(
+				call.user,
+				user,
+				image.streamProvider().readBytes(),
+				contentType.toString()
+			)
 
 			call.respond(HttpStatusCode.OK)
 		}
@@ -166,8 +202,16 @@ class UserController(
 			val param = call.request.queryParameters.getSearchParam(userMapper + associationMapper)
 			val list = userService.getAll(call.user, param)?.map { TUser(it) }
 			val count = userService.getAllCount(call.user, param)
-			if(list != null && count != null) {
-				call.respond(TLists(list, param.page, ceil(count.toDouble() / param.perPage).toInt(), param.perPage, count.toInt()))
+			if (list != null && count != null) {
+				call.respond(
+					TLists(
+						list,
+						param.page,
+						ceil(count.toDouble() / param.perPage).toInt(),
+						param.perPage,
+						count.toInt()
+					)
+				)
 			} else {
 				call.respond(HttpStatusCode.Forbidden)
 			}

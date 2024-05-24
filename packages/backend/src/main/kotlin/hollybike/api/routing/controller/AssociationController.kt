@@ -3,14 +3,13 @@ package hollybike.api.routing.controller
 import hollybike.api.services.AssociationService
 import hollybike.api.exceptions.AssociationAlreadyExists
 import hollybike.api.exceptions.AssociationNotFound
+import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
-import hollybike.api.types.association.TAssociation
-import hollybike.api.types.association.TNewAssociation
-import hollybike.api.types.association.TUpdateAssociation
+import hollybike.api.types.association.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
@@ -35,6 +34,8 @@ class AssociationController(
 				getMyAssociation()
 				updateMyAssociation()
 				updateMyAssociationPicture()
+				getMyOnboarding()
+				updateMyOnboarding()
 
 				if (application.isCloud) {
 					getAll()
@@ -44,6 +45,7 @@ class AssociationController(
 					updateAssociation()
 					updateAssociationPicture()
 					deleteAssociation()
+					getAssociationOnboarding()
 				}
 			}
 		}
@@ -231,6 +233,36 @@ class AssociationController(
 	private fun Route.getMetaData() {
 		get<Associations.MetaData<API>>(EUserScope.Root) {
 			call.respond(associationMapper.getMapperData())
+		}
+	}
+
+	private fun Route.getMyOnboarding() {
+		get<Associations.Me.Onboarding<API>>(EUserScope.Admin) {
+			call.respond(TOnboarding(call.user.association))
+		}
+	}
+
+	private fun Route.updateMyOnboarding() {
+		patch<Associations.Me.Onboarding<API>>(EUserScope.Admin) {
+			val update = call.receive<TOnboardingUpdate>()
+			associationService.updateAssociationOnboarding(call.user, call.user.association, update).onSuccess {
+				call.respond(TOnboarding(it))
+			}.onFailure {
+				when (it) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					else -> call.respond(HttpStatusCode.InternalServerError)
+				}
+			}
+		}
+	}
+
+	private fun Route.getAssociationOnboarding() {
+		get<Associations.Id.Onboarding<API>>(EUserScope.Root) {
+			val association = associationService.getById(it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Association inconnue")
+				return@get
+			}
+			call.respond(TOnboarding(association))
 		}
 	}
 }
