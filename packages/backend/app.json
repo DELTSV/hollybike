@@ -6,7 +6,7 @@
 	},
 	"security": {
 		"audience": "hollybike.fr",
-		"domain": "http://192.168.8.248:8080",
+		"domain": "http://0.0.0.0:8080",
 		"realm": "realm",
 		"secret": "test-secret"
 	},

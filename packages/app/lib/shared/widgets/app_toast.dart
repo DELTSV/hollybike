@@ -23,14 +23,27 @@ class Toast {
 
   static void showSuccessToast(BuildContext context, String message) {
     showCustomToast(
-        context,
-        message,
-        Lottie.asset(
-          'assets/lottie/lottie_success_animation.json',
-          width: 30,
-          height: 30,
-          repeat: false,
-        ));
+      context,
+      message,
+      Lottie.asset(
+        'assets/lottie/lottie_success_animation.json',
+        width: 30,
+        height: 30,
+        repeat: false,
+      ),
+    );
+  }
+
+  static void showErrorToast(BuildContext context, String message) {
+    showCustomToast(
+      context,
+      message,
+      const Icon(
+        Icons.error,
+        color: Colors.red,
+        size: 30,
+      )
+    );
   }
 
   static OverlayEntry createOverlayEntry(

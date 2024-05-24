@@ -68,17 +68,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
   Widget build(BuildContext context) {
     return BlocListener<EventDetailsBloc, EventDetailsState>(
       listener: (context, state) {
-          if (state is EventOperationFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Error while publishing event"),
-              ),
-            );
-          }
+        if (state is EventOperationFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        }
 
-          if (state is EventOperationSuccess) {
-            Toast.showSuccessToast(context, state.successMessage);
-          }
+        if (state is EventOperationSuccess) {
+          Toast.showSuccessToast(context, state.successMessage);
+        }
       },
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -165,12 +161,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
               if (event.status == EventStatusState.pending) {
                 children.insert(
-                    0,
-                    EventPendingWarning(
-                      onAction: () => {
-                        _onPublish(),
-                      },
-                    ));
+                  0,
+                  EventPendingWarning(
+                    onAction: () => {
+                      _onPublish(),
+                    },
+                  ),
+                );
               }
 
               return Padding(

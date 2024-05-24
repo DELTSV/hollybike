@@ -139,11 +139,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 }
 
                 if (state is EventCreationFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.errorMessage),
-                    ),
-                  );
+                  Toast.showErrorToast(context, state.errorMessage);
                 }
               }),
             ],
