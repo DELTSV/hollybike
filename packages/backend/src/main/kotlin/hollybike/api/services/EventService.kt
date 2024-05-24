@@ -13,12 +13,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class EventService(
@@ -98,7 +95,9 @@ class EventService(
 	fun getEvents(caller: User, perPage: Int, page: Int): List<Event> = transaction(db) {
 		Event.find {
 			eventUserCondition(caller)
-		}.limit(perPage, offset = (page * perPage).toLong()).with(Event::owner).toList()
+		}.orderBy(
+			Events.startDateTime to SortOrder.ASC,
+		).limit(perPage, offset = (page * perPage).toLong()).with(Event::owner).toList()
 	}
 
 	fun countEvents(caller: User): Int = transaction(db) {

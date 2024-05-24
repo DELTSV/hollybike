@@ -23,11 +23,11 @@ data class TEventPartial(
 	@SerialName("update_date_time")
 	val updateDateTime: Instant,
 ) {
-	constructor(entity: Event) : this(
+	constructor(entity: Event, host: String) : this(
 		id = entity.id.value,
 		name = entity.name,
 		description = entity.description,
-		image = entity.image,
+		image = entity.image?.let { "$host/storage/$it" },
 		status = entity.status,
 		owner = TUserPartial(entity.owner),
 		startDateTime = entity.startDateTime,

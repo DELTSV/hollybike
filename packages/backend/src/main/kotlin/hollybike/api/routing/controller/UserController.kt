@@ -6,7 +6,6 @@ import hollybike.api.exceptions.UserWrongPassword
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
-import hollybike.api.routing.resources.Associations
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
 import hollybike.api.types.association.TAssociation
@@ -33,6 +32,7 @@ import kotlin.math.ceil
 class UserController(
 	application: Application,
 	private val userService: UserService,
+	private val host: String
 ) {
 	init {
 		application.routing {
@@ -63,14 +63,14 @@ class UserController(
 
 	private fun Route.getMe() {
 		get<Users.Me> {
-			call.respond(TUser(call.user))
+			call.respond(TUser(call.user, host))
 		}
 	}
 
 	private fun Route.getUserById() {
 		get<Users.Id>(EUserScope.Admin) {
 			userService.getUser(call.user, it.id)?.let { user ->
-				call.respond(TUser(user))
+				call.respond(TUser(user, host))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -80,7 +80,7 @@ class UserController(
 	private fun Route.getByUserName() {
 		get<Users.Username>(EUserScope.Admin) {
 			userService.getUserByUsername(call.user, it.username)?.let { user ->
-				call.respond(TUser(user))
+				call.respond(TUser(user, host))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -90,7 +90,7 @@ class UserController(
 	private fun Route.getByEmail() {
 		get<Users.Email>(EUserScope.Admin) {
 			userService.getUserByEmail(call.user, it.email)?.let { user ->
-				call.respond(TUser(user))
+				call.respond(TUser(user, host))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -101,7 +101,7 @@ class UserController(
 		this.patch<Users.Me> {
 			val update = call.receive<TUserUpdateSelf>()
 			userService.updateMe(call.user, update).onSuccess {
-				call.respond(TUser(it))
+				call.respond(TUser(it, host))
 			}.onFailure {
 				when(it) {
 					is BadRequestException -> call.respond(HttpStatusCode.BadRequest, "Changer de mot de passe nécessite new_password, new_password_again et old_password")
@@ -164,7 +164,7 @@ class UserController(
 	private fun Route.getAll() {
 		get<Users>(EUserScope.Admin) {
 			val param = call.request.queryParameters.getSearchParam(userMapper + associationMapper)
-			val list = userService.getAll(call.user, param)?.map { TUser(it) }
+			val list = userService.getAll(call.user, param)?.map { TUser(it, host) }
 			val count = userService.getAllCount(call.user, param)
 			if(list != null && count != null) {
 				call.respond(TLists(list, param.page, ceil(count.toDouble() / param.perPage).toInt(), param.perPage, count.toInt()))

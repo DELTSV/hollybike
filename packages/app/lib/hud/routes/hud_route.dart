@@ -12,8 +12,8 @@ class HudRoute extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            child: Container(
-              color: Colors.transparent,
+            child: AutoRouter(
+              navigatorObservers: () => [HeroController()],
             ),
           ),
           const HudBottomBar(),

@@ -23,6 +23,7 @@ import kotlin.math.ceil
 class EventController(
 	application: Application,
 	private val eventService: EventService,
+	private val host: String
 ) {
 	init {
 		application.routing {
@@ -101,7 +102,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it) },
+					data = events.map { TEventPartial(it, host) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -116,7 +117,7 @@ class EventController(
 			val event = eventService.getEvent(call.user, id.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
 
-			call.respond(TEvent(event))
+			call.respond(TEvent(event, host))
 		}
 	}
 
@@ -131,7 +132,7 @@ class EventController(
 				newEvent.startDate,
 				newEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it.first, listOf(it.second)))
+				call.respond(HttpStatusCode.Created, TEvent(it.first, host, listOf(it.second)))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -150,7 +151,7 @@ class EventController(
 				updateEvent.startDate,
 				updateEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.OK, TEvent(it))
+				call.respond(HttpStatusCode.OK, TEvent(it, host))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -219,7 +220,7 @@ class EventController(
 				image.streamProvider().readBytes(),
 				contentType.toString()
 			).onSuccess {
-				call.respond(TEvent(it))
+				call.respond(TEvent(it, host))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
