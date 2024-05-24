@@ -54,7 +54,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 	}, []);
 
 	const login = (data: TLogin) => {
-		api<TAuthInfo, TLogin>("/auth/login", {
+		api<TAuthInfo>("/auth/login", {
 			method: "POST",
 			body: data,
 		}).then((res) => {

@@ -21,6 +21,7 @@ export default [
       "prefer-object-spread": ["error"],
       "prefer-template": ["error"],
       "eol-last": ["error"],
+      "@typescript-eslint/no-explicit-any": ["off"]
     },
     files: ["src/**/*.{tsx,ts}"]
   },
