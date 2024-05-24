@@ -61,7 +61,7 @@ export default [
       "@stylistic/js/object-curly-newline": ["error", {multiline: true, minProperties: 2}],
       "@stylistic/js/object-curly-spacing": ["error", "always", {objectsInObjects: false, arraysInObjects: false}],
       "@stylistic/js/object-property-newline": ["error"],
-      "@stylistic/js/operator-linebreak": ["error", "before"],
+      "@stylistic/js/operator-linebreak": ["error", "after"],
       "@stylistic/js/padded-blocks": ["error", "never"],
       "@stylistic/js/quote-props": ["error", "as-needed"],
       "@stylistic/js/quotes": ["error", "double", {avoidEscape: true, allowTemplateLiterals: true}],

@@ -3,6 +3,7 @@ import {
 	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { backendBaseUrl } from "../config";
+import { externalDisconnect } from "../auth/context.tsx";
 
 interface UseApiOptions<T> {
 	method?: string,
@@ -29,8 +30,8 @@ interface ApiRawOptions {
 
 export function useApi<T, B>(
 	url: string,
-	deps: Inputs,
-	options: UseApiOptions<B>,
+	deps?: Inputs,
+	options?: UseApiOptions<B>,
 ) {
 	const [result, setResult] = useState<APIResponse<T>>({ status: 0 });
 
@@ -86,6 +87,9 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 	}
 	if (response.status.toString()[0] !== "2") {
 		const responseText = await response.text();
+		if (response.status === 401)
+			externalDisconnect();
+
 		if (responseText.length != 0)
 			return {
 				status: response.status,

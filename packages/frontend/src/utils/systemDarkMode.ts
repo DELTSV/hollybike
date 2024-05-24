@@ -6,7 +6,6 @@ export function useSystemDarkMode() {
 	const [darkMode, setDarkMode] = useState(window.matchMedia("(prefers-color-scheme: dark)").matches);
 	useEffect(() => {
 		const onChange = (e: MediaQueryListEvent) => {
-			console.log(e);
 			setDarkMode(e.matches);
 		};
 		if (window.matchMedia)

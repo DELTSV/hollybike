@@ -22,7 +22,6 @@ import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
@@ -134,17 +133,12 @@ class UserService(
 		if (caller.scope == EUserScope.User) {
 			return null
 		}
+		val param = searchParam.copy(filter = searchParam.filter.toMutableList())
 		if (caller.scope not EUserScope.Root) {
-			searchParam.filter.add(Filter(Associations.id, caller.id.value.toString(), FilterMode.EQUAL))
+			param.filter.add(Filter(Associations.id, caller.association.id.value.toString(), FilterMode.EQUAL))
 		}
 		return transaction(db) {
-			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam).andWhere {
-				if (caller.scope not EUserScope.Root) {
-					Associations.id eq caller.association.id
-				} else {
-					Associations.id neq null
-				}
-			}).with(User::association).toList()
+			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(param)).with(User::association).toList()
 		}
 	}
 
@@ -156,15 +150,12 @@ class UserService(
 		if (caller.scope == EUserScope.User) {
 			return null
 		}
-
+		val param = searchParam.copy(filter = searchParam.filter.toMutableList())
+		if (caller.scope not EUserScope.Root) {
+			param.filter.add(Filter(Associations.id, caller.association.id.value.toString(), FilterMode.EQUAL))
+		}
 		return transaction(db) {
-			User.wrapRows(Users.innerJoin(Associations).selectAll().applyParam(searchParam).andWhere {
-				if (caller.scope not EUserScope.Root) {
-					Associations.id eq caller.association.id
-				} else {
-					Associations.id neq null
-				}
-			}).with(User::association).count()
+			Users.innerJoin(Associations).selectAll().applyParam(param, false).count()
 		}
 	}
 }
