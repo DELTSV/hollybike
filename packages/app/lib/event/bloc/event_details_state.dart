@@ -61,7 +61,9 @@ class EventOperationInProgress extends EventDetailsState {
 }
 
 class EventOperationSuccess extends EventDetailsState {
-  EventOperationSuccess(EventDetailsState state)
+  final String successMessage;
+
+  EventOperationSuccess(EventDetailsState state, {required this.successMessage})
       : super(
           event: state.event,
           status: EventDetailsStatus.success,

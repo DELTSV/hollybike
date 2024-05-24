@@ -65,106 +65,121 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: Column(
-        children: [
-          SizedBox(
-            height: 160,
-            width: double.infinity,
-            child: Stack(
-              children: [
-                HeroMode(
-                  enabled: widget.animate,
-                  child: Hero(
-                    tag: "event-image-${widget.eventId}",
-                    child: Container(
-                      width: double.infinity,
-                      foregroundDecoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Theme.of(context).scaffoldBackgroundColor,
-                          ],
+    return BlocListener<EventDetailsBloc, EventDetailsState>(
+      listener: (context, state) {
+          if (state is EventOperationFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Error while publishing event"),
+              ),
+            );
+          }
+
+          if (state is EventOperationSuccess) {
+          }
+      },
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 160,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  HeroMode(
+                    enabled: widget.animate,
+                    child: Hero(
+                      tag: "event-image-${widget.eventId}",
+                      child: Container(
+                        width: double.infinity,
+                        foregroundDecoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Theme.of(context).scaffoldBackgroundColor,
+                            ],
+                          ),
                         ),
+                        child: widget.eventImage,
                       ),
-                      child: widget.eventImage,
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: LayoutBuilder(builder: (context, constraints) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          HeroMode(
-                            enabled: widget.animate,
-                            child: Hero(
-                              tag: "event-name-${widget.eventId}",
-                              child: SizedBox(
-                                width: constraints.maxWidth - 20,
-                                child: Text(
-                                  widget.eventName,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.titleLarge,
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            HeroMode(
+                              enabled: widget.animate,
+                              child: Hero(
+                                tag: "event-name-${widget.eventId}",
+                                child: SizedBox(
+                                  width: constraints.maxWidth - 20,
+                                  child: Text(
+                                    widget.eventName,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
+                          ],
+                        );
+                      }),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          BlocBuilder<EventDetailsBloc, EventDetailsState>(builder: (
-            context,
-            state,
-          ) {
-            if (state is EventDetailsLoadInProgress) {
-              return const CircularProgressIndicator();
-            }
-
-            if (state is EventDetailsLoadFailure) {
-              return const Text("Error while loading event details");
-            }
-
-            if (state.event == null) {
-              return const Text("Event not found");
-            }
-
-            final Event event = state.event!;
-
-            List<Widget> children = [
-              Text(event.startDate.toString()),
-            ];
-
-            if (event.status == EventStatusState.pending) {
-              children.insert(
-                  0,
-                  EventPendingWarning(
-                    onAction: () => {
-                      _onPublish(),
-                    },
-                  ));
-            }
-
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: children,
+                ],
               ),
-            );
-          }),
-        ],
+            ),
+            BlocBuilder<EventDetailsBloc, EventDetailsState>(builder: (
+              context,
+              state,
+            ) {
+              if (state is EventDetailsLoadInProgress) {
+                return const CircularProgressIndicator();
+              }
+
+              if (state is EventDetailsLoadFailure) {
+                return const Text("Error while loading event details");
+              }
+
+              if (state.event == null) {
+                return const Text("Event not found");
+              }
+
+              final Event event = state.event!;
+
+              List<Widget> children = [
+                Text(event.startDate.toString()),
+              ];
+
+              if (event.status == EventStatusState.pending) {
+                children.insert(
+                    0,
+                    EventPendingWarning(
+                      onAction: () => {
+                        _onPublish(),
+                      },
+                    ));
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: children,
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
