@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-Future<void> showEventDateWarningDialog(BuildContext context) {
+Future<void> showEventDateWarningDialog(BuildContext context, String message) {
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -16,8 +16,7 @@ Future<void> showEventDateWarningDialog(BuildContext context) {
               'assets/lottie/lottie_calendar_error_animation.json',
               repeat: false,
             ),
-            const Text(
-                'La date de fin doit être postérieure à la date de début.'),
+            Text(message),
           ],
         ),
         actions: <Widget>[

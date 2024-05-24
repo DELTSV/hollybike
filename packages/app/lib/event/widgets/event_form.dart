@@ -121,7 +121,10 @@ class _EventFormState extends State<EventForm> {
           time.hour == _endTime.hour && time.minute >= _endTime.minute) {
         if (time.hour == 23) {
           if (time.minute == 59) {
-            showEventDateWarningDialog(context);
+            showEventDateWarningDialog(
+              context,
+              "L'heure de début doit être avant l'heure de fin.",
+            );
             return;
           }
 
@@ -143,7 +146,10 @@ class _EventFormState extends State<EventForm> {
     if (checkSameDate(_dateRange.start, _dateRange.end)) {
       if (time.hour < _startTime.hour ||
           time.hour == _startTime.hour && time.minute <= _startTime.minute) {
-        showEventDateWarningDialog(context);
+        showEventDateWarningDialog(
+          context,
+          "L'heure de fin doit être postérieure à l'heure de début.",
+        );
         return;
       }
     }
@@ -183,7 +189,10 @@ class _EventFormState extends State<EventForm> {
       );
 
       if (startDate.isBefore(DateTime.now())) {
-        showEventDateWarningDialog(context);
+        showEventDateWarningDialog(
+          context,
+          "La date de début doit être dans le futur.",
+        );
         return;
       }
 
@@ -193,6 +202,14 @@ class _EventFormState extends State<EventForm> {
               minute: _endTime.minute,
             )
           : null;
+
+      if (endDate != null && endDate.isBefore(startDate)) {
+        showEventDateWarningDialog(
+          context,
+          "La date de fin doit être postérieure à la date de début.",
+        );
+        return;
+      }
 
       widget.onSubmit(
         _nameController.text,
