@@ -10,6 +10,7 @@ import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/event/widgets/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
+import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_event.dart';
 
 @RoutePage()
@@ -76,6 +77,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           }
 
           if (state is EventOperationSuccess) {
+            Toast.showSuccessToast(context, state.successMessage);
           }
       },
       child: Container(

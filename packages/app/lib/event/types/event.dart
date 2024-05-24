@@ -46,13 +46,13 @@ class Event with _$Event {
 
   static String placeholderImageFromDateTime(DateTime startDate) {
     if (startDate.month >= 3 && startDate.month <= 5) {
-      return "images/placeholder_event_image_spring.jpg";
+      return "assets/images/placeholder_event_image_spring.jpg";
     } else if (startDate.month >= 6 && startDate.month <= 8) {
-      return "images/placeholder_event_image_summer.jpg";
+      return "assets/images/placeholder_event_image_summer.jpg";
     } else if (startDate.month >= 9 && startDate.month <= 11) {
-      return "images/placeholder_event_image_autumn.jpg";
+      return "assets/images/placeholder_event_image_autumn.jpg";
     } else {
-      return "images/placeholder_event_image_winter.jpg";
+      return "assets/images/placeholder_event_image_winter.jpg";
     }
   }
 }

@@ -13,6 +13,7 @@ import 'package:hollybike/shared/utils/with_current_session.dart';
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../shared/utils/dates.dart';
+import '../../shared/widgets/app_toast.dart';
 import '../widgets/event_creation_modal.dart';
 import '../widgets/event_preview_card.dart';
 
@@ -123,11 +124,13 @@ class _EventsScreenState extends State<EventsScreen> {
                   }
                 },
               ),
-              BlocListener<EventsBloc, EventsState>(listener: (context, event) {
-                if (event is EventCreationSuccess) {
+              BlocListener<EventsBloc, EventsState>(listener: (context, state) {
+                if (state is EventCreationSuccess) {
+                  Toast.showSuccessToast(context, "Événement créé");
+
                   Future.delayed(const Duration(milliseconds: 50), () {
                     _navigateToEventDetails(
-                        context, event.createdEvent.toMinimalEvent(), false);
+                        context, state.createdEvent.toMinimalEvent(), false);
 
                     Future.delayed(const Duration(milliseconds: 200), () {
                       _refreshEvents();
@@ -135,10 +138,10 @@ class _EventsScreenState extends State<EventsScreen> {
                   });
                 }
 
-                if (event is EventCreationFailure) {
+                if (state is EventCreationFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(event.errorMessage),
+                      content: Text(state.errorMessage),
                     ),
                   );
                 }

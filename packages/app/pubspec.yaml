@@ -50,6 +50,7 @@ dependencies:
   rxdart: ^0.27.7
   flutter_native_splash: ^2.4.0
   lottie: ^3.1.2
+  simple_animations: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -73,12 +74,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/wallpaper.jpg
-    - images/placeholder_profile_picture.jpg
-    - images/placeholder_event_image_autumn.jpg
-    - images/placeholder_event_image_summer.jpg
-    - images/placeholder_event_image_winter.jpg
-    - images/placeholder_event_image_spring.jpg
+    - assets/images/
+    - assets/lottie/
 
   fonts:
     - family: Inter

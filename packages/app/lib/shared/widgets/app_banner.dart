@@ -18,7 +18,7 @@ class AppBanner extends StatelessWidget {
                 ),
               ),
               image: const DecorationImage(
-                image: AssetImage("images/wallpaper.jpg"),
+                image: AssetImage("assets/images/wallpaper.jpg"),
                 fit: BoxFit.none,
                 scale: 5,
                 repeat: ImageRepeat.repeatX,
