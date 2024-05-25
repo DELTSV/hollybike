@@ -2,11 +2,13 @@ package hollybike.api.routing.controller
 
 import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
+import hollybike.api.repository.events.eventMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventService
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.listParams
+import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -92,13 +94,10 @@ class EventController(
 
 	private fun Route.getEvents() {
 		get<Events> {
-			val events = eventService.getEvents(
-				call.user,
-				call.listParams.perPage,
-				call.listParams.page
-			)
+			val params = call.request.queryParameters.getSearchParam(eventMapper)
 
-			val total = eventService.countEvents(call.user)
+			val events = eventService.getEvents(call.user, params)
+			val total = eventService.countEvents(call.user, params)
 
 			call.respond(
 				TLists(

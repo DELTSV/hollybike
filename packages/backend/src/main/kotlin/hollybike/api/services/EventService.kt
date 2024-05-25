@@ -9,6 +9,9 @@ import hollybike.api.repository.events.participations.EventParticipations
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
+import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.applyParam
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -92,18 +95,28 @@ class EventService(
 		.or(Events.status neq EEventStatus.PENDING.value)
 		.and(Events.association eq caller.association.id)
 
-	fun getEvents(caller: User, perPage: Int, page: Int): List<Event> = transaction(db) {
-		Event.find {
-			eventUserCondition(caller)
-		}.orderBy(
-			Events.startDateTime to SortOrder.ASC,
-		).limit(perPage, offset = (page * perPage).toLong()).with(Event::owner).toList()
+	fun getEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
+		val eventsQuery = Events.selectAll().applyParam(searchParam)
+
+		if (caller.scope != EUserScope.Root) {
+			eventsQuery.andWhere {
+				eventUserCondition(caller)
+			}
+		}
+
+		Event.wrapRows(eventsQuery).with(Event::owner).toList()
 	}
 
-	fun countEvents(caller: User): Int = transaction(db) {
-		Event.find {
-			eventUserCondition(caller)
-		}.count().toInt()
+	fun countEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
+		val eventsQuery = Events.selectAll().applyParam(searchParam, pagination = false)
+
+		if (caller.scope != EUserScope.Root) {
+			eventsQuery.andWhere {
+				eventUserCondition(caller)
+			}
+		}
+
+		eventsQuery.count().toInt()
 	}
 
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
@@ -296,7 +309,8 @@ class EventService(
 				if (role != EEventRole.ORGANIZER) {
 					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut promouvoir un participant"))
 				}
-			} ?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+			}
+				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
 			Result.success(
 				EventParticipation.find {
@@ -329,7 +343,8 @@ class EventService(
 				if (role != EEventRole.ORGANIZER) {
 					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut rétrograder un participant"))
 				}
-			} ?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+			}
+				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
 			Result.success(
 				EventParticipation.find {
