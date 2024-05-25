@@ -36,14 +36,13 @@ class Toast {
 
   static void showErrorToast(BuildContext context, String message) {
     showCustomToast(
-      context,
-      message,
-      const Icon(
-        Icons.error,
-        color: Colors.red,
-        size: 30,
-      )
-    );
+        context,
+        message,
+        const Icon(
+          Icons.error,
+          color: Colors.red,
+          size: 30,
+        ));
   }
 
   static OverlayEntry createOverlayEntry(
@@ -53,50 +52,52 @@ class Toast {
       builder: (context) => Positioned(
         top: 50.0,
         width: MediaQuery.of(context).size.width,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ToastMessageAnimation(
-              toastDuration: toastDuration,
-              animationDuration: animationDuration,
-              Material(
-                elevation: 10.0,
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.9),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: ToastMessageAnimation(
+                  toastDuration: toastDuration,
+                  animationDuration: animationDuration,
+                  Material(
+                    elevation: 10.0,
                     borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      icon,
-                      const SizedBox(width: 10),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        child: Flexible(
-                          child: Text(
-                            message,
-                            textAlign: TextAlign.center,
-                            softWrap: true,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFFFFFFFF),
+                    color: Colors.transparent,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          icon,
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: Text(
+                              message,
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Color(0xFFFFFFFF),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

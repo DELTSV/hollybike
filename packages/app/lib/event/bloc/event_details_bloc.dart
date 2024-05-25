@@ -68,7 +68,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
       emit(EventOperationSuccess(
         state,
-        successMessage: 'Evénement publié avec succès',
+        successMessage: 'Evénement publié',
       ));
     } catch (e) {
       log('Error while publishing event', error: e);
