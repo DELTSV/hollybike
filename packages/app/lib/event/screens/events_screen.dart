@@ -173,7 +173,9 @@ class _EventsScreenState extends State<EventsScreen> {
                     padding: const EdgeInsets.symmetric(
                       vertical: 16.0,
                     ),
-                    physics: const BouncingScrollPhysics(),
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
                     itemCount: state.events.length + (state.hasMore ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == state.events.length) {
