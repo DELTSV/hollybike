@@ -28,7 +28,7 @@ data class TEventPartial(
 		name = entity.name,
 		description = entity.description,
 		image = entity.image?.let { "$host/storage/$it" },
-		status = entity.status,
+		status = EEventStatus.fromEvent(entity),
 		owner = TUserPartial(entity.owner),
 		startDateTime = entity.startDateTime,
 		endDateTime = entity.endDateTime,

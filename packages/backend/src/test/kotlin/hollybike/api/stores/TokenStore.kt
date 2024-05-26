@@ -1,4 +1,4 @@
-package hollybike.api.base
+package hollybike.api.stores
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -35,4 +35,6 @@ class TokenStore {
 	}
 
 	fun get(email: String): String = tokens[email] ?: error("Token not found")
+
+	operator fun get(user: Pair<Int, String>): String = tokens[user.second] ?: error("Token not found")
 }

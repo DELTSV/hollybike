@@ -115,7 +115,7 @@ INSERT INTO users (email, username, password, association, last_login, scope) VA
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin2@hollybike.fr', 'admin2', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 3, now(), 2);
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin3@hollybike.fr', 'admin3', 'JDJhJDA2JHJwVWE4dWdyUi9URERJdWt4cll0VU9yLmRQSExWdTUzdlB4bWFQbktZanppZVd2V01vdFpX', 4, now(), 2);
 
-INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 1 - Asso 1 - User 1 - PENDING', 'Description 1', 2, null, 1, 2, now(), now());
+INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 1 - Asso 1 - User 1 - PENDING', 'Description 1', 2, null, 1, 2, now() + interval '1' day, now() + interval '2' day);
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 1, 2);
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 2 - Asso 1 - User 1 - SCHEDULED', 'Description 2', 2, null, 2, 2, now(), now());

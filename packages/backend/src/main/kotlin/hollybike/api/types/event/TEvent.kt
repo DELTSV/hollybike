@@ -30,7 +30,7 @@ data class TEvent(
 		name = entity.name,
 		description = entity.description,
 		image = entity.image?.let { "$host/storage/${it}" },
-		status = entity.status,
+		status = EEventStatus.fromEvent(entity),
 		owner = TUserPartial(entity.owner),
 		participants = participants.map { TEventParticipation(it) },
 		startDateTime = entity.startDateTime,

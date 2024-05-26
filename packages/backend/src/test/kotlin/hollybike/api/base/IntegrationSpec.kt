@@ -2,6 +2,8 @@ package hollybike.api.base
 
 import hollybike.api.*
 import hollybike.api.services.storage.StorageMode
+import hollybike.api.stores.TokenStore
+import hollybike.api.stores.UserStore
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
 import hollybike.api.types.user.EUserScope

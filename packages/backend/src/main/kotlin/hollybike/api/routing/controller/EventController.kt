@@ -161,7 +161,7 @@ class EventController(
 
 	private fun Route.cancelEvent() {
 		patch<Events.Id.Cancel> { id ->
-			eventService.updateEventStatus(call.user, id.cancel.id, EEventStatus.CANCELLED).onSuccess {
+			eventService.updateEventStatus(call.user, id.cancel.id, EEventStatus.Cancelled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -171,7 +171,7 @@ class EventController(
 
 	private fun Route.scheduleEvent() {
 		patch<Events.Id.Schedule> { id ->
-			eventService.updateEventStatus(call.user, id.schedule.id, EEventStatus.SCHEDULED).onSuccess {
+			eventService.updateEventStatus(call.user, id.schedule.id, EEventStatus.Scheduled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -181,7 +181,7 @@ class EventController(
 
 	private fun Route.finishEvent() {
 		patch<Events.Id.Finish> { id ->
-			eventService.updateEventStatus(call.user, id.finish.id, EEventStatus.FINISHED).onSuccess {
+			eventService.updateEventStatus(call.user, id.finish.id, EEventStatus.Finished).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -191,7 +191,7 @@ class EventController(
 
 	private fun Route.pendEvent() {
 		patch<Events.Id.Pend> { id ->
-			eventService.updateEventStatus(call.user, id.pend.id, EEventStatus.PENDING).onSuccess {
+			eventService.updateEventStatus(call.user, id.pend.id, EEventStatus.Pending).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)

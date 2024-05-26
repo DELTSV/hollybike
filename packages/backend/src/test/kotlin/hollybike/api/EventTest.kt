@@ -1,7 +1,9 @@
 package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.base.auth
 import hollybike.api.services.storage.StorageMode
+import hollybike.api.stores.UserStore
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
@@ -32,7 +34,7 @@ class EventTest : IntegrationSpec({
 		test("Should get all the events of the database as root user") {
 			onPremiseTestApp {
 				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -50,8 +52,6 @@ class EventTest : IntegrationSpec({
 					)
 
 					body.data.size shouldBe 10
-
-					body.data.map { event -> event.status } shouldContain EEventStatus.PENDING
 				}
 			}
 		}
@@ -59,7 +59,7 @@ class EventTest : IntegrationSpec({
 		test("Should only the events of the association 1 as root user") {
 			onPremiseTestApp {
 				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC&id_association=eq:2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -78,7 +78,7 @@ class EventTest : IntegrationSpec({
 
 					body.data.size shouldBe 6
 
-					body.data.map { event -> event.status } shouldContain EEventStatus.PENDING
+					body.data.map { event -> event.status } shouldContain EEventStatus.Pending
 				}
 			}
 		}
@@ -86,7 +86,7 @@ class EventTest : IntegrationSpec({
 		test("Should get all the scheduled events of the association") {
 			onPremiseTestApp {
 				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC") {
-					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					auth(UserStore.user3)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -105,7 +105,7 @@ class EventTest : IntegrationSpec({
 
 					body.data.size shouldBe 4
 
-					body.data.map { event -> event.status } shouldNotContain EEventStatus.PENDING
+					body.data.map { event -> event.status } shouldNotContain EEventStatus.Pending
 				}
 			}
 		}
@@ -113,7 +113,7 @@ class EventTest : IntegrationSpec({
 		test("Should get all the scheduled events of the association and my pending events") {
 			onPremiseTestApp {
 				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC") {
-					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					auth(UserStore.user4)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -132,7 +132,7 @@ class EventTest : IntegrationSpec({
 
 					body.data.size shouldBe 5
 
-					body.data.map { event -> event.status } shouldContain EEventStatus.PENDING
+					body.data.map { event -> event.status } shouldContain EEventStatus.Pending
 				}
 			}
 		}
@@ -142,7 +142,7 @@ class EventTest : IntegrationSpec({
 		test("Should get the event by id") {
 			onPremiseTestApp {
 				it.get("/api/events/2") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -154,7 +154,7 @@ class EventTest : IntegrationSpec({
 		test("Should get the event by id with pending status because the user is the owner") {
 			onPremiseTestApp {
 				it.get("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -166,7 +166,7 @@ class EventTest : IntegrationSpec({
 		test("Should not get the event by id because the user is not the owner and the status is PENDING") {
 			onPremiseTestApp {
 				it.get("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 
@@ -178,7 +178,7 @@ class EventTest : IntegrationSpec({
 		test("Should not get the event by id because im not in the association") {
 			onPremiseTestApp {
 				it.get("/api/events/2") {
-					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					auth(UserStore.user4)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 
@@ -212,18 +212,18 @@ class EventTest : IntegrationSpec({
 			test("Should create an event with one participant (organizer)") {
 				onPremiseTestApp {
 					it.post("/api/events") {
-						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+						auth(UserStore.user1)
 						contentType(ContentType.Application.Json)
 						setBody(newEvent)
 					}.apply {
 						status shouldBe HttpStatusCode.Created
 
-						body<TEvent>().status shouldBe EEventStatus.PENDING
+						body<TEvent>().status shouldBe EEventStatus.Pending
 
 						body<TEvent>().participants.size shouldBe 1
 
 						body<TEvent>().participants[0].user.username shouldBe "user1"
-						body<TEvent>().participants[0].role shouldBe EEventRole.ORGANIZER
+						body<TEvent>().participants[0].role shouldBe EEventRole.Organizer
 					}
 				}
 			}
@@ -232,7 +232,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because the start date is in the past") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -256,7 +256,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because the start date is after the end date") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -280,7 +280,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because the start date is malformed") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -301,7 +301,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because the end date is malformed") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -322,7 +322,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because name is too long") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -343,7 +343,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because name is provided but empty") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -364,7 +364,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because description is too long") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -385,7 +385,7 @@ class EventTest : IntegrationSpec({
 		test("Should not create an event because description is provided but empty") {
 			onPremiseTestApp {
 				it.post("/api/events") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TCreateEvent(
@@ -428,7 +428,7 @@ class EventTest : IntegrationSpec({
 			test("Should update an event") {
 				onPremiseTestApp {
 					it.put("/api/events/1") {
-						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+						auth(UserStore.user1)
 						contentType(ContentType.Application.Json)
 						setBody(newEvent)
 					}.apply {
@@ -443,7 +443,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because the start date is in the past") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -467,7 +467,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because the start date is after the end date") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -491,7 +491,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because the start date is malformed") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -512,7 +512,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because the end date is malformed") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -533,7 +533,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because name is too long") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -554,7 +554,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because name is provided but empty") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -575,7 +575,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because description is too long") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -596,7 +596,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because description is provided but empty") {
 			onPremiseTestApp {
 				it.put("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -617,7 +617,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.put("/api/events/2") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -638,7 +638,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event if the user is not participating") {
 			onPremiseTestApp {
 				it.put("/api/events/6") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -659,7 +659,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event because it does not exist") {
 			onPremiseTestApp {
 				it.put("/api/events/20") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUpdateEvent(
@@ -682,7 +682,7 @@ class EventTest : IntegrationSpec({
 		test("Should schedule pending event") {
 			onPremiseTestApp {
 				it.patch("/api/events/1/schedule") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -693,7 +693,7 @@ class EventTest : IntegrationSpec({
 		test("Should not schedule the already scheduled event") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/schedule") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -706,7 +706,7 @@ class EventTest : IntegrationSpec({
 		test("Should not schedule event because it does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/events/20/schedule") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -719,7 +719,7 @@ class EventTest : IntegrationSpec({
 		test("Should not schedule event if the user is not participating") {
 			onPremiseTestApp {
 				it.patch("/api/events/6/schedule") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -732,7 +732,7 @@ class EventTest : IntegrationSpec({
 		test("Should not update an event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/schedule") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -747,7 +747,7 @@ class EventTest : IntegrationSpec({
 		test("Should cancel the scheduled event") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -758,7 +758,7 @@ class EventTest : IntegrationSpec({
 		test("Should not cancel the pending event") {
 			onPremiseTestApp {
 				it.patch("/api/events/1/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -771,7 +771,7 @@ class EventTest : IntegrationSpec({
 		test("Should not cancel the already canceled event") {
 			onPremiseTestApp {
 				it.patch("/api/events/3/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -784,7 +784,7 @@ class EventTest : IntegrationSpec({
 		test("Should not cancel the terminated event") {
 			onPremiseTestApp {
 				it.patch("/api/events/4/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -797,7 +797,7 @@ class EventTest : IntegrationSpec({
 		test("Should not cancel event because it does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/events/20/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -810,7 +810,7 @@ class EventTest : IntegrationSpec({
 		test("Should not cancel event if the user is not participating") {
 			onPremiseTestApp {
 				it.patch("/api/events/6/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -823,7 +823,7 @@ class EventTest : IntegrationSpec({
 		test("Should not cancel event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/cancel") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -838,7 +838,7 @@ class EventTest : IntegrationSpec({
 		test("Should pend the scheduled event") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -849,7 +849,7 @@ class EventTest : IntegrationSpec({
 		test("Should not pend the already pending event") {
 			onPremiseTestApp {
 				it.patch("/api/events/1/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -862,7 +862,7 @@ class EventTest : IntegrationSpec({
 		test("Should not pend event because it does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/events/20/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -875,7 +875,7 @@ class EventTest : IntegrationSpec({
 		test("Should not pend event if the user is not participating") {
 			onPremiseTestApp {
 				it.patch("/api/events/6/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -888,7 +888,7 @@ class EventTest : IntegrationSpec({
 		test("Should not pend event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -901,7 +901,7 @@ class EventTest : IntegrationSpec({
 		test("Should not pend event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -914,7 +914,7 @@ class EventTest : IntegrationSpec({
 		test("Should not pend event if the user is not the owner") {
 			onPremiseTestApp {
 				it.patch("/api/events/7/pend") {
-					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					auth(UserStore.user4)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -929,7 +929,7 @@ class EventTest : IntegrationSpec({
 		test("Should finish the scheduled event") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -940,7 +940,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish the already finished event") {
 			onPremiseTestApp {
 				it.patch("/api/events/4/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -953,7 +953,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish the pending event") {
 			onPremiseTestApp {
 				it.patch("/api/events/1/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -966,7 +966,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish the canceled event") {
 			onPremiseTestApp {
 				it.patch("/api/events/3/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -979,7 +979,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish event because it does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/events/20/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -992,7 +992,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish event if the user is not participating") {
 			onPremiseTestApp {
 				it.patch("/api/events/6/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1005,7 +1005,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1018,7 +1018,7 @@ class EventTest : IntegrationSpec({
 		test("Should not finish event if the user is not an organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/finish") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1047,7 +1047,7 @@ class EventTest : IntegrationSpec({
 
 						it.patch("/api/events/1/image") {
 							val boundary = "WebAppBoundary"
-							header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+							auth(UserStore.user1)
 							setBody(
 								MultiPartFormDataContent(
 									formData {
@@ -1082,7 +1082,7 @@ class EventTest : IntegrationSpec({
 
 					it.patch("/api/events/1/image") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+						auth(UserStore.user1)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -1112,7 +1112,7 @@ class EventTest : IntegrationSpec({
 
 				it.patch("/api/events/1/image") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -1140,7 +1140,7 @@ class EventTest : IntegrationSpec({
 
 				it.patch("/api/events/2/image") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -1169,7 +1169,7 @@ class EventTest : IntegrationSpec({
 
 				it.patch("/api/events/6/image") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -1198,7 +1198,7 @@ class EventTest : IntegrationSpec({
 
 				it.patch("/api/events/20/image") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -1224,12 +1224,12 @@ class EventTest : IntegrationSpec({
 		test("Should participate to the event") {
 			onPremiseTestApp {
 				it.post("/api/events/6/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Created
 
-					body<TEventParticipation>().role shouldBe EEventRole.MEMBER
+					body<TEventParticipation>().role shouldBe EEventRole.Member
 				}
 			}
 		}
@@ -1237,7 +1237,7 @@ class EventTest : IntegrationSpec({
 		test("Should not participate to the event because you are already participating") {
 			onPremiseTestApp {
 				it.post("/api/events/1/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Conflict
@@ -1250,7 +1250,7 @@ class EventTest : IntegrationSpec({
 		test("Should not participate to the event because it does not exist") {
 			onPremiseTestApp {
 				it.post("/api/events/20/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1263,7 +1263,7 @@ class EventTest : IntegrationSpec({
 		test("Should not participate to the event because you are not in the same association") {
 			onPremiseTestApp {
 				it.post("/api/events/8/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1278,7 +1278,7 @@ class EventTest : IntegrationSpec({
 		test("Should leave the event") {
 			onPremiseTestApp {
 				it.delete("/api/events/2/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -1289,7 +1289,7 @@ class EventTest : IntegrationSpec({
 		test("Should not leave the event because you are the owner") {
 			onPremiseTestApp {
 				it.delete("/api/events/1/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1302,7 +1302,7 @@ class EventTest : IntegrationSpec({
 		test("Should not leave the event because it does not exist") {
 			onPremiseTestApp {
 				it.delete("/api/events/20/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1315,7 +1315,7 @@ class EventTest : IntegrationSpec({
 		test("Should not leave the event because you are not participating") {
 			onPremiseTestApp {
 				it.delete("/api/events/9/participations") {
-					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					auth(UserStore.user3)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1330,12 +1330,12 @@ class EventTest : IntegrationSpec({
 		test("Should promote the participant") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/participations/3/promote") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
-					body<TEventParticipation>().role shouldBe EEventRole.ORGANIZER
+					body<TEventParticipation>().role shouldBe EEventRole.Organizer
 				}
 			}
 		}
@@ -1343,7 +1343,7 @@ class EventTest : IntegrationSpec({
 		test("Should not promote the participant because the event does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/events/20/participations/3/promote") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1356,7 +1356,7 @@ class EventTest : IntegrationSpec({
 		test("Should not promote the participant because you are not organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/10/participations/6/promote") {
-					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					auth(UserStore.user3)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1369,7 +1369,7 @@ class EventTest : IntegrationSpec({
 		test("Should not promote yourself") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/participations/2/promote") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1382,7 +1382,7 @@ class EventTest : IntegrationSpec({
 		test("Should not promote the participant because he is not participating") {
 			onPremiseTestApp {
 				it.patch("/api/events/9/participations/4/promote") {
-					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					auth(UserStore.user4)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1395,7 +1395,7 @@ class EventTest : IntegrationSpec({
 		test("Should not promote the participant because the user is already organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/11/participations/4/promote") {
-					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					auth(UserStore.user4)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1410,12 +1410,12 @@ class EventTest : IntegrationSpec({
 		test("Should demote the participant") {
 			onPremiseTestApp {
 				it.patch("/api/events/7/participations/5/demote") {
-					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
+					auth(UserStore.user3)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
-					body<TEventParticipation>().role shouldBe EEventRole.MEMBER
+					body<TEventParticipation>().role shouldBe EEventRole.Member
 				}
 			}
 		}
@@ -1423,7 +1423,7 @@ class EventTest : IntegrationSpec({
 		test("Should not demote the participant because the event does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/events/20/participations/5/demote") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1436,7 +1436,7 @@ class EventTest : IntegrationSpec({
 		test("Should not demote the participant because you are not organizer") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/participations/2/demote") {
-					header("Authorization", "Bearer ${tokenStore.get("user2@hollybike.fr")}")
+					auth(UserStore.user2)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1449,7 +1449,7 @@ class EventTest : IntegrationSpec({
 		test("Should not demote yourself") {
 			onPremiseTestApp {
 				it.patch("/api/events/1/participations/2/demote") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1462,7 +1462,7 @@ class EventTest : IntegrationSpec({
 		test("Should not demote the participant because he is not participating") {
 			onPremiseTestApp {
 				it.patch("/api/events/9/participations/4/demote") {
-					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
+					auth(UserStore.user4)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1475,7 +1475,7 @@ class EventTest : IntegrationSpec({
 		test("Should not promote the participant because the user is already member") {
 			onPremiseTestApp {
 				it.patch("/api/events/2/participations/3/demote") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1490,7 +1490,7 @@ class EventTest : IntegrationSpec({
 		test("Should delete the event") {
 			onPremiseTestApp {
 				it.delete("/api/events/1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -1501,7 +1501,7 @@ class EventTest : IntegrationSpec({
 		test("Should not delete the event because im not the owner") {
 			onPremiseTestApp {
 				it.delete("/api/events/6") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -1514,7 +1514,7 @@ class EventTest : IntegrationSpec({
 		test("Should not delete the event because it does not exist") {
 			onPremiseTestApp {
 				it.delete("/api/events/20") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -1525,5 +1525,3 @@ class EventTest : IntegrationSpec({
 		}
 	}
 })
-
-private fun s() = "of"

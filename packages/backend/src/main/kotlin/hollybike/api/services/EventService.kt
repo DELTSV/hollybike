@@ -85,7 +85,7 @@ class EventService(
 		val participation = event.participants.find { it.user.id == user.id }
 			?: return Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
 
-		if (participation.role != EEventRole.ORGANIZER) {
+		if (participation.role != EEventRole.Organizer) {
 			return Result.failure(EventActionDeniedException("Seul l'organisateur peut modifier l'événement"))
 		}
 
@@ -93,7 +93,7 @@ class EventService(
 	}
 
 	private fun eventUserCondition(caller: User): Op<Boolean> {
-		return ((((Events.owner eq caller.id) and (Events.status eq EEventStatus.PENDING.value)) or (Events.status neq EEventStatus.PENDING.value)) and (Events.association eq caller.association.id))
+		return ((((Events.owner eq caller.id) and (Events.status eq EEventStatus.Pending.value)) or (Events.status neq EEventStatus.Pending.value)) and (Events.association eq caller.association.id))
 	}
 
 	private fun eventsQuery(caller: User, searchParam: SearchParam, pagination: Boolean = true): SizedIterable<Event> {
@@ -148,13 +148,13 @@ class EventService(
 				this.description = description
 				this.startDateTime = Instant.parse(startDate)
 				this.endDateTime = endDate?.let { Instant.parse(it) }
-				status = EEventStatus.PENDING
+				status = EEventStatus.Pending
 			}
 
 			val participation = EventParticipation.new {
 				user = caller
 				event = createdEvent
-				role = EEventRole.ORGANIZER
+				role = EEventRole.Organizer
 			}
 
 			Result.success(
@@ -199,7 +199,7 @@ class EventService(
 		}.firstOrNull()
 			?: return@transaction Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
 
-		if (participation.role != EEventRole.ORGANIZER) {
+		if (participation.role != EEventRole.Organizer) {
 			return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut modifier le statut de l'événement"))
 		}
 
@@ -208,25 +208,26 @@ class EventService(
 		}
 
 		when (status) {
-			EEventStatus.PENDING -> {
+			EEventStatus.Pending -> {
 				if (event.owner.id != caller.id) {
 					return@transaction Result.failure(EventActionDeniedException("Seul le propriétaire peut mettre l'événement en attente"))
 				}
 			}
 
-			EEventStatus.CANCELLED -> {
-				if (event.status != EEventStatus.SCHEDULED) {
+			EEventStatus.Cancelled -> {
+				if (event.status != EEventStatus.Scheduled) {
 					return@transaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être annulé"))
 				}
 			}
 
-			EEventStatus.FINISHED -> {
-				if (event.status != EEventStatus.SCHEDULED) {
+			EEventStatus.Finished -> {
+				if (event.status != EEventStatus.Scheduled) {
 					return@transaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être terminé"))
 				}
 			}
 
-			EEventStatus.SCHEDULED -> Unit
+			EEventStatus.Scheduled -> Unit
+			EEventStatus.Now -> Unit
 		}
 
 		event.status = status
@@ -276,7 +277,7 @@ class EventService(
 			EventParticipation.new {
 				user = caller
 				event = Event[eventId]
-				role = EEventRole.MEMBER
+				role = EEventRole.Member
 			}
 		)
 	}
@@ -311,7 +312,7 @@ class EventService(
 			EventParticipation.find {
 				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 			}.firstOrNull()?.apply {
-				if (role != EEventRole.ORGANIZER) {
+				if (role != EEventRole.Organizer) {
 					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut promouvoir un participant"))
 				}
 			}
@@ -321,8 +322,8 @@ class EventService(
 				EventParticipation.find {
 					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
 				}.with(EventParticipation::user).firstOrNull()?.apply {
-					if (role == EEventRole.MEMBER) {
-						role = EEventRole.ORGANIZER
+					if (role == EEventRole.Member) {
+						role = EEventRole.Organizer
 					} else {
 						return@transaction Result.failure(EventActionDeniedException("Seul un membre peut être promu"))
 					}
@@ -345,7 +346,7 @@ class EventService(
 			EventParticipation.find {
 				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 			}.firstOrNull()?.apply {
-				if (role != EEventRole.ORGANIZER) {
+				if (role != EEventRole.Organizer) {
 					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut rétrograder un participant"))
 				}
 			}
@@ -355,8 +356,8 @@ class EventService(
 				EventParticipation.find {
 					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
 				}.with(EventParticipation::user).firstOrNull()?.apply {
-					if (role == EEventRole.ORGANIZER) {
-						role = EEventRole.MEMBER
+					if (role == EEventRole.Organizer) {
+						role = EEventRole.Member
 					} else {
 						return@transaction Result.failure(EventActionDeniedException("Seul un organisateur peut être rétrogradé"))
 					}
