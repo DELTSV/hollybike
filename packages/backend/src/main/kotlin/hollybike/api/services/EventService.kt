@@ -1,7 +1,9 @@
 package hollybike.api.services
 
 import hollybike.api.exceptions.*
+import hollybike.api.repository.Associations
 import hollybike.api.repository.User
+import hollybike.api.repository.Users
 import hollybike.api.repository.events.Event
 import hollybike.api.repository.events.Events
 import hollybike.api.repository.events.participations.EventParticipation
@@ -90,13 +92,20 @@ class EventService(
 		return Result.success(event)
 	}
 
-	private fun eventUserCondition(caller: User): Op<Boolean> = (Events.owner eq caller.id)
-		.and(Events.status eq EEventStatus.PENDING.value)
-		.or(Events.status neq EEventStatus.PENDING.value)
-		.and(Events.association eq caller.association.id)
+	private fun eventUserCondition(caller: User): Op<Boolean> {
+		return ((((Events.owner eq caller.id) and (Events.status eq EEventStatus.PENDING.value)) or (Events.status neq EEventStatus.PENDING.value)) and (Events.association eq caller.association.id))
+	}
 
-	fun getEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
-		val eventsQuery = Events.selectAll().applyParam(searchParam)
+	private fun eventsQuery(caller: User, searchParam: SearchParam, pagination: Boolean = true): SizedIterable<Event> {
+		val eventsQuery = Events.innerJoin(
+			Associations,
+			{ association },
+			{ Associations.id }
+		).innerJoin(
+			Users,
+			{ Events.owner },
+			{ Users.id }
+		).selectAll().applyParam(searchParam, pagination)
 
 		if (caller.scope != EUserScope.Root) {
 			eventsQuery.andWhere {
@@ -104,19 +113,15 @@ class EventService(
 			}
 		}
 
-		Event.wrapRows(eventsQuery).with(Event::owner).toList()
+		return Event.wrapRows(eventsQuery);
+	}
+
+	fun getEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
+		eventsQuery(caller, searchParam).with(Event::owner).toList()
 	}
 
 	fun countEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		val eventsQuery = Events.selectAll().applyParam(searchParam, pagination = false)
-
-		if (caller.scope != EUserScope.Root) {
-			eventsQuery.andWhere {
-				eventUserCondition(caller)
-			}
-		}
-
-		eventsQuery.count().toInt()
+		eventsQuery(caller, searchParam, pagination = false).count().toInt()
 	}
 
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {

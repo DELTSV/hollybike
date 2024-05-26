@@ -2,7 +2,9 @@ package hollybike.api.routing.controller
 
 import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
+import hollybike.api.repository.associationMapper
 import hollybike.api.repository.events.eventMapper
+import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventService
 import hollybike.api.types.event.*
@@ -94,7 +96,7 @@ class EventController(
 
 	private fun Route.getEvents() {
 		get<Events> {
-			val params = call.request.queryParameters.getSearchParam(eventMapper)
+			val params = call.request.queryParameters.getSearchParam(eventMapper + associationMapper + userMapper)
 
 			val events = eventService.getEvents(call.user, params)
 			val total = eventService.countEvents(call.user, params)

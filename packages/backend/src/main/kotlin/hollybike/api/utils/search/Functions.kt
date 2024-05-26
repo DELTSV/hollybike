@@ -58,16 +58,16 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Query {
 	var q = this
 	q = q.orderBy(*searchParam.sort.map { (c, o) -> c to o }.toTypedArray())
-	if(pagination) {
+	if (pagination) {
 		q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
 	}
 	val filter = searchParamFilter(searchParam.filter)
-	val query = if((searchParam.query?.split(" ")?.size ?: 0) == 2) {
+	val query = if ((searchParam.query?.split(" ")?.size ?: 0) == 2) {
 		val values = searchParam.query!!.split(" ")
-		val val1= q.searchParamQuery(values.joinToString("%") { it.replace("%", "\\%") })
+		val val1 = q.searchParamQuery(values.joinToString("%") { it.replace("%", "\\%") })
 		val val2 = q.searchParamQuery(values.reversed().joinToString("%") { it.replace("%", "\\%") })
-		if(val1 != null) {
-			if(val2 != null) {
+		if (val1 != null) {
+			if (val2 != null) {
 				val1 or val2
 			} else {
 				val1
@@ -78,10 +78,10 @@ fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Quer
 	} else {
 		searchParam.query?.let { query -> q.searchParamQuery(query.replace("%", "\\%").replace(" ", "%")) }
 	}
-	val where = if(query == null) {
+	val where = if (query == null) {
 		filter
 	} else {
-		if(filter == null) {
+		if (filter == null) {
 			query
 		} else {
 			query and filter
@@ -140,13 +140,15 @@ private infix fun Column<out Any?>.equal(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) eq it }
+
 		is EntityIDColumnType<*> -> {
-			if(columnType.sqlType() == "SERIAL") {
+			if (columnType.sqlType() == "SERIAL") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) eq it }
 			} else {
 				null
 			}
 		}
+
 		else -> null
 	}
 
@@ -163,13 +165,15 @@ private infix fun Column<out Any?>.nEqual(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) neq it }
+
 		is EntityIDColumnType<*> -> {
-			if(columnType.sqlType() == "INT") {
+			if (columnType.sqlType() == "INT") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) neq it }
 			} else {
 				null
 			}
 		}
+
 		else -> null
 	}
 
@@ -186,13 +190,15 @@ private infix fun Column<out Any?>.lt(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) less it }
+
 		is EntityIDColumnType<*> -> {
-			if(columnType.sqlType() == "INT") {
+			if (columnType.sqlType() == "INT") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) less it }
 			} else {
 				null
 			}
 		}
+
 		else -> null
 	}
 
@@ -209,13 +215,15 @@ private infix fun Column<out Any?>.gt(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) greater it }
+
 		is EntityIDColumnType<*> -> {
-			if(columnType.sqlType() == "INT") {
+			if (columnType.sqlType() == "INT") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) greater it }
 			} else {
 				null
 			}
 		}
+
 		else -> null
 	}
 
@@ -232,13 +240,15 @@ private infix fun Column<out Any?>.lte(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) lessEq it }
+
 		is EntityIDColumnType<*> -> {
-			if(columnType.sqlType() == "INT") {
+			if (columnType.sqlType() == "INT") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) lessEq it }
 			} else {
 				null
 			}
 		}
+
 		else -> null
 	}
 
@@ -255,18 +265,20 @@ private infix fun Column<out Any?>.gte(value: String): Op<Boolean>? =
 				null
 			}
 		}?.let { (this as Column<Instant?>) greaterEq it }
+
 		is EntityIDColumnType<*> -> {
-			if(columnType.sqlType() == "INT") {
+			if (columnType.sqlType() == "INT") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) greaterEq it }
 			} else {
 				null
 			}
 		}
+
 		else -> null
 	}
 
 fun Mapper.getMapperData(): Map<String, String> = this.mapValues {
-	when(it.value.columnType) {
+	when (it.value.columnType) {
 		is VarCharColumnType -> "String"
 		is IntegerColumnType -> "Int"
 		is KotlinInstantColumnType -> "DateTime"
