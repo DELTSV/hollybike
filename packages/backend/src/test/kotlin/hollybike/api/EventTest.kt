@@ -29,9 +29,63 @@ class EventTest : IntegrationSpec({
 	)
 
 	context("Get all events") {
+		test("Should get all the events of the database as root user") {
+			onPremiseTestApp {
+				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = 2,
+							perPage = 10,
+							totalData = 11
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe 10
+
+					body.data.map { event -> event.status } shouldContain EEventStatus.PENDING
+				}
+			}
+		}
+
+		test("Should only the events of the association 1 as root user") {
+			onPremiseTestApp {
+				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC&id_association=eq:2") {
+					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = 1,
+							perPage = 10,
+							totalData = 6
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe 6
+
+					body.data.map { event -> event.status } shouldContain EEventStatus.PENDING
+				}
+			}
+		}
+
 		test("Should get all the scheduled events of the association") {
 			onPremiseTestApp {
-				it.get("/api/events") {
+				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC") {
 					header("Authorization", "Bearer ${tokenStore.get("user3@hollybike.fr")}")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -43,7 +97,7 @@ class EventTest : IntegrationSpec({
 							data = listOf(),
 							page = 0,
 							totalPage = 1,
-							perPage = 20,
+							perPage = 10,
 							totalData = 4
 						),
 						TLists<TAssociation>::data
@@ -58,7 +112,7 @@ class EventTest : IntegrationSpec({
 
 		test("Should get all the scheduled events of the association and my pending events") {
 			onPremiseTestApp {
-				it.get("/api/events") {
+				it.get("/api/events?page=0&per_page=10&sort=start_date_time.ASC") {
 					header("Authorization", "Bearer ${tokenStore.get("user4@hollybike.fr")}")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -70,7 +124,7 @@ class EventTest : IntegrationSpec({
 							data = listOf(),
 							page = 0,
 							totalPage = 1,
-							perPage = 20,
+							perPage = 10,
 							totalData = 5
 						),
 						TLists<TAssociation>::data
@@ -1471,3 +1525,5 @@ class EventTest : IntegrationSpec({
 		}
 	}
 })
+
+private fun s() = "of"
