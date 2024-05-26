@@ -1,9 +1,6 @@
 package hollybike.api
 
-import hollybike.api.base.IntegrationSpec
-import hollybike.api.base.auth
-import hollybike.api.base.id
-import hollybike.api.base.value
+import hollybike.api.base.*
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.stores.AssociationStore
 import hollybike.api.stores.UserStore
@@ -245,7 +242,7 @@ class AssociationTest : IntegrationSpec({
 	context("Get all associations") {
 		test("Should get all associations") {
 			cloudTestApp {
-				it.get("/api/associations") {
+				it.get("/api/associations?per_page=10&page=0") {
 					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -256,14 +253,20 @@ class AssociationTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 1,
-							perPage = 20,
-							totalData = 4
+							totalPage = nbPages(
+								nbItems = AssociationStore.ASSOCIATION_COUNT,
+								pageSize = 10
+							),
+							perPage = 10,
+							totalData = AssociationStore.ASSOCIATION_COUNT
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 4
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = AssociationStore.ASSOCIATION_COUNT
+					)
 				}
 			}
 		}

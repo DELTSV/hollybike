@@ -3,6 +3,16 @@ package hollybike.api.stores
 class UserStore {
 	companion object {
 		/**
+		 * Total user count
+		 */
+		const val USER_COUNT = 13
+
+		/**
+		 * User count for association 1
+		 */
+		const val USER_COUNT_ASSOCIATION_1 = 4
+
+		/**
 		 * Root user, part of the root association.
 		 */
 		val root = 1 to "root@hollybike.fr"

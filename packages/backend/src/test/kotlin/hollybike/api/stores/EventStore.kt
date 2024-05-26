@@ -4,6 +4,26 @@ class EventStore {
 	companion object {
 
 		/**
+		 * Total event count
+		 */
+		const val EVENT_COUNT = 11
+
+		/**
+		 * Event count for association 1
+		 */
+		const val ASSOCIATION_1_EVENT_COUNT = 6
+
+		/**
+		 * Event count visible for user 3
+		 */
+		const val USER_3_VISIBLE_EVENT_COUNT = 4
+
+		/**
+		 * Event count visible for user 4 (including own pending events)
+		 */
+		const val USER_4_VISIBLE_EVENT_COUNT = 5
+
+		/**
 		 * Event 1
 		 * - Asso: Association 1
 		 * - Status: PENDING
@@ -54,7 +74,7 @@ class EventStore {
 		/**
 		 * Event 1
 		 * - Asso: Association 2
-		 * - Status: PENDING
+		 * - Status: SCHEDULED
 		 * - Participants: User 3 (Owner), User 4 (Organizer)
 		 */
 		val event1Asso2User3 = 7 to "Event 1 - Asso 2"

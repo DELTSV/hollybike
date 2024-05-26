@@ -1,9 +1,6 @@
 package hollybike.api
 
-import hollybike.api.base.IntegrationSpec
-import hollybike.api.base.auth
-import hollybike.api.base.id
-import hollybike.api.base.value
+import hollybike.api.base.*
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.stores.AssociationStore
 import hollybike.api.stores.UserStore
@@ -743,7 +740,7 @@ class UserTest : IntegrationSpec({
 	context("Get all users") {
 		test("Should return list of association users") {
 			onPremiseTestApp {
-				it.get("/api/users") {
+				it.get("/api/users?per_page=10&page=0") {
 					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -751,21 +748,24 @@ class UserTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 1,
-							perPage = 20,
-							totalData = 4
+							totalPage = nbPages(
+								UserStore.USER_COUNT_ASSOCIATION_1,
+								10
+							),
+							perPage = 10,
+							totalData = UserStore.USER_COUNT_ASSOCIATION_1
 						),
 						TLists<TUser>::data
 					)
 
-					body<TLists<TUser>>().data.size shouldBe 4
+					body<TLists<TUser>>().data.size shouldBe countWithCap(10, UserStore.USER_COUNT_ASSOCIATION_1)
 				}
 			}
 		}
 
 		test("Should return all users if root") {
 			onPremiseTestApp {
-				it.get("/api/users") {
+				it.get("/api/users?per_page=10&page=0") {
 					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -775,14 +775,44 @@ class UserTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 1,
-							perPage = 20,
-							totalData = 13
+							totalPage = nbPages(
+								UserStore.USER_COUNT,
+								10
+							),
+							perPage = 10,
+							totalData = UserStore.USER_COUNT
 						),
 						TLists<TUser>::data
 					)
 
-					body.data.size shouldBe 13
+					body.data.size shouldBe countWithCap(10, UserStore.USER_COUNT)
+				}
+			}
+		}
+
+		test("Should return all users of specific association") {
+			onPremiseTestApp {
+				it.get("/api/users?per_page=10&page=0&id_association=eq:${AssociationStore.association1.id}") {
+					auth(UserStore.root)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+					val body = body<TLists<TUser>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = nbPages(
+								UserStore.USER_COUNT_ASSOCIATION_1,
+								10
+							),
+							perPage = 10,
+							totalData = UserStore.USER_COUNT_ASSOCIATION_1
+						),
+						TLists<TUser>::data
+					)
+
+					body.data.size shouldBe countWithCap(10, UserStore.USER_COUNT_ASSOCIATION_1)
 				}
 			}
 		}

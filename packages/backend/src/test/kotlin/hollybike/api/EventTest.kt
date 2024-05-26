@@ -1,9 +1,6 @@
 package hollybike.api
 
-import hollybike.api.base.IntegrationSpec
-import hollybike.api.base.auth
-import hollybike.api.base.id
-import hollybike.api.base.value
+import hollybike.api.base.*
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.stores.AssociationStore
 import hollybike.api.stores.EventStore
@@ -48,14 +45,20 @@ class EventTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 2,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.EVENT_COUNT
+							),
 							perPage = 10,
-							totalData = 11
+							totalData = EventStore.EVENT_COUNT
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 10
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.EVENT_COUNT
+					)
 				}
 			}
 		}
@@ -73,14 +76,20 @@ class EventTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 1,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.ASSOCIATION_1_EVENT_COUNT
+							),
 							perPage = 10,
-							totalData = 6
+							totalData = EventStore.ASSOCIATION_1_EVENT_COUNT
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 6
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.ASSOCIATION_1_EVENT_COUNT
+					)
 
 					body.data.map { event -> event.status } shouldContain EEventStatus.Pending
 				}
@@ -100,14 +109,20 @@ class EventTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 1,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.USER_3_VISIBLE_EVENT_COUNT
+							),
 							perPage = 10,
-							totalData = 4
+							totalData = EventStore.USER_3_VISIBLE_EVENT_COUNT
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 4
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.USER_3_VISIBLE_EVENT_COUNT
+					)
 
 					body.data.map { event -> event.status } shouldNotContain EEventStatus.Pending
 				}
@@ -127,14 +142,20 @@ class EventTest : IntegrationSpec({
 						TLists(
 							data = listOf(),
 							page = 0,
-							totalPage = 1,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.USER_4_VISIBLE_EVENT_COUNT
+							),
 							perPage = 10,
-							totalData = 5
+							totalData = EventStore.USER_4_VISIBLE_EVENT_COUNT
 						),
 						TLists<TAssociation>::data
 					)
 
-					body.data.size shouldBe 5
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.USER_4_VISIBLE_EVENT_COUNT
+					)
 
 					body.data.map { event -> event.status } shouldContain EEventStatus.Pending
 				}

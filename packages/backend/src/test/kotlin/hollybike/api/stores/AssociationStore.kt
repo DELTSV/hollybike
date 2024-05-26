@@ -2,6 +2,10 @@ package hollybike.api.stores
 
 class AssociationStore {
 	companion object {
+		/**
+		 * Total association count
+		 */
+		const val ASSOCIATION_COUNT = 4
 
 		/**
 		 * Root association, contains only the root user.
