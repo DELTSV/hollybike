@@ -1,7 +1,12 @@
 package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.base.auth
+import hollybike.api.base.id
+import hollybike.api.base.value
 import hollybike.api.services.storage.StorageMode
+import hollybike.api.stores.AssociationStore
+import hollybike.api.stores.UserStore
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.lists.TLists
@@ -24,15 +29,15 @@ class UserTest : IntegrationSpec({
 	context("Get association by user id") {
 		test("Should get association by user id") {
 			onPremiseTestApp {
-				it.get("/api/users/2/association") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.get("/api/users/${UserStore.user1.id}/association") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
 					body<TAssociation>().shouldBeEqualToIgnoringFields(
 						TAssociation(
-							id = 2,
-							name = "Test Association 1",
+							id = AssociationStore.association1.id,
+							name = AssociationStore.association1.value,
 							status = EAssociationsStatus.Enabled,
 							picture = null
 						),
@@ -43,13 +48,13 @@ class UserTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not get association by user id if $scope") {
 				onPremiseTestApp {
-					it.get("/api/users/2/association") {
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+					it.get("/api/users/${UserStore.user1.id}/association") {
+						auth(user)
 					}.apply {
 						status shouldBe HttpStatusCode.Forbidden
 						bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -59,20 +64,20 @@ class UserTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"root@hollybike.fr" to EUserScope.Root,
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.root to EUserScope.Root,
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			run {
 				test("Should return myself for role $scope") {
 					onPremiseTestApp {
 						it.get("/api/users/me") {
-							header("Authorization", "Bearer ${tokenStore.get(email)}")
+							auth(user)
 						}.apply {
 							status shouldBe HttpStatusCode.OK
-							val body = body<TUser>();
+							val body = body<TUser>()
 
-							body.email shouldBe email
+							body.email shouldBe user.value
 							body.scope shouldBe scope
 						}
 					}
@@ -84,21 +89,21 @@ class UserTest : IntegrationSpec({
 	context("Get user by id") {
 		test("Should return the user by id") {
 			onPremiseTestApp {
-				it.get("/api/users/2") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/${UserStore.user1.id}") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TUser>().shouldBeEqualToIgnoringFields(
 						TUser(
-							id = 1,
-							email = "user1@hollybike.fr",
+							id = UserStore.user1.id,
+							email = UserStore.user1.value,
 							username = "user1",
 							scope = EUserScope.User,
 							status = EUserStatus.Enabled,
 							lastLogin = Instant.DISTANT_PAST,
 							association = TAssociation(
-								id = 2,
-								name = "Test Association 1",
+								id = AssociationStore.association1.id,
+								name = AssociationStore.association1.value,
 								status = EAssociationsStatus.Enabled,
 							),
 							profilePicture = null
@@ -112,21 +117,21 @@ class UserTest : IntegrationSpec({
 
 		test("Should return the user by id cross association if root") {
 			onPremiseTestApp {
-				it.get("/api/users/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.get("/api/users/${UserStore.user1.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TUser>().shouldBeEqualToIgnoringFields(
 						TUser(
-							id = 1,
-							email = "user1@hollybike.fr",
+							id = UserStore.user1.id,
+							email = UserStore.user1.value,
 							username = "user1",
 							scope = EUserScope.User,
 							status = EUserStatus.Enabled,
 							lastLogin = Instant.DISTANT_PAST,
 							association = TAssociation(
-								id = 2,
-								name = "Test Association 1",
+								id = AssociationStore.association1.id,
+								name = AssociationStore.association1.value,
 								status = EAssociationsStatus.Enabled,
 							),
 							profilePicture = null
@@ -140,8 +145,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not return the user by id if not admin") {
 			onPremiseTestApp {
-				it.get("/api/users/2") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+				it.get("/api/users/${UserStore.user1.id}") {
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -151,8 +156,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by id if not in the same association") {
 			onPremiseTestApp {
-				it.get("/api/users/4") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/${UserStore.user3.id}") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -162,8 +167,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by id if it does not exist") {
 			onPremiseTestApp {
-				it.get("/api/users/20") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/${UserStore.unknown.id}") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -175,21 +180,21 @@ class UserTest : IntegrationSpec({
 	context("Get user by email") {
 		test("Should return the user by email") {
 			onPremiseTestApp {
-				it.get("/api/users/email/user1@hollybike.fr") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/email/${UserStore.user1.value}") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TUser>().shouldBeEqualToIgnoringFields(
 						TUser(
-							id = 1,
-							email = "user1@hollybike.fr",
+							id = UserStore.user1.id,
+							email = UserStore.user1.value,
 							username = "user1",
 							scope = EUserScope.User,
 							status = EUserStatus.Enabled,
 							lastLogin = Instant.DISTANT_PAST,
 							association = TAssociation(
-								id = 2,
-								name = "Test Association 1",
+								id = AssociationStore.association1.id,
+								name = AssociationStore.association1.value,
 								status = EAssociationsStatus.Enabled,
 							),
 							profilePicture = null
@@ -203,21 +208,21 @@ class UserTest : IntegrationSpec({
 
 		test("Should return the user by email cross association if root") {
 			onPremiseTestApp {
-				it.get("/api/users/email/user1@hollybike.fr") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.get("/api/users/email/${UserStore.user1.value}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TUser>().shouldBeEqualToIgnoringFields(
 						TUser(
-							id = 1,
-							email = "user1@hollybike.fr",
+							id = UserStore.user1.id,
+							email = UserStore.user1.value,
 							username = "user1",
 							scope = EUserScope.User,
 							status = EUserStatus.Enabled,
 							lastLogin = Instant.DISTANT_PAST,
 							association = TAssociation(
-								id = 2,
-								name = "Test Association 1",
+								id = AssociationStore.association1.id,
+								name = AssociationStore.association1.value,
 								status = EAssociationsStatus.Enabled,
 							),
 							profilePicture = null
@@ -231,8 +236,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not return the user by email if not admin") {
 			onPremiseTestApp {
-				it.get("/api/users/email/user1@hollybike.fr") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+				it.get("/api/users/email/${UserStore.user1.value}") {
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -242,8 +247,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by email if not in the same association") {
 			onPremiseTestApp {
-				it.get("/api/users/email/user3@hollybike.fr") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/email/${UserStore.user3.value}") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -253,8 +258,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by email if it does not exist") {
 			onPremiseTestApp {
-				it.get("/api/users/email/notexists@hollybike.fr") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/email/${UserStore.unknown.value}") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -267,20 +272,20 @@ class UserTest : IntegrationSpec({
 		test("Should return the user by username") {
 			onPremiseTestApp {
 				it.get("/api/users/username/user1") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TUser>().shouldBeEqualToIgnoringFields(
 						TUser(
-							id = 1,
-							email = "user1@hollybike.fr",
+							id = UserStore.user1.id,
+							email = UserStore.user1.value,
 							username = "user1",
 							scope = EUserScope.User,
 							status = EUserStatus.Enabled,
 							lastLogin = Instant.DISTANT_PAST,
 							association = TAssociation(
-								id = 2,
-								name = "Test Association 1",
+								id = AssociationStore.association1.id,
+								name = AssociationStore.association1.value,
 								status = EAssociationsStatus.Enabled,
 							),
 							profilePicture = null
@@ -295,20 +300,20 @@ class UserTest : IntegrationSpec({
 		test("Should return the user by username cross association if root") {
 			onPremiseTestApp {
 				it.get("/api/users/username/user1") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TUser>().shouldBeEqualToIgnoringFields(
 						TUser(
-							id = 1,
-							email = "user1@hollybike.fr",
+							id = UserStore.user1.id,
+							email = UserStore.user1.value,
 							username = "user1",
 							scope = EUserScope.User,
 							status = EUserStatus.Enabled,
 							lastLogin = Instant.DISTANT_PAST,
 							association = TAssociation(
-								id = 2,
-								name = "Test Association 1",
+								id = AssociationStore.association1.id,
+								name = AssociationStore.association1.value,
 								status = EAssociationsStatus.Enabled,
 							),
 							profilePicture = null
@@ -323,7 +328,7 @@ class UserTest : IntegrationSpec({
 		test("Should not return the user by username if not admin") {
 			onPremiseTestApp {
 				it.get("/api/users/username/user1") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -334,7 +339,7 @@ class UserTest : IntegrationSpec({
 		test("Should not found the user by username if not in the same association") {
 			onPremiseTestApp {
 				it.get("/api/users/username/user3") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -344,8 +349,8 @@ class UserTest : IntegrationSpec({
 
 		test("Should not found the user by username if it does not exist") {
 			onPremiseTestApp {
-				it.get("/api/users/username/notexists") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+				it.get("/api/users/username/unknown") {
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -358,7 +363,7 @@ class UserTest : IntegrationSpec({
 		test("Should update my username") {
 			onPremiseTestApp {
 				it.patch("/api/users/me") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUserUpdateSelf(
@@ -375,7 +380,7 @@ class UserTest : IntegrationSpec({
 		test("Should update my password") {
 			onPremiseTestApp {
 				it.patch("/api/users/me") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUserUpdateSelf(
@@ -393,7 +398,7 @@ class UserTest : IntegrationSpec({
 		test("Should not update my password if the old password is wrong") {
 			onPremiseTestApp {
 				it.patch("/api/users/me") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUserUpdateSelf(
@@ -412,7 +417,7 @@ class UserTest : IntegrationSpec({
 		test("Should not update my password if the new password is different") {
 			onPremiseTestApp {
 				it.patch("/api/users/me") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TUserUpdateSelf(
@@ -444,7 +449,7 @@ class UserTest : IntegrationSpec({
 			test("Should not update my password because one element is missing") {
 				onPremiseTestApp {
 					it.patch("/api/users/me") {
-						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+						auth(UserStore.user1)
 						contentType(ContentType.Application.Json)
 						setBody(update)
 					}.apply {
@@ -474,7 +479,7 @@ class UserTest : IntegrationSpec({
 
 						it.post("/api/users/me/profile-picture") {
 							val boundary = "WebAppBoundary"
-							header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+							auth(UserStore.user1)
 							setBody(
 								MultiPartFormDataContent(
 									formData {
@@ -509,7 +514,7 @@ class UserTest : IntegrationSpec({
 
 					it.post("/api/users/me/profile-picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+						auth(UserStore.user1)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -538,7 +543,7 @@ class UserTest : IntegrationSpec({
 
 				it.post("/api/users/me/profile-picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -569,9 +574,9 @@ class UserTest : IntegrationSpec({
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
 
-					it.post("/api/users/2/profile-picture") {
+					it.post("/api/users/${UserStore.user1.id}/profile-picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+						auth(UserStore.admin1)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -603,9 +608,9 @@ class UserTest : IntegrationSpec({
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
 
-					it.post("/api/users/2/profile-picture") {
+					it.post("/api/users/${UserStore.user1.id}/profile-picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+						auth(UserStore.admin1)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -632,9 +637,9 @@ class UserTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.post("/api/users/2/profile-picture") {
+				it.post("/api/users/${UserStore.user1.id}/profile-picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -659,9 +664,9 @@ class UserTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.post("/api/users/20/profile-picture") {
+				it.post("/api/users/${UserStore.unknown.id}/profile-picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -675,7 +680,7 @@ class UserTest : IntegrationSpec({
 					)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Utilisateur 20 inconnu"
+					bodyAsText() shouldBe "Utilisateur ${UserStore.unknown.id} inconnu"
 				}
 			}
 		}
@@ -686,9 +691,9 @@ class UserTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.post("/api/users/4/profile-picture") {
+				it.post("/api/users/${UserStore.user3.id}/profile-picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -713,9 +718,9 @@ class UserTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.post("/api/users/2/profile-picture") {
+				it.post("/api/users/${UserStore.user1.id}/profile-picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -739,7 +744,7 @@ class UserTest : IntegrationSpec({
 		test("Should return list of association users") {
 			onPremiseTestApp {
 				it.get("/api/users") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TLists<TUser>>().shouldBeEqualToIgnoringFields(
@@ -761,7 +766,7 @@ class UserTest : IntegrationSpec({
 		test("Should return all users if root") {
 			onPremiseTestApp {
 				it.get("/api/users") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					val body = body<TLists<TUser>>()
@@ -785,7 +790,7 @@ class UserTest : IntegrationSpec({
 		test("Should not return list of association users if not admin") {
 			onPremiseTestApp {
 				it.get("/api/users") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 
@@ -799,7 +804,7 @@ class UserTest : IntegrationSpec({
 		test("Should get user meta-data") {
 			onPremiseTestApp {
 				it.get("/api/users/meta-data") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<Map<String, String>>().size shouldNotBe 0
@@ -810,7 +815,7 @@ class UserTest : IntegrationSpec({
 		test("Should not get user meta-data if not admin") {
 			onPremiseTestApp {
 				it.get("/api/users/meta-data") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"

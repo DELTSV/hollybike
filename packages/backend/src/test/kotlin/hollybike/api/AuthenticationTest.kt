@@ -1,6 +1,8 @@
 package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.base.value
+import hollybike.api.stores.UserStore
 import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
 import hollybike.api.types.auth.TSignup
@@ -18,7 +20,7 @@ class AuthenticationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
-					setBody(TLogin("notfound@hollybike.fr", "test"))
+					setBody(TLogin(UserStore.unknown.value, "test"))
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Utilisateur inconnu"
@@ -30,7 +32,7 @@ class AuthenticationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
-					setBody(TLogin("root@hollybike.fr", "password"))
+					setBody(TLogin(UserStore.root.value, "password"))
 				}.apply {
 					status shouldBe HttpStatusCode.Unauthorized
 					bodyAsText() shouldBe "Mauvais mot de passe"
@@ -42,7 +44,7 @@ class AuthenticationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
-					setBody(TLogin("disabled1@hollybike.fr", "test"))
+					setBody(TLogin(UserStore.disabled1.value, "test"))
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 				}
@@ -53,7 +55,7 @@ class AuthenticationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
-					setBody(TLogin("user6@hollybike.fr", "test"))
+					setBody(TLogin(UserStore.user6.value, "test"))
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 				}
@@ -64,7 +66,7 @@ class AuthenticationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/auth/login") {
 					contentType(ContentType.Application.Json)
-					setBody(TLogin("root@hollybike.fr", "test"))
+					setBody(TLogin(UserStore.root.value, "test"))
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TAuthInfo>().token shouldNotBe null
@@ -76,16 +78,16 @@ class AuthenticationTest : IntegrationSpec({
 	context("Sign up user") {
 		test("Should sign up the user to the association") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,
@@ -101,16 +103,16 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user with invalid email address") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1",
+							email = "invalid_email",
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,
@@ -126,16 +128,16 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user if the email is already used") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "user1@hollybike.fr",
+							email = UserStore.user1.value,
 							password = "test",
-							username = "user1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,
@@ -151,15 +153,15 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user if no host is provided") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,
@@ -175,16 +177,16 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user with bad invitation id") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,
@@ -199,16 +201,16 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user with bad association id") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = 20,
 							role = EUserScope.User,
@@ -223,16 +225,16 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user with bad user scope") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.Admin,
@@ -247,17 +249,17 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user with bad verify signature") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
-							verify = "somesignature",
+							username = "new_account",
+							verify = "invalid_signature",
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,
 							invitation = invitation["invitation"]!!.toInt()
@@ -271,16 +273,16 @@ class AuthenticationTest : IntegrationSpec({
 
 		test("Should not sign up the user with used invitation") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr", maxUses = 0)
+				val invitation = generateInvitation(it, UserStore.admin1, maxUses = 0)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
 					header("Host", "localhost")
 					setBody(
 						TSignup(
-							email = "account1@hollybike.fr",
+							email = UserStore.new.value,
 							password = "test",
-							username = "account1",
+							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
 							role = EUserScope.User,

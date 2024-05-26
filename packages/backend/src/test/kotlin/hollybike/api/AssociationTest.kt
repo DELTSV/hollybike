@@ -1,7 +1,12 @@
 package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.base.auth
+import hollybike.api.base.id
+import hollybike.api.base.value
 import hollybike.api.services.storage.StorageMode
+import hollybike.api.stores.AssociationStore
+import hollybike.api.stores.UserStore
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TNewAssociation
@@ -9,6 +14,7 @@ import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -22,13 +28,13 @@ class AssociationTest : IntegrationSpec({
 		test("Should return the my association") {
 			onPremiseTestApp {
 				it.get("/api/associations/me") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TAssociation>().shouldBeEqualToIgnoringFields(
 						TAssociation(
-							id = 1,
-							name = "Test Association 1",
+							id = AssociationStore.association1.id,
+							name = AssociationStore.association1.value,
 							status = EAssociationsStatus.Enabled,
 							picture = null
 						),
@@ -41,7 +47,7 @@ class AssociationTest : IntegrationSpec({
 		test("Should not return my association if not admin") {
 			onPremiseTestApp {
 				it.get("/api/associations/me") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -54,7 +60,7 @@ class AssociationTest : IntegrationSpec({
 		test("Should update my association") {
 			onPremiseTestApp {
 				it.patch("/api/associations/me") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
 						name = "Updated Association",
@@ -63,14 +69,11 @@ class AssociationTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
-					body<TAssociation>().shouldBeEqualToIgnoringFields(
-						TAssociation(
-							id = 2,
-							name = "Updated Association",
-							status = EAssociationsStatus.Enabled,
-							picture = null
-						),
-						TAssociation::id
+					body<TAssociation>() shouldBeEqual TAssociation(
+						id = AssociationStore.association1.id,
+						name = "Updated Association",
+						status = EAssociationsStatus.Enabled,
+						picture = null
 					)
 				}
 			}
@@ -79,7 +82,7 @@ class AssociationTest : IntegrationSpec({
 		test("Should not update my association if not admin") {
 			onPremiseTestApp {
 				it.patch("/api/associations/me") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
 						name = "Updated Association",
@@ -96,10 +99,10 @@ class AssociationTest : IntegrationSpec({
 		test("Should not update my association if the name already exists") {
 			onPremiseTestApp {
 				it.patch("/api/associations/me") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
-						name = "Test Association 2",
+						name = AssociationStore.association2.value
 					))
 				}.apply {
 					status shouldBe HttpStatusCode.Conflict
@@ -127,7 +130,7 @@ class AssociationTest : IntegrationSpec({
 
 						it.patch("/api/associations/me/picture") {
 							val boundary = "WebAppBoundary"
-							header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+							auth(UserStore.admin1)
 							setBody(
 								MultiPartFormDataContent(
 									formData {
@@ -156,7 +159,7 @@ class AssociationTest : IntegrationSpec({
 
 				it.patch("/api/associations/me/picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -190,7 +193,7 @@ class AssociationTest : IntegrationSpec({
 
 					it.patch("/api/associations/me/picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+						auth(UserStore.admin1)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -219,7 +222,7 @@ class AssociationTest : IntegrationSpec({
 
 				it.patch("/api/associations/me/picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -243,7 +246,7 @@ class AssociationTest : IntegrationSpec({
 		test("Should get all associations") {
 			cloudTestApp {
 				it.get("/api/associations") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -266,13 +269,13 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not get all associations if $scope") {
 				cloudTestApp {
 					it.get("/api/associations") {
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+						auth(user)
 					}.apply {
 						status shouldBe HttpStatusCode.Forbidden
 						bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -284,7 +287,7 @@ class AssociationTest : IntegrationSpec({
 		test("Should not get all associations if on premise mode") {
 			onPremiseTestApp {
 				it.get("/api/associations") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 				}
@@ -295,15 +298,15 @@ class AssociationTest : IntegrationSpec({
 	context("Get association by id") {
 		test("Should get association by id") {
 			cloudTestApp {
-				it.get("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.get("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
 					body<TAssociation>().shouldBeEqualToIgnoringFields(
 						TAssociation(
-							id = 2,
-							name = "Test Association 1",
+							id = AssociationStore.association1.id,
+							name = AssociationStore.association1.value,
 							status = EAssociationsStatus.Enabled,
 							picture = null
 						),
@@ -314,13 +317,13 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not get association by id if $scope") {
 				cloudTestApp {
 					it.get("/api/associations") {
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+						auth(user)
 					}.apply {
 						status shouldBe HttpStatusCode.Forbidden
 						bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -331,20 +334,20 @@ class AssociationTest : IntegrationSpec({
 
 		test("Should not get association by id if it does not exist") {
 			cloudTestApp {
-				it.get("/api/associations/20") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.get("/api/associations/${AssociationStore.unknown.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 
-					bodyAsText() shouldBe "Association 20 inconnue"
+					bodyAsText() shouldBe "Association ${AssociationStore.unknown.id} inconnue"
 				}
 			}
 		}
 
 		test("Should not get association by id if on premise mode") {
 			onPremiseTestApp {
-				it.get("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.get("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 				}
@@ -356,18 +359,18 @@ class AssociationTest : IntegrationSpec({
 		test("Should create an association") {
 			cloudTestApp {
 				it.post("/api/associations") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TNewAssociation(
-						name = "New Association"
+						name = AssociationStore.new.value
 					))
 				}.apply {
 					status shouldBe HttpStatusCode.Created
 
 					body<TAssociation>().shouldBeEqualToIgnoringFields(
 						TAssociation(
-							id = 0,
-							name = "New Association",
+							id = AssociationStore.new.id,
+							name = AssociationStore.new.value,
 							status = EAssociationsStatus.Enabled,
 							picture = null
 						),
@@ -378,16 +381,16 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not create an association if $scope") {
 				cloudTestApp {
 					it.post("/api/associations") {
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+						auth(user)
 						contentType(ContentType.Application.Json)
 						setBody(TNewAssociation(
-							name = "New Association"
+							name = AssociationStore.new.value
 						))
 					}.apply {
 						status shouldBe HttpStatusCode.Forbidden
@@ -401,10 +404,10 @@ class AssociationTest : IntegrationSpec({
 		test("Should not create an association if the name already exists") {
 			cloudTestApp {
 				it.post("/api/associations") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TNewAssociation(
-						name = "Test Association 1"
+						name = AssociationStore.association1.value
 					))
 				}.apply {
 					status shouldBe HttpStatusCode.Conflict
@@ -417,10 +420,10 @@ class AssociationTest : IntegrationSpec({
 		test("Should not create an association if on premise mode") {
 			onPremiseTestApp {
 				it.post("/api/associations") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TNewAssociation(
-						name = "New Association"
+						name = AssociationStore.new.value
 					))
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -432,8 +435,8 @@ class AssociationTest : IntegrationSpec({
 	context("Update an association") {
 		test("Should update an association") {
 			cloudTestApp {
-				it.patch("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.patch("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
 						name = "Updated Association",
@@ -444,7 +447,7 @@ class AssociationTest : IntegrationSpec({
 
 					body<TAssociation>().shouldBeEqualToIgnoringFields(
 						TAssociation(
-							id = 2,
+							id = AssociationStore.association1.id,
 							name = "Updated Association",
 							status = EAssociationsStatus.Disabled,
 							picture = null
@@ -456,13 +459,13 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not update an association if $scope") {
 				cloudTestApp {
 					it.patch("/api/associations/2") {
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+						auth(user)
 						contentType(ContentType.Application.Json)
 						setBody(TUpdateAssociation(
 							name = "Updated Association",
@@ -479,11 +482,11 @@ class AssociationTest : IntegrationSpec({
 
 		test("Should not update an association if the name already exists") {
 			cloudTestApp {
-				it.patch("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.patch("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
-						name = "Test Association 2",
+						name = AssociationStore.association2.value
 					))
 				}.apply {
 					status shouldBe HttpStatusCode.Conflict
@@ -494,8 +497,8 @@ class AssociationTest : IntegrationSpec({
 
 		test("Should not update an association if it does not exist") {
 			cloudTestApp {
-				it.patch("/api/associations/20") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.patch("/api/associations/${AssociationStore.unknown.id}") {
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
 						name = "Updated Association",
@@ -503,15 +506,15 @@ class AssociationTest : IntegrationSpec({
 					))
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Association 20 inconnue"
+					bodyAsText() shouldBe "Association ${AssociationStore.unknown.id} inconnue"
 				}
 			}
 		}
 
 		test("Should not update an association if on premise mode") {
 			onPremiseTestApp {
-				it.patch("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.patch("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 					contentType(ContentType.Application.Json)
 					setBody(TUpdateAssociation(
 						name = "Updated Association",
@@ -535,9 +538,9 @@ class AssociationTest : IntegrationSpec({
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
 
-					it.patch("/api/associations/2/picture") {
+					it.patch("/api/associations/${AssociationStore.association1.id}/picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+						auth(UserStore.root)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -558,18 +561,18 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not upload association picture if $scope") {
 				cloudTestApp {
 					val file = File(
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
 
-					it.patch("/api/associations/2/picture") {
+					it.patch("/api/associations/${AssociationStore.association1.id}/picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+						auth(user)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -602,9 +605,9 @@ class AssociationTest : IntegrationSpec({
 						javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 					)
 
-					it.patch("/api/associations/2/picture") {
+					it.patch("/api/associations/${AssociationStore.association1.id}/picture") {
 						val boundary = "WebAppBoundary"
-						header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+						auth(UserStore.root)
 						setBody(
 							MultiPartFormDataContent(
 								formData {
@@ -631,9 +634,9 @@ class AssociationTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.patch("/api/associations/2/picture") {
+				it.patch("/api/associations/${AssociationStore.association1.id}/picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -658,9 +661,9 @@ class AssociationTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.patch("/api/associations/20/picture") {
+				it.patch("/api/associations/${AssociationStore.unknown.id}/picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -675,7 +678,7 @@ class AssociationTest : IntegrationSpec({
 					)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Association 20 inconnue"
+					bodyAsText() shouldBe "Association ${AssociationStore.unknown.id} inconnue"
 				}
 			}
 		}
@@ -686,9 +689,9 @@ class AssociationTest : IntegrationSpec({
 					javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 				)
 
-				it.patch("/api/associations/20/picture") {
+				it.patch("/api/associations/${AssociationStore.unknown.id}/picture") {
 					val boundary = "WebAppBoundary"
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					setBody(
 						MultiPartFormDataContent(
 							formData {
@@ -711,8 +714,8 @@ class AssociationTest : IntegrationSpec({
 	context("Delete an association") {
 		test("Should delete an association") {
 			cloudTestApp {
-				it.delete("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.delete("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 				}
@@ -720,13 +723,13 @@ class AssociationTest : IntegrationSpec({
 		}
 
 		mapOf(
-			"admin1@hollybike.fr" to EUserScope.Admin,
-			"user1@hollybike.fr" to EUserScope.User,
-		).forEach { (email, scope) ->
+			UserStore.admin1 to EUserScope.Admin,
+			UserStore.user1 to EUserScope.User,
+		).forEach { (user, scope) ->
 			test("Should not delete an association if $scope") {
 				cloudTestApp {
-					it.delete("/api/associations/2") {
-						header("Authorization", "Bearer ${tokenStore.get(email)}")
+					it.delete("/api/associations/${AssociationStore.association1.id}") {
+						auth(user)
 					}.apply {
 						status shouldBe HttpStatusCode.Forbidden
 
@@ -738,19 +741,19 @@ class AssociationTest : IntegrationSpec({
 
 		test("Should not delete an association if it does not exist") {
 			cloudTestApp {
-				it.delete("/api/associations/20") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.delete("/api/associations/${AssociationStore.unknown.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Association 20 inconnue"
+					bodyAsText() shouldBe "Association ${AssociationStore.unknown.id} inconnue"
 				}
 			}
 		}
 
 		test("Should not delete an association in on premise mode") {
 			onPremiseTestApp {
-				it.delete("/api/associations/2") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+				it.delete("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 				}
