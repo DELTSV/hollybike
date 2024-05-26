@@ -1,9 +1,7 @@
 package hollybike.api.services
 
 import hollybike.api.exceptions.*
-import hollybike.api.repository.Associations
-import hollybike.api.repository.User
-import hollybike.api.repository.Users
+import hollybike.api.repository.*
 import hollybike.api.repository.events.Event
 import hollybike.api.repository.events.Events
 import hollybike.api.repository.events.participations.EventParticipation
@@ -13,6 +11,7 @@ import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
@@ -20,8 +19,12 @@ import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class EventService(
 	private val db: Database,
@@ -113,15 +116,67 @@ class EventService(
 			}
 		}
 
-		return Event.wrapRows(eventsQuery);
+		return Event.wrapRows(eventsQuery)
 	}
 
-	fun getEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
+	fun getAllEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		eventsQuery(caller, searchParam).with(Event::owner).toList()
 	}
 
-	fun countEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
+	fun countAllEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
 		eventsQuery(caller, searchParam, pagination = false).count().toInt()
+	}
+
+	private fun futureEventsCondition(): Op<Boolean> {
+		return (Events.startDateTime greaterEq now()) or
+			((Events.endDateTime neq null) and(Events.endDateTime greaterEq now())) or
+			((Events.endDateTime eq null) and(addtime(Events.startDateTime, 4.hours) greaterEq now()))
+	}
+
+	fun getFutureEvents(caller: User, page: Int, perPage: Int): List<Event> = transaction(db) {
+		val searchParam = SearchParam(
+			sort = listOf(Sort(Events.startDateTime, SortOrder.ASC)),
+			page = page,
+			perPage = perPage,
+			filter = mutableListOf(),
+			query = null
+		)
+
+		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
+			eventUserCondition(caller) and futureEventsCondition()
+		}).with(Event::owner).toList()
+	}
+
+	fun countFutureEvents(caller: User): Int = transaction(db) {
+		Event.find(
+			eventUserCondition(caller) and futureEventsCondition()
+		).count().toInt()
+	}
+
+	private fun archivedEventsCondition(): Op<Boolean> {
+		return (Events.startDateTime less now()) and
+			(((Events.endDateTime neq null) and (Events.endDateTime less now())) or
+			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
+	}
+
+	fun getArchivedEvents(caller: User, page: Int, perPage: Int): List<Event> = transaction(db) {
+		val searchParam = SearchParam(
+			sort = listOf(Sort(Events.startDateTime, SortOrder.DESC)),
+			page = page,
+			perPage = perPage,
+			filter = mutableListOf(),
+			query = null
+		)
+
+		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
+			eventUserCondition(caller) and archivedEventsCondition()
+		}).with(Event::owner).toList()
+	}
+
+	fun countArchivedEvents(caller: User): Int = transaction(db) {
+		Event.find(
+			eventUserCondition(caller) and archivedEventsCondition()
+		).count().toInt()
 	}
 
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {

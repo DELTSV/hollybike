@@ -22,6 +22,7 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 
 class EventController(
@@ -32,7 +33,9 @@ class EventController(
 	init {
 		application.routing {
 			authenticate {
-				getEvents()
+				getAllEvents()
+				getFutureEvents()
+				getArchivedEvents()
 				getEvent()
 				createEvent()
 				updateEvent()
@@ -94,12 +97,46 @@ class EventController(
 		}
 	}
 
-	private fun Route.getEvents() {
+	private fun Route.getAllEvents() {
 		get<Events> {
 			val params = call.request.queryParameters.getSearchParam(eventMapper + associationMapper + userMapper)
 
-			val events = eventService.getEvents(call.user, params)
-			val total = eventService.countEvents(call.user, params)
+			val events = eventService.getAllEvents(call.user, params)
+			val total = eventService.countAllEvents(call.user, params)
+
+			call.respond(
+				TLists(
+					data = events.map { TEventPartial(it, host) },
+					page = call.listParams.page,
+					perPage = call.listParams.perPage,
+					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
+					totalData = total
+				)
+			)
+		}
+	}
+
+	private fun Route.getFutureEvents() {
+		get<Events.Future> {
+			val events = eventService.getFutureEvents(call.user, call.listParams.page, call.listParams.perPage)
+			val total = eventService.countFutureEvents(call.user)
+
+			call.respond(
+				TLists(
+					data = events.map { TEventPartial(it, host) },
+					page = call.listParams.page,
+					perPage = call.listParams.perPage,
+					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
+					totalData = total
+				)
+			)
+		}
+	}
+
+	private fun Route.getArchivedEvents() {
+		get<Events.Archived> {
+			val events = eventService.getArchivedEvents(call.user, call.listParams.page, call.listParams.perPage)
+			val total = eventService.countArchivedEvents(call.user)
 
 			call.respond(
 				TLists(

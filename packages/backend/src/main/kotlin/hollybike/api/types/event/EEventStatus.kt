@@ -3,6 +3,7 @@ package hollybike.api.types.event
 import hollybike.api.repository.events.Event
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 enum class EEventStatus(val value: Int) {
 	Pending(1),
@@ -22,15 +23,22 @@ enum class EEventStatus(val value: Int) {
 			}
 
 			if (event.endDateTime != null && event.endDateTime!! > now) {
-				return Now
+				return if (event.status == Scheduled) {
+					Now
+				} else {
+					event.status
+				}
 			}
 
 			if (event.endDateTime == null) {
 				val endDateTime = event.startDateTime + 4.hours
-				if (endDateTime < now) {
-					return Finished
+				if (endDateTime > now) {
+					return if (event.status == Scheduled) {
+						Now
+					} else {
+						event.status
+					}
 				}
-				return Now
 			}
 
 			return Finished
