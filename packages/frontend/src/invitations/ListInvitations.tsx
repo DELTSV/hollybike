@@ -3,13 +3,29 @@ import { TInvitation } from "../types/TInvitation.ts";
 import { List } from "../components/List/List.tsx";
 import { Cell } from "../components/List/Cell.tsx";
 import { Button } from "../components/Button/Button.tsx";
-import { useNavigate } from "react-router-dom";
+import {
+	useNavigate, useParams,
+} from "react-router-dom";
 import { LinkOff } from "@material-ui/icons";
 import { api } from "../utils/useApi.ts";
 import { useReload } from "../utils/useReload.ts";
+import { useEffect } from "preact/hooks";
+import { TAssociation } from "../types/TAssociation.ts";
 
 export function ListInvitations() {
-	const { association } = useSideBar();
+	const {
+		association, setAssociation,
+	} = useSideBar();
+
+	const { id } = useParams();
+
+	useEffect(() => {
+		if (id)
+			api<TAssociation>(`/associations/${id}`).then((res) => {
+				if (res.status === 200 && res.data !== null && res.data !== undefined)
+					setAssociation(res.data);
+			});
+	}, [id, setAssociation]);
 
 	const {
 		reload, doReload,
@@ -48,7 +64,7 @@ export function ListInvitations() {
 						id: "",
 					},
 				]}
-				baseUrl={`/associations/${ association?.id}/invitations`} line={(i: TInvitation) => [
+				baseUrl={`/associations/${association?.id}/invitations`} line={(i: TInvitation) => [
 					<Cell>
 						{ i.role }
 					</Cell>,
