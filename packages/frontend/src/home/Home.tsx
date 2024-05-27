@@ -25,8 +25,15 @@ export function Home() {
 			api<TOnboarding>("/associations/me/onboarding", {
 				method: "PATCH",
 				body: localOnboarding,
+			}).then((res) => {
+				if (res.status === 400)
+					setLocalOnboarding(onboarding.data);
 			});
-	}, [localOnboarding, onboarding]);
+	}, [
+		localOnboarding,
+		onboarding,
+		setLocalOnboarding,
+	]);
 
 	return (
 		<div>
@@ -77,7 +84,9 @@ export function Home() {
 										};
 								})}
 							/>
-							<span>Créer une invitation</span>
+							<Link to={`associations/${ user.user?.association.id }/invitations/`}>
+								<span>Créer une invitation</span>
+							</Link>
 						</p>
 					</div>
 				</Card> }
