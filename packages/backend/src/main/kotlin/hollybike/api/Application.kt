@@ -64,7 +64,7 @@ fun Application.checkTestEnvironment() {
 }
 
 fun Application.loadConfig() {
-	this.attributes.put(confKey, parseConf(isTestEnv))
+	this.attributes.put(confKey, parseConf())
 }
 
 fun Application.loadCustomConfig(customConfig: Conf) {

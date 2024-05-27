@@ -12,13 +12,11 @@ class FTPStorageService(
 	ftpUsername: String?,
 	ftpPassword: String?,
 	ftpDirectory: String?,
-	storageSignatureService: StorageSignatureService
+	override val signer: StorageSignatureService
 ) : StorageService {
 	override val mode = StorageMode.FTP
 
 	private val ftpClient = FTPClient()
-
-	override val signer = storageSignatureService.signer
 
 	init {
 		if (ftpServer == null || ftpUsername == null || ftpPassword == null || ftpDirectory == null) {

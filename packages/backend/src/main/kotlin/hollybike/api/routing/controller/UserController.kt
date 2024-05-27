@@ -11,6 +11,7 @@ import hollybike.api.services.UserService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.lists.TLists
+import hollybike.api.types.shared.ImagePath
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
 import hollybike.api.types.user.TUserUpdateSelf
@@ -26,8 +27,8 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
-import io.ktor.server.routing.routing
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.routing
 import kotlin.math.ceil
 
 class UserController(
@@ -55,7 +56,7 @@ class UserController(
 	private fun Route.getUserAssociation() {
 		get<Users.Id.Association>(EUserScope.Root) { params ->
 			userService.getUserAssociation(params.id.id)?.let {
-				call.respond(TAssociation(it, storageService.signer))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -64,14 +65,14 @@ class UserController(
 
 	private fun Route.getMe() {
 		get<Users.Me> {
-			call.respond(TUser(call.user, storageService.signer))
+			call.respond(TUser(call.user, storageService.signer.sign))
 		}
 	}
 
 	private fun Route.getUserById() {
 		get<Users.Id>(EUserScope.Admin) {
 			userService.getUser(call.user, it.id)?.let { user ->
-				call.respond(TUser(user, storageService.signer))
+				call.respond(TUser(user, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -81,7 +82,7 @@ class UserController(
 	private fun Route.getByUserName() {
 		get<Users.Username>(EUserScope.Admin) {
 			userService.getUserByUsername(call.user, it.username)?.let { user ->
-				call.respond(TUser(user, storageService.signer))
+				call.respond(TUser(user, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -91,7 +92,7 @@ class UserController(
 	private fun Route.getByEmail() {
 		get<Users.Email>(EUserScope.Admin) {
 			userService.getUserByEmail(call.user, it.email)?.let { user ->
-				call.respond(TUser(user, storageService.signer))
+				call.respond(TUser(user, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -102,12 +103,19 @@ class UserController(
 		this.patch<Users.Me> {
 			val update = call.receive<TUserUpdateSelf>()
 			userService.updateMe(call.user, update).onSuccess {
-				call.respond(TUser(it, storageService.signer))
+				call.respond(TUser(it, storageService.signer.sign))
 			}.onFailure {
-				when(it) {
-					is BadRequestException -> call.respond(HttpStatusCode.BadRequest, "Changer de mot de passe nécessite new_password, new_password_again et old_password")
+				when (it) {
+					is BadRequestException -> call.respond(
+						HttpStatusCode.BadRequest,
+						"Changer de mot de passe nécessite new_password, new_password_again et old_password"
+					)
+
 					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais old_password")
-					is UserDifferentNewPassword -> call.respond(HttpStatusCode.BadRequest, "new_password et _new_password_again sont différent")
+					is UserDifferentNewPassword -> call.respond(
+						HttpStatusCode.BadRequest,
+						"new_password et _new_password_again sont différent"
+					)
 				}
 			}
 		}
@@ -129,9 +137,18 @@ class UserController(
 				return@post
 			}
 
-			userService.uploadUserProfilePicture(call.user, call.user, image.streamProvider().readBytes(), contentType.toString())
+			val path = userService.uploadUserProfilePicture(
+				call.user,
+				call.user,
+				image.streamProvider().readBytes(),
+				contentType.toString()
+			)
 
-			call.respond(HttpStatusCode.OK)
+			path?.let { imagePath ->
+				call.respond(HttpStatusCode.OK, ImagePath(storageService.signer.sign(imagePath)))
+			} ?: run {
+				call.respond(HttpStatusCode.Forbidden)
+			}
 		}
 	}
 
@@ -156,19 +173,36 @@ class UserController(
 				return@post
 			}
 
-			userService.uploadUserProfilePicture(call.user, user, image.streamProvider().readBytes(), contentType.toString())
+			val path = userService.uploadUserProfilePicture(
+				call.user,
+				user,
+				image.streamProvider().readBytes(),
+				contentType.toString(),
+			)
 
-			call.respond(HttpStatusCode.OK)
+			path?.let { imagePath ->
+				call.respond(HttpStatusCode.OK, ImagePath(storageService.signer.sign(imagePath)))
+			} ?: run {
+				call.respond(HttpStatusCode.Forbidden)
+			}
 		}
 	}
 
 	private fun Route.getAll() {
 		get<Users>(EUserScope.Admin) {
 			val param = call.request.queryParameters.getSearchParam(userMapper + associationMapper)
-			val list = userService.getAll(call.user, param)?.map { TUser(it, storageService.signer) }
+			val list = userService.getAll(call.user, param)?.map { TUser(it, storageService.signer.sign) }
 			val count = userService.getAllCount(call.user, param)
-			if(list != null && count != null) {
-				call.respond(TLists(list, param.page, ceil(count.toDouble() / param.perPage).toInt(), param.perPage, count.toInt()))
+			if (list != null && count != null) {
+				call.respond(
+					TLists(
+						list,
+						param.page,
+						ceil(count.toDouble() / param.perPage).toInt(),
+						param.perPage,
+						count.toInt()
+					)
+				)
 			} else {
 				call.respond(HttpStatusCode.Forbidden)
 			}

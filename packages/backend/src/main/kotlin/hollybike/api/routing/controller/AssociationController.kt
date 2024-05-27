@@ -53,7 +53,7 @@ class AssociationController(
 
 	private fun Route.getMyAssociation() {
 		get<Associations.Me<API>>(EUserScope.Admin) {
-			call.respond(TAssociation(call.user.association, storageService.signer))
+			call.respond(TAssociation(call.user.association, storageService.signer.sign))
 		}
 	}
 
@@ -65,7 +65,7 @@ class AssociationController(
 				update.name,
 				null
 			).onSuccess {
-				call.respond(TAssociation(it, storageService.signer))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'association existe déjà")
@@ -97,7 +97,7 @@ class AssociationController(
 				contentType
 			)
 
-			call.respond(TAssociation(association, storageService.signer))
+			call.respond(TAssociation(association, storageService.signer.sign))
 		}
 	}
 
@@ -115,7 +115,7 @@ class AssociationController(
 
 			call.respond(
 				TLists(
-					data = associations.map { TAssociation(it, storageService.signer) },
+					data = associations.map { TAssociation(it, storageService.signer.sign) },
 					page = searchParam.page,
 					perPage = searchParam.perPage,
 					totalPage = ceil(totAssociations.div(searchParam.perPage.toDouble())).toInt(),
@@ -128,7 +128,7 @@ class AssociationController(
 	private fun Route.getById() {
 		get<Associations.Id<API>>(EUserScope.Root) { params ->
 			associationService.getById(params.id)?.let {
-				call.respond(TAssociation(it, storageService.signer))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
 			}
@@ -140,7 +140,7 @@ class AssociationController(
 			val new = call.receive<TNewAssociation>()
 
 			associationService.createAssociation(new.name).onSuccess {
-				call.respond(HttpStatusCode.Created, TAssociation(it, storageService.signer))
+				call.respond(HttpStatusCode.Created, TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'association existe déjà")
@@ -159,7 +159,7 @@ class AssociationController(
 				update.name,
 				update.status
 			).onSuccess {
-				call.respond(TAssociation(it, storageService.signer))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationNotFound -> call.respond(
@@ -199,7 +199,7 @@ class AssociationController(
 				image.streamProvider().readBytes(),
 				contentType
 			).onSuccess {
-				call.respond(TAssociation(it, storageService.signer))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationNotFound -> call.respond(

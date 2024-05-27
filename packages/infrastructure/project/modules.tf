@@ -9,6 +9,7 @@ module "frontend" {
   environment              = var.environment
   namespace                = var.namespace
   alb_domain_name          = module.backend.alb_domain_name
+  cf_key_json_output       = module.cf_key.outputs
 }
 
 module "network" {
@@ -40,6 +41,8 @@ module "backend" {
   alb_header_value       = module.frontend.alb_header_value
   storage_s3_bucket_name = module.storage.application_storage_bucket_name
   storage_bucket_arn     = module.storage.application_storage_bucket_arn
+  cf_ssm_parameter_arn   = module.cf_key.parameter_arn
+  cf_key_pair_id         = module.frontend.cf_key_pair_id
 }
 
 module "domain" {
@@ -86,9 +89,9 @@ resource "random_id" "id" {
 }
 
 module "cf_key" {
-  source  = "sashee/ssm-generated-value/aws"
+  source         = "sashee/ssm-generated-value/aws"
   parameter_name = "/cfkey-${random_id.id.hex}"
-  code = <<EOF
+  code           = <<EOF
 import crypto from "node:crypto";
 import {promisify} from "node:util";
 

@@ -104,6 +104,12 @@ resource "aws_cloudfront_distribution" "cf_dist_frontend" {
 
     path_pattern = "/storage/*"
 
+    compress = true
+
+    trusted_key_groups = [
+      aws_cloudfront_key_group.object_signing_key_group.id
+    ]
+
     forwarded_values {
       headers      = []
       query_string = true

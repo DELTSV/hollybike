@@ -106,7 +106,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it, storageService.signer) },
+					data = events.map { TEventPartial(it, storageService.signer.sign) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -123,7 +123,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it, storageService.signer) },
+					data = events.map { TEventPartial(it, storageService.signer.sign) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -140,7 +140,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it, storageService.signer) },
+					data = events.map { TEventPartial(it, storageService.signer.sign) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -155,7 +155,7 @@ class EventController(
 			val event = eventService.getEvent(call.user, id.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
 
-			call.respond(TEvent(event, storageService.signer))
+			call.respond(TEvent(event, storageService.signer.sign))
 		}
 	}
 
@@ -170,7 +170,7 @@ class EventController(
 				newEvent.startDate,
 				newEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it.first, storageService.signer, listOf(it.second)))
+				call.respond(HttpStatusCode.Created, TEvent(it.first, storageService.signer.sign, listOf(it.second)))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -189,7 +189,7 @@ class EventController(
 				updateEvent.startDate,
 				updateEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.OK, TEvent(it, storageService.signer))
+				call.respond(HttpStatusCode.OK, TEvent(it, storageService.signer.sign))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -258,7 +258,7 @@ class EventController(
 				image.streamProvider().readBytes(),
 				contentType.toString()
 			).onSuccess {
-				call.respond(TEvent(it, storageService.signer))
+				call.respond(TEvent(it, storageService.signer.sign))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -278,7 +278,7 @@ class EventController(
 	private fun Route.participateEvent() {
 		post<Events.Id.Participations> { data ->
 			eventService.participateEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer))
+				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer.sign))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -299,7 +299,7 @@ class EventController(
 		patch<Events.Id.Participations.User.Promote> { data ->
 			eventService.promoteParticipant(call.user, data.promote.user.participations.id, data.promote.userId)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer))
+					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
 				}.onFailure {
 					handleEventExceptions(it, call)
 				}
@@ -310,7 +310,7 @@ class EventController(
 		patch<Events.Id.Participations.User.Demote> { data ->
 			eventService.demoteParticipant(call.user, data.demote.user.participations.id, data.demote.userId)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer))
+					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
 				}.onFailure {
 					handleEventExceptions(it, call)
 				}

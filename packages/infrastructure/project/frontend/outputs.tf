@@ -17,3 +17,8 @@ output "cloudfront_oai_iam_arn" {
   description = "The ARN of the CloudFront OAI"
   value       = aws_cloudfront_origin_access_identity.oai_frontend.iam_arn
 }
+
+output "cf_key_pair_id" {
+  description = "The ID of the CloudFront key pair"
+  value       = aws_cloudfront_public_key.cf_key.id
+}

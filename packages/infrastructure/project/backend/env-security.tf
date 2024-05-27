@@ -22,6 +22,12 @@ resource "aws_ssm_parameter" "backend_security_secret" {
   type  = "SecureString"
 }
 
+resource "aws_ssm_parameter" "backend_security_cf_key_pair_id" {
+  name  = "/${lower(var.namespace)}/backend/${var.environment}/security_cf_key_pair_id"
+  value = var.cf_key_pair_id
+  type  = "String"
+}
+
 resource "random_password" "security_secret" {
   length            = 40
   special           = true

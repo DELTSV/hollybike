@@ -2,7 +2,6 @@ package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
 import hollybike.api.base.auth
-import hollybike.api.base.id
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.stores.UserStore
 import io.kotest.matchers.shouldBe
@@ -38,9 +37,9 @@ class StorageTest : IntegrationSpec({
 		).forEach { storageMode ->
 			test("Should get storage data in $storageMode mode") {
 				onPremiseTestApp(storageMode) {
-					uploadProfileImageInStorage(it, UserStore.user1)
+					val path = uploadProfileImageInStorage(it, UserStore.user1).removePrefix("domain")
 
-					it.get("/storage/u/2/p") {
+					it.get(path) {
 						auth(UserStore.user1)
 					}.apply {
 						status shouldBe HttpStatusCode.OK
@@ -51,24 +50,23 @@ class StorageTest : IntegrationSpec({
 
 
 
-		test("Should return 404 on unknown storage path") {
+		test("Should return 401 on unknown storage signature") {
 			onPremiseTestApp {
 				uploadProfileImageInStorage(it, UserStore.user1)
 
-				it.get("/storage/u/20/p") {
+				it.get("/storage/object?signature=unknown-signature") {
 					auth(UserStore.user1)
 				}.apply {
-					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Inconnu"
+					status shouldBe HttpStatusCode.Unauthorized
 				}
 			}
 		}
 
 		test("Should not get storage data in cloud mode") {
 			cloudTestApp {
-				uploadProfileImageInStorage(it, UserStore.user1)
+				val path = uploadProfileImageInStorage(it, UserStore.user1).removePrefix("domain")
 
-				it.get("/storage/u/${UserStore.user1.id}/p") {
+				it.get(path) {
 					auth(UserStore.user1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound

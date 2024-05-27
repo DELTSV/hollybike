@@ -4,10 +4,12 @@ import hollybike.api.Conf
 
 object StorageSignatureServiceFactory {
 	fun getService(conf: Conf, isOnPremise: Boolean): StorageSignatureService {
-		if (isOnPremise) {
-			return LocalStorageSignatureService(conf.security)
+		val isCloudFront = conf.security.cfPrivateKeySecret != null && conf.security.cfKeyPairId != null
+
+		if (isOnPremise || !isCloudFront) {
+			return JWTStorageSignatureService(conf.security)
 		}
 
-		return CloudStorageSignatureService(conf.security)
+		return CloudFrontStorageSignatureService(conf.security)
 	}
 }

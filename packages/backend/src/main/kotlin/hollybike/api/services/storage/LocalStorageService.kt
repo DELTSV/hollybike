@@ -5,11 +5,9 @@ import java.io.File
 
 class LocalStorageService(
 	private val storagePath: String?,
-	storageSignatureService: StorageSignatureService
+	override val signer: StorageSignatureService
 ) : StorageService {
 	override val mode = StorageMode.LOCAL
-
-	override val signer = storageSignatureService.signer
 
 	init {
 		if (storagePath == null) {

@@ -5,9 +5,11 @@ import com.auth0.jwt.algorithms.Algorithm
 import hollybike.api.ConfSecurity
 import java.util.*
 
-class LocalStorageSignatureService(
+class JWTStorageSignatureService(
 	private val conf: ConfSecurity,
 ): StorageSignatureService {
+	override val mode = StorageSignatureMode.JWT
+
 	private fun generateJWT(objectPath: String) = JWT.create()
 		.withAudience(conf.audience)
 		.withIssuer(conf.domain)
@@ -18,5 +20,5 @@ class LocalStorageSignatureService(
 	private fun getSignedPath(path: String): String =
 		"${conf.domain}/storage/object?signature=${generateJWT(path)}"
 
-	override val signer = { path: String -> getSignedPath(path) }
+	override val sign = { path: String -> getSignedPath(path) }
 }

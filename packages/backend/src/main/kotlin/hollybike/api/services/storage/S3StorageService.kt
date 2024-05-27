@@ -19,11 +19,9 @@ class S3StorageService(
 	private val bucketRegion: String,
 	private val username: String? = null,
 	private val password: String? = null,
-	storageSignatureService: StorageSignatureService
+	override val signer : StorageSignatureService
 ) : StorageService {
 	override val mode = StorageMode.S3
-
-	override val signer = storageSignatureService.signer
 
 	private val client = S3Client {
 		endpointUrl = url?.let { Url.parse(url) }
