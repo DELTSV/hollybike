@@ -13,16 +13,18 @@ import {
 } from "preact";
 import { TList } from "../../types/TList.ts";
 import { Button } from "../Button/Button.tsx";
+import { Reload } from "../../utils/useReload.ts";
 
 interface ListProps<T> {
 	columns: Columns[],
 	baseUrl: string,
 	line: (data: T) => ComponentChildren[]
-	perPage?: number
+	perPage?: number,
+	reload?: Reload
 }
 
 export function List<T>(props: ListProps<T>) {
-	const sortFilterColumns = useApi<TMetaData, never>(`${props.baseUrl}/meta-data`);
+	const sortFilterColumns = useApi<TMetaData>(`${props.baseUrl}/meta-data`);
 	const [sort, setSort] = useState<{[name: string]: Sort}>({});
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(0);
@@ -67,7 +69,7 @@ export function List<T>(props: ListProps<T>) {
 			return "";
 	}, [sort]);
 
-	const data = useApi<TList<T>, never>(
+	const data = useApi<TList<T>>(
 		`${props.baseUrl}?page=${page}&per_page=${props.perPage ?? 10}&query=${search}${orderQuery}`,
 		[
 			props.baseUrl,
@@ -75,6 +77,7 @@ export function List<T>(props: ListProps<T>) {
 			page,
 			search,
 			orderQuery,
+			props.reload,
 		],
 	);
 

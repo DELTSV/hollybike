@@ -8,7 +8,7 @@ import { Card } from "../components/Card/Card.tsx";
 export function Association() {
 	const { id } = useParams();
 
-	const association = useApi<TAssociation, never>(`/associations/${id}`);
+	const association = useApi<TAssociation>(`/associations/${id}`);
 
 	const { setAssociation } = useSideBar();
 

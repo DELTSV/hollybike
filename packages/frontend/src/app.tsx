@@ -18,6 +18,8 @@ import { useApi } from "./utils/useApi.ts";
 import { TConfDone } from "./types/GConfDone.ts";
 import { Conf } from "./conf/Conf.tsx";
 import { UserDetail } from "./user/userDetail/UserDetail.tsx";
+import { ListInvitations } from "./invitations/ListInvitations.tsx";
+import { CreateInvitation } from "./invitations/CreateInvitation.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -48,6 +50,14 @@ export function App() {
 				{
 					path: "users/:id",
 					element: <UserDetail/>,
+				},
+				{
+					path: "associations/:id/invitations",
+					element: <ListInvitations/>,
+				},
+				{
+					path: "invitations/new",
+					element: <CreateInvitation/>,
 				},
 				{
 					path: "conf",

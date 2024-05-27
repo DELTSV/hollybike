@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-type Reload = boolean
+export type Reload = boolean
 type DoReload = () => void
 
 interface UseReload {

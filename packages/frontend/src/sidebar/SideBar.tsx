@@ -2,6 +2,7 @@ import { SideBarMenu } from "./SideBarMenu.tsx";
 import { useUser } from "../user/useUser.tsx";
 import { useMemo } from "preact/hooks";
 import { useSideBar } from "./useSideBar.tsx";
+import { TAssociation } from "../types/TAssociation.ts";
 
 export function SideBar() {
 	const { user } = useUser();
@@ -26,11 +27,7 @@ export function SideBar() {
 			menus.push(...asso);
 			return menus;
 		} else
-			 return [
-				 <SideBarMenu to={`/associations/${ user?.association.id}`}>
-					 Mon Association
-				 </SideBarMenu>,
-			 ];
+			 return adminMenu(user?.association);
 	}, [user, association]);
 
 	return (
@@ -41,4 +38,18 @@ export function SideBar() {
 			{ content }
 		</aside>
 	);
+}
+
+function adminMenu(association: TAssociation | undefined) {
+	return [
+		<SideBarMenu to={`/associations/${association?.id}`}>
+			Mon association
+		</SideBarMenu>,
+		<SideBarMenu to={`/association/${association?.id}/users`}>
+			Mes utilisateurs
+		</SideBarMenu>,
+		<SideBarMenu to={`/associations/${association?.id}/invitations`}>
+			Mes invitation
+		</SideBarMenu>,
+	];
 }
