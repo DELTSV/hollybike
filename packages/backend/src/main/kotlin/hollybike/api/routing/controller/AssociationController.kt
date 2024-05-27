@@ -36,11 +36,11 @@ class AssociationController(
 				updateMyAssociationPicture()
 				getMyOnboarding()
 				updateMyOnboarding()
+				getById()
 
 				if (application.isCloud) {
 					getAll()
 					getMetaData()
-					getById()
 					addAssociation()
 					updateAssociation()
 					updateAssociationPicture()
@@ -126,8 +126,8 @@ class AssociationController(
 	}
 
 	private fun Route.getById() {
-		get<Associations.Id<API>>(EUserScope.Root) { params ->
-			associationService.getById(params.id)?.let {
+		get<Associations.Id<API>>(EUserScope.Admin) { params ->
+			associationService.getById(call.user, params.id)?.let {
 				call.respond(TAssociation(it))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
@@ -258,7 +258,7 @@ class AssociationController(
 
 	private fun Route.getAssociationOnboarding() {
 		get<Associations.Id.Onboarding<API>>(EUserScope.Root) {
-			val association = associationService.getById(it.id.id) ?: run {
+			val association = associationService.getById(call.user, it.id.id) ?: run {
 				call.respond(HttpStatusCode.NotFound, "Association inconnue")
 				return@get
 			}

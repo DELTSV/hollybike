@@ -110,7 +110,7 @@ class UserController(
 			}.onFailure { e ->
 				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, e.message ?: "")
+					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 				}
 			}
 		}

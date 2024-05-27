@@ -26,11 +26,19 @@ class AssociationService(
 	private val db: Database,
 	private val storageService: StorageService,
 ) {
-	fun authorizeUpdate(caller: User, association: Association) = when(caller.scope) {
+	private fun authorizeUpdate(caller: User, association: Association) = when(caller.scope) {
 		EUserScope.Root -> true
 		EUserScope.Admin -> caller.association.id == association.id
 		EUserScope.User -> false
 	}
+
+	private fun authorizeGet(caller: User, association: Association) = when (caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == association.id
+		EUserScope.User -> caller.association.id == association.id
+	}
+
+	private infix fun Association?.getIfAllowed(caller: User) = if(this != null && authorizeGet(caller, this)) this else null
 
 	private fun checkAlreadyExistsException(e: ExposedSQLException): Boolean {
 		val cause = if (e.cause is BatchUpdateException && (e.cause as BatchUpdateException).cause is PSQLException) {
@@ -78,8 +86,8 @@ class AssociationService(
 		Result.success(Associations.selectAll().applyParam(searchParam, false).count().toInt())
 	}
 
-	fun getById(id: Int): Association? = transaction(db) {
-		Association.findById(id)
+	fun getById(caller: User, id: Int): Association? = transaction(db) {
+		Association.findById(id) getIfAllowed caller
 	}
 
 	fun createAssociation(name: String): Result<Association> {

@@ -150,11 +150,11 @@ class UserService(
 		if (!authorizeUpdate(caller, user, update)) {
 			return Result.failure(NotAllowedException("Opération impossible"))
 		}
-		if(getUserByEmailAndAssociation(caller, user.email, caller.association.id.value) != null) {
-			return Result.failure(UserAlreadyExists())
+		if(getUserByEmailAndAssociation(caller, user.email, caller.association.id.value) == null) {
+			return Result.failure(UserNotFoundException())
 		}
 		val targetAssociation = update.association?.let {
-			associationService.getById(it)
+			associationService.getById(caller, it)
 		}
 		return transaction(db) {
 			Result.success(user.apply {
