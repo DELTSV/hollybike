@@ -26,7 +26,6 @@ class FormBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("rebuild form");
     return LayoutBuilder(
       builder: (context, constraint) {
         final height = MediaQuery.of(context).size.height;
