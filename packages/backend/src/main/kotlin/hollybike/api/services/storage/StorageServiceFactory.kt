@@ -5,7 +5,7 @@ import hollybike.api.services.storage.signature.StorageSignatureServiceFactory
 
 object StorageServiceFactory {
 	fun getService(conf: Conf, isOnPremise: Boolean): StorageService {
-		val signer = StorageSignatureServiceFactory.getService(conf)
+		val signer = StorageSignatureServiceFactory.getService(conf, isOnPremise)
 
 		return if (isOnPremise) {
 			val isFtp = conf.storage.ftpServer != null
