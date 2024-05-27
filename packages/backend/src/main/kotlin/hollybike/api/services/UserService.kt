@@ -160,7 +160,7 @@ class UserService(
 			Result.success(user.apply {
 				update.username?.let { username = it }
 				update.email?.let { email = it }
-				update.password?.let { password = it }
+				update.password?.let { password = hash(it).encodeBase64() }
 				update.status?.let { status = it }
 				update.scope?.let { scope = it }
 				targetAssociation?.let { association = it }
