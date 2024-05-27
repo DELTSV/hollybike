@@ -1,11 +1,15 @@
 package hollybike.api.services.storage
 
+import hollybike.api.services.storage.signature.StorageSignatureService
 import java.io.File
 
 class LocalStorageService(
 	private val storagePath: String?,
+	storageSignatureService: StorageSignatureService
 ) : StorageService {
 	override val mode = StorageMode.LOCAL
+
+	override val signer = storageSignatureService.signer
 
 	init {
 		if (storagePath == null) {

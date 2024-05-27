@@ -7,6 +7,7 @@ import hollybike.api.repository.events.eventMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventService
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.listParams
@@ -27,7 +28,7 @@ import kotlin.math.ceil
 class EventController(
 	application: Application,
 	private val eventService: EventService,
-	private val host: String
+	private val storageService: StorageService,
 ) {
 	init {
 		application.routing {
@@ -105,7 +106,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it, host) },
+					data = events.map { TEventPartial(it, storageService.signer) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -122,7 +123,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it, host) },
+					data = events.map { TEventPartial(it, storageService.signer) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -139,7 +140,7 @@ class EventController(
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it, host) },
+					data = events.map { TEventPartial(it, storageService.signer) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -154,7 +155,7 @@ class EventController(
 			val event = eventService.getEvent(call.user, id.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
 
-			call.respond(TEvent(event, host))
+			call.respond(TEvent(event, storageService.signer))
 		}
 	}
 
@@ -169,7 +170,7 @@ class EventController(
 				newEvent.startDate,
 				newEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it.first, host, listOf(it.second)))
+				call.respond(HttpStatusCode.Created, TEvent(it.first, storageService.signer, listOf(it.second)))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -188,7 +189,7 @@ class EventController(
 				updateEvent.startDate,
 				updateEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.OK, TEvent(it, host))
+				call.respond(HttpStatusCode.OK, TEvent(it, storageService.signer))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -257,7 +258,7 @@ class EventController(
 				image.streamProvider().readBytes(),
 				contentType.toString()
 			).onSuccess {
-				call.respond(TEvent(it, host))
+				call.respond(TEvent(it, storageService.signer))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -277,7 +278,7 @@ class EventController(
 	private fun Route.participateEvent() {
 		post<Events.Id.Participations> { data ->
 			eventService.participateEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it))
+				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -298,7 +299,7 @@ class EventController(
 		patch<Events.Id.Participations.User.Promote> { data ->
 			eventService.promoteParticipant(call.user, data.promote.user.participations.id, data.promote.userId)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it))
+					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer))
 				}.onFailure {
 					handleEventExceptions(it, call)
 				}
@@ -309,7 +310,7 @@ class EventController(
 		patch<Events.Id.Participations.User.Demote> { data ->
 			eventService.demoteParticipant(call.user, data.demote.user.participations.id, data.demote.userId)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it))
+					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer))
 				}.onFailure {
 					handleEventExceptions(it, call)
 				}

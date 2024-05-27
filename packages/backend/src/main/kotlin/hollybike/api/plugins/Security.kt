@@ -17,8 +17,10 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
 private val userAttributeKey = AttributeKey<User>("user")
+private val objectPathAttributeKey = AttributeKey<String>("objectPath")
 
 val ApplicationCall.user: User get() = attributes[userAttributeKey]
+val ApplicationCall.objectPath: String get() = attributes[objectPathAttributeKey]
 
 fun Application.configureSecurity(db: Database) {
 	log.info("Configuring Security")
@@ -58,13 +60,14 @@ fun Application.configureSecurity(db: Database) {
 			realm = jwtRealm
 			verifier(
 				JWT
-					.require(Algorithm.HMAC256(jwtSecret))
+					.require(Algorithm.HMAC256(jwtSecret + "image-signer"))
 					.withAudience(jwtAudience)
 					.withIssuer(jwtDomain)
 					.build(),
 			)
 			validate { credential ->
 				if (credential.payload.audience.contains(jwtAudience)) {
+					this.attributes.put(objectPathAttributeKey, credential.payload.getClaim("objectPath").asString())
 					JWTPrincipal(credential.payload)
 				} else {
 					null
@@ -72,7 +75,7 @@ fun Application.configureSecurity(db: Database) {
 			}
 			authHeader { call ->
 				try {
-					HttpAuthHeader.Single("Bearer", call.parameters["token"] ?: "")
+					HttpAuthHeader.Single("Bearer", call.parameters["signature"] ?: "")
 				} catch (e: Throwable) {
 					null
 				}

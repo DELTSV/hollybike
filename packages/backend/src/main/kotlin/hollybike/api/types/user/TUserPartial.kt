@@ -1,6 +1,6 @@
+package hollybike.api.types.user
+
 import hollybike.api.repository.User
-import hollybike.api.types.user.EUserScope
-import hollybike.api.types.user.EUserStatus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,11 +13,11 @@ data class TUserPartial(
 	@SerialName("profile_picture")
 	val profilePicture: String? = null,
 ) {
-	constructor(entity: User): this(
+	constructor(entity: User, signer: (String) -> String): this(
 		id = entity.id.value,
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
-		profilePicture = entity.profilePicture
+		profilePicture = entity.profilePicture?.let { signer(it) }
 	)
 }

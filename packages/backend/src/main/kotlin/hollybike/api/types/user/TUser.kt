@@ -19,14 +19,14 @@ data class TUser(
 	@SerialName("profile_picture")
 	val profilePicture: String? = null,
 ) {
-	constructor(entity: User, host: String): this(
+	constructor(entity: User, signer: (String) -> String) : this(
 		id = entity.id.value,
 		email = entity.email,
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
 		lastLogin = entity.lastLogin,
-		association = TAssociation(entity.association),
-		profilePicture = entity.profilePicture?.let { "$host/storage/${entity.profilePicture}" },
+		association = TAssociation(entity.association, signer),
+		profilePicture = entity.profilePicture?.let { signer(it) },
 	)
 }

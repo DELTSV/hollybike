@@ -1,6 +1,6 @@
 package hollybike.api.types.event
 
-import TUserPartial
+import hollybike.api.types.user.TUserPartial
 import hollybike.api.repository.events.Event
 import hollybike.api.repository.events.participations.EventParticipation
 import kotlinx.datetime.Instant
@@ -25,14 +25,18 @@ data class TEvent(
 	@SerialName("update_date_time")
 	val updateDateTime: Instant,
 ) {
-	constructor(entity: Event, host: String, participants: List<EventParticipation> = entity.participants.toList()) : this(
+	constructor(
+		entity: Event,
+		signer: (String) -> String,
+		participants: List<EventParticipation> = entity.participants.toList()
+	) : this(
 		id = entity.id.value,
 		name = entity.name,
 		description = entity.description,
-		image = entity.image?.let { "$host/storage/${it}" },
+		image = entity.image?.let { signer(it) },
 		status = EEventStatus.fromEvent(entity),
-		owner = TUserPartial(entity.owner),
-		participants = participants.map { TEventParticipation(it) },
+		owner = TUserPartial(entity.owner, signer),
+		participants = participants.map { TEventParticipation(it, signer) },
 		startDateTime = entity.startDateTime,
 		endDateTime = entity.endDateTime,
 		createDateTime = entity.createDateTime,

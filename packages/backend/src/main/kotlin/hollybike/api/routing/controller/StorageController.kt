@@ -1,5 +1,6 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.plugins.objectPath
 import hollybike.api.routing.resources.Storage
 import hollybike.api.services.storage.StorageService
 import io.ktor.http.*
@@ -30,10 +31,8 @@ class StorageController(
 	}
 
 	private fun Route.storage() {
-		get<Storage.Data> {
-			val path = it.path.joinToString("/")
-
-			val data = storageService.retrieve(path) ?: return@get call.respondText(
+		get<Storage.Object> {
+			val data = storageService.retrieve(call.objectPath) ?: return@get call.respondText(
 				"Inconnu",
 				status = HttpStatusCode.NotFound
 			)

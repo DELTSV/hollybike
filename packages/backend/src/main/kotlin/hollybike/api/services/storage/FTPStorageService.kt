@@ -1,5 +1,6 @@
 package hollybike.api.services.storage
 
+import hollybike.api.services.storage.signature.StorageSignatureService
 import org.apache.commons.net.PrintCommandListener
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
@@ -11,10 +12,13 @@ class FTPStorageService(
 	ftpUsername: String?,
 	ftpPassword: String?,
 	ftpDirectory: String?,
+	storageSignatureService: StorageSignatureService
 ) : StorageService {
 	override val mode = StorageMode.FTP
 
 	private val ftpClient = FTPClient()
+
+	override val signer = storageSignatureService.signer
 
 	init {
 		if (ftpServer == null || ftpUsername == null || ftpPassword == null || ftpDirectory == null) {
