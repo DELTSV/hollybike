@@ -56,7 +56,7 @@ class UserService(
 	}
 
 	fun getUser(caller: User, id: Int): User? = transaction(db) {
-		User.find { Users.id eq id }.singleOrNull() getIfAllowed caller
+		User.find { Users.id eq id }.with(User::association).singleOrNull() getIfAllowed caller
 	}
 
 	suspend fun uploadUserProfilePicture(
@@ -116,7 +116,7 @@ class UserService(
 	}
 
 	fun getUserByEmail(caller: User, email: String): User? = transaction(this.db) {
-		User.find { Users.email eq email }.singleOrNull() getIfAllowed caller
+		User.find { Users.email eq email }.with(User::association).singleOrNull() getIfAllowed caller
 	}
 
 	fun getUserByEmailAndAssociation(caller: User, email: String, association: Int): User? = transaction(db) {
@@ -124,7 +124,7 @@ class UserService(
 	}
 
 	fun getUserByUsername(caller: User, username: String): User? = transaction(db) {
-		User.find { Users.username eq username }.singleOrNull() getIfAllowed caller
+		User.find { Users.username eq username }.with(User::association).singleOrNull() getIfAllowed caller
 	}
 
 	fun updateMe(user: User, update: TUserUpdateSelf): Result<User> = transaction(db) {

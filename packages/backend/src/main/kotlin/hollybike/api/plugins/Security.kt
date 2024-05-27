@@ -36,17 +36,27 @@ fun Application.configureSecurity(db: Database) {
 					.build(),
 			)
 			validate { credential ->
-				if (credential.payload.audience.contains(jwtAudience)) {
-					val user = transaction(db) {
-						User.find {
-							(Users.email eq credential.payload.getClaim("email").asString()) and (Users.status neq EUserStatus.Disabled.value)
-						}.with(User::association).singleOrNull()
-					} ?: run {
-						return@validate null
+				try {
+					println("NIKKKKKK")
+					if (credential.payload.audience.contains(jwtAudience)) {
+						val user = transaction(db) {
+							User.find {
+								(Users.email eq credential.payload.getClaim("email")
+									.asString()) and (Users.status neq EUserStatus.Disabled.value)
+							}.with(User::association).singleOrNull()
+						} ?: run {
+							println("NIKKKKKK")
+							return@validate null
+						}
+						this.attributes.put(userAttributeKey, user)
+						println("DOINE")
+						JWTPrincipal(credential.payload)
+					} else {
+						println("NIKKKKKK")
+						null
 					}
-					this.attributes.put(userAttributeKey, user)
-					JWTPrincipal(credential.payload)
-				} else {
+				}catch (e: Exception) {
+					e.printStackTrace()
 					null
 				}
 			}

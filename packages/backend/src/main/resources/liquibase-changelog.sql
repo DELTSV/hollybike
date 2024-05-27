@@ -159,7 +159,7 @@ INSERT INTO users_participate_events ("user", event, role) VALUES (6, 11, 1);
 -- changeset denis:5
 CREATE EXTENSION IF NOT EXISTS unaccent;
 
--- changeset denis:6 context:premise
+-- changeset denis:6
 ALTER TABLE associations
     ADD COLUMN IF NOT EXISTS update_default_user BOOLEAN DEFAULT false,
     ADD COLUMN IF NOT EXISTS update_association BOOLEAN DEFAULT false,
