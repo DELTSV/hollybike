@@ -6,7 +6,7 @@ resource "aws_ssm_parameter" "backend_security_audience" {
 
 resource "aws_ssm_parameter" "backend_security_domain" {
   name  = "/${lower(var.namespace)}/backend/${var.environment}/security_domain"
-  value = "http://0.0.0.0:8080"
+  value = "https://${var.domain_name}"
   type  = "String"
 }
 
