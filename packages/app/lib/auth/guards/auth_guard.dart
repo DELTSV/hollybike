@@ -12,11 +12,9 @@ class AuthGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final AuthState(
-        :isPersistentSessionsLoaded,
-        :currentSession,
-    ) = BlocProvider
-        .of<AuthBloc>(context)
-        .state;
+      :isPersistentSessionsLoaded,
+      :currentSession,
+    ) = BlocProvider.of<AuthBloc>(context).state;
 
     if (!isPersistentSessionsLoaded) {
       router.push(const LoadingRoute());

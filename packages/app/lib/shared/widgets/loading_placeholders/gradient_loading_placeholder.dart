@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class GradientLoadingPlaceholder extends StatefulWidget {
   final Widget? child;
+
   const GradientLoadingPlaceholder({super.key, this.child});
 
   @override
-  State<GradientLoadingPlaceholder> createState() => _GradientLoadingPlaceholderState();
+  State<GradientLoadingPlaceholder> createState() =>
+      _GradientLoadingPlaceholderState();
 }
 
 class _GradientLoadingPlaceholderState extends State<GradientLoadingPlaceholder>
@@ -48,25 +50,25 @@ class _GradientLoadingPlaceholderState extends State<GradientLoadingPlaceholder>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        return Container(
-          constraints: widget.child == null ? const BoxConstraints.expand() : null,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: _beginAlignment.value,
-              end: _endAlignment.value,
-              colors: const [
-                Color(0x20b4befe),
-                Color(0x40b4befe),
-                Color(0x20b4befe),
-              ],
+        animation: _controller,
+        builder: (context, _) {
+          return Container(
+            constraints:
+                widget.child == null ? const BoxConstraints.expand() : null,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: _beginAlignment.value,
+                end: _endAlignment.value,
+                colors: const [
+                  Color(0x20b4befe),
+                  Color(0x40b4befe),
+                  Color(0x20b4befe),
+                ],
+              ),
             ),
-          ),
-          child: widget.child,
-        );
-      }
-    );
+            child: widget.child,
+          );
+        });
   }
 
   @override

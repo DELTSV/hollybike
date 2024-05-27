@@ -4,7 +4,6 @@ import hollybike.api.routing.resources.Storage
 import hollybike.api.services.storage.StorageService
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -16,9 +15,7 @@ class StorageController(
 	init {
 		application.routing {
 			index()
-			authenticate {
-				storage()
-			}
+			storage()
 		}
 	}
 

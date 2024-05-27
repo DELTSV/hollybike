@@ -31,7 +31,7 @@ class _LoadingBackgroundState extends State<LoadingBackground>
       child: SlideTransition(
         position: _offsetAnimation,
         child: Image.asset(
-          "images/wallpaper.jpg",
+          "assets/images/wallpaper.jpg",
           fit: BoxFit.fitHeight,
           repeat: ImageRepeat.repeatX,
         ),

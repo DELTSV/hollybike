@@ -25,12 +25,12 @@ data class TEvent(
 	@SerialName("update_date_time")
 	val updateDateTime: Instant,
 ) {
-	constructor(entity: Event, participants: List<EventParticipation> = entity.participants.toList()) : this(
+	constructor(entity: Event, host: String, participants: List<EventParticipation> = entity.participants.toList()) : this(
 		id = entity.id.value,
 		name = entity.name,
 		description = entity.description,
-		image = entity.image,
-		status = entity.status,
+		image = entity.image?.let { "$host/storage/${it}" },
+		status = EEventStatus.fromEvent(entity),
 		owner = TUserPartial(entity.owner),
 		participants = participants.map { TEventParticipation(it) },
 		startDateTime = entity.startDateTime,

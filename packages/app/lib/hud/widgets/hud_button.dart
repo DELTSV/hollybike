@@ -46,6 +46,6 @@ class HudButton extends StatelessWidget {
 
   void _handleLongPress() {
     HapticFeedback.heavyImpact();
-    if(onLongPress != null) onLongPress!();
+    if (onLongPress != null) onLongPress!();
   }
 }

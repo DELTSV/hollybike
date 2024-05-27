@@ -46,10 +46,10 @@ fun Application.api() {
 	}
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
-	UserController(this, userService)
+	UserController(this, userService, conf.security.domain)
 	AssociationController(this, associationService, invitationService, authService)
 	InvitationController(this, authService, invitationService)
-	EventController(this, eventService)
+	EventController(this, eventService, conf.security.domain)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

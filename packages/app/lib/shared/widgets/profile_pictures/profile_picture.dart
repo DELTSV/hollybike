@@ -16,7 +16,7 @@ class ProfilePicture extends StatelessWidget {
   Widget build(BuildContext context) {
     final profilePicture = switch (profile.profilePicture) {
       String src => Image.network(src),
-      _ => Image.asset("images/placeholder_profile_picture.jpg"),
+      _ => Image.asset("assets/images/placeholder_profile_picture.jpg"),
     };
 
     return ProfilePictureContainer(size: size, child: profilePicture);

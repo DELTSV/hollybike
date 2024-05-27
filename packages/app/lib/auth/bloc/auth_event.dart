@@ -21,7 +21,6 @@ final class AuthSessionSwitch extends AuthEvent {
   AuthSessionSwitch({required this.newSession});
 }
 
-
 final class AuthStoreCurrentSession extends AuthEvent {
   AuthStoreCurrentSession();
 }

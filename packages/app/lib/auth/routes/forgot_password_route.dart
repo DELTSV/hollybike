@@ -13,8 +13,7 @@ class ForgotPasswordRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       return TextFormBuilder(
-        onFormSubmit: (formValue) {
-        },
+        onFormSubmit: (formValue) {},
         formFields: {
           "email": FormFieldConfig(
             label: "adresse mail",

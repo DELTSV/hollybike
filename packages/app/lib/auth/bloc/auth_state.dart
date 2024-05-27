@@ -90,9 +90,7 @@ class AuthSessionSwitched extends AuthState {
         : [state.currentSession as AuthSession];
 
     return oldSession +
-        (state.storedSessions
-            .where((value) => !value.equal(session))
-            .toList());
+        (state.storedSessions.where((value) => !value.equal(session)).toList());
   }
 }
 

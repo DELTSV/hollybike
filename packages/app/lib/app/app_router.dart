@@ -23,6 +23,18 @@ class AppRouter extends $AppRouter {
               guards: [AuthGuard(context: context)],
               page: HudRoute.page,
               initial: true,
+              children: [
+                RedirectRoute(path: '', redirectTo: 'events'),
+                AutoRoute(
+                  page: EventsRoute.page,
+                  path: 'events',
+                ),
+                CustomRoute(
+                  page: EventDetailsRoute.page,
+                  path: 'event-details',
+                  transitionsBuilder: TransitionsBuilders.fadeIn,
+                )
+              ],
             ),
             AutoRoute(
               page: AuthRoute.page,

@@ -2,11 +2,15 @@ package hollybike.api.routing.controller
 
 import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
+import hollybike.api.repository.associationMapper
+import hollybike.api.repository.events.eventMapper
+import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventService
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.listParams
+import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -18,16 +22,20 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 
 class EventController(
 	application: Application,
 	private val eventService: EventService,
+	private val host: String
 ) {
 	init {
 		application.routing {
 			authenticate {
-				getEvents()
+				getAllEvents()
+				getFutureEvents()
+				getArchivedEvents()
 				getEvent()
 				createEvent()
 				updateEvent()
@@ -89,19 +97,50 @@ class EventController(
 		}
 	}
 
-	private fun Route.getEvents() {
+	private fun Route.getAllEvents() {
 		get<Events> {
-			val events = eventService.getEvents(
-				call.user,
-				call.listParams.perPage,
-				call.listParams.page
-			)
+			val params = call.request.queryParameters.getSearchParam(eventMapper + associationMapper + userMapper)
 
-			val total = eventService.countEvents(call.user)
+			val events = eventService.getAllEvents(call.user, params)
+			val total = eventService.countAllEvents(call.user, params)
 
 			call.respond(
 				TLists(
-					data = events.map { TEventPartial(it) },
+					data = events.map { TEventPartial(it, host) },
+					page = call.listParams.page,
+					perPage = call.listParams.perPage,
+					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
+					totalData = total
+				)
+			)
+		}
+	}
+
+	private fun Route.getFutureEvents() {
+		get<Events.Future> {
+			val events = eventService.getFutureEvents(call.user, call.listParams.page, call.listParams.perPage)
+			val total = eventService.countFutureEvents(call.user)
+
+			call.respond(
+				TLists(
+					data = events.map { TEventPartial(it, host) },
+					page = call.listParams.page,
+					perPage = call.listParams.perPage,
+					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
+					totalData = total
+				)
+			)
+		}
+	}
+
+	private fun Route.getArchivedEvents() {
+		get<Events.Archived> {
+			val events = eventService.getArchivedEvents(call.user, call.listParams.page, call.listParams.perPage)
+			val total = eventService.countArchivedEvents(call.user)
+
+			call.respond(
+				TLists(
+					data = events.map { TEventPartial(it, host) },
 					page = call.listParams.page,
 					perPage = call.listParams.perPage,
 					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
@@ -116,7 +155,7 @@ class EventController(
 			val event = eventService.getEvent(call.user, id.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
 
-			call.respond(TEvent(event))
+			call.respond(TEvent(event, host))
 		}
 	}
 
@@ -131,7 +170,7 @@ class EventController(
 				newEvent.startDate,
 				newEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it.first, listOf(it.second)))
+				call.respond(HttpStatusCode.Created, TEvent(it.first, host, listOf(it.second)))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -150,7 +189,7 @@ class EventController(
 				updateEvent.startDate,
 				updateEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.OK, TEvent(it))
+				call.respond(HttpStatusCode.OK, TEvent(it, host))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}
@@ -159,7 +198,7 @@ class EventController(
 
 	private fun Route.cancelEvent() {
 		patch<Events.Id.Cancel> { id ->
-			eventService.updateEventStatus(call.user, id.cancel.id, EEventStatus.CANCELLED).onSuccess {
+			eventService.updateEventStatus(call.user, id.cancel.id, EEventStatus.Cancelled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -169,7 +208,7 @@ class EventController(
 
 	private fun Route.scheduleEvent() {
 		patch<Events.Id.Schedule> { id ->
-			eventService.updateEventStatus(call.user, id.schedule.id, EEventStatus.SCHEDULED).onSuccess {
+			eventService.updateEventStatus(call.user, id.schedule.id, EEventStatus.Scheduled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -179,7 +218,7 @@ class EventController(
 
 	private fun Route.finishEvent() {
 		patch<Events.Id.Finish> { id ->
-			eventService.updateEventStatus(call.user, id.finish.id, EEventStatus.FINISHED).onSuccess {
+			eventService.updateEventStatus(call.user, id.finish.id, EEventStatus.Finished).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -189,7 +228,7 @@ class EventController(
 
 	private fun Route.pendEvent() {
 		patch<Events.Id.Pend> { id ->
-			eventService.updateEventStatus(call.user, id.pend.id, EEventStatus.PENDING).onSuccess {
+			eventService.updateEventStatus(call.user, id.pend.id, EEventStatus.Pending).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				handleEventExceptions(it, call)
@@ -219,7 +258,7 @@ class EventController(
 				image.streamProvider().readBytes(),
 				contentType.toString()
 			).onSuccess {
-				call.respond(TEvent(it))
+				call.respond(TEvent(it, host))
 			}.onFailure {
 				handleEventExceptions(it, call)
 			}

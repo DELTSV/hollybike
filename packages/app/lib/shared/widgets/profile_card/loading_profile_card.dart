@@ -7,11 +7,7 @@ class LoadingProfileCard extends StatelessWidget {
   final bool clickable;
   final Widget? endChild;
 
-  const LoadingProfileCard({
-    super.key,
-    this.clickable = false,
-    this.endChild
-  });
+  const LoadingProfileCard({super.key, this.clickable = false, this.endChild});
 
   @override
   Widget build(BuildContext context) {
