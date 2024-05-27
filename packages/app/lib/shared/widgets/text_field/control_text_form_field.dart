@@ -6,6 +6,9 @@ class ControlTextField extends StatelessWidget {
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final void Function()? onEditingDone;
+  final bool autofocus;
+  final Iterable<String>? autofillHints;
+  final TextInputType? textInputType;
 
   const ControlTextField({
     super.key,
@@ -13,6 +16,9 @@ class ControlTextField extends StatelessWidget {
     required this.controller,
     this.focusNode,
     this.onEditingDone,
+    this.autofocus = false,
+    this.autofillHints,
+    this.textInputType,
   });
 
   @override
@@ -23,6 +29,9 @@ class ControlTextField extends StatelessWidget {
       validator: _confirmFieldValidator,
       focusNode: focusNode,
       onEditingDone: onEditingDone,
+      autofocus: autofocus,
+      autofillHints: autofillHints,
+      textInputType: textInputType,
     );
   }
 

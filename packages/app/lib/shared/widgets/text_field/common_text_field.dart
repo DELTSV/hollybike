@@ -8,6 +8,9 @@ class CommonTextField extends StatelessWidget {
   final IconButton? iconButton;
   final FocusNode? focusNode;
   final void Function()? onEditingDone;
+  final bool autofocus;
+  final Iterable<String>? autofillHints;
+  final TextInputType? textInputType;
 
   const CommonTextField({
     super.key,
@@ -18,6 +21,9 @@ class CommonTextField extends StatelessWidget {
     this.iconButton,
     this.focusNode,
     this.onEditingDone,
+    this.autofocus = false,
+    this.autofillHints,
+    this.textInputType,
   });
 
   @override
@@ -39,6 +45,9 @@ class CommonTextField extends StatelessWidget {
       obscureText: obscureText,
       decoration: decoration,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      autofocus: autofocus,
+      autofillHints: autofillHints,
+      keyboardType: textInputType,
       focusNode: focusNode,
       onEditingComplete: onEditingDone,
     );

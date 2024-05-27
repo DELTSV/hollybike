@@ -7,6 +7,9 @@ class SecuredTextField extends StatefulWidget {
   final String? Function(String?) validator;
   final FocusNode? focusNode;
   final void Function()? onEditingDone;
+  final bool autofocus;
+  final Iterable<String>? autofillHints;
+  final TextInputType? textInputType;
 
   const SecuredTextField({
     super.key,
@@ -15,6 +18,9 @@ class SecuredTextField extends StatefulWidget {
     required this.validator,
     this.focusNode,
     this.onEditingDone,
+    this.autofocus = false,
+    this.autofillHints,
+    this.textInputType,
   });
 
   @override
@@ -33,6 +39,9 @@ class _SecuredTextFieldState extends State<SecuredTextField> {
       obscureText: _hide,
       focusNode: widget.focusNode,
       onEditingDone: widget.onEditingDone,
+      autofocus: widget.autofocus,
+      autofillHints: widget.autofillHints,
+      textInputType: widget.textInputType,
       iconButton: IconButton(
         onPressed: () => setState(() {
           _hide = !_hide;

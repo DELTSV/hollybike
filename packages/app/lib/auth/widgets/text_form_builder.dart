@@ -148,6 +148,9 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
           controller: controller,
           focusNode: focusNode?.focusNode,
           onEditingDone: next,
+          autofocus: config.autofocus,
+          autofillHints: config.autofillHints,
+          textInputType: config.textInputType,
         )
       ];
     }
@@ -159,6 +162,9 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
         validator: config.validator,
         focusNode: focusNode?.focusNode,
         onEditingDone: config.hasControlField ? () => focusNode?.controlFocusNode?.requestFocus() : next,
+        autofocus: config.autofocus,
+        autofillHints: config.autofillHints,
+        textInputType: config.textInputType,
       ),
     ];
 
@@ -168,6 +174,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
         controlledFieldTitle: config.label,
         focusNode: focusNode?.controlFocusNode,
         onEditingDone: next,
+        textInputType: config.textInputType,
       ));
     }
 
