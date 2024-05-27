@@ -4,11 +4,15 @@ import 'package:hollybike/shared/widgets/text_field/secured_text_field.dart';
 class ControlTextField extends StatelessWidget {
   final String controlledFieldTitle;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final void Function()? onEditingDone;
 
   const ControlTextField({
     super.key,
     required this.controlledFieldTitle,
     required this.controller,
+    this.focusNode,
+    this.onEditingDone,
   });
 
   @override
@@ -17,6 +21,8 @@ class ControlTextField extends StatelessWidget {
       controller: controller,
       title: "confirmer le $controlledFieldTitle",
       validator: _confirmFieldValidator,
+      focusNode: focusNode,
+      onEditingDone: onEditingDone,
     );
   }
 

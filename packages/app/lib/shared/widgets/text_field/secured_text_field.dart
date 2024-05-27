@@ -5,12 +5,16 @@ class SecuredTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String title;
   final String? Function(String?) validator;
+  final FocusNode? focusNode;
+  final void Function()? onEditingDone;
 
   const SecuredTextField({
     super.key,
     required this.controller,
     required this.title,
     required this.validator,
+    this.focusNode,
+    this.onEditingDone,
   });
 
   @override
@@ -27,6 +31,8 @@ class _SecuredTextFieldState extends State<SecuredTextField> {
       title: widget.title,
       validator: widget.validator,
       obscureText: _hide,
+      focusNode: widget.focusNode,
+      onEditingDone: widget.onEditingDone,
       iconButton: IconButton(
         onPressed: () => setState(() {
           _hide = !_hide;

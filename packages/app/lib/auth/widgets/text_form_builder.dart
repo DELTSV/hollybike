@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:hollybike/auth/types/field_focus_node.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
 import 'package:hollybike/shared/widgets/text_field/control_text_form_field.dart';
@@ -25,15 +26,27 @@ class TextFormBuilder extends StatefulWidget {
 
 class _TextFormBuilderState extends State<TextFormBuilder> {
   late final GlobalKey<FormState> _formKey;
+  late final Map<String, FieldFocusNode> _formFocusNodes;
   late final Map<String, TextEditingController> _formControllers;
 
   @override
   void initState() {
     _formKey = GlobalKey<FormState>();
     _formControllers = Map.fromIterables(
-        widget.formFields.keys,
-        widget.formFields.values
-            .map((field) => TextEditingController(text: field.defaultValue)));
+      widget.formFields.keys,
+      widget.formFields.values.map(
+        (field) => TextEditingController(text: field.defaultValue),
+      ),
+    );
+    _formFocusNodes = Map.fromIterables(
+      widget.formFields.keys,
+      widget.formFields.values.map<FieldFocusNode>(
+        (config) => FieldFocusNode(
+          hasControlNode: config.isSecured && config.hasControlField,
+        ),
+      ),
+    );
+
     super.initState();
   }
 
@@ -107,15 +120,25 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   }
 
   List<Widget> _convertFormFieldsToWidgets(FormFields formFields) {
-    return formFields.entries
-        .expand<Widget>(
-          (field) => _convertFieldToWidget(field.key, field.value),
-        )
-        .toList();
+    return formFields.entries.expand<Widget>(_convertFieldToWidget).toList();
   }
 
-  List<Widget> _convertFieldToWidget(String key, FormFieldConfig config) {
+  List<Widget> _convertFieldToWidget(MapEntry<String, FormFieldConfig> field) {
+    final MapEntry<String, FormFieldConfig>(:key, value: config) = field;
+    final focusNode = _formFocusNodes[key];
     final controller = _formControllers[key];
+
+    next() {
+      final nextKey = getNextKey(key);
+
+      if(nextKey == null) {
+        _handleFormSubmit();
+        return;
+      }
+
+      final nextNode = _formFocusNodes[nextKey];
+      nextNode?.focusNode.requestFocus();
+    }
 
     if (config.isSecured == false) {
       return <Widget>[
@@ -123,6 +146,8 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
           validator: config.validator,
           title: config.label,
           controller: controller,
+          focusNode: focusNode?.focusNode,
+          onEditingDone: next,
         )
       ];
     }
@@ -132,6 +157,8 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
         controller: controller,
         title: config.label,
         validator: config.validator,
+        focusNode: focusNode?.focusNode,
+        onEditingDone: config.hasControlField ? () => focusNode?.controlFocusNode?.requestFocus() : next,
       ),
     ];
 
@@ -139,10 +166,21 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
       fields.add(ControlTextField(
         controller: controller,
         controlledFieldTitle: config.label,
+        focusNode: focusNode?.controlFocusNode,
+        onEditingDone: next,
       ));
     }
 
     return fields;
+  }
+
+  String? getNextKey(String key) {
+    for (int i = 0; i < widget.formFields.length - 1; i++) {
+      if (widget.formFields.keys.elementAt(i) == key) {
+        return widget.formFields.keys.elementAt(i + 1);
+      }
+    }
+    return null;
   }
 
   void _handleFormSubmit() {

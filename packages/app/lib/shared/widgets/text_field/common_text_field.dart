@@ -6,6 +6,8 @@ class CommonTextField extends StatelessWidget {
   final String? Function(String?) validator;
   final bool obscureText;
   final IconButton? iconButton;
+  final FocusNode? focusNode;
+  final void Function()? onEditingDone;
 
   const CommonTextField({
     super.key,
@@ -14,6 +16,8 @@ class CommonTextField extends StatelessWidget {
     required this.validator,
     this.obscureText = false,
     this.iconButton,
+    this.focusNode,
+    this.onEditingDone,
   });
 
   @override
@@ -34,6 +38,9 @@ class CommonTextField extends StatelessWidget {
       validator: validator,
       obscureText: obscureText,
       decoration: decoration,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      focusNode: focusNode,
+      onEditingComplete: onEditingDone,
     );
   }
 }
