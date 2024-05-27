@@ -13,7 +13,7 @@ class EventApi {
     int eventsPerPage,
   ) async {
     final response = await DioClient(session).dio.get(
-      '/events',
+      '/events/future',
       queryParameters: {
         'page': page,
         'per_page': eventsPerPage,
