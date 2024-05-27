@@ -109,7 +109,14 @@ class InvitationService(
 			return Result.failure(NotAllowedException())
 		}
 		val invitations = transaction(db) {
-			Invitation.wrapRows(Invitations.innerJoin(Associations).innerJoin(Users).selectAll().applyParam(searchParam)).toList()
+			Invitation.wrapRows(
+				Invitations
+					.innerJoin(Associations)
+					.innerJoin(Users)
+					.selectAll()
+					.applyParam(searchParam))
+				.with(Invitation::association)
+				.toList()
 		}
 		return Result.success(invitations)
 	}
