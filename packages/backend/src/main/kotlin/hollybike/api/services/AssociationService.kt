@@ -10,7 +10,6 @@ import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TOnboardingUpdate
-import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam

@@ -4,7 +4,6 @@ import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
-import hollybike.api.routing.resources.Associations
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
 import hollybike.api.types.association.TAssociation
