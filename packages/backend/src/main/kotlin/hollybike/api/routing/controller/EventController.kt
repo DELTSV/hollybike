@@ -22,7 +22,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 
 class EventController(

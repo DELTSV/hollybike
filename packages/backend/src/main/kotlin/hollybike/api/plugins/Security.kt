@@ -6,6 +6,7 @@ import hollybike.api.conf
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.types.user.EUserStatus
+import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -39,7 +40,8 @@ fun Application.configureSecurity(db: Database) {
 				if (credential.payload.audience.contains(jwtAudience)) {
 					val user = transaction(db) {
 						User.find {
-							(Users.email eq credential.payload.getClaim("email").asString()) and (Users.status neq EUserStatus.Disabled.value)
+							(Users.email eq credential.payload.getClaim("email")
+								.asString()) and (Users.status neq EUserStatus.Disabled.value)
 						}.with(User::association).singleOrNull()
 					} ?: run {
 						return@validate null
@@ -47,6 +49,31 @@ fun Application.configureSecurity(db: Database) {
 					this.attributes.put(userAttributeKey, user)
 					JWTPrincipal(credential.payload)
 				} else {
+					null
+				}
+			}
+		}
+
+		jwt("signed-image") {
+			realm = jwtRealm
+			verifier(
+				JWT
+					.require(Algorithm.HMAC256(jwtSecret))
+					.withAudience(jwtAudience)
+					.withIssuer(jwtDomain)
+					.build(),
+			)
+			validate { credential ->
+				if (credential.payload.audience.contains(jwtAudience)) {
+					JWTPrincipal(credential.payload)
+				} else {
+					null
+				}
+			}
+			authHeader { call ->
+				try {
+					HttpAuthHeader.Single("Bearer", call.parameters["token"] ?: "")
+				} catch (e: Throwable) {
 					null
 				}
 			}
