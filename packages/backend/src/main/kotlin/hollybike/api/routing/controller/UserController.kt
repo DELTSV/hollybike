@@ -106,7 +106,7 @@ class UserController(
 				return@patch
 			}
 			userService.updateUser(call.user, user, update).onSuccess { u ->
-				call.respond(TUser(u))
+				call.respond(TUser(u, host))
 			}.onFailure { e ->
 				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)

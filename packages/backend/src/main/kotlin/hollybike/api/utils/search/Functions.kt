@@ -90,6 +90,7 @@ fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Quer
 	return where?.let { q.where(where) } ?: q
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun Query.searchParamQuery(query: String): Op<Boolean>? {
 	var op: Op<Boolean>? = null
 	this.targets.forEach { table ->
@@ -127,6 +128,7 @@ private fun searchParamFilter(filter: List<Filter>): Op<Boolean>? = filter
 		acc and v
 	}
 
+@Suppress("UNCHECKED_CAST")
 private infix fun Column<out Any?>.equal(value: String): Op<Boolean>? =
 	when (columnType) {
 		is IntegerColumnType -> value.toIntOrNull()?.let { (this as Column<Int?>) eq it }
@@ -152,6 +154,7 @@ private infix fun Column<out Any?>.equal(value: String): Op<Boolean>? =
 		else -> null
 	}
 
+@Suppress("UNCHECKED_CAST")
 private infix fun Column<out Any?>.nEqual(value: String): Op<Boolean>? =
 	when (columnType) {
 		is IntegerColumnType -> value.toIntOrNull()?.let { (this as Column<Int?>) neq it }
@@ -177,6 +180,7 @@ private infix fun Column<out Any?>.nEqual(value: String): Op<Boolean>? =
 		else -> null
 	}
 
+@Suppress("UNCHECKED_CAST")
 private infix fun Column<out Any?>.lt(value: String): Op<Boolean>? =
 	when (columnType) {
 		is IntegerColumnType -> value.toIntOrNull()?.let { (this as Column<Int?>) less it }
@@ -202,6 +206,7 @@ private infix fun Column<out Any?>.lt(value: String): Op<Boolean>? =
 		else -> null
 	}
 
+@Suppress("UNCHECKED_CAST")
 private infix fun Column<out Any?>.gt(value: String): Op<Boolean>? =
 	when (columnType) {
 		is IntegerColumnType -> value.toIntOrNull()?.let { (this as Column<Int?>) greater it }
@@ -227,6 +232,7 @@ private infix fun Column<out Any?>.gt(value: String): Op<Boolean>? =
 		else -> null
 	}
 
+@Suppress("UNCHECKED_CAST")
 private infix fun Column<out Any?>.lte(value: String): Op<Boolean>? =
 	when (columnType) {
 		is IntegerColumnType -> value.toIntOrNull()?.let { (this as Column<Int?>) lessEq it }
@@ -252,6 +258,7 @@ private infix fun Column<out Any?>.lte(value: String): Op<Boolean>? =
 		else -> null
 	}
 
+@Suppress("UNCHECKED_CAST")
 private infix fun Column<out Any?>.gte(value: String): Op<Boolean>? =
 	when (columnType) {
 		is IntegerColumnType -> value.toIntOrNull()?.let { (this as Column<Int?>) greaterEq it }
