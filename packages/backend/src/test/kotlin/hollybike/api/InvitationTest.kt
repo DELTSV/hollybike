@@ -1,6 +1,8 @@
 package hollybike.api
 
 import hollybike.api.base.IntegrationSpec
+import hollybike.api.base.auth
+import hollybike.api.stores.UserStore
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
@@ -19,7 +21,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should not create the invitation link because no host is provided") {
 			onPremiseTestApp {
 				it.post("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					contentType(ContentType.Application.Json)
 					setBody(
 						TInvitationCreation(
@@ -65,7 +67,7 @@ class InvitationTest : IntegrationSpec({
 			test("Should return create the invitation link") {
 				onPremiseTestApp {
 					it.post("/api/invitation") {
-						header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+						auth(UserStore.admin1)
 						header("Host", "localhost")
 						contentType(ContentType.Application.Json)
 						setBody(
@@ -95,7 +97,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should not create the invitation link because the user is not an admin") {
 			onPremiseTestApp {
 				it.post("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					header("Host", "localhost")
 					contentType(ContentType.Application.Json)
 					setBody(
@@ -115,10 +117,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should not create the invitation because it already exists") {
 			onPremiseTestApp {
-				generateInvitation(it, "admin1@hollybike.fr")
+				generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					header("Host", "localhost")
 					contentType(ContentType.Application.Json)
 					setBody(
@@ -139,7 +141,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should not create the invitation because the association does not exist") {
 			onPremiseTestApp {
 				it.post("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					header("Host", "localhost")
 					contentType(ContentType.Application.Json)
 					setBody(
@@ -161,10 +163,10 @@ class InvitationTest : IntegrationSpec({
 	context("Disable invitation") {
 		test("Should disable the invitation") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -177,7 +179,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should not disable the invitation because it does not exist") {
 			onPremiseTestApp {
 				it.patch("/api/invitation/20/disable") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
@@ -188,10 +190,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should not disable the invitation if the host is not provided") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.BadRequest
 					bodyAsText() shouldBe "Aucun Host fourni"
@@ -201,10 +203,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should not disable the invitation because the user is not an admin") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -215,10 +217,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should not disable the invitation because the user is not on the same association") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
-					header("Authorization", "Bearer ${tokenStore.get("admin2@hollybike.fr")}")
+					auth(UserStore.admin2)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -228,10 +230,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should disable the invitation if the user is a root but not on the same association") {
 			onPremiseTestApp {
-				val invitation = generateInvitation(it, "admin1@hollybike.fr")
+				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
-					header("Authorization", "Bearer ${tokenStore.get("root@hollybike.fr")}")
+					auth(UserStore.root)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -246,7 +248,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should return an empty list of invitations") {
 			onPremiseTestApp {
 				it.get("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -259,7 +261,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should not return the list of invitations because the user is not an admin") {
 			onPremiseTestApp {
 				it.get("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("user1@hollybike.fr")}")
+					auth(UserStore.user1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
@@ -272,7 +274,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should not return the list of invitations if the host is not provided") {
 			onPremiseTestApp {
 				it.get("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.BadRequest
 
@@ -283,10 +285,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should return list of invitations with links") {
 			onPremiseTestApp {
-				generateInvitation(it, "admin1@hollybike.fr")
+				generateInvitation(it, UserStore.admin1)
 
 				it.get("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
@@ -302,10 +304,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should return list of disabled invitations without links") {
 			onPremiseTestApp {
-				generateInvitation(it, "admin1@hollybike.fr", disabled = true)
+				generateInvitation(it, UserStore.admin1, disabled = true)
 
 				it.get("/api/invitation") {
-					header("Authorization", "Bearer ${tokenStore.get("admin1@hollybike.fr")}")
+					auth(UserStore.admin1)
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK

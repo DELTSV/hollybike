@@ -4,6 +4,12 @@ import io.ktor.resources.*
 
 @Resource("/events")
 class Events(val api: API = API()) {
+	@Resource("future")
+	class Future(val events: Events)
+
+	@Resource("archived")
+	class Archived(val events: Events)
+
 	@Resource("{id}")
 	class Id(val events: Events = Events(), val id: Int) {
 		@Resource("image")

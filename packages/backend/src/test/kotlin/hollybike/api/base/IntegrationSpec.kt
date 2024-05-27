@@ -2,6 +2,8 @@ package hollybike.api.base
 
 import hollybike.api.*
 import hollybike.api.services.storage.StorageMode
+import hollybike.api.stores.TokenStore
+import hollybike.api.stores.UserStore
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
 import hollybike.api.types.user.EUserScope
@@ -78,14 +80,14 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			Thread.sleep(5000)
 		}
 
-		suspend fun uploadProfileImageInStorage(client: HttpClient, sender: String) {
+		suspend fun uploadProfileImageInStorage(client: HttpClient, sender: Pair<Int, String>) {
 			val file = File(
 				javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 			)
 
 			client.post("/api/users/me/profile-picture") {
 				val boundary = "WebAppBoundary"
-				header("Authorization", "Bearer ${tokenStore.get(sender)}")
+				auth(sender)
 				setBody(
 					MultiPartFormDataContent(
 						formData {
@@ -105,13 +107,13 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 
 		suspend fun generateInvitation(
 			client: HttpClient,
-			sender: String,
+			sender: Pair<Int, String>,
 			role: EUserScope = EUserScope.User,
 			maxUses: Int = 1,
 			disabled: Boolean = false
 		): Parameters {
 			val response = client.post("/api/invitation") {
-				header("Authorization", "Bearer ${tokenStore.get(sender)}")
+				auth(sender)
 				header("Host", "localhost")
 				contentType(ContentType.Application.Json)
 				setBody(
@@ -139,11 +141,11 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 
 		private suspend fun disableInvitation(
 			client: HttpClient,
-			sender: String,
+			sender: Pair<Int, String>,
 			invitationId: Int
 		) {
 			val response = client.patch("/api/invitation/$invitationId/disable") {
-				header("Authorization", "Bearer ${tokenStore.get(sender)}")
+				auth(sender)
 				header("Host", "localhost")
 				contentType(ContentType.Application.Json)
 			}

@@ -1,12 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 
 enum EventStatusState {
-  @JsonValue('PENDING')
+  @JsonValue('Pending')
   pending,
-  @JsonValue('SCHEDULED')
+  @JsonValue('Scheduled')
   scheduled,
-  @JsonValue('CANCELLED')
+  @JsonValue('Cancelled')
   canceled,
-  @JsonValue('FINISHED')
+  @JsonValue('Finished')
   finished,
+  @JsonValue('Now')
+  now,
 }
