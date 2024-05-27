@@ -1,9 +1,7 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.exceptions.*
 import hollybike.api.services.AssociationService
-import hollybike.api.exceptions.AssociationAlreadyExists
-import hollybike.api.exceptions.AssociationNotFound
-import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
@@ -259,6 +257,8 @@ class AssociationController(
 			}.onFailure {
 				when (it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is AssociationOnboardingUserNotEditedException -> call.respond(HttpStatusCode.BadRequest, "Vous devez éditer le user avant ça")
+					is AssociationsOnboardingAssociationNotEditedException -> call.respond(HttpStatusCode.BadRequest, "Vous devez éditer votre association avant ça")
 					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
 			}

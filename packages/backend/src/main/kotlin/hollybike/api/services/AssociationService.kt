@@ -1,8 +1,6 @@
 package hollybike.api.services
 
-import hollybike.api.exceptions.AssociationAlreadyExists
-import hollybike.api.exceptions.AssociationNotFound
-import hollybike.api.exceptions.NotAllowedException
+import hollybike.api.exceptions.*
 import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
@@ -131,12 +129,22 @@ class AssociationService(
 		if(!authorizeUpdate(caller, association)) {
 			return Result.failure(NotAllowedException())
 		}
-		transaction(db) {
+		return transaction(db) {
 			update.updateDefaultUser?.let { association.updateDefaultUser = it }
-			update.updateAssociation?.let { association.updateAssociation = it }
-			update.createInvitation?.let { association.createInvitation = it }
+			update.updateAssociation?.let {
+				if(it && !association.updateDefaultUser) {
+					return@transaction Result.failure(AssociationOnboardingUserNotEditedException())
+				}
+				association.updateAssociation = it
+			}
+			update.createInvitation?.let {
+				if(it && !association.updateAssociation) {
+					return@transaction Result.failure(AssociationsOnboardingAssociationNotEditedException())
+				}
+				association.createInvitation = it
+			}
+			return@transaction Result.success(association)
 		}
-		return Result.success(association)
 	}
 
 	suspend fun updateAssociationPicture(id: Int, image: ByteArray, contentType: ContentType): Result<Association> {
