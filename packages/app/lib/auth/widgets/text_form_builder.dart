@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
-import 'package:hollybike/auth/widgets/control_text_form_field.dart';
-import 'package:hollybike/auth/widgets/secured_text_form_field.dart';
+import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
+import 'package:hollybike/shared/widgets/text_field/control_text_form_field.dart';
+import 'package:hollybike/shared/widgets/text_field/secured_text_field.dart';
 
 import '../types/form_field_config.dart';
 
@@ -23,9 +24,18 @@ class TextFormBuilder extends StatefulWidget {
 }
 
 class _TextFormBuilderState extends State<TextFormBuilder> {
-  final _formKey = GlobalKey<FormState>();
+  late final GlobalKey<FormState> _formKey;
+  late final Map<String, TextEditingController> _formControllers;
 
-  late Map<String, TextEditingController> _formControllers;
+  @override
+  void initState() {
+    _formKey = GlobalKey<FormState>();
+    _formControllers = Map.fromIterables(
+        widget.formFields.keys,
+        widget.formFields.values
+            .map((field) => TextEditingController(text: field.defaultValue)));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,73 +107,50 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
   }
 
   List<Widget> _convertFormFieldsToWidgets(FormFields formFields) {
-    _formControllers = Map.fromIterables(
-      formFields.keys,
-      formFields.values
-          .map((field) => TextEditingController(text: field.defaultValue)),
-    );
-
     return formFields.entries
         .expand<Widget>(
-            (field) => _convertFieldToWidget(field.key, field.value))
+          (field) => _convertFieldToWidget(field.key, field.value),
+        )
         .toList();
   }
 
   List<Widget> _convertFieldToWidget(String key, FormFieldConfig config) {
-    final decoration = _getInputDecoration(config.label);
     final controller = _formControllers[key];
 
     if (config.isSecured == false) {
       return <Widget>[
-        TextFormField(
+        CommonTextField(
           validator: config.validator,
+          title: config.label,
           controller: controller,
-          decoration: decoration,
         )
       ];
     }
 
     var fields = <Widget>[
-      SecuredTextFormField(
+      SecuredTextField(
         controller: controller,
-        getDecoration: ({required IconButton iconButton}) =>
-            _getInputDecoration(
-          config.label,
-          iconButton: iconButton,
-        ),
+        title: config.label,
         validator: config.validator,
       ),
     ];
 
     if (config.hasControlField) {
-      fields.add(ControlTextFormField(
-        controlledFieldText: config.label,
+      fields.add(ControlTextField(
         controller: controller,
-        getDecoration: _getInputDecoration,
+        controlledFieldTitle: config.label,
       ));
     }
 
     return fields;
   }
 
-  InputDecoration _getInputDecoration(String labelText,
-      {IconButton? iconButton}) {
-    return InputDecoration(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      labelText: labelText,
-      fillColor: Theme.of(context).colorScheme.primaryContainer,
-      filled: true,
-      suffixIcon: iconButton,
-    );
-  }
-
   void _handleFormSubmit() {
     if (_formKey.currentState!.validate()) {
-      final data = Map.fromIterables(_formControllers.keys,
-          _formControllers.values.map((controller) => controller.text));
+      final data = Map.fromIterables(
+        _formControllers.keys,
+        _formControllers.values.map((controller) => controller.text),
+      );
       widget.onFormSubmit(data);
     }
   }

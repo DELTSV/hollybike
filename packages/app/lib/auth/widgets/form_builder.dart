@@ -6,7 +6,7 @@ import '../types/form_field_config.dart';
 import '../types/form_texts.dart';
 import 'text_form_builder.dart';
 
-class FormBuilder extends StatefulWidget {
+class FormBuilder extends StatelessWidget {
   final String title;
   final String? description;
   final String notificationsConsumerId;
@@ -25,12 +25,8 @@ class FormBuilder extends StatefulWidget {
   });
 
   @override
-  State<FormBuilder> createState() => _FormBuilderState();
-}
-
-class _FormBuilderState extends State<FormBuilder> {
-  @override
   Widget build(BuildContext context) {
+    print("rebuild form");
     return LayoutBuilder(
       builder: (context, constraint) {
         final height = MediaQuery.of(context).size.height;
@@ -55,8 +51,8 @@ class _FormBuilderState extends State<FormBuilder> {
   List<Widget> _renderHeader() {
     return <Widget>[
       FormTitle(
-        title: widget.title,
-        description: widget.description,
+        title: title,
+        description: description,
       ),
     ];
   }
@@ -64,7 +60,7 @@ class _FormBuilderState extends State<FormBuilder> {
   List<Widget> _renderError() {
     return <Widget>[
       ErrorConsumer(
-        notificationsConsumerId: widget.notificationsConsumerId,
+        notificationsConsumerId: notificationsConsumerId,
       ),
     ];
   }
@@ -72,9 +68,9 @@ class _FormBuilderState extends State<FormBuilder> {
   List<Widget> _renderTextInputs() {
     return <Widget>[
       TextFormBuilder(
-        texts: widget.formTexts,
-        onFormSubmit: widget.onFormSubmit,
-        formFields: widget.formFields,
+        texts: formTexts,
+        onFormSubmit: onFormSubmit,
+        formFields: formFields,
       ),
     ];
   }
