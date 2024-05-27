@@ -10,6 +10,7 @@ import aws.smithy.kotlin.runtime.content.ByteStream
 import aws.smithy.kotlin.runtime.content.toByteArray
 import aws.smithy.kotlin.runtime.http.HttpException
 import aws.smithy.kotlin.runtime.net.url.Url
+import hollybike.api.services.storage.signature.StorageSignatureService
 import kotlinx.coroutines.runBlocking
 
 class S3StorageService(
@@ -17,7 +18,8 @@ class S3StorageService(
 	private val bucketName: String,
 	private val bucketRegion: String,
 	private val username: String? = null,
-	private val password: String? = null
+	private val password: String? = null,
+	override val signer : StorageSignatureService
 ) : StorageService {
 	override val mode = StorageMode.S3
 

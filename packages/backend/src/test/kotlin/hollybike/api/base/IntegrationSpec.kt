@@ -3,9 +3,9 @@ package hollybike.api.base
 import hollybike.api.*
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.stores.TokenStore
-import hollybike.api.stores.UserStore
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
+import hollybike.api.types.shared.ImagePath
 import hollybike.api.types.user.EUserScope
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -80,12 +80,12 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			Thread.sleep(5000)
 		}
 
-		suspend fun uploadProfileImageInStorage(client: HttpClient, sender: Pair<Int, String>) {
+		suspend fun uploadProfileImageInStorage(client: HttpClient, sender: Pair<Int, String>): String {
 			val file = File(
 				javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
 			)
 
-			client.post("/api/users/me/profile-picture") {
+			val response = client.post("/api/users/me/profile-picture") {
 				val boundary = "WebAppBoundary"
 				auth(sender)
 				setBody(
@@ -103,6 +103,8 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 			}.apply {
 				status shouldBe HttpStatusCode.OK
 			}
+
+			return response.body<ImagePath>().path
 		}
 
 		suspend fun generateInvitation(

@@ -12,6 +12,7 @@ import hollybike.api.services.auth.InvitationService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.utils.MailSender
 import hollybike.api.services.storage.StorageServiceFactory
+import hollybike.api.services.storage.signature.StorageSignatureMode
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
@@ -34,6 +35,11 @@ fun Application.api() {
 		storageService = StorageServiceFactory.getService(conf, isOnPremise)
 	}
 
+	if (!isOnPremise && storageService.signer.mode == StorageSignatureMode.JWT) {
+		log.warn("JWT signature is not secure in a non-on-premise environment. Please use a secure signature mode.")
+	}
+
+	log.info("Using storage signature mode: ${storageService.signer.mode}")
 	log.info("Storage service in mode ${storageService.mode} initialized in $storageInitTime ms")
 
 	val userService = UserService(db, storageService)
@@ -46,10 +52,10 @@ fun Application.api() {
 	}
 	ApiController(this, mailSender)
 	AuthenticationController(this, authService)
-	UserController(this, userService, conf.security.domain)
-	AssociationController(this, associationService)
+	UserController(this, userService, storageService)
+	AssociationController(this, associationService, storageService)
 	InvitationController(this, authService, invitationService)
-	EventController(this, eventService, conf.security.domain)
+	EventController(this, eventService, storageService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

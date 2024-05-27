@@ -82,3 +82,13 @@ variable "storage_bucket_arn" {
   type        = string
   description = "The ARN of the S3 bucket used for application storage"
 }
+
+variable "cf_ssm_parameter_arn" {
+  type        = string
+  description = "The ARN of the SSM parameter for the CloudFront private key"
+}
+
+variable "cf_key_pair_id" {
+  type        = string
+  description = "The ID of the CloudFront key pair"
+}
