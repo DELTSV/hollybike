@@ -5,22 +5,27 @@ import hollybike.api.exceptions.InvitationAlreadyExist
 import hollybike.api.exceptions.InvitationNotFoundException
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.plugins.user
+import hollybike.api.repository.invitationMapper
 import hollybike.api.routing.resources.Invitation
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
+import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.get
 import hollybike.api.utils.patch
 import hollybike.api.utils.post
+import hollybike.api.utils.search.getMapperData
+import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlin.math.ceil
 
 class InvitationController(
 	application: Application,
@@ -30,15 +35,17 @@ class InvitationController(
 	init {
 		application.routing {
 			authenticate {
-				listInvitations()
+				getAll()
+				getMetaData()
 				createInvitation()
 				disableInvitation()
 			}
 		}
 	}
 
-	private fun Route.listInvitations() {
+	private fun Route.getAll() {
 		get<Invitation>(EUserScope.Admin) {
+			val searchParam = call.request.queryParameters.getSearchParam(invitationMapper)
 			val host = call.request.headers["Host"]
 
 			if (host == null) {
@@ -46,16 +53,38 @@ class InvitationController(
 				return@get
 			}
 
-			invitationService.listInvitation(call.user, call.user.association).onSuccess {
-				val dto = it.map { i ->
+			val count = invitationService.getAllCount(call.user, call.user.association, searchParam) ?: run {
+				call.respond(HttpStatusCode.Forbidden)
+				return@get
+			}
+			invitationService.getAll(call.user, call.user.association, searchParam).onSuccess { invitations ->
+				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
 						TInvitation(i, authService.generateLink(call.user, host, i))
 					} else {
 						TInvitation(i)
 					}
 				}
-				call.respond(dto)
+				call.respond(
+					TLists(
+					dto,
+					searchParam.page,
+					ceil(count.toDouble() / searchParam.perPage).toInt(),
+					searchParam.perPage,
+					count.toInt()
+				)
+				)
+			}.onFailure { e ->
+				when(e) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+				}
 			}
+		}
+	}
+
+	private fun Route.getMetaData() {
+		get<Invitation.MetaData>(EUserScope.Admin) {
+			call.respond(invitationMapper.getMapperData())
 		}
 	}
 

@@ -2,6 +2,7 @@ package hollybike.api.repository
 
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -32,3 +33,13 @@ class Invitation(id: EntityID<Int>) : IntEntity(id) {
 
 	companion object: IntEntityClass<Invitation>(Invitations)
 }
+
+val invitationMapper: Mapper = mapOf(
+	"role" to Invitations.role,
+	"status" to Invitations.status,
+	"association" to Invitations.association,
+	"creator" to Invitations.creator,
+	"expiration" to Invitations.expiration,
+	"uses" to Invitations.uses,
+	"max_uses" to Invitations.maxUses,
+)

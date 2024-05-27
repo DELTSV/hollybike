@@ -47,7 +47,7 @@ fun Application.api() {
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
 	UserController(this, userService)
-	AssociationController(this, associationService)
+	AssociationController(this, associationService, invitationService, authService)
 	InvitationController(this, authService, invitationService)
 	EventController(this, eventService)
 

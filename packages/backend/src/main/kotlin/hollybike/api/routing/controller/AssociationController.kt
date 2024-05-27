@@ -7,9 +7,14 @@ import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
+import hollybike.api.repository.invitationMapper
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
+import hollybike.api.services.auth.AuthService
+import hollybike.api.services.auth.InvitationService
 import hollybike.api.types.association.*
+import hollybike.api.types.invitation.EInvitationStatus
+import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
@@ -26,7 +31,9 @@ import kotlin.math.ceil
 
 class AssociationController(
 	application: Application,
-	private val associationService: AssociationService
+	private val associationService: AssociationService,
+	private val invitationService: InvitationService,
+	private val authService: AuthService
 ) {
 	init {
 		application.routing {
@@ -37,6 +44,8 @@ class AssociationController(
 				getMyOnboarding()
 				updateMyOnboarding()
 				getById()
+				getAllInvitationsByAssociations()
+				getAllInvitationsByAssociationsMetadata()
 
 				if (application.isCloud) {
 					getAll()
@@ -263,6 +272,53 @@ class AssociationController(
 				return@get
 			}
 			call.respond(TOnboarding(association))
+		}
+	}
+
+	private fun Route.getAllInvitationsByAssociations() {
+		get<Associations.Id.Invitations<API>>(EUserScope.Admin) {
+			val searchParam = call.request.queryParameters.getSearchParam(invitationMapper)
+			val host = call.request.headers["Host"]
+
+			if (host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@get
+			}
+
+			val association = associationService.getById(call.user, it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Association inconnue")
+				return@get
+			}
+			val count = invitationService.getAllCount(call.user, association, searchParam) ?: run {
+				call.respond(HttpStatusCode.Forbidden)
+				return@get
+			}
+			invitationService.getAll(call.user, association, searchParam).onSuccess { invitations ->
+				val dto = invitations.map { i ->
+					if(i.status == EInvitationStatus.Enabled) {
+						TInvitation(i, authService.generateLink(call.user, host, i))
+					} else {
+						TInvitation(i)
+					}
+				}
+				call.respond(TLists(
+					dto,
+					searchParam.page,
+					ceil(count.toDouble() / searchParam.perPage).toInt(),
+					searchParam.perPage,
+					count.toInt()
+				))
+			}.onFailure { e ->
+				when(e) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+				}
+			}
+		}
+	}
+
+	private fun Route.getAllInvitationsByAssociationsMetadata() {
+		get<Associations.Id.Invitations.MetaData<API>>(EUserScope.Admin) {
+			call.respond(invitationMapper.getMapperData())
 		}
 	}
 }

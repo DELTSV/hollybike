@@ -4,12 +4,11 @@ import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.InvitationAlreadyExist
 import hollybike.api.exceptions.InvitationNotFoundException
 import hollybike.api.exceptions.NotAllowedException
-import hollybike.api.repository.Association
-import hollybike.api.repository.Invitation
-import hollybike.api.repository.Invitations
-import hollybike.api.repository.User
+import hollybike.api.repository.*
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.applyParam
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.with
@@ -18,6 +17,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class InvitationService(
@@ -104,13 +104,22 @@ class InvitationService(
 		} ?: return Result.failure(InvitationNotFoundException())
 	}
 
-	fun listInvitation(caller: User, association: Association): Result<List<Invitation>> {
+	fun getAll(caller: User, association: Association, searchParam: SearchParam): Result<List<Invitation>> {
 		if ((caller.scope == EUserScope.Admin && association.id != caller.association.id)) {
 			return Result.failure(NotAllowedException())
 		}
 		val invitations = transaction(db) {
-			Invitation.find { Invitations.association eq association.id.value }.with(Invitation::association).toList()
+			Invitation.wrapRows(Invitations.innerJoin(Associations).innerJoin(Users).selectAll().applyParam(searchParam)).toList()
 		}
 		return Result.success(invitations)
+	}
+
+	fun getAllCount(caller: User, association: Association, searchParam: SearchParam): Long? {
+		if ((caller.scope == EUserScope.Admin && association.id != caller.association.id)) {
+			return null
+		}
+		return transaction(db){
+			Invitations.innerJoin(Associations).innerJoin(Users).selectAll().applyParam(searchParam).count()
+		}
 	}
 }

@@ -11,6 +11,12 @@ class Associations<T>(val parent: T) {
 
 		@Resource("onboarding")
 		class Onboarding<T>(val id: Id<T>)
+
+		@Resource("/invitations")
+		class Invitations<T>(val id: Id<T>) {
+			@Resource("meta-data")
+			class MetaData<T>(val invitation: Invitations<T>)
+		}
 	}
 
 	@Resource("me")

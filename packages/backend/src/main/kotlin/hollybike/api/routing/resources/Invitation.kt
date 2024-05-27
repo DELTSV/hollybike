@@ -9,4 +9,7 @@ class Invitation(val api: API = API()) {
 		@Resource("disable")
 		class Disable(val id: Id)
 	}
+
+	@Resource("meta-data")
+	class MetaData(val invitation: Invitation = Invitation())
 }
