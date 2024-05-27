@@ -45,7 +45,7 @@ function adminMenu(association: TAssociation | undefined) {
 		<SideBarMenu to={`/associations/${association?.id}`}>
 			Mon association
 		</SideBarMenu>,
-		<SideBarMenu to={`/association/${association?.id}/users`}>
+		<SideBarMenu to={`/associations/${association?.id}/users`}>
 			Mes utilisateurs
 		</SideBarMenu>,
 		<SideBarMenu to={`/associations/${association?.id}/invitations`}>

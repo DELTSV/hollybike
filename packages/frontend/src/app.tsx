@@ -56,6 +56,10 @@ export function App() {
 					element: <ListInvitations/>,
 				},
 				{
+					path: "associations/:id/users",
+					element: <ListUser/>,
+				},
+				{
 					path: "invitations/new",
 					element: <CreateInvitation/>,
 				},

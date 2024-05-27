@@ -20,7 +20,8 @@ interface ListProps<T> {
 	baseUrl: string,
 	line: (data: T) => ComponentChildren[]
 	perPage?: number,
-	reload?: Reload
+	reload?: Reload,
+	filter?: string
 }
 
 export function List<T>(props: ListProps<T>) {
@@ -69,8 +70,15 @@ export function List<T>(props: ListProps<T>) {
 			return "";
 	}, [sort]);
 
+	const filterQuery = useMemo(() => {
+		if (props.filter !== undefined && props.filter.length !== 0)
+			return `&${ props.filter}`;
+		 else
+			return "";
+	}, []);
+
 	const data = useApi<TList<T>>(
-		`${props.baseUrl}?page=${page}&per_page=${props.perPage ?? 10}&query=${search}${orderQuery}`,
+		`${props.baseUrl}?page=${page}&per_page=${props.perPage ?? 10}&query=${search}${orderQuery}${filterQuery}`,
 		[
 			props.baseUrl,
 			props.perPage,
