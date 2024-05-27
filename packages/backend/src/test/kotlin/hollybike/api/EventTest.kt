@@ -163,6 +163,159 @@ class EventTest : IntegrationSpec({
 		}
 	}
 
+	context("Get future events") {
+		test("Should all future scheduled events") {
+			onPremiseTestApp {
+				it.get("/api/events/future?page=0&per_page=10") {
+					auth(UserStore.user3)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.USER_3_VISIBLE_EVENT_COUNT
+							),
+							perPage = 10,
+							totalData = EventStore.USER_3_VISIBLE_EVENT_COUNT
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.USER_3_VISIBLE_EVENT_COUNT
+					)
+				}
+			}
+		}
+
+		test("Should all future scheduled and my pending events") {
+			onPremiseTestApp {
+				it.get("/api/events/future?page=0&per_page=10") {
+					auth(UserStore.user4)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.USER_4_VISIBLE_EVENT_COUNT
+							),
+							perPage = 10,
+							totalData = EventStore.USER_4_VISIBLE_EVENT_COUNT
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.USER_4_VISIBLE_EVENT_COUNT
+					)
+				}
+			}
+		}
+
+		test("Should get upcoming & current events and not past events") {
+			onPremiseTestApp {
+				it.get("/api/events/future?page=0&per_page=10") {
+					auth(UserStore.user1)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.USER_1_FUTURE_EVENT_COUNT
+							),
+							perPage = 10,
+							totalData = EventStore.USER_1_FUTURE_EVENT_COUNT
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.USER_1_FUTURE_EVENT_COUNT
+					)
+				}
+			}
+		}
+	}
+
+	context("Get archived events") {
+		test("Should not have archived events for association 2") {
+			onPremiseTestApp {
+				it.get("/api/events/archived?page=0&per_page=10") {
+					auth(UserStore.user3)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = 0,
+							perPage = 10,
+							totalData = 0
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe 0
+				}
+			}
+		}
+
+		test("Should all past archived events") {
+			onPremiseTestApp {
+				it.get("/api/events/archived?page=0&per_page=10") {
+					auth(UserStore.user1)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+
+					val body = body<TLists<TEventPartial>>()
+
+					body.shouldBeEqualToIgnoringFields(
+						TLists(
+							data = listOf(),
+							page = 0,
+							totalPage = nbPages(
+								pageSize = 10,
+								nbItems = EventStore.ASSOCIATION_1_ARCHIVED_EVENT_COUNT
+							),
+							perPage = 10,
+							totalData = EventStore.ASSOCIATION_1_ARCHIVED_EVENT_COUNT
+						),
+						TLists<TAssociation>::data
+					)
+
+					body.data.size shouldBe countWithCap(
+						cap = 10,
+						count = EventStore.ASSOCIATION_1_ARCHIVED_EVENT_COUNT
+					)
+				}
+			}
+		}
+	}
+
 	context("Get event by id") {
 		test("Should get the event by id") {
 			onPremiseTestApp {

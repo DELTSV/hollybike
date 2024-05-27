@@ -3,7 +3,6 @@ package hollybike.api.types.event
 import hollybike.api.repository.events.Event
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 
 enum class EEventStatus(val value: Int) {
 	Pending(1),

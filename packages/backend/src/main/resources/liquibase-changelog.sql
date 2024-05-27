@@ -118,17 +118,17 @@ INSERT INTO users (email, username, password, association, last_login, scope) VA
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 1 - Asso 1', 'Description 1', 2, null, 1, 2, now() + interval '1' day, now() + interval '2' day);
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 1, 2);
 
-INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 2 - Asso 1', 'Description 2', 2, null, 2, 2, now() + interval '1' day, now() + interval '2' day);
+INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 2 - Asso 1', 'Description 2', 2, null, 2, 2, now() - interval '1' day, now() + interval '1' day);
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 2, 2);
 INSERT INTO users_participate_events ("user", event, role) VALUES (3, 2, 1);
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 3 - Asso 1', 'Description 3', 2, null, 3, 2, now() + interval '1' day, now() + interval '2' day);
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 3, 2);
 
-INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 4 - Asso 1', 'Description 4', 2, null, 4, 2, now() + interval '1' day, now() + interval '2' day);
+INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 4 - Asso 1', 'Description 4', 2, null, 4, 2, now() - interval '2' day, now() - interval '1' day);
 INSERT INTO users_participate_events ("user", event, role) VALUES (2, 4, 2);
 
-INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 5 - Asso 1', 'Description 5', 2, null, 1, 3, now() + interval '1' day, now() + interval '2' day);
+INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 5 - Asso 1', 'Description 5', 2, null, 2, 3, now() - interval '1' day, null);
 INSERT INTO users_participate_events ("user", event, role) VALUES (3, 5, 2);
 
 INSERT INTO events (name, description, association, image, status, owner, start_date_time, end_date_time) VALUES ('Event 6 - Asso 1', 'Description 6', 2, null, 2, 3, now() + interval '1' day, now() + interval '2' day);
