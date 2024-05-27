@@ -8,9 +8,12 @@ import {
 	useEffect, useState,
 } from "preact/hooks";
 import { equals } from "../utils/equals.ts";
+import { Link } from "react-router-dom";
+import { useUser } from "../user/useUser.tsx";
 
 export function Home() {
 	const onboarding = useApi<TOnboarding>("/associations/me/onboarding", []);
+	const user = useUser();
 	const [localOnboarding, setLocalOnboarding] = useState<TOnboarding | undefined>(onboarding.data);
 
 	useEffect(() => {
@@ -44,7 +47,7 @@ export function Home() {
 										};
 								})}
 							/>
-							<span>Mettre à jour l'utilisateur par défaut</span>
+							<Link to={`/users/${ user.user?.id}`}>Mettre à jour l'utilisateur par défaut</Link>
 						</p>
 						<p className={"flex items-center gap-2"}>
 							<CheckBox
@@ -59,7 +62,7 @@ export function Home() {
 										};
 								})}
 							/>
-							<span>Personnaliser l'association</span>
+							<Link to={`/associations/${ user.user?.association?.id}`}><span>Personnaliser l'association</span></Link>
 						</p>
 						<p className={"flex items-center gap-2"}>
 							<CheckBox

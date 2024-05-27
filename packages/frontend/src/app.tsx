@@ -17,6 +17,7 @@ import { ListUser } from "./user/listUser/ListUser.tsx";
 import { useApi } from "./utils/useApi.ts";
 import { TConfDone } from "./types/GConfDone.ts";
 import { Conf } from "./conf/Conf.tsx";
+import { UserDetail } from "./user/userDetail/UserDetail.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -45,6 +46,10 @@ export function App() {
 					element: <ListUser/>,
 				},
 				{
+					path: "users/:id",
+					element: <UserDetail/>,
+				},
+				{
 					path: "conf",
 					element: <Conf/>,
 				},
@@ -64,7 +69,7 @@ export function App() {
 		},
 	]);
 
-	const confMode = useApi<TConfDone, never>("/conf-done");
+	const confMode = useApi<TConfDone>("/conf-done");
 
 	useEffect(() => {
 		if (!auth.loading)
