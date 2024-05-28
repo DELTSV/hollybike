@@ -3,6 +3,7 @@ package hollybike.api.types.invitation
 import hollybike.api.repository.Invitation
 import hollybike.api.types.user.EUserScope
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,6 +14,7 @@ data class TInvitation(
 	val expiration: Instant?,
 	val creation: Instant,
 	val uses: Int,
+	@SerialName("max_uses")
 	val maxUses: Int?,
 	val link: String? = null
 ) {

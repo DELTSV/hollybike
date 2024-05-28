@@ -1,8 +1,6 @@
 package hollybike.api.routing.controller
 
-import hollybike.api.exceptions.BadRequestException
-import hollybike.api.exceptions.UserDifferentNewPassword
-import hollybike.api.exceptions.UserWrongPassword
+import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
@@ -14,8 +12,10 @@ import hollybike.api.types.lists.TLists
 import hollybike.api.types.shared.ImagePath
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
+import hollybike.api.types.user.TUserUpdate
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.get
+import hollybike.api.utils.patch
 import hollybike.api.utils.post
 import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
@@ -44,6 +44,7 @@ class UserController(
 				getUserById()
 				getByUserName()
 				getByEmail()
+				update()
 				updateMe()
 				uploadMeProfilePicture()
 				uploadUserProfilePicture()
@@ -55,7 +56,7 @@ class UserController(
 
 	private fun Route.getUserAssociation() {
 		get<Users.Id.Association>(EUserScope.Root) { params ->
-			userService.getUserAssociation(params.id.id)?.let {
+			userService.getUserAssociation(call.user, params.id.id)?.let {
 				call.respond(TAssociation(it, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
@@ -95,6 +96,24 @@ class UserController(
 				call.respond(TUser(user, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+			}
+		}
+	}
+
+	private fun Route.update() {
+		this.patch<Users.Id>(EUserScope.Admin) {
+			val update = call.receive<TUserUpdate>()
+			val user = userService.getUser(call.user, it.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+				return@patch
+			}
+			userService.updateUser(call.user, user, update).onSuccess { u ->
+				call.respond(TUser(u, storageService.signer.sign))
+			}.onFailure { e ->
+				when (e) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+				}
 			}
 		}
 	}

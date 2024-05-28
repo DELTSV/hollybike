@@ -1,14 +1,13 @@
 package hollybike.api.services
 
-import hollybike.api.exceptions.AssociationAlreadyExists
-import hollybike.api.exceptions.AssociationNotFound
-import hollybike.api.exceptions.NotAllowedException
+import hollybike.api.exceptions.*
 import hollybike.api.repository.Association
 import hollybike.api.repository.Associations
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
+import hollybike.api.types.association.TOnboardingUpdate
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
@@ -24,6 +23,20 @@ class AssociationService(
 	private val db: Database,
 	private val storageService: StorageService,
 ) {
+	private fun authorizeUpdate(caller: User, association: Association) = when(caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == association.id
+		EUserScope.User -> false
+	}
+
+	private fun authorizeGet(caller: User, association: Association) = when (caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == association.id
+		EUserScope.User -> caller.association.id == association.id
+	}
+
+	private infix fun Association?.getIfAllowed(caller: User) = if(this != null && authorizeGet(caller, this)) this else null
+
 	private fun checkAlreadyExistsException(e: ExposedSQLException): Boolean {
 		val cause = if (e.cause is BatchUpdateException && (e.cause as BatchUpdateException).cause is PSQLException) {
 			(e.cause as BatchUpdateException).cause as PSQLException
@@ -70,8 +83,8 @@ class AssociationService(
 		Result.success(Associations.selectAll().applyParam(searchParam, false).count().toInt())
 	}
 
-	fun getById(id: Int): Association? = transaction(db) {
-		Association.findById(id)
+	fun getById(caller: User, id: Int): Association? = transaction(db) {
+		Association.findById(id) getIfAllowed caller
 	}
 
 	fun createAssociation(name: String): Result<Association> {
@@ -109,6 +122,28 @@ class AssociationService(
 			}
 
 			return Result.failure(e)
+		}
+	}
+
+	fun updateAssociationOnboarding(caller: User, association: Association, update: TOnboardingUpdate): Result<Association> {
+		if(!authorizeUpdate(caller, association)) {
+			return Result.failure(NotAllowedException())
+		}
+		return transaction(db) {
+			update.updateDefaultUser?.let { association.updateDefaultUser = it }
+			update.updateAssociation?.let {
+				if(it && !association.updateDefaultUser) {
+					return@transaction Result.failure(AssociationOnboardingUserNotEditedException())
+				}
+				association.updateAssociation = it
+			}
+			update.createInvitation?.let {
+				if(it && !association.updateAssociation) {
+					return@transaction Result.failure(AssociationsOnboardingAssociationNotEditedException())
+				}
+				association.createInvitation = it
+			}
+			return@transaction Result.success(association)
 		}
 	}
 

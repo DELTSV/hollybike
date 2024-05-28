@@ -1,0 +1,20 @@
+import {
+	CheckBoxOutlineBlank,
+	CheckBoxOutlined,
+} from "@material-ui/icons";
+
+interface CheckBoxProps {
+	checked?: boolean
+	toggle?: () => void
+}
+
+export function CheckBox(props: CheckBoxProps) {
+	return (
+		<div onClick={props.toggle}>
+			{ props.checked === true ?
+				<CheckBoxOutlined/>:
+				<CheckBoxOutlineBlank/> }
+			<input type={"checkbox"} className={"hidden"} checked={props.checked}/>
+		</div>
+	);
+}

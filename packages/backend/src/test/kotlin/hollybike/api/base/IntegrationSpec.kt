@@ -82,7 +82,7 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 
 		suspend fun uploadProfileImageInStorage(client: HttpClient, sender: Pair<Int, String>): String {
 			val file = File(
-				javaClass.classLoader.getResource("profile.jpg")?.file ?: error("File profile.jpg not found")
+				this::class.java.getResource("/profile.jpg")?.file ?: error("File profile.jpg not found")
 			)
 
 			val response = client.post("/api/users/me/profile-picture") {
@@ -200,7 +200,7 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 
 			application {
 				loadCustomConfig(config)
-				checkTestEnvironment()
+				checkEnvironment()
 				configureSerialization()
 				forceMode(isOnPremise = baseConfig.isOnPremise)
 				api()
