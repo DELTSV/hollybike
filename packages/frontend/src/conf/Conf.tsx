@@ -50,7 +50,7 @@ export function Conf() {
 						},
 					).then(() => {
 						setReload(prev => !prev);
-						// api("/restart", { method: "DELETE" });
+						api("/restart", { method: "DELETE" });
 					});
 				}}
 			>
