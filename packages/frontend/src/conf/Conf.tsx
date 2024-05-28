@@ -22,7 +22,7 @@ export interface ConfProps {
 export function Conf() {
 	const [reload, setReload] = useState(false);
 	const [conf, setConf] = useState<TConf>();
-	const confAPI = useApi<TConf, never>("/conf", [reload]);
+	const confAPI = useApi<TConf>("/conf", [reload]);
 
 	useEffect(() => {
 		setConf(confAPI.data);
@@ -42,7 +42,7 @@ export function Conf() {
 			</div>
 			<Button
 				onClick={() => {
-					api<TConf, TConf>(
+					api<TConf>(
 						"/conf",
 						{
 							method: "PUT",
