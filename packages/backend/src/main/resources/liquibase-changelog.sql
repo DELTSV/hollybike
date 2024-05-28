@@ -166,7 +166,7 @@ ALTER TABLE associations
     ADD COLUMN IF NOT EXISTS create_invitation BOOLEAN DEFAULT false;
 
 
--- changeset denis:7 context:!test and premise
+-- changeset denis:7 context:premise and !test
 INSERT INTO associations (name) VALUES ('Hollybike');
 INSERT INTO users (email, username, password, association, last_login, scope) VALUES ('admin@hollybike.fr', 'Admin', 'JDJhJDA2JEtHaDN5c0pIc1guU2s5V3g2Ulpjek95YXAvZVpkQllPNjlPMUFHTFhuV1pua2RyZnpzVDdh
 ', LASTVAL(), NOW(), 2);
