@@ -1,5 +1,6 @@
 package hollybike.api.repository
 
+import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -14,7 +15,7 @@ class EventImage(id: EntityID<Int>) : IntEntity(id) {
 	var size by EventImages.size
 	var uploadDateTime by EventImages.uploadDateTime
 
-	companion object : IntEntityClass<EventParticipation>(EventParticipations)
+	companion object : IntEntityClass<EventImage>(EventImages)
 }
 
 object EventImages: IntIdTable("event_images", "id_event_image") {
@@ -24,3 +25,10 @@ object EventImages: IntIdTable("event_images", "id_event_image") {
 	val size = integer("size")
 	val uploadDateTime = timestamp("upload_date_time").clientDefault { Clock.System.now() }
 }
+
+val eventImagesMapper: Mapper = mapOf(
+	"id_image" to EventImages.id,
+	"owner_image" to EventImages.owner,
+	"size" to EventImages.size,
+	"upload_date_time" to EventImages.uploadDateTime
+)

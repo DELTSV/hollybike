@@ -45,7 +45,7 @@ fun Application.api() {
 	val authService = AuthService(db, conf.security, invitationService, userService)
 	val eventService = EventService(db, storageService)
 	val eventParticipationService = EventParticipationService(db, eventService)
-	val eventImageService = EventImageService(db, eventService)
+	val eventImageService = EventImageService(db, eventService, storageService)
 	val associationService = AssociationService(db, storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)

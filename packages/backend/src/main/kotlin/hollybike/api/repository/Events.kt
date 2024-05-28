@@ -39,13 +39,13 @@ class Event(id: EntityID<Int>) : IntEntity(id) {
 }
 
 val eventMapper: Mapper = mapOf(
-	"id" to Events.id,
-	"name" to Events.name,
-	"description" to Events.description,
-	"image" to Events.image,
-	"status" to Events.status,
+	"id_event" to Events.id,
+	"name_event" to Events.name,
+	"description_event" to Events.description,
+	"image_event" to Events.image,
+	"status_event" to Events.status,
 	"start_date_time" to Events.startDateTime,
 	"end_date_time" to Events.endDateTime,
-	"create_date_time" to Events.createDateTime,
-	"update_date_time" to Events.updateDateTime
+	"create_date_time_event" to Events.createDateTime,
+	"update_date_time_event" to Events.updateDateTime
 )

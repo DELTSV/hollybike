@@ -1,6 +1,7 @@
 package hollybike.api.routing.controller
 
 import hollybike.api.plugins.user
+import hollybike.api.repository.Event
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
@@ -9,7 +10,11 @@ import hollybike.api.services.EventService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
-import hollybike.api.utils.listParams
+import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.checkContentType
+import hollybike.api.utils.get
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -29,6 +34,8 @@ class EventController(
 	private val eventService: EventService,
 	private val storageService: StorageService,
 ) {
+	private val mapper = eventMapper + associationMapper + userMapper
+
 	init {
 		application.routing {
 			authenticate {
@@ -44,60 +51,51 @@ class EventController(
 				scheduleEvent()
 				finishEvent()
 				pendEvent()
+				getMetaData()
 			}
 		}
 	}
 
+	private fun getEventsPagination(events: List<Event>, total: Int, searchParam: SearchParam): TLists<TEventPartial> {
+		return TLists(
+			data = events.map { TEventPartial(it, storageService.signer.sign) },
+			page = searchParam.page,
+			perPage = searchParam.perPage,
+			totalPage = ceil(total.toDouble() / searchParam.perPage).toInt(),
+			totalData = total
+		)
+	}
+
 	private fun Route.getAllEvents() {
 		get<Events> {
-			val params = call.request.queryParameters.getSearchParam(eventMapper + associationMapper + userMapper)
+			val params = call.request.queryParameters.getSearchParam(mapper)
 
 			val events = eventService.getAllEvents(call.user, params)
-			val total = eventService.countAllEvents(call.user, params)
+			val totalEvents = eventService.countAllEvents(call.user, params)
 
-			call.respond(
-				TLists(
-					data = events.map { TEventPartial(it, storageService.signer.sign) },
-					page = call.listParams.page,
-					perPage = call.listParams.perPage,
-					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
-					totalData = total
-				)
-			)
+			call.respond(getEventsPagination(events, totalEvents, params))
 		}
 	}
 
 	private fun Route.getFutureEvents() {
 		get<Events.Future> {
-			val events = eventService.getFutureEvents(call.user, call.listParams.page, call.listParams.perPage)
-			val total = eventService.countFutureEvents(call.user)
+			val searchParam = call.request.queryParameters.getSearchParam(mapper)
 
-			call.respond(
-				TLists(
-					data = events.map { TEventPartial(it, storageService.signer.sign) },
-					page = call.listParams.page,
-					perPage = call.listParams.perPage,
-					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
-					totalData = total
-				)
-			)
+			val events = eventService.getFutureEvents(call.user, searchParam)
+			val totalEvents = eventService.countFutureEvents(call.user, searchParam)
+
+			getEventsPagination(events, totalEvents, searchParam)
 		}
 	}
 
 	private fun Route.getArchivedEvents() {
 		get<Events.Archived> {
-			val events = eventService.getArchivedEvents(call.user, call.listParams.page, call.listParams.perPage)
-			val total = eventService.countArchivedEvents(call.user)
+			val searchParam = call.request.queryParameters.getSearchParam(mapper)
 
-			call.respond(
-				TLists(
-					data = events.map { TEventPartial(it, storageService.signer.sign) },
-					page = call.listParams.page,
-					perPage = call.listParams.perPage,
-					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
-					totalData = total
-				)
-			)
+			val events = eventService.getArchivedEvents(call.user, searchParam)
+			val totalEvents = eventService.countArchivedEvents(call.user, searchParam)
+
+			getEventsPagination(events, totalEvents, searchParam)
 		}
 	}
 
@@ -193,14 +191,8 @@ class EventController(
 
 			val image = multipart.readPart() as PartData.FileItem
 
-			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
-				return@patch
-			}
-
-			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
-				return@patch
+			val contentType = checkContentType(image).getOrElse {
+				return@patch call.respond(HttpStatusCode.BadRequest, it.message!!)
 			}
 
 			eventService.uploadEventImage(
@@ -223,6 +215,12 @@ class EventController(
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}
+		}
+	}
+
+	private fun Route.getMetaData() {
+		get<Events.MetaData>(EUserScope.Admin) {
+			call.respond(mapper.getMapperData())
 		}
 	}
 }

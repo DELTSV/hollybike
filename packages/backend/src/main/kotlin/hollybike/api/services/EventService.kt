@@ -13,7 +13,6 @@ import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
-import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -181,24 +180,16 @@ class EventService(
 			((Events.endDateTime eq null) and(addtime(Events.startDateTime, 4.hours) greaterEq now()))
 	}
 
-	fun getFutureEvents(caller: User, page: Int, perPage: Int): List<Event> = transaction(db) {
-		val searchParam = SearchParam(
-			sort = listOf(Sort(Events.startDateTime, SortOrder.ASC)),
-			page = page,
-			perPage = perPage,
-			filter = mutableListOf(),
-			query = null
-		)
-
+	fun getFutureEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and futureEventsCondition()
 		}).with(Event::owner).toList()
 	}
 
-	fun countFutureEvents(caller: User): Int = transaction(db) {
-		Event.find(
+	fun countFutureEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
+		Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and futureEventsCondition()
-		).count().toInt()
+		}.count().toInt()
 	}
 
 	private fun archivedEventsCondition(): Op<Boolean> {
@@ -207,24 +198,16 @@ class EventService(
 			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
 	}
 
-	fun getArchivedEvents(caller: User, page: Int, perPage: Int): List<Event> = transaction(db) {
-		val searchParam = SearchParam(
-			sort = listOf(Sort(Events.startDateTime, SortOrder.DESC)),
-			page = page,
-			perPage = perPage,
-			filter = mutableListOf(),
-			query = null
-		)
-
+	fun getArchivedEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and archivedEventsCondition()
 		}).with(Event::owner).toList()
 	}
 
-	fun countArchivedEvents(caller: User): Int = transaction(db) {
-		Event.find(
+	fun countArchivedEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
+		Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and archivedEventsCondition()
-		).count().toInt()
+		}.count().toInt()
 	}
 
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
