@@ -9,19 +9,13 @@ import { Input } from "../../components/Input/Input.tsx";
 import {
 	useEffect, useState,
 } from "preact/hooks";
-import { TAssociation } from "../../types/TAssociation.ts";
+import { dummyAssociation } from "../../types/TAssociation.ts";
 import { Button } from "../../components/Button/Button.tsx";
 import {
 	Visibility, VisibilityOff,
 } from "@material-ui/icons";
 import { TUserUpdate } from "../../types/TUserUpdate.ts";
 import { Select } from "../../components/Select/Select.tsx";
-
-const emptyAssocation: TAssociation = {
-	id: -1,
-	name: "",
-	status: "Enabled",
-};
 
 const emptyUser: TUser = {
 	id: -1,
@@ -30,7 +24,7 @@ const emptyUser: TUser = {
 	status: "Enabled",
 	scope: "User",
 	last_login: "",
-	association: emptyAssocation,
+	association: dummyAssociation,
 };
 
 export function UserDetail() {

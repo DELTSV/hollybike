@@ -17,6 +17,7 @@ interface SelectProps {
 	default?: string | number,
 	value?: string | number,
 	onChange?: (value: string | number | undefined) => void,
+	disabled?: boolean
 }
 
 let selectCount = 1000;
@@ -62,8 +63,13 @@ export function Select(props: SelectProps) {
 
 	return (
 		<div
-			className={clsx("bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-between cursor-pointer " +
-				"border-2 border-slate-950 dark:border-slate-700 px-2 py-2 h-9.5 relative", visible && "rounded-b-none")}
+			className={clsx(
+				"bg-slate-100 dark:bg-slate-800 rounded flex items-center justify-between border-2 px-2 py-2 h-9.5 relative",
+				visible && "rounded-b-none",
+				props.disabled === true ?
+					"border-slate-300 text-slate-300 dark:border-slate-600 dark:text-slate-600 cursor-default" :
+					"border-slate-950 dark:border-slate-700 cursor-pointer",
+			)}
 			onClick={() => setVisible(true)} ref={container}
 			style={`z-index: ${id}`}
 		>
@@ -86,7 +92,7 @@ export function Select(props: SelectProps) {
 							{ o.name }
 						</p>) }
 				</div> }
-			<select className={"hidden"} value={props.value}>
+			<select disabled={props.disabled} className={"hidden"} value={props.value}>
 				<option default={props.default === undefined}></option>
 				{ props.options.map((o, i) =>
 					<option default={props.default === o.value} key={i} value={o.value}>{ o.name }</option>) }
