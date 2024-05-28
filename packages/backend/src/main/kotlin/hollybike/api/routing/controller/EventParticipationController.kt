@@ -3,7 +3,6 @@ package hollybike.api.routing.controller
 import hollybike.api.plugins.user
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
-import hollybike.api.services.EventService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.TEventParticipation
 import io.ktor.http.*
