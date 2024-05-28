@@ -6,7 +6,7 @@ resource "aws_ssm_parameter" "backend_security_audience" {
 
 resource "aws_ssm_parameter" "backend_security_domain" {
   name  = "/${lower(var.namespace)}/backend/${var.environment}/security_domain"
-  value = "http://0.0.0.0:8080"
+  value = "https://${var.domain_name}"
   type  = "String"
 }
 
@@ -20,6 +20,12 @@ resource "aws_ssm_parameter" "backend_security_secret" {
   name  = "/${lower(var.namespace)}/backend/${var.environment}/security_secret"
   value = random_password.security_secret.result
   type  = "SecureString"
+}
+
+resource "aws_ssm_parameter" "backend_security_cf_key_pair_id" {
+  name  = "/${lower(var.namespace)}/backend/${var.environment}/security_cf_key_pair_id"
+  value = var.cf_key_pair_id
+  type  = "String"
 }
 
 resource "random_password" "security_secret" {

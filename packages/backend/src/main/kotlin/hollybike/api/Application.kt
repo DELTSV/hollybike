@@ -83,7 +83,7 @@ fun Application.checkEnvironment() {
 }
 
 fun Application.loadConfig(): Boolean {
-	val conf = parseConf(isTestEnv) ?: run {
+	val conf = parseConf() ?: run {
 		println("Unable to get conf from file or env")
 		return false
 	}

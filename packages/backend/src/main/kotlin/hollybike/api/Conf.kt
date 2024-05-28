@@ -30,7 +30,9 @@ data class ConfSecurity(
 	val audience: String,
 	val domain: String,
 	val realm: String,
-	val secret: String
+	val secret: String,
+	val cfPrivateKeySecret: String? = null,
+	val cfKeyPairId: String? = null
 )
 
 @Serializable
@@ -56,10 +58,7 @@ data class ConfStorage(
 	val ftpDirectory: String? = null
 )
 
-fun parseConf(isTestEnv: Boolean): Conf? {
-	if (isTestEnv) {
-		return parseSystemConf()
-	}
+fun parseConf(): Conf? {
 
 	val f = File("./app.json")
 	return if (f.exists()) {
@@ -85,24 +84,6 @@ private val json = Json {
 
 private fun parseFileConf(f: File): Conf = json.decodeFromString(f.readText())
 
-private fun parseSystemConf() = Conf(
-	ConfDB(
-		System.getProperty("database.url"),
-		System.getProperty("database.username"),
-		System.getProperty("database.password")
-	),
-	ConfSecurity(
-		System.getProperty("security.audience"),
-		System.getProperty("security.domain"),
-		System.getProperty("security.realm"),
-		System.getProperty("security.secret")
-	),
-	smtp = null,
-	ConfStorage(
-		localPath = System.getProperty("storage.localPath"),
-	),
-)
-
 private fun parseEnvConf() = Conf(
 	ConfDB(
 		System.getenv("DB_URL"),
@@ -113,7 +94,9 @@ private fun parseEnvConf() = Conf(
 		System.getenv("SECURITY_AUDIENCE"),
 		System.getenv("SECURITY_DOMAIN"),
 		System.getenv("SECURITY_REALM"),
-		System.getenv("SECURITY_SECRET")
+		System.getenv("SECURITY_SECRET"),
+		System.getenv("SECURITY_CF_PRIVATE_KEY"),
+		System.getenv("SECURITY_CF_KEY_PAIR_ID"),
 	),
 	parseEnvSMTPConv(),
 	ConfStorage(

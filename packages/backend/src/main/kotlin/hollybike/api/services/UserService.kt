@@ -64,15 +64,15 @@ class UserService(
 		user: User,
 		image: ByteArray,
 		imageContentType: String,
-	): Boolean {
+	): String? {
 		if (!authorizeUpdatePicture(caller, user)) {
-			return false
+			return null
 		}
 
 		val path = "u/${user.id}/p"
 		storageService.store(image, path, imageContentType)
 		transaction(db) { user.profilePicture = path }
-		return true
+		return path
 	}
 
 	fun createUser(

@@ -13,6 +13,10 @@ import hollybike.api.services.auth.InvitationService
 import hollybike.api.types.association.*
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
+import hollybike.api.services.storage.StorageService
+import hollybike.api.types.association.TAssociation
+import hollybike.api.types.association.TNewAssociation
+import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
@@ -31,7 +35,8 @@ class AssociationController(
 	application: Application,
 	private val associationService: AssociationService,
 	private val invitationService: InvitationService,
-	private val authService: AuthService
+	private val authService: AuthService,
+	private val storageService: StorageService
 ) {
 	init {
 		application.routing {
@@ -60,7 +65,7 @@ class AssociationController(
 
 	private fun Route.getMyAssociation() {
 		get<Associations.Me<API>>(EUserScope.Admin) {
-			call.respond(TAssociation(call.user.association))
+			call.respond(TAssociation(call.user.association, storageService.signer.sign))
 		}
 	}
 
@@ -72,7 +77,7 @@ class AssociationController(
 				update.name,
 				null
 			).onSuccess {
-				call.respond(TAssociation(it))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'association existe déjà")
@@ -104,7 +109,7 @@ class AssociationController(
 				contentType
 			)
 
-			call.respond(TAssociation(association))
+			call.respond(TAssociation(association, storageService.signer.sign))
 		}
 	}
 
@@ -122,7 +127,7 @@ class AssociationController(
 
 			call.respond(
 				TLists(
-					data = associations.map { TAssociation(it) },
+					data = associations.map { TAssociation(it, storageService.signer.sign) },
 					page = searchParam.page,
 					perPage = searchParam.perPage,
 					totalPage = ceil(totAssociations.div(searchParam.perPage.toDouble())).toInt(),
@@ -135,7 +140,7 @@ class AssociationController(
 	private fun Route.getById() {
 		get<Associations.Id<API>>(EUserScope.Admin) { params ->
 			associationService.getById(call.user, params.id)?.let {
-				call.respond(TAssociation(it))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
 			}
@@ -147,7 +152,7 @@ class AssociationController(
 			val new = call.receive<TNewAssociation>()
 
 			associationService.createAssociation(new.name).onSuccess {
-				call.respond(HttpStatusCode.Created, TAssociation(it))
+				call.respond(HttpStatusCode.Created, TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'association existe déjà")
@@ -166,7 +171,7 @@ class AssociationController(
 				update.name,
 				update.status
 			).onSuccess {
-				call.respond(TAssociation(it))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationNotFound -> call.respond(
@@ -206,7 +211,7 @@ class AssociationController(
 				image.streamProvider().readBytes(),
 				contentType
 			).onSuccess {
-				call.respond(TAssociation(it))
+				call.respond(TAssociation(it, storageService.signer.sign))
 			}.onFailure {
 				when (it) {
 					is AssociationNotFound -> call.respond(

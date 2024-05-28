@@ -13,12 +13,6 @@ resource "aws_ecs_task_definition" "default" {
       cpu       = 256
       memory    = 256
       essential = true
-      environment: [
-        {
-          "name": "CLOUD",
-          "value": "true"
-        }
-      ],
       secrets : [
         {
           name : "DB_URL",
@@ -49,13 +43,21 @@ resource "aws_ecs_task_definition" "default" {
           valueFrom : aws_ssm_parameter.backend_security_secret.arn
         },
         {
+          name : "SECURITY_CF_PRIVATE_KEY",
+          valueFrom : var.cf_ssm_parameter_arn
+        },
+        {
+          name : "SECURITY_CF_KEY_PAIR_ID",
+          valueFrom : aws_ssm_parameter.backend_security_cf_key_pair_id.arn
+        },
+        {
           name : "STORAGE_S3_BUCKET_NAME",
           valueFrom : aws_ssm_parameter.backend_storage_bucket_name.arn
         },
         {
           name : "STORAGE_S3_REGION",
           valueFrom : aws_ssm_parameter.backend_storage_bucket_region.arn
-        },
+        }
       ]
       portMappings = [
         {
