@@ -37,7 +37,6 @@ fun Application.configureSecurity(db: Database) {
 			)
 			validate { credential ->
 				try {
-					println("NIKKKKKK")
 					if (credential.payload.audience.contains(jwtAudience)) {
 						val user = transaction(db) {
 							User.find {
@@ -45,14 +44,11 @@ fun Application.configureSecurity(db: Database) {
 									.asString()) and (Users.status neq EUserStatus.Disabled.value)
 							}.with(User::association).singleOrNull()
 						} ?: run {
-							println("NIKKKKKK")
 							return@validate null
 						}
 						this.attributes.put(userAttributeKey, user)
-						println("DOINE")
 						JWTPrincipal(credential.payload)
 					} else {
-						println("NIKKKKKK")
 						null
 					}
 				}catch (e: Exception) {
