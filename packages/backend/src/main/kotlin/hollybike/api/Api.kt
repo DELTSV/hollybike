@@ -5,6 +5,7 @@ import hollybike.api.plugins.configureSecurity
 import hollybike.api.database.configureDatabase
 import hollybike.api.routing.controller.*
 import hollybike.api.services.AssociationService
+import hollybike.api.services.EventParticipationService
 import hollybike.api.services.EventService
 import hollybike.api.services.UserService
 import hollybike.api.services.auth.AuthService
@@ -46,16 +47,19 @@ fun Application.api() {
 	val invitationService = InvitationService(db)
 	val authService = AuthService(db, conf.security, invitationService, userService)
 	val eventService = EventService(db, storageService)
+	val eventParticipationService = EventParticipationService(db, eventService)
 	val associationService = AssociationService(db, storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
+
 	ApiController(this, mailSender)
 	AuthenticationController(this, authService)
 	UserController(this, userService, storageService)
 	AssociationController(this, associationService, storageService)
 	InvitationController(this, authService, invitationService)
 	EventController(this, eventService, storageService)
+	EventParticipationController(this, eventParticipationService, storageService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

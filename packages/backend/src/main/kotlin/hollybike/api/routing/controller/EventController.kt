@@ -1,6 +1,5 @@
 package hollybike.api.routing.controller
 
-import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.eventMapper
@@ -41,58 +40,10 @@ class EventController(
 				updateEvent()
 				uploadEventImage()
 				deleteEvent()
-				participateEvent()
-				leaveEvent()
-				promoteParticipant()
-				demoteParticipant()
 				cancelEvent()
 				scheduleEvent()
 				finishEvent()
 				pendEvent()
-			}
-		}
-	}
-
-	private suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
-		when (exception) {
-			is EventNotFoundException -> call.respond(
-				HttpStatusCode.NotFound,
-				exception.message ?: "Event not found"
-			)
-
-			is EventActionDeniedException -> call.respond(
-				HttpStatusCode.Forbidden,
-				exception.message ?: "Action denied"
-			)
-
-			is InvalidDateException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid date"
-			)
-
-			is InvalidEventNameException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event name"
-			)
-
-			is InvalidEventDescriptionException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event description"
-			)
-
-			is AlreadyParticipatingToEventException -> call.respond(
-				HttpStatusCode.Conflict,
-				exception.message ?: "Already participating to event"
-			)
-
-			is NotParticipatingToEventException -> call.respond(
-				HttpStatusCode.NotFound,
-				exception.message ?: "Not participating to event"
-			)
-
-			else -> {
-				exception.printStackTrace()
-				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
 			}
 		}
 	}
@@ -172,7 +123,7 @@ class EventController(
 			).onSuccess {
 				call.respond(HttpStatusCode.Created, TEvent(it.first, storageService.signer.sign, listOf(it.second)))
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -191,7 +142,7 @@ class EventController(
 			).onSuccess {
 				call.respond(HttpStatusCode.OK, TEvent(it, storageService.signer.sign))
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -201,7 +152,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.cancel.id, EEventStatus.Cancelled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -211,7 +162,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.schedule.id, EEventStatus.Scheduled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -221,7 +172,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.finish.id, EEventStatus.Finished).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -231,7 +182,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.pend.id, EEventStatus.Pending).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -260,7 +211,7 @@ class EventController(
 			).onSuccess {
 				call.respond(TEvent(it, storageService.signer.sign))
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -270,50 +221,8 @@ class EventController(
 			eventService.deleteEvent(call.user, id.id).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
-		}
-	}
-
-	private fun Route.participateEvent() {
-		post<Events.Id.Participations> { data ->
-			eventService.participateEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer.sign))
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.leaveEvent() {
-		delete<Events.Id.Participations> { data ->
-			eventService.leaveEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.OK)
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.promoteParticipant() {
-		patch<Events.Id.Participations.User.Promote> { data ->
-			eventService.promoteParticipant(call.user, data.promote.user.participations.id, data.promote.userId)
-				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
-				}.onFailure {
-					handleEventExceptions(it, call)
-				}
-		}
-	}
-
-	private fun Route.demoteParticipant() {
-		patch<Events.Id.Participations.User.Demote> { data ->
-			eventService.demoteParticipant(call.user, data.demote.user.participations.id, data.demote.userId)
-				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
-				}.onFailure {
-					handleEventExceptions(it, call)
-				}
 		}
 	}
 }
