@@ -1,7 +1,7 @@
 package hollybike.api.utils.search
 
-import hollybike.api.repository.lower
-import hollybike.api.repository.unaccent
+import hollybike.api.database.lower
+import hollybike.api.database.unaccent
 import io.ktor.http.*
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate

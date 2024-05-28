@@ -1,8 +1,8 @@
 package hollybike.api.types.event
 
 import hollybike.api.types.user.TUserPartial
-import hollybike.api.repository.events.Event
-import hollybike.api.repository.events.participations.EventParticipation
+import hollybike.api.repository.Event
+import hollybike.api.repository.EventParticipation
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

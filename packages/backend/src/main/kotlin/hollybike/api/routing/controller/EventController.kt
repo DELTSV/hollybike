@@ -3,7 +3,7 @@ package hollybike.api.routing.controller
 import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
-import hollybike.api.repository.events.eventMapper
+import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventService

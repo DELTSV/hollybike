@@ -1,4 +1,4 @@
-package hollybike.api.repository
+package hollybike.api.database
 
 import hollybike.api.conf
 import hollybike.api.isCloud

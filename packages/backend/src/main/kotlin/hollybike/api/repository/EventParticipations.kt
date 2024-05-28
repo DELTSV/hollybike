@@ -1,11 +1,12 @@
-package hollybike.api.repository.events.participations
+package hollybike.api.repository
 
-import hollybike.api.repository.User
-import hollybike.api.repository.events.Event
 import hollybike.api.types.event.EEventRole
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	var user by User referencedOn EventParticipations.user
@@ -14,4 +15,11 @@ class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	var joinedDateTime by EventParticipations.joinedDateTime
 
 	companion object : IntEntityClass<EventParticipation>(EventParticipations)
+}
+
+object EventParticipations: IntIdTable("users_participate_events", "id_participation") {
+	val user = reference("user", Users)
+	val event = reference("event", Events)
+	val role = integer("role")
+	val joinedDateTime = timestamp("joined_date_time").clientDefault { Clock.System.now() }
 }

@@ -2,7 +2,7 @@ package hollybike.api
 
 import hollybike.api.plugins.configureHTTP
 import hollybike.api.plugins.configureSecurity
-import hollybike.api.repository.configureDatabase
+import hollybike.api.database.configureDatabase
 import hollybike.api.routing.controller.*
 import hollybike.api.services.AssociationService
 import hollybike.api.services.EventService
