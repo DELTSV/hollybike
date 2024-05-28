@@ -83,7 +83,7 @@ export default [
       "@stylistic/jsx/jsx-curly-newline": ["error", "consistent"],
       "@stylistic/jsx/jsx-curly-spacing": ["error", {when: "always", children: true, allowMultiline: false, spacing: { objectLiterals: "never" }, attributes: false}],
       "@stylistic/jsx/jsx-first-prop-new-line": ["error", "multiline"],
-      "@stylistic/jsx/jsx-wrap-multilines": ["error", {return: "parens-new-line"}]
+      "@stylistic/jsx/jsx-wrap-multilines": ["off"]
     },
     files: ["src/**/*.tsx"],
   },

@@ -15,6 +15,7 @@ import {
 	Visibility, VisibilityOff,
 } from "@material-ui/icons";
 import { TUserUpdate } from "../../types/TUserUpdate.ts";
+import { Select } from "../../components/Select/Select.tsx";
 
 const emptyAssocation: TAssociation = {
 	id: -1,
@@ -70,16 +71,55 @@ export function UserDetail() {
 				/>
 				<p>Mot de passe</p>
 				<Input
+					placeholder={"·······"}
 					type={passwordVisible ? "text" : "password"}
 					value={password} onInput={e => setPassword(e.currentTarget.value) }
 					rightIcon={passwordVisible ?
 						<VisibilityOff className={"cursor-pointer"} onClick={() => setPasswordVisible(false)}/> :
 						<Visibility className={"cursor-pointer"} onClick={() => setPasswordVisible(true)}/>}
 				/>
-				<p>Scope</p>
-				<p>TODO Select</p>
-				<p>Status</p>
-				<p>TODO Select</p>
+				<p>Rôle</p>
+				<Select
+					value={userData.scope}
+					onChange={v => setUserData(prev => ({
+						...prev,
+						scope: v!.toString(),
+					}))}
+					options={[
+						{
+							name: "Utilisateur",
+							value: "User",
+						},
+						{
+							name: "Administrateur",
+							value: "Admin",
+						},
+						{
+							name: "Root",
+							value: "Root",
+						},
+					]}
+					default={userData.scope}
+				/>
+				<p>Statut</p>
+				<Select
+					value={userData.status}
+					onChange={v => setUserData(prev => ({
+						...prev,
+						status: v!.toString(),
+					}))}
+					options={[
+						{
+							name: "Activé",
+							value: "Enabled",
+						},
+						{
+							name: "Désactivé",
+							value: "Disabled",
+						},
+					]}
+					default={userData.status}
+				/>
 			</div>
 			<Button
 				onClick={() => {
