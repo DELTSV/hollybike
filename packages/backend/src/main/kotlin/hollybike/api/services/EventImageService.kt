@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -22,36 +23,45 @@ class EventImageService(
 	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) =
 		eventService.handleEventExceptions(exception, call)
 
-	private fun eventImagesCondition(caller: User): Op<Boolean> {
-		return eventService.eventUserCondition(caller) and
+	private fun eventImagesCondition(caller: User): Op<Boolean> = EventParticipations.run {
+		eventService.eventUserCondition(caller) and
 			(
-				(
-					(EventParticipations.isImagesPublic eq true) and
-						(EventParticipations.user eq EventImages.owner)
-					) or
+				(isImagesPublic eq true) or
 					(
-						(EventParticipations.isImagesPublic eq false) and
-							(EventParticipations.user eq caller.id)
+						(isImagesPublic eq false) and
+							(id inSubQuery select(id).where { (user eq caller.id) and (event eq Events.id) })
 						)
-				) and
-			(Events.id eq EventImages.event) and
-			(EventParticipations.event eq Events.id)
+				)
+	}
+
+	private fun eventImagesRequest(caller: User, searchParam: SearchParam): Query {
+		return EventImages.innerJoin(
+			Users,
+			{ owner },
+			{ Users.id }
+		).innerJoin(
+			Events,
+			{ Events.id },
+			{ EventImages.event }
+		).innerJoin(
+			EventParticipations,
+			{ EventParticipations.event },
+			{ Events.id },
+			{ EventParticipations.user eq EventImages.owner }
+		).selectAll()
+			.applyParam(searchParam).andWhere {
+				eventImagesCondition(caller)
+			}
 	}
 
 	fun getImages(caller: User, searchParam: SearchParam): List<EventImage> = transaction(db) {
 		EventImage.wrapRows(
-			EventImages.innerJoin(Users).innerJoin(EventParticipations).innerJoin(Events).selectAll()
-				.applyParam(searchParam).andWhere {
-					eventImagesCondition(caller)
-				}
+			eventImagesRequest(caller, searchParam)
 		).with(EventImage::owner).toList()
 	}
 
 	fun countImages(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		EventImages.innerJoin(Users).innerJoin(EventParticipations).innerJoin(Events).selectAll()
-			.applyParam(searchParam).andWhere {
-				eventImagesCondition(caller)
-			}.count().toInt()
+		eventImagesRequest(caller, searchParam).count().toInt()
 	}
 
 	suspend fun uploadImages(
@@ -60,7 +70,8 @@ class EventImageService(
 		images: List<Pair<ByteArray, String>>
 	): Result<List<EventImage>> {
 		val foundEvent =
-			eventService.getEvent(caller, eventId) ?: throw EventNotFoundException("Event $eventId introuvable")
+			eventService.getEvent(caller, eventId)
+				?: return Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val createdImages = transaction(db) {
 			val newImages = images.map { (data, contentType) ->
@@ -90,7 +101,9 @@ class EventImageService(
 
 	fun deleteImage(caller: User, imageId: Int): Result<Unit> {
 		val image = transaction(db) {
-			EventImage.findById(imageId) ?: return@transaction null
+			EventImage.find {
+				EventImages.id eq imageId
+			}.with(EventImage::owner).firstOrNull() ?: return@transaction null
 		} ?: return Result.failure(EventNotFoundException("Image $imageId introuvable"))
 
 		if (image.owner.id != caller.id) {
