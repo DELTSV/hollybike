@@ -14,6 +14,7 @@ class AuthRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
+        print("changement de log");
         if (state.currentSession != null) onAuthSuccess.call();
       },
       builder: (context, state) => Container(

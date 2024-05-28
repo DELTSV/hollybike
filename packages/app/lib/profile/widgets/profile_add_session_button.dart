@@ -1,6 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 
 class ProfileAddSessionButton extends StatelessWidget {
   const ProfileAddSessionButton({super.key});
@@ -18,7 +18,7 @@ class ProfileAddSessionButton extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () {
-          BlocProvider.of<AuthBloc>(context).add(AuthStoreCurrentSession());
+          context.router.push(AuthRoute(onAuthSuccess: () => context.router.maybePop()));
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.start,

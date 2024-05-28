@@ -21,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }) : super(AuthInitial()) {
     _init();
     on<AuthPersistentSessionsLoaded>((event, emit) {
+      print(event.sessionsJson);
       emit(AuthPersistentSessions(event.sessionsJson));
     });
     on<AuthSessionExpired>((event, emit) {
@@ -69,6 +70,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _init() async {
     final persistedSessions = await authRepository.retrievePersistedSessions();
+    print("ici $persistedSessions");
     add(AuthPersistentSessionsLoaded(sessionsJson: persistedSessions));
   }
 
