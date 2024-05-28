@@ -12,6 +12,7 @@ class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	var user by User referencedOn EventParticipations.user
 	var event by Event referencedOn EventParticipations.event
 	var role by EventParticipations.role.transform({ it.value }, { EEventRole[it] })
+	var isImagesPublic by EventParticipations.isImagesPublic
 	var joinedDateTime by EventParticipations.joinedDateTime
 
 	companion object : IntEntityClass<EventParticipation>(EventParticipations)
@@ -21,5 +22,6 @@ object EventParticipations: IntIdTable("users_participate_events", "id_participa
 	val user = reference("user", Users)
 	val event = reference("event", Events)
 	val role = integer("role")
+	val isImagesPublic = bool("is_images_public").default(true)
 	val joinedDateTime = timestamp("joined_date_time").clientDefault { Clock.System.now() }
 }
