@@ -5,11 +5,14 @@ import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
+import hollybike.api.types.event.EEventParticipationStatus
 import hollybike.api.types.event.EEventRole
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class EventParticipationService(
@@ -19,13 +22,49 @@ class EventParticipationService(
 	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) =
 		eventService.handleEventExceptions(exception, call)
 
+	private fun eventParticipationUserEventCondition(caller: User, event: Event): Op<Boolean> =
+		EventParticipations.run {
+			(user eq caller.id) and eventParticipationCondition(event)
+		}
+
+	private fun eventParticipationCondition(event: Event): Op<Boolean> = EventParticipations.run {
+		(this.event eq event.id) and (status eq EEventParticipationStatus.Joined.value)
+	}
+
+	fun getEventParticipations(caller: User, eventId: Int, searchParam: SearchParam): Result<List<EventParticipation>> = transaction(db) {
+		val event = Event.find {
+			Events.id eq eventId and eventService.eventUserCondition(caller)
+		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+
+		Result.success(
+			EventParticipation.wrapRows(
+				EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+					.selectAll()
+					.applyParam(searchParam)
+					.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(event) }
+			).with(EventParticipation::user).toList()
+		)
+	}
+
+	fun getEventCount(caller: User, eventId: Int): Result<Int> = transaction(db) {
+		val event = Event.find {
+			Events.id eq eventId and eventService.eventUserCondition(caller)
+		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+
+		Result.success(
+			EventParticipation.find {
+				eventParticipationCondition(event)
+			}.count().toInt()
+		)
+	}
+
 	fun participateEvent(caller: User, eventId: Int): Result<EventParticipation> = transaction(db) {
-		Event.find {
+		val event = Event.find {
 			Events.id eq eventId and eventService.eventUserCondition(caller)
 		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		EventParticipation.find {
-			(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
+			eventParticipationUserEventCondition(caller, event)
 		}.firstOrNull()?.let {
 			return@transaction Result.failure(AlreadyParticipatingToEventException("Vous participez déjà à cet événement"))
 		}
@@ -33,7 +72,7 @@ class EventParticipationService(
 		Result.success(
 			EventParticipation.new {
 				user = caller
-				event = Event[eventId]
+				this.event = event
 				role = EEventRole.Member
 			}
 		)
@@ -48,12 +87,17 @@ class EventParticipationService(
 			return@transaction Result.failure(EventActionDeniedException("Le propriétaire ne peut pas quitter l'événement"))
 		}
 
-		Result.success(
-			EventParticipation.find {
-				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
-			}.firstOrNull()?.delete()
-				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
-		)
+		val participation = EventParticipation.find {
+			eventParticipationUserEventCondition(caller, event)
+		}.firstOrNull()
+
+		if (participation == null) {
+			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+		}
+
+		participation.status = EEventParticipationStatus.Left
+
+		Result.success(Unit)
 	}
 
 	fun promoteParticipant(caller: User, eventId: Int, userId: Int): Result<EventParticipation> {
@@ -62,12 +106,12 @@ class EventParticipationService(
 		}
 
 		return transaction(db) {
-			Event.find {
+			val event = Event.find {
 				Events.id eq eventId and eventService.eventUserCondition(caller)
 			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 			EventParticipation.find {
-				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
+				eventParticipationUserEventCondition(caller, event)
 			}.firstOrNull()?.apply {
 				if (role != EEventRole.Organizer) {
 					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut promouvoir un participant"))
@@ -75,9 +119,14 @@ class EventParticipationService(
 			}
 				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
+
+			val user = User.findById(userId)
+				?: return@transaction Result.failure(EventNotFoundException("User $userId introuvable"))
+
+
 			Result.success(
 				EventParticipation.find {
-					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
+					eventParticipationUserEventCondition(user, event)
 				}.with(EventParticipation::user).firstOrNull()?.apply {
 					if (role == EEventRole.Member) {
 						role = EEventRole.Organizer
@@ -96,12 +145,12 @@ class EventParticipationService(
 		}
 
 		return transaction(db) {
-			Event.find {
+			val event = Event.find {
 				Events.id eq eventId and eventService.eventUserCondition(caller)
 			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 			EventParticipation.find {
-				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
+				eventParticipationUserEventCondition(caller, event)
 			}.firstOrNull()?.apply {
 				if (role != EEventRole.Organizer) {
 					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut rétrograder un participant"))
@@ -109,9 +158,12 @@ class EventParticipationService(
 			}
 				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
+			val user = User.findById(userId)
+				?: return@transaction Result.failure(EventNotFoundException("User $userId introuvable"))
+
 			Result.success(
 				EventParticipation.find {
-					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
+					eventParticipationUserEventCondition(user, event)
 				}.with(EventParticipation::user).firstOrNull()?.apply {
 					if (role == EEventRole.Organizer) {
 						role = EEventRole.Member

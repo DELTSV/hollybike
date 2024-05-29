@@ -239,3 +239,14 @@ CREATE TABLE IF NOT EXISTS event_images
     size             INTEGER                                  NOT NULL,
     upload_date_time TIMESTAMP DEFAULT NOW()                  NOT NULL
 );
+
+-- changeset loic:6
+
+ALTER TABLE users_participate_events
+    ADD COLUMN IF NOT EXISTS status INTEGER DEFAULT 1 NOT NULL;
+
+ALTER TABLE users_participate_events
+    ALTER COLUMN is_images_public SET NOT NULL;
+
+ALTER TABLE users_participate_events
+    RENAME TO event_participations;

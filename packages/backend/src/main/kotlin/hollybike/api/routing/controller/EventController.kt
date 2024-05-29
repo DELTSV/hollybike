@@ -84,7 +84,7 @@ class EventController(
 			val events = eventService.getFutureEvents(call.user, searchParam)
 			val totalEvents = eventService.countFutureEvents(call.user, searchParam)
 
-			getEventsPagination(events, totalEvents, searchParam)
+			call.respond(getEventsPagination(events, totalEvents, searchParam))
 		}
 	}
 
@@ -95,7 +95,7 @@ class EventController(
 			val events = eventService.getArchivedEvents(call.user, searchParam)
 			val totalEvents = eventService.countArchivedEvents(call.user, searchParam)
 
-			getEventsPagination(events, totalEvents, searchParam)
+			call.respond(getEventsPagination(events, totalEvents, searchParam))
 		}
 	}
 
