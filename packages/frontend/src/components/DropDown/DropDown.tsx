@@ -11,19 +11,23 @@ interface DropDownProps {
 	text: ComponentChildren
 }
 
-export function DropDown(props: DropDownProps) {
+export function DropDown({
+	text, children,
+}: DropDownProps) {
 	const [visible, setVisible] = useState(false);
 	const container = useRef<HTMLDivElement>(null);
 
-	const handleOut = (e: MouseEvent) => {
-		if (
-			container.current &&
-			!container.current.contains(e.target as Node) &&
-			container.current
-		)
-			setVisible(false);
-	};
+
 	useEffect(() => {
+		const handleOut = (e: MouseEvent) => {
+			if (
+				container.current &&
+				!container.current.contains(e.target as Node) &&
+				container.current
+			)
+				setVisible(false);
+		};
+
 		document.addEventListener("mousedown", handleOut);
 		return () => {
 			document.removeEventListener("mousedown", handleOut);
@@ -32,10 +36,10 @@ export function DropDown(props: DropDownProps) {
 
 	return (
 		<div className={"relative"} ref={container}>
-			<Button onClick={() => setVisible(prev => !prev)}>{ props.text }</Button>
+			<Button onClick={() => setVisible(prev => !prev)}>{ text }</Button>
 			{ visible &&
 				<Card className={"flex flex-col absolute top-full left-1/2 -translate-x-1/2"}>
-					{ props.children }
+					{ children }
 				</Card> }
 		</div>
 	);
