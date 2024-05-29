@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -23,18 +23,21 @@ class EventImageService(
 	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) =
 		eventService.handleEventExceptions(exception, call)
 
-	private fun eventImagesCondition(caller: User): Op<Boolean> = EventParticipations.run {
-		eventService.eventUserCondition(caller) and
-			(
-				(isImagesPublic eq true) or
-					(
-						(isImagesPublic eq false) and
-							(id inSubQuery select(id).where { (user eq caller.id) and (event eq Events.id) })
-						)
-				)
-	}
+	private fun eventImagesCondition(caller: User, userParticipation: Alias<EventParticipations>): Op<Boolean> =
+		EventParticipations.run {
+			eventService.eventUserCondition(caller) and
+				(
+					(isImagesPublic eq true) or
+						(
+							(isImagesPublic eq false) and
+								(userParticipation[role].isNotNull()) and
+								(userParticipation[isJoined] eq true)
+							)
+					)
+		}
 
 	private fun eventImagesRequest(caller: User, searchParam: SearchParam): Query {
+		val userParticipation = EventParticipations.alias("userParticipation")
 		return EventImages.innerJoin(
 			Users,
 			{ owner },
@@ -48,9 +51,14 @@ class EventImageService(
 			{ EventParticipations.event },
 			{ Events.id },
 			{ EventParticipations.user eq EventImages.owner }
+		).leftJoin(
+			userParticipation,
+			{ userParticipation[EventParticipations.event] },
+			{ Events.id },
+			{ userParticipation[EventParticipations.user] eq caller.id }
 		).selectAll()
 			.applyParam(searchParam).andWhere {
-				eventImagesCondition(caller)
+				eventImagesCondition(caller, userParticipation)
 			}
 	}
 

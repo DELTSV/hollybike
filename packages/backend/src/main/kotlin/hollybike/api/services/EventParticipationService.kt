@@ -5,11 +5,11 @@ import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
-import hollybike.api.types.event.EEventParticipationStatus
 import hollybike.api.types.event.EEventRole
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -28,23 +28,24 @@ class EventParticipationService(
 		}
 
 	private fun eventParticipationCondition(event: Event): Op<Boolean> = EventParticipations.run {
-		(this.event eq event.id) and (status eq EEventParticipationStatus.Joined.value)
+		(this.event eq event.id) and (isJoined eq true)
 	}
 
-	fun getEventParticipations(caller: User, eventId: Int, searchParam: SearchParam): Result<List<EventParticipation>> = transaction(db) {
-		val event = Event.find {
-			Events.id eq eventId and eventService.eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+	fun getEventParticipations(caller: User, eventId: Int, searchParam: SearchParam): Result<List<EventParticipation>> =
+		transaction(db) {
+			val event = Event.find {
+				Events.id eq eventId and eventService.eventUserCondition(caller)
+			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		Result.success(
-			EventParticipation.wrapRows(
-				EventParticipations.innerJoin(Events, { this.event }, { Events.id })
-					.selectAll()
-					.applyParam(searchParam)
-					.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(event) }
-			).with(EventParticipation::user).toList()
-		)
-	}
+			Result.success(
+				EventParticipation.wrapRows(
+					EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+						.selectAll()
+						.applyParam(searchParam)
+						.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(event) }
+				).with(EventParticipation::user).toList()
+			)
+		}
 
 	fun getEventCount(caller: User, eventId: Int): Result<Int> = transaction(db) {
 		val event = Event.find {
@@ -63,19 +64,26 @@ class EventParticipationService(
 			Events.id eq eventId and eventService.eventUserCondition(caller)
 		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		EventParticipation.find {
-			eventParticipationUserEventCondition(caller, event)
-		}.firstOrNull()?.let {
-			return@transaction Result.failure(AlreadyParticipatingToEventException("Vous participez déjà à cet événement"))
-		}
+		val eventParticipation = EventParticipation.find {
+			(EventParticipations.user eq caller.id) and (EventParticipations.event eq event.id)
+		}.with(EventParticipation::user).firstOrNull()
 
-		Result.success(
-			EventParticipation.new {
-				user = caller
-				this.event = event
-				role = EEventRole.Member
-			}
-		)
+		return@transaction if (eventParticipation != null && eventParticipation.isJoined) {
+			Result.failure(AlreadyParticipatingToEventException("Vous participez déjà à cet événement"))
+		} else if (eventParticipation != null) {
+			eventParticipation.isJoined = true
+			eventParticipation.joinedDateTime = Clock.System.now()
+
+			Result.success(eventParticipation)
+		} else {
+			Result.success(
+				EventParticipation.new {
+					user = caller
+					this.event = event
+					role = EEventRole.Member
+				}
+			)
+		}
 	}
 
 	fun leaveEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
@@ -95,7 +103,8 @@ class EventParticipationService(
 			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 		}
 
-		participation.status = EEventParticipationStatus.Left
+		participation.isJoined = false
+		participation.leftDateTime = Clock.System.now()
 
 		Result.success(Unit)
 	}

@@ -37,7 +37,7 @@ class EventParticipationController(
 	}
 
 	private fun Route.getParticipations() {
-		post<Events.Id.Participations> { data ->
+		get<Events.Id.Participations> { data ->
 			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper)
 
 			val participations = eventParticipationService.getEventParticipations(
@@ -46,7 +46,7 @@ class EventParticipationController(
 				searchParam
 			).getOrElse {
 				eventParticipationService.handleEventExceptions(it, call)
-				return@post
+				return@get
 			}
 
 			val participationCount = eventParticipationService.getEventCount(
@@ -54,7 +54,7 @@ class EventParticipationController(
 				data.participations.id
 			).getOrElse {
 				eventParticipationService.handleEventExceptions(it, call)
-				return@post
+				return@get
 			}
 
 			call.respond(
