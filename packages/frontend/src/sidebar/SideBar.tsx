@@ -9,25 +9,10 @@ export function SideBar() {
 	const { association } = useSideBar();
 
 	const content = useMemo(() => {
-		if (user?.scope === "Root") {
-			const asso = association !== undefined ?
-				[
-					<SideBarMenu to={`/associations/${association.id}`}>
-						{ association?.name }
-					</SideBarMenu>,
-				] : [];
-			const menus = [
-				<SideBarMenu to={"/associations"}>
-					Associations
-				</SideBarMenu>,
-				<SideBarMenu to={"/users"}>
-					Utilisateurs
-				</SideBarMenu>,
-			];
-			menus.push(...asso);
-			return menus;
-		} else
-			 return adminMenu(user?.association);
+		if (user?.scope === "Root")
+			return rootMenu(association);
+		 else
+			 return adminMenu(user?.association, false);
 	}, [user, association]);
 
 	return (
@@ -40,16 +25,30 @@ export function SideBar() {
 	);
 }
 
-function adminMenu(association: TAssociation | undefined) {
+function adminMenu(association: TAssociation | undefined, root: boolean) {
 	return [
 		<SideBarMenu to={`/associations/${association?.id}`}>
-			Mon association
+			{ root ? association?.name :"Mon association" }
 		</SideBarMenu>,
 		<SideBarMenu to={`/associations/${association?.id}/users`}>
-			Mes utilisateurs
+			{ root ? `Utilisateurs de ${association?.name}` : "Mes utilisateurs" }
 		</SideBarMenu>,
 		<SideBarMenu to={`/associations/${association?.id}/invitations`}>
-			Mes invitation
+			{ root ? `Invitations de ${association?.name}` : "Mes utilisateurs" }
 		</SideBarMenu>,
 	];
+}
+
+function rootMenu(association: TAssociation | undefined) {
+	const menu = [
+		<SideBarMenu to={"/associations"}>
+			Associations
+		</SideBarMenu>,
+		<SideBarMenu to={"/users"}>
+			Utilisateurs
+		</SideBarMenu>,
+	];
+	if (association !== undefined)
+		menu.push(...adminMenu(association, true));
+	return menu;
 }

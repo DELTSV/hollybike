@@ -20,6 +20,7 @@ import { Conf } from "./conf/Conf.tsx";
 import { UserDetail } from "./user/userDetail/UserDetail.tsx";
 import { ListInvitations } from "./invitations/ListInvitations.tsx";
 import { CreateInvitation } from "./invitations/CreateInvitation.tsx";
+import { CreateAssociation } from "./associations/CreateAssociation.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -38,6 +39,10 @@ export function App() {
 				{
 					path: "associations",
 					element: <ListAssociations/>,
+				},
+				{
+					path: "associations/new",
+					element: <CreateAssociation/>,
 				},
 				{
 					path: "associations/:id",
