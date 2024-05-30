@@ -9,6 +9,7 @@ import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.TEventParticipation
 import hollybike.api.types.event.TUpdateImagesVisibility
 import hollybike.api.types.lists.TLists
+import hollybike.api.types.user.TUserPartial
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -29,6 +30,7 @@ class EventParticipationController(
 	init {
 		application.routing {
 			authenticate {
+				getParticipationCandidates()
 				getParticipations()
 				updateImageVisibility()
 				participateEvent()
@@ -36,6 +38,44 @@ class EventParticipationController(
 				promoteParticipant()
 				demoteParticipant()
 			}
+		}
+	}
+
+	private fun Route.getParticipationCandidates() {
+		get<Events.Id.Participations.Candidates> { data ->
+			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper)
+
+			val candidates = eventParticipationService.getParticipationCandidates(
+				call.user,
+				data.participations.eventId.id,
+				searchParam
+			).getOrElse {
+				eventParticipationService.handleEventExceptions(it, call)
+				return@get
+			}
+
+			val count = eventParticipationService.countParticipationCandidates(
+				call.user,
+				data.participations.eventId.id,
+				searchParam
+			).getOrElse {
+				eventParticipationService.handleEventExceptions(it, call)
+				return@get
+			}
+
+			call.respond(
+				TLists(
+					data = candidates.map {
+						val (user, participation) = it
+						val isOwner = user.id == participation?.event?.owner?.id
+						TUserPartial(user, isOwner, participation?.role, storageService.signer.sign)
+					},
+					page = searchParam.page,
+					perPage = searchParam.perPage,
+					totalPage = ceil(count.toDouble() / searchParam.perPage).toInt(),
+					totalData = count
+				)
+			)
 		}
 	}
 
