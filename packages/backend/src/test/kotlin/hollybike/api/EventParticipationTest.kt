@@ -92,6 +92,28 @@ class EventParticipationTest : IntegrationSpec({
 				}
 			}
 		}
+
+		test("Should not promote the participant because the user does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/${EventStore.event1Asso2User3.id}/participations/${UserStore.unknown.id}/promote") {
+					auth(UserStore.user3)
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+				}
+			}
+		}
+
+		test("Should not promote the participant because the user is not in the same association") {
+			onPremiseTestApp {
+				it.patch("/api/events/${EventStore.event1Asso2User3.id}/participations/${UserStore.user1.id}/promote") {
+					auth(UserStore.user3)
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+				}
+			}
+		}
 	}
 
 	context("Demote event participant") {
@@ -169,6 +191,28 @@ class EventParticipationTest : IntegrationSpec({
 					status shouldBe HttpStatusCode.Forbidden
 
 					bodyAsText() shouldBe "Seul un organisateur peut être rétrogradé"
+				}
+			}
+		}
+
+		test("Should not demote the participant because the user does not exist") {
+			onPremiseTestApp {
+				it.patch("/api/events/${EventStore.event1Asso2User3.id}/participations/${UserStore.unknown.id}/demote") {
+					auth(UserStore.user3)
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
+				}
+			}
+		}
+
+		test("Should not demote the participant because the user is not in the same association") {
+			onPremiseTestApp {
+				it.patch("/api/events/${EventStore.event1Asso2User3.id}/participations/${UserStore.user1.id}/demote") {
+					auth(UserStore.user3)
+					contentType(ContentType.Application.Json)
+				}.apply {
+					status shouldBe HttpStatusCode.NotFound
 				}
 			}
 		}

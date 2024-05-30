@@ -55,33 +55,35 @@ class EventParticipationService(
 		caller: User,
 		eventId: Int,
 		searchParam: SearchParam
-	): Result<List<Pair<User, EventParticipation?>>> =
-		transaction(db) {
-			findEvent(caller, eventId)
-				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+	): Result<List<Pair<User, EventParticipation?>>> = transaction(db) {
+		findEvent(caller, eventId)
+			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-			val query = eventCandidatesQuery(caller, eventId, searchParam)
+		val query = eventCandidatesQuery(caller, eventId, searchParam)
 
-			Result.success(
-				query.map { row ->
-					User.wrapRow(row) to try {
-						EventParticipation.wrapRow(row).load(EventParticipation::event, Event::owner)
-					} catch (e: Throwable) {
-						null
-					}
-				}.toList()
-			)
-		}
+		Result.success(
+			query.map { row ->
+				User.wrapRow(row) to try {
+					EventParticipation.wrapRow(row).load(EventParticipation::event, Event::owner)
+				} catch (e: Throwable) {
+					null
+				}
+			}.toList()
+		)
+	}
 
-	fun countParticipationCandidates(caller: User, eventId: Int, searchParam: SearchParam): Result<Int> =
-		transaction(db) {
-			findEvent(caller, eventId)
-				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+	fun countParticipationCandidates(
+		caller: User,
+		eventId: Int,
+		searchParam: SearchParam
+	): Result<Int> = transaction(db) {
+		findEvent(caller, eventId)
+			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-			val query = eventCandidatesQuery(caller, eventId, searchParam)
+		val query = eventCandidatesQuery(caller, eventId, searchParam)
 
-			Result.success(query.count().toInt())
-		}
+		Result.success(query.count().toInt())
+	}
 
 	fun getEventParticipations(caller: User, eventId: Int, searchParam: SearchParam): Result<List<EventParticipation>> =
 		transaction(db) {
@@ -176,70 +178,72 @@ class EventParticipationService(
 		Result.success(Unit)
 	}
 
-	fun addParticipantsToEvent(caller: User, eventId: Int, userIds: List<Int>): Result<List<EventParticipation>> =
-		transaction(db) {
-			val event = findEvent(caller, eventId)
-				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+	fun addParticipantsToEvent(
+		caller: User,
+		eventId: Int,
+		userIds: List<Int>
+	): Result<List<EventParticipation>> = transaction(db) {
+		val event = findEvent(caller, eventId)
+			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-			val participation = EventParticipation.find {
-				eventParticipationUserEventCondition(caller, eventId)
-			}.firstOrNull()
+		val participation = EventParticipation.find {
+			eventParticipationUserEventCondition(caller, eventId)
+		}.firstOrNull()
 
-			if (participation == null) {
-				return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
-			}
-
-			if (participation.role != EEventRole.Organizer) {
-				return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut ajouter des participants"))
-			}
-
-			val users = User.find { Users.id inList userIds }
-
-			Result.success(
-				users.map { user ->
-					val userParticipation = EventParticipation.find {
-						(EventParticipations.user eq user.id) and (EventParticipations.event eq eventId)
-					}.with(EventParticipation::user).firstOrNull()
-
-					if (userParticipation == null) {
-						EventParticipation.new {
-							this.user = user
-							this.event = event
-							role = EEventRole.Member
-						}
-					} else if (userParticipation.isJoined.not()) {
-						userParticipation.isJoined = true
-						userParticipation.joinedDateTime = Clock.System.now()
-
-						userParticipation
-					} else {
-						return@transaction Result.failure(AlreadyParticipatingToEventException("L'utilisateur ${user.id} participe déjà à cet événement"))
-					}
-				}
-			)
+		if (participation == null) {
+			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 		}
+
+		if (participation.role != EEventRole.Organizer) {
+			return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut ajouter des participants"))
+		}
+
+		val users = User.find { Users.id inList userIds }
+
+		Result.success(
+			users.map { user ->
+				val userParticipation = EventParticipation.find {
+					(EventParticipations.user eq user.id) and (EventParticipations.event eq eventId)
+				}.with(EventParticipation::user).firstOrNull()
+
+				if (userParticipation == null) {
+					EventParticipation.new {
+						this.user = user
+						this.event = event
+						role = EEventRole.Member
+					}
+				} else if (userParticipation.isJoined.not()) {
+					userParticipation.isJoined = true
+					userParticipation.joinedDateTime = Clock.System.now()
+
+					userParticipation
+				} else {
+					return@transaction Result.failure(AlreadyParticipatingToEventException("L'utilisateur ${user.id} participe déjà à cet événement"))
+				}
+			}
+		)
+	}
 
 	fun updateUserImageVisibility(
 		caller: User,
 		eventId: Int,
 		isImagesPublic: Boolean
-	): Result<EventParticipation> =
-		transaction(db) {
-			findEvent(caller, eventId)
-				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+	): Result<EventParticipation> = transaction(db) {
+		findEvent(caller, eventId)
+			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-			val participation = EventParticipation.find {
-				eventParticipationUserEventCondition(caller, eventId)
-			}.with(EventParticipation::user).firstOrNull()
+		val participation = EventParticipation.find {
+			eventParticipationUserEventCondition(caller, eventId)
+		}.with(EventParticipation::user).firstOrNull()
 
-			if (participation == null) {
-				return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
-			}
-
-			participation.isImagesPublic = isImagesPublic
-
-			Result.success(participation)
+		if (participation == null) {
+			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 		}
+
+		participation.isImagesPublic = isImagesPublic
+
+		Result.success(participation)
+	}
 
 	fun leaveEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
 		val event = findEvent(caller, eventId)
@@ -281,10 +285,8 @@ class EventParticipationService(
 			}
 				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
-
-			val user = User.findById(userId)
+			val user = User.find { (Users.id eq userId) and (Users.association eq caller.association.id) }.firstOrNull()
 				?: return@transaction Result.failure(EventNotFoundException("User $userId introuvable"))
-
 
 			Result.success(
 				EventParticipation.find {
@@ -319,7 +321,7 @@ class EventParticipationService(
 			}
 				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 
-			val user = User.findById(userId)
+			val user = User.find { (Users.id eq userId) and (Users.association eq caller.association.id) }.firstOrNull()
 				?: return@transaction Result.failure(EventNotFoundException("User $userId introuvable"))
 
 			Result.success(
