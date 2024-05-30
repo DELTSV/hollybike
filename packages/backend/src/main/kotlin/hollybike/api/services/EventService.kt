@@ -1,18 +1,22 @@
 package hollybike.api.services
 
+import hollybike.api.database.addtime
+import hollybike.api.database.now
 import hollybike.api.exceptions.*
 import hollybike.api.repository.*
-import hollybike.api.repository.events.Event
-import hollybike.api.repository.events.Events
-import hollybike.api.repository.events.participations.EventParticipation
-import hollybike.api.repository.events.participations.EventParticipations
+import hollybike.api.repository.Event
+import hollybike.api.repository.Events
+import hollybike.api.repository.EventParticipation
+import hollybike.api.repository.EventParticipations
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
-import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -24,7 +28,6 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 
 class EventService(
 	private val db: Database,
@@ -95,7 +98,7 @@ class EventService(
 		return Result.success(event)
 	}
 
-	private fun eventUserCondition(caller: User): Op<Boolean> {
+	fun eventUserCondition(caller: User): Op<Boolean> {
 		return ((((Events.owner eq caller.id) and (Events.status eq EEventStatus.Pending.value)) or (Events.status neq EEventStatus.Pending.value)) and (Events.association eq caller.association.id))
 	}
 
@@ -119,6 +122,50 @@ class EventService(
 		return Event.wrapRows(eventsQuery)
 	}
 
+	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
+		when (exception) {
+			is EventNotFoundException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Event not found"
+			)
+
+			is EventActionDeniedException -> call.respond(
+				HttpStatusCode.Forbidden,
+				exception.message ?: "Action denied"
+			)
+
+			is InvalidDateException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid date"
+			)
+
+			is InvalidEventNameException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid event name"
+			)
+
+			is InvalidEventDescriptionException -> call.respond(
+				HttpStatusCode.BadRequest,
+				exception.message ?: "Invalid event description"
+			)
+
+			is AlreadyParticipatingToEventException -> call.respond(
+				HttpStatusCode.Conflict,
+				exception.message ?: "Already participating to event"
+			)
+
+			is NotParticipatingToEventException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Not participating to event"
+			)
+
+			else -> {
+				exception.printStackTrace()
+				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
+			}
+		}
+	}
+
 	fun getAllEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		eventsQuery(caller, searchParam).with(Event::owner).toList()
 	}
@@ -133,24 +180,16 @@ class EventService(
 			((Events.endDateTime eq null) and(addtime(Events.startDateTime, 4.hours) greaterEq now()))
 	}
 
-	fun getFutureEvents(caller: User, page: Int, perPage: Int): List<Event> = transaction(db) {
-		val searchParam = SearchParam(
-			sort = listOf(Sort(Events.startDateTime, SortOrder.ASC)),
-			page = page,
-			perPage = perPage,
-			filter = mutableListOf(),
-			query = null
-		)
-
+	fun getFutureEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and futureEventsCondition()
 		}).with(Event::owner).toList()
 	}
 
-	fun countFutureEvents(caller: User): Int = transaction(db) {
-		Event.find(
+	fun countFutureEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
+		Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and futureEventsCondition()
-		).count().toInt()
+		}.count().toInt()
 	}
 
 	private fun archivedEventsCondition(): Op<Boolean> {
@@ -159,24 +198,16 @@ class EventService(
 			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
 	}
 
-	fun getArchivedEvents(caller: User, page: Int, perPage: Int): List<Event> = transaction(db) {
-		val searchParam = SearchParam(
-			sort = listOf(Sort(Events.startDateTime, SortOrder.DESC)),
-			page = page,
-			perPage = perPage,
-			filter = mutableListOf(),
-			query = null
-		)
-
+	fun getArchivedEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and archivedEventsCondition()
 		}).with(Event::owner).toList()
 	}
 
-	fun countArchivedEvents(caller: User): Int = transaction(db) {
-		Event.find(
+	fun countArchivedEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
+		Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and archivedEventsCondition()
-		).count().toInt()
+		}.count().toInt()
 	}
 
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
@@ -191,7 +222,7 @@ class EventService(
 		description: String?,
 		startDate: String,
 		endDate: String?,
-	): Result<Pair<Event, EventParticipation>> {
+	): Result<Event> {
 		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
 
@@ -206,14 +237,14 @@ class EventService(
 				status = EEventStatus.Pending
 			}
 
-			val participation = EventParticipation.new {
+			EventParticipation.new {
 				user = caller
 				event = createdEvent
 				role = EEventRole.Organizer
 			}
 
 			Result.success(
-				createdEvent to participation
+				createdEvent
 			)
 		}
 	}
@@ -315,110 +346,5 @@ class EventService(
 		}
 
 		Result.success(event.delete())
-	}
-
-	fun participateEvent(caller: User, eventId: Int): Result<EventParticipation> = transaction(db) {
-		Event.find {
-			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
-
-		EventParticipation.find {
-			(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
-		}.firstOrNull()?.let {
-			return@transaction Result.failure(AlreadyParticipatingToEventException("Vous participez déjà à cet événement"))
-		}
-
-		Result.success(
-			EventParticipation.new {
-				user = caller
-				event = Event[eventId]
-				role = EEventRole.Member
-			}
-		)
-	}
-
-	fun leaveEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
-		val event = Event.find {
-			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
-
-		if (event.owner.id == caller.id) {
-			return@transaction Result.failure(EventActionDeniedException("Le propriétaire ne peut pas quitter l'événement"))
-		}
-
-		Result.success(
-			EventParticipation.find {
-				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
-			}.firstOrNull()?.delete()
-				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
-		)
-	}
-
-	fun promoteParticipant(caller: User, eventId: Int, userId: Int): Result<EventParticipation> {
-		if (caller.id.value == userId) {
-			return Result.failure(EventActionDeniedException("Vous ne pouvez pas vous promouvoir"))
-		}
-
-		return transaction(db) {
-			Event.find {
-				Events.id eq eventId and eventUserCondition(caller)
-			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
-
-			EventParticipation.find {
-				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
-			}.firstOrNull()?.apply {
-				if (role != EEventRole.Organizer) {
-					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut promouvoir un participant"))
-				}
-			}
-				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
-
-			Result.success(
-				EventParticipation.find {
-					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
-				}.with(EventParticipation::user).firstOrNull()?.apply {
-					if (role == EEventRole.Member) {
-						role = EEventRole.Organizer
-					} else {
-						return@transaction Result.failure(EventActionDeniedException("Seul un membre peut être promu"))
-					}
-				}
-					?: return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
-			)
-		}
-	}
-
-	fun demoteParticipant(caller: User, eventId: Int, userId: Int): Result<EventParticipation> {
-		if (caller.id.value == userId) {
-			return Result.failure(EventActionDeniedException("Vous ne pouvez pas vous rétrograder"))
-		}
-
-		return transaction(db) {
-			Event.find {
-				Events.id eq eventId and eventUserCondition(caller)
-			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
-
-			EventParticipation.find {
-				(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
-			}.firstOrNull()?.apply {
-				if (role != EEventRole.Organizer) {
-					return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut rétrograder un participant"))
-				}
-			}
-				?: return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
-
-			Result.success(
-				EventParticipation.find {
-					(EventParticipations.user eq userId) and (EventParticipations.event eq eventId)
-				}.with(EventParticipation::user).firstOrNull()?.apply {
-					if (role == EEventRole.Organizer) {
-						role = EEventRole.Member
-					} else {
-						return@transaction Result.failure(EventActionDeniedException("Seul un organisateur peut être rétrogradé"))
-					}
-				}
-					?: return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
-			)
-		}
 	}
 }

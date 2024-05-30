@@ -9,7 +9,7 @@ import hollybike.api.exceptions.*
 import hollybike.api.repository.Invitation
 import hollybike.api.repository.User
 import hollybike.api.repository.Users
-import hollybike.api.repository.lower
+import hollybike.api.database.lower
 import hollybike.api.services.UserService
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.auth.TLogin

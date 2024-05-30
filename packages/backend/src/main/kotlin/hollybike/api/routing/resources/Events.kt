@@ -10,6 +10,18 @@ class Events(val api: API = API()) {
 	@Resource("archived")
 	class Archived(val events: Events)
 
+	@Resource("images")
+	class Images(val events: Events) {
+		@Resource("me")
+		class Me(val images: Images)
+
+		@Resource("{imageId}")
+		class ImageId(val images: Images, val imageId: Int)
+
+		@Resource("meta-data")
+		class MetaData(val images: Images)
+	}
+
 	@Resource("{id}")
 	class Id(val events: Events = Events(), val id: Int) {
 		@Resource("image")
@@ -28,7 +40,16 @@ class Events(val api: API = API()) {
 		class Pend(val pend: Id)
 
 		@Resource("participations")
-		class Participations(val participations: Id) {
+		class Participations(val eventId: Id) {
+			@Resource("images-visibility")
+			class ImagesVisibility(val participations: Participations)
+
+			@Resource("candidates")
+			class Candidates(val participations: Participations)
+
+			@Resource("add-users")
+			class AddUsers(val participations: Participations)
+
 			@Resource("{userId}")
 			class User(val user: Participations, val userId: Int) {
 				@Resource("promote")
@@ -38,5 +59,11 @@ class Events(val api: API = API()) {
 				class Demote(val demote: User)
 			}
 		}
+
+		@Resource("images")
+		class Images(val event: Id)
 	}
+
+	@Resource("meta-data")
+	class MetaData(val events: Events)
 }

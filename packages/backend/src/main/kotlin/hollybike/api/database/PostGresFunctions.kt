@@ -1,4 +1,4 @@
-package hollybike.api.repository
+package hollybike.api.database
 
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.*

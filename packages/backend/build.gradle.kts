@@ -97,7 +97,6 @@ dependencies {
 
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.liquibase:liquibase-core:4.27.0")
-	implementation("software.amazon.awssdk:s3:2.25.30")
 	implementation("software.amazon.awssdk:cloudfront:2.25.60")
 	implementation("org.simplejavamail:simple-java-mail:8.8.4")
 	ksp(project(":processor"))

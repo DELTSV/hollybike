@@ -1,16 +1,20 @@
 package hollybike.api.routing.controller
 
-import hollybike.api.exceptions.*
 import hollybike.api.plugins.user
+import hollybike.api.repository.Event
 import hollybike.api.repository.associationMapper
-import hollybike.api.repository.events.eventMapper
+import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
-import hollybike.api.utils.listParams
+import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.checkContentType
+import hollybike.api.utils.get
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -30,6 +34,8 @@ class EventController(
 	private val eventService: EventService,
 	private val storageService: StorageService,
 ) {
+	private val mapper = eventMapper + associationMapper + userMapper
+
 	init {
 		application.routing {
 			authenticate {
@@ -41,112 +47,55 @@ class EventController(
 				updateEvent()
 				uploadEventImage()
 				deleteEvent()
-				participateEvent()
-				leaveEvent()
-				promoteParticipant()
-				demoteParticipant()
 				cancelEvent()
 				scheduleEvent()
 				finishEvent()
 				pendEvent()
+				getMetaData()
 			}
 		}
 	}
 
-	private suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) {
-		when (exception) {
-			is EventNotFoundException -> call.respond(
-				HttpStatusCode.NotFound,
-				exception.message ?: "Event not found"
-			)
-
-			is EventActionDeniedException -> call.respond(
-				HttpStatusCode.Forbidden,
-				exception.message ?: "Action denied"
-			)
-
-			is InvalidDateException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid date"
-			)
-
-			is InvalidEventNameException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event name"
-			)
-
-			is InvalidEventDescriptionException -> call.respond(
-				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event description"
-			)
-
-			is AlreadyParticipatingToEventException -> call.respond(
-				HttpStatusCode.Conflict,
-				exception.message ?: "Already participating to event"
-			)
-
-			is NotParticipatingToEventException -> call.respond(
-				HttpStatusCode.NotFound,
-				exception.message ?: "Not participating to event"
-			)
-
-			else -> {
-				exception.printStackTrace()
-				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
-			}
-		}
+	private fun getEventsPagination(events: List<Event>, total: Int, searchParam: SearchParam): TLists<TEventPartial> {
+		return TLists(
+			data = events.map { TEventPartial(it, storageService.signer.sign) },
+			page = searchParam.page,
+			perPage = searchParam.perPage,
+			totalPage = ceil(total.toDouble() / searchParam.perPage).toInt(),
+			totalData = total
+		)
 	}
 
 	private fun Route.getAllEvents() {
 		get<Events> {
-			val params = call.request.queryParameters.getSearchParam(eventMapper + associationMapper + userMapper)
+			val params = call.request.queryParameters.getSearchParam(mapper)
 
 			val events = eventService.getAllEvents(call.user, params)
-			val total = eventService.countAllEvents(call.user, params)
+			val totalEvents = eventService.countAllEvents(call.user, params)
 
-			call.respond(
-				TLists(
-					data = events.map { TEventPartial(it, storageService.signer.sign) },
-					page = call.listParams.page,
-					perPage = call.listParams.perPage,
-					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
-					totalData = total
-				)
-			)
+			call.respond(getEventsPagination(events, totalEvents, params))
 		}
 	}
 
 	private fun Route.getFutureEvents() {
 		get<Events.Future> {
-			val events = eventService.getFutureEvents(call.user, call.listParams.page, call.listParams.perPage)
-			val total = eventService.countFutureEvents(call.user)
+			val searchParam = call.request.queryParameters.getSearchParam(mapper)
 
-			call.respond(
-				TLists(
-					data = events.map { TEventPartial(it, storageService.signer.sign) },
-					page = call.listParams.page,
-					perPage = call.listParams.perPage,
-					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
-					totalData = total
-				)
-			)
+			val events = eventService.getFutureEvents(call.user, searchParam)
+			val totalEvents = eventService.countFutureEvents(call.user, searchParam)
+
+			call.respond(getEventsPagination(events, totalEvents, searchParam))
 		}
 	}
 
 	private fun Route.getArchivedEvents() {
 		get<Events.Archived> {
-			val events = eventService.getArchivedEvents(call.user, call.listParams.page, call.listParams.perPage)
-			val total = eventService.countArchivedEvents(call.user)
+			val searchParam = call.request.queryParameters.getSearchParam(mapper)
 
-			call.respond(
-				TLists(
-					data = events.map { TEventPartial(it, storageService.signer.sign) },
-					page = call.listParams.page,
-					perPage = call.listParams.perPage,
-					totalPage = ceil(total.toDouble() / call.listParams.perPage).toInt(),
-					totalData = total
-				)
-			)
+			val events = eventService.getArchivedEvents(call.user, searchParam)
+			val totalEvents = eventService.countArchivedEvents(call.user, searchParam)
+
+			call.respond(getEventsPagination(events, totalEvents, searchParam))
 		}
 	}
 
@@ -170,9 +119,9 @@ class EventController(
 				newEvent.startDate,
 				newEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it.first, storageService.signer.sign, listOf(it.second)))
+				call.respond(HttpStatusCode.Created, TEvent(it, storageService.signer.sign))
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -191,7 +140,7 @@ class EventController(
 			).onSuccess {
 				call.respond(HttpStatusCode.OK, TEvent(it, storageService.signer.sign))
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -201,7 +150,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.cancel.id, EEventStatus.Cancelled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -211,7 +160,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.schedule.id, EEventStatus.Scheduled).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -221,7 +170,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.finish.id, EEventStatus.Finished).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -231,7 +180,7 @@ class EventController(
 			eventService.updateEventStatus(call.user, id.pend.id, EEventStatus.Pending).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -242,14 +191,8 @@ class EventController(
 
 			val image = multipart.readPart() as PartData.FileItem
 
-			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
-				return@patch
-			}
-
-			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
-				return@patch
+			val contentType = checkContentType(image).getOrElse {
+				return@patch call.respond(HttpStatusCode.BadRequest, it.message!!)
 			}
 
 			eventService.uploadEventImage(
@@ -260,7 +203,7 @@ class EventController(
 			).onSuccess {
 				call.respond(TEvent(it, storageService.signer.sign))
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
@@ -270,50 +213,14 @@ class EventController(
 			eventService.deleteEvent(call.user, id.id).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
-				handleEventExceptions(it, call)
+				eventService.handleEventExceptions(it, call)
 			}
 		}
 	}
 
-	private fun Route.participateEvent() {
-		post<Events.Id.Participations> { data ->
-			eventService.participateEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer.sign))
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.leaveEvent() {
-		delete<Events.Id.Participations> { data ->
-			eventService.leaveEvent(call.user, data.participations.id).onSuccess {
-				call.respond(HttpStatusCode.OK)
-			}.onFailure {
-				handleEventExceptions(it, call)
-			}
-		}
-	}
-
-	private fun Route.promoteParticipant() {
-		patch<Events.Id.Participations.User.Promote> { data ->
-			eventService.promoteParticipant(call.user, data.promote.user.participations.id, data.promote.userId)
-				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
-				}.onFailure {
-					handleEventExceptions(it, call)
-				}
-		}
-	}
-
-	private fun Route.demoteParticipant() {
-		patch<Events.Id.Participations.User.Demote> { data ->
-			eventService.demoteParticipant(call.user, data.demote.user.participations.id, data.demote.userId)
-				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
-				}.onFailure {
-					handleEventExceptions(it, call)
-				}
+	private fun Route.getMetaData() {
+		get<Events.MetaData>(EUserScope.Admin) {
+			call.respond(mapper.getMapperData())
 		}
 	}
 }
