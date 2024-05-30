@@ -6,6 +6,7 @@ import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
 import hollybike.api.services.storage.StorageService
+import hollybike.api.types.event.TCreateParticipations
 import hollybike.api.types.event.TEventParticipation
 import hollybike.api.types.event.TUpdateImagesVisibility
 import hollybike.api.types.lists.TLists
@@ -33,6 +34,8 @@ class EventParticipationController(
 				getParticipationCandidates()
 				getParticipations()
 				updateImageVisibility()
+				addUsersToEvent()
+				removeUserFromEvent()
 				participateEvent()
 				leaveEvent()
 				promoteParticipant()
@@ -135,6 +138,38 @@ class EventParticipationController(
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
 			}
+		}
+	}
+
+	private fun Route.removeUserFromEvent() {
+		delete<Events.Id.Participations.User> { data ->
+			eventParticipationService.removeUserFromEvent(call.user, data.user.eventId.id, data.userId)
+				.onSuccess {
+					call.respond(HttpStatusCode.OK)
+				}.onFailure {
+					eventParticipationService.handleEventExceptions(it, call)
+				}
+		}
+	}
+
+	private fun Route.addUsersToEvent() {
+		post<Events.Id.Participations> { data ->
+			val users = call.receive<TCreateParticipations>().userIds
+
+			if (users.isEmpty()) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun utilisateur fourni")
+				return@post
+			}
+
+			eventParticipationService.addParticipantsToEvent(call.user, data.eventId.id, users)
+				.onSuccess { participations ->
+					call.respond(
+						HttpStatusCode.Created,
+						participations.map { TEventParticipation(it, storageService.signer.sign) }
+					)
+				}.onFailure {
+					eventParticipationService.handleEventExceptions(it, call)
+				}
 		}
 	}
 

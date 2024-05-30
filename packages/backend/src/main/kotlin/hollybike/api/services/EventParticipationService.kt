@@ -135,6 +135,90 @@ class EventParticipationService(
 		}
 	}
 
+	fun removeUserFromEvent(caller: User, eventId: Int, userId: Int): Result<Unit> = transaction(db) {
+		val event = findEvent(caller, eventId)
+			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+
+		if (caller.id.value == userId) {
+			return@transaction Result.failure(EventActionDeniedException("Vous ne pouvez pas vous retirer de l'événement"))
+		}
+
+		if (event.owner.id.value == userId) {
+			return@transaction Result.failure(EventActionDeniedException("Vous ne pouvez pas retirer le propriétaire de l'événement"))
+		}
+
+		val participation = EventParticipation.find {
+			eventParticipationUserEventCondition(caller, eventId)
+		}.firstOrNull()
+
+		if (participation == null) {
+			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+		}
+
+		if (participation.role != EEventRole.Organizer) {
+			return@transaction Result.failure(EventActionDeniedException("Seul un organisateur peut retirer un participant"))
+		}
+
+		val user = User.findById(userId)
+			?: return@transaction Result.failure(EventNotFoundException("User $userId introuvable"))
+
+		val userParticipation = EventParticipation.find {
+			eventParticipationUserEventCondition(user, eventId)
+		}.firstOrNull()
+
+		if (userParticipation == null) {
+			return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
+		}
+
+		userParticipation.isJoined = false
+		userParticipation.leftDateTime = Clock.System.now()
+
+		Result.success(Unit)
+	}
+
+	fun addParticipantsToEvent(caller: User, eventId: Int, userIds: List<Int>): Result<List<EventParticipation>> =
+		transaction(db) {
+			val event = findEvent(caller, eventId)
+				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+
+			val participation = EventParticipation.find {
+				eventParticipationUserEventCondition(caller, eventId)
+			}.firstOrNull()
+
+			if (participation == null) {
+				return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+			}
+
+			if (participation.role != EEventRole.Organizer) {
+				return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut ajouter des participants"))
+			}
+
+			val users = User.find { Users.id inList userIds }
+
+			Result.success(
+				users.map { user ->
+					val userParticipation = EventParticipation.find {
+						(EventParticipations.user eq user.id) and (EventParticipations.event eq eventId)
+					}.with(EventParticipation::user).firstOrNull()
+
+					if (userParticipation == null) {
+						EventParticipation.new {
+							this.user = user
+							this.event = event
+							role = EEventRole.Member
+						}
+					} else if (userParticipation.isJoined.not()) {
+						userParticipation.isJoined = true
+						userParticipation.joinedDateTime = Clock.System.now()
+
+						userParticipation
+					} else {
+						return@transaction Result.failure(AlreadyParticipatingToEventException("L'utilisateur ${user.id} participe déjà à cet événement"))
+					}
+				}
+			)
+		}
+
 	fun updateUserImageVisibility(
 		caller: User,
 		eventId: Int,
