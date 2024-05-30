@@ -6,7 +6,6 @@ import hollybike.api.exceptions.InvitationNotFoundException
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.*
 import hollybike.api.repository.Invitations.creator
-import hollybike.api.repository.Invitations.innerJoin
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
