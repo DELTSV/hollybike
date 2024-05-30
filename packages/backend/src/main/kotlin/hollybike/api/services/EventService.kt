@@ -222,7 +222,7 @@ class EventService(
 		description: String?,
 		startDate: String,
 		endDate: String?,
-	): Result<Pair<Event, EventParticipation>> {
+	): Result<Event> {
 		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
 
@@ -237,14 +237,14 @@ class EventService(
 				status = EEventStatus.Pending
 			}
 
-			val participation = EventParticipation.new {
+			EventParticipation.new {
 				user = caller
 				event = createdEvent
 				role = EEventRole.Organizer
 			}
 
 			Result.success(
-				createdEvent to participation
+				createdEvent
 			)
 		}
 	}

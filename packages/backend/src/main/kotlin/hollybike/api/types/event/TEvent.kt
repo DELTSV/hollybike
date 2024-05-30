@@ -2,7 +2,6 @@ package hollybike.api.types.event
 
 import hollybike.api.types.user.TUserPartial
 import hollybike.api.repository.Event
-import hollybike.api.repository.EventParticipation
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,7 +14,6 @@ data class TEvent(
 	val image: String?,
 	val status: EEventStatus,
 	val owner: TUserPartial,
-	val participants: List<TEventParticipation>,
 	@SerialName("start_date_time")
 	val startDateTime: Instant,
 	@SerialName("end_date_time")
@@ -28,7 +26,6 @@ data class TEvent(
 	constructor(
 		entity: Event,
 		signer: (String) -> String,
-		participants: List<EventParticipation> = entity.participants.toList()
 	) : this(
 		id = entity.id.value,
 		name = entity.name,
@@ -36,7 +33,6 @@ data class TEvent(
 		image = entity.image?.let { signer(it) },
 		status = EEventStatus.fromEvent(entity),
 		owner = TUserPartial(entity.owner, signer),
-		participants = participants.map { TEventParticipation(it, signer) },
 		startDateTime = entity.startDateTime,
 		endDateTime = entity.endDateTime,
 		createDateTime = entity.createDateTime,

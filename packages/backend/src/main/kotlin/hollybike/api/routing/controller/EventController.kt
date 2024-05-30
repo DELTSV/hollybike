@@ -119,7 +119,7 @@ class EventController(
 				newEvent.startDate,
 				newEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it.first, storageService.signer.sign, listOf(it.second)))
+				call.respond(HttpStatusCode.Created, TEvent(it, storageService.signer.sign))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}
