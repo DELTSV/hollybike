@@ -45,4 +45,24 @@ class LocalStorageService(
 
 		return file.readBytes()
 	}
+
+	override suspend fun delete(path: String) {
+		val file = File("$storagePath/$path")
+
+		if (file.exists()) {
+			file.delete()
+		}
+	}
+
+	override suspend fun batchStore(data: List<Pair<ByteArray, String>>, dataContentType: String) {
+		data.forEach { (data, path) ->
+			store(data, path, dataContentType)
+		}
+	}
+
+	override suspend fun batchDelete(paths: List<String>) {
+		paths.forEach { path ->
+			delete(path)
+		}
+	}
 }

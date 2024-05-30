@@ -2,10 +2,7 @@ package hollybike.api.services.storage
 
 import aws.sdk.kotlin.runtime.auth.credentials.*
 import aws.sdk.kotlin.services.s3.S3Client
-import aws.sdk.kotlin.services.s3.model.GetObjectRequest
-import aws.sdk.kotlin.services.s3.model.HeadBucketRequest
-import aws.sdk.kotlin.services.s3.model.NotFound
-import aws.sdk.kotlin.services.s3.model.PutObjectRequest
+import aws.sdk.kotlin.services.s3.model.*
 import aws.smithy.kotlin.runtime.content.ByteStream
 import aws.smithy.kotlin.runtime.content.toByteArray
 import aws.smithy.kotlin.runtime.http.HttpException
@@ -81,6 +78,25 @@ class S3StorageService(
 			})
 		} catch (e: Exception) {
 			null
+		}
+	}
+
+	override suspend fun delete(path: String) {
+		client.deleteObject(DeleteObjectRequest {
+			bucket = bucketName
+			key = "storage/$path"
+		})
+	}
+
+	override suspend fun batchStore(data: List<Pair<ByteArray, String>>, dataContentType: String) {
+		data.forEach {
+			store(it.first, it.second, dataContentType)
+		}
+	}
+
+	override suspend fun batchDelete(paths: List<String>) {
+		paths.forEach {
+			delete(it)
 		}
 	}
 }

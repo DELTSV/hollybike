@@ -100,4 +100,22 @@ class FTPStorageService(
 		ftpClient.completePendingCommand()
 		return bytes
 	}
+
+	override suspend fun delete(path: String) {
+		if (!ftpClient.deleteFile(path)) {
+			throw Exception("Cannot delete file, check your permissions")
+		}
+	}
+
+	override suspend fun batchStore(data: List<Pair<ByteArray, String>>, dataContentType: String) {
+		data.forEach { (data, path) ->
+			store(data, path, dataContentType)
+		}
+	}
+
+	override suspend fun batchDelete(paths: List<String>) {
+		paths.forEach { path ->
+			delete(path)
+		}
+	}
 }

@@ -14,6 +14,7 @@ import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.TUser
 import hollybike.api.types.user.TUserUpdate
 import hollybike.api.types.user.TUserUpdateSelf
+import hollybike.api.utils.checkContentType
 import hollybike.api.utils.get
 import hollybike.api.utils.patch
 import hollybike.api.utils.post
@@ -146,14 +147,8 @@ class UserController(
 
 			val image = multipart.readPart() as PartData.FileItem
 
-			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
-				return@post
-			}
-
-			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
-				return@post
+			val contentType = checkContentType(image).getOrElse {
+				return@post call.respond(HttpStatusCode.BadRequest, it.message!!)
 			}
 
 			val path = userService.uploadUserProfilePicture(
@@ -182,14 +177,8 @@ class UserController(
 				return@post
 			}
 
-			val contentType = image.contentType ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Type de contenu de l'image manquant")
-				return@post
-			}
-
-			if (contentType != ContentType.Image.JPEG && contentType != ContentType.Image.PNG) {
-				call.respond(HttpStatusCode.BadRequest, "Image invalide (JPEG et PNG seulement)")
-				return@post
+			val contentType = checkContentType(image).getOrElse { err ->
+				return@post call.respond(HttpStatusCode.BadRequest, err.message!!)
 			}
 
 			val path = userService.uploadUserProfilePicture(

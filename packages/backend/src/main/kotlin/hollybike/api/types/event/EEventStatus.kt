@@ -1,6 +1,6 @@
 package hollybike.api.types.event
 
-import hollybike.api.repository.events.Event
+import hollybike.api.repository.Event
 import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.hours
 

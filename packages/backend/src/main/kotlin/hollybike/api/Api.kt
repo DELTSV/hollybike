@@ -1,18 +1,16 @@
 package hollybike.api
 
+import hollybike.api.database.configureDatabase
 import hollybike.api.plugins.configureHTTP
 import hollybike.api.plugins.configureSecurity
-import hollybike.api.repository.configureDatabase
 import hollybike.api.routing.controller.*
-import hollybike.api.services.AssociationService
-import hollybike.api.services.EventService
-import hollybike.api.services.UserService
+import hollybike.api.services.*
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.utils.MailSender
 import hollybike.api.services.storage.StorageServiceFactory
 import hollybike.api.services.storage.signature.StorageSignatureMode
+import hollybike.api.utils.MailSender
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
@@ -47,15 +45,20 @@ fun Application.api() {
 	val invitationService = InvitationService(db)
 	val authService = AuthService(db, conf.security, invitationService, userService)
 	val eventService = EventService(db, storageService)
+	val eventParticipationService = EventParticipationService(db, eventService)
+	val eventImageService = EventImageService(db, eventService, storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
+
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
 	UserController(this, userService, storageService)
 	AssociationController(this, associationService, invitationService, authService, storageService)
 	InvitationController(this, authService, invitationService)
 	EventController(this, eventService, storageService)
+	EventParticipationController(this, eventParticipationService, storageService)
+	EventImageController(this, eventImageService, storageService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)
