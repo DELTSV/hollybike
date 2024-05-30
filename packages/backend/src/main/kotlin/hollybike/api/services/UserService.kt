@@ -11,6 +11,7 @@ import hollybike.api.repository.Users
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
+import hollybike.api.types.user.TUserUpdate
 import hollybike.api.types.user.TUserUpdateSelf
 import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
@@ -22,6 +23,7 @@ import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
@@ -31,17 +33,30 @@ import java.sql.BatchUpdateException
 class UserService(
 	private val db: Database,
 	private val storageService: StorageService,
+	private val associationService: AssociationService
 ) {
-	private fun checkUserScope(caller: User, user: User?): User? {
-		if ((caller.scope == EUserScope.User && caller.id != user?.id) || (caller.association != user?.association && caller.scope != EUserScope.Root)) {
-			return null
-		}
-		return user
+	private fun authorizeGet(caller: User, target: User) = when(caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == target.association.id
+		EUserScope.User -> caller.id == target.id
+	}
+
+	private infix fun User?.getIfAllowed(caller: User): User? = if(this != null && authorizeGet(caller, this)) this else null
+
+	private fun authorizeUpdate(caller: User, target: User, update: TUserUpdate) = when (caller.scope){
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == target.association.id && update.association == caller.association.id.value
+		else -> false
+	}
+
+	private fun authorizeUpdatePicture(caller: User, target: User) = when (caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == target.association.id
+		EUserScope.User -> caller.id == target.id
 	}
 
 	fun getUser(caller: User, id: Int): User? = transaction(db) {
-		val user = User.find { Users.id eq id }.singleOrNull()
-		checkUserScope(caller, user)
+		User.find { Users.id eq id }.with(User::association).singleOrNull() getIfAllowed caller
 	}
 
 	suspend fun uploadUserProfilePicture(
@@ -50,7 +65,7 @@ class UserService(
 		image: ByteArray,
 		imageContentType: String,
 	): String? {
-		if (checkUserScope(caller, user) == null) {
+		if (!authorizeUpdatePicture(caller, user)) {
 			return null
 		}
 
@@ -101,13 +116,15 @@ class UserService(
 	}
 
 	fun getUserByEmail(caller: User, email: String): User? = transaction(this.db) {
-		val user = User.find { Users.email eq email }.singleOrNull()
-		checkUserScope(caller, user)
+		User.find { Users.email eq email }.with(User::association).singleOrNull() getIfAllowed caller
+	}
+
+	fun getUserByEmailAndAssociation(caller: User, email: String, association: Int): User? = transaction(db) {
+		User.find { (Users.email eq email) and (Users.association eq association) }.singleOrNull() getIfAllowed caller
 	}
 
 	fun getUserByUsername(caller: User, username: String): User? = transaction(db) {
-		val user = User.find { Users.username eq username }.singleOrNull()
-		checkUserScope(caller, user)
+		User.find { Users.username eq username }.with(User::association).singleOrNull() getIfAllowed caller
 	}
 
 	fun updateMe(user: User, update: TUserUpdateSelf): Result<User> = transaction(db) {
@@ -129,6 +146,28 @@ class UserService(
 		return@transaction Result.success(user)
 	}
 
+	fun updateUser(caller: User, user: User, update: TUserUpdate): Result<User> {
+		if (!authorizeUpdate(caller, user, update)) {
+			return Result.failure(NotAllowedException("Opération impossible"))
+		}
+		if(getUserByEmailAndAssociation(caller, user.email, caller.association.id.value) == null) {
+			return Result.failure(UserNotFoundException())
+		}
+		val targetAssociation = update.association?.let {
+			associationService.getById(caller, it)
+		}
+		return transaction(db) {
+			Result.success(user.apply {
+				update.username?.let { username = it }
+				update.email?.let { email = it }
+				update.password?.let { password = hash(it).encodeBase64() }
+				update.status?.let { status = it }
+				update.scope?.let { scope = it }
+				targetAssociation?.let { association = it }
+			})
+		}
+	}
+
 	fun getAll(caller: User, searchParam: SearchParam): List<User>? {
 		if (caller.scope == EUserScope.User) {
 			return null
@@ -142,8 +181,8 @@ class UserService(
 		}
 	}
 
-	fun getUserAssociation(id: Int): Association? = transaction(db) {
-		User.findById(id)?.load(User::association)
+	fun getUserAssociation(caller: User, id: Int): Association? = transaction(db) {
+		User.findById(id)?.getIfAllowed(caller)?.load(User::association)
 	}?.association
 
 	fun getAllCount(caller: User, searchParam: SearchParam): Long? {

@@ -13,16 +13,19 @@ import {
 } from "preact";
 import { TList } from "../../types/TList.ts";
 import { Button } from "../Button/Button.tsx";
+import { Reload } from "../../utils/useReload.ts";
 
 interface ListProps<T> {
 	columns: Columns[],
 	baseUrl: string,
 	line: (data: T) => ComponentChildren[]
-	perPage?: number
+	perPage?: number,
+	reload?: Reload,
+	filter?: string
 }
 
 export function List<T>(props: ListProps<T>) {
-	const sortFilterColumns = useApi<TMetaData, never>(`${props.baseUrl}/meta-data`);
+	const sortFilterColumns = useApi<TMetaData>(`${props.baseUrl}/meta-data`);
 	const [sort, setSort] = useState<{[name: string]: Sort}>({});
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(0);
@@ -67,14 +70,22 @@ export function List<T>(props: ListProps<T>) {
 			return "";
 	}, [sort]);
 
-	const data = useApi<TList<T>, never>(
-		`${props.baseUrl}?page=${page}&per_page=${props.perPage ?? 10}&query=${search}${orderQuery}`,
+	const filterQuery = useMemo(() => {
+		if (props.filter !== undefined && props.filter.length !== 0)
+			return `&${ props.filter}`;
+		 else
+			return "";
+	}, []);
+
+	const data = useApi<TList<T>>(
+		`${props.baseUrl}?page=${page}&per_page=${props.perPage ?? 10}&query=${search}${orderQuery}${filterQuery}`,
 		[
 			props.baseUrl,
 			props.perPage,
 			page,
 			search,
 			orderQuery,
+			props.reload,
 		],
 	);
 
@@ -82,7 +93,7 @@ export function List<T>(props: ListProps<T>) {
 		<div className={"px-2 flex flex-col grow gap-2"}>
 			<Input
 				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
-				placeholder={"Recherche"} className={"self-start"} icon={<Search/>}
+				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
 			/>
 			<table className={"rounded bg-slate-100 dark:bg-slate-800"}>
 				<thead>

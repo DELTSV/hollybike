@@ -18,6 +18,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.datetime.Clock
 import java.io.File
 
 class AssociationTest : IntegrationSpec({
@@ -244,6 +245,8 @@ class AssociationTest : IntegrationSpec({
 			cloudTestApp {
 				it.get("/api/associations?per_page=10&page=0") {
 					auth(UserStore.root)
+					println(Clock.System.now())
+					println(tokenStore[UserStore.root])
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -347,9 +350,19 @@ class AssociationTest : IntegrationSpec({
 			}
 		}
 
-		test("Should not get association by id if on premise mode") {
+		test("Should get association by id if on premise mode") {
 			onPremiseTestApp {
 				it.get("/api/associations/${AssociationStore.association1.id}") {
+					auth(UserStore.root)
+				}.apply {
+					status shouldBe HttpStatusCode.OK
+				}
+			}
+		}
+
+		test("Should not get other association by id if on premise mode") {
+			onPremiseTestApp {
+				it.get("/api/associations/${AssociationStore.unknown.id}") {
 					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound

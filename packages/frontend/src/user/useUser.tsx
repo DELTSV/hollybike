@@ -7,7 +7,6 @@ import {
 	useContext, useState,
 } from "preact/hooks";
 import { api } from "../utils/useApi.ts";
-import { TUpdateUsername } from "../types/TUpdateUsername.ts";
 import { TUpdatePassword } from "../types/TUpdatePassword.ts";
 
 interface UserContext {
@@ -36,7 +35,7 @@ export function UserProvider(props: UserProviderProps) {
 	const [user, setUser] = useState<TUser | null>(null);
 
 	const setUsername = useCallback((username: string) => {
-		api<TUser, TUpdateUsername>("/users/me", {
+		api<TUser>("/users/me", {
 			method: "PATCH",
 			body: { username: username },
 		}).then((res) => {
@@ -46,7 +45,7 @@ export function UserProvider(props: UserProviderProps) {
 	}, []);
 
 	const setPassword = useCallback((passwordChange: TUpdatePassword) => {
-		api<TUser, TUpdatePassword>("/users/me", {
+		api<TUser>("/users/me", {
 			method: "PATCH",
 			body: passwordChange,
 		}).then((res) => {
@@ -56,7 +55,7 @@ export function UserProvider(props: UserProviderProps) {
 	}, []);
 
 	const fetchUser = useCallback(async () => {
-		const res = await api<TUser, void>("/users/me");
+		const res = await api<TUser>("/users/me");
 		if (res.status === 200) {
 			setUser(res.data!);
 			return res.data!;

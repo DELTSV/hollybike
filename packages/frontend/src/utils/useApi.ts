@@ -5,9 +5,9 @@ import {
 import { backendBaseUrl } from "../config";
 import { externalDisconnect } from "../auth/context.tsx";
 
-interface UseApiOptions<T> {
+interface UseApiOptions {
 	method?: string,
-	body?: T
+	body?: any
 }
 
 interface APIResponse<T> {
@@ -16,9 +16,9 @@ interface APIResponse<T> {
 	data?: T
 }
 
-interface ApiOptions<T> {
+interface ApiOptions {
 	method?: string,
-	body?: T,
+	body?: any,
 	headers?: Record<string, string>
 }
 
@@ -28,23 +28,23 @@ interface ApiRawOptions {
 	headers?: Record<string, string>
 }
 
-export function useApi<T, B>(
+export function useApi<T>(
 	url: string,
 	deps?: Inputs,
-	options?: UseApiOptions<B>,
+	options?: UseApiOptions,
 ) {
 	const [result, setResult] = useState<APIResponse<T>>({ status: 0 });
 
 	const stringDeps = JSON.stringify(deps);
 
 	const optionsString = JSON.stringify(options);
-	const opt: UseApiOptions<B> | undefined = useMemo(
+	const opt: UseApiOptions | undefined = useMemo(
 		() => optionsString !== undefined ? JSON.parse(optionsString) : undefined,
 		[optionsString],
 	);
 
 	useEffect(() => {
-		api<T, B>(url, options).then((res) => {
+		api<T>(url, options).then((res) => {
 			setResult(res);
 		});
 	}, [
@@ -56,7 +56,7 @@ export function useApi<T, B>(
 	return result;
 }
 
-export async function api<T, B>(url: string, options?: ApiOptions<B>): Promise<APIResponse<T>> {
+export async function api<T>(url: string, options?: ApiOptions): Promise<APIResponse<T>> {
 	return apiRaw<T>(url, "application/json", {
 		method: options?.method,
 		body: JSON.stringify(options?.body),
@@ -95,9 +95,9 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 				status: response.status,
 				message: responseText,
 			};
-		 else
+		else
 			return {
-			 	status: response.status,
+				status: response.status,
 				message: "Erreur inconnue",
 			};
 	}

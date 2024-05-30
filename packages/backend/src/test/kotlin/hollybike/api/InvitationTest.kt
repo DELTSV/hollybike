@@ -6,6 +6,7 @@ import hollybike.api.stores.UserStore
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
+import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.shouldBe
@@ -253,7 +254,7 @@ class InvitationTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
-					body<List<TInvitation>>() shouldBe emptyList()
+					body<TLists<TInvitation>>() shouldBe TLists(emptyList(), 0, 0, 20, 0)
 				}
 			}
 		}
@@ -292,11 +293,14 @@ class InvitationTest : IntegrationSpec({
 					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
+					body<TLists<TInvitation>>().let { body ->
+						println(body)
+						body.totalData shouldBe 1
+						body.data.size shouldBe 1
 
-					body<List<TInvitation>>().size shouldBe 1
-
-					body<List<TInvitation>>().forEach { invitation ->
-						invitation.link shouldNotBe null
+						body.data.forEach { invitation ->
+							invitation.link shouldNotBe null
+						}
 					}
 				}
 			}
@@ -312,9 +316,10 @@ class InvitationTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
-					body<List<TInvitation>>().size shouldBe 1
+					body<TLists<TInvitation>>().totalData shouldBe 1
+					body<TLists<TInvitation>>().data.size shouldBe 1
 
-					body<List<TInvitation>>().forEach { invitation ->
+					body<TLists<TInvitation>>().data.forEach { invitation ->
 						invitation.link shouldBe null
 					}
 				}

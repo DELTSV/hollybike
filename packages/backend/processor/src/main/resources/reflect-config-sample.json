@@ -2495,6 +2495,21 @@
 		]
 	},
 	{
+		"name": "liquibase.parser.SqlParserFactory",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			},
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"liquibase.Scope"
+				]
+			}
+		]
+	},
+	{
 		"name": "liquibase.plugin.AbstractPlugin",
 		"queryAllPublicMethods": true
 	},

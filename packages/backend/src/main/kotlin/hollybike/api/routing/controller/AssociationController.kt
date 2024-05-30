@@ -1,13 +1,18 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.exceptions.*
 import hollybike.api.services.AssociationService
-import hollybike.api.exceptions.AssociationAlreadyExists
-import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
+import hollybike.api.repository.invitationMapper
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
+import hollybike.api.services.auth.AuthService
+import hollybike.api.services.auth.InvitationService
+import hollybike.api.types.association.*
+import hollybike.api.types.invitation.EInvitationStatus
+import hollybike.api.types.invitation.TInvitation
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TNewAssociation
@@ -29,6 +34,8 @@ import kotlin.math.ceil
 class AssociationController(
 	application: Application,
 	private val associationService: AssociationService,
+	private val invitationService: InvitationService,
+	private val authService: AuthService,
 	private val storageService: StorageService
 ) {
 	init {
@@ -37,15 +44,20 @@ class AssociationController(
 				getMyAssociation()
 				updateMyAssociation()
 				updateMyAssociationPicture()
+				getMyOnboarding()
+				updateMyOnboarding()
+				getById()
+				getAllInvitationsByAssociations()
+				getAllInvitationsByAssociationsMetadata()
 
 				if (application.isCloud) {
 					getAll()
 					getMetaData()
-					getById()
 					addAssociation()
 					updateAssociation()
 					updateAssociationPicture()
 					deleteAssociation()
+					getAssociationOnboarding()
 				}
 			}
 		}
@@ -126,8 +138,8 @@ class AssociationController(
 	}
 
 	private fun Route.getById() {
-		get<Associations.Id<API>>(EUserScope.Root) { params ->
-			associationService.getById(params.id)?.let {
+		get<Associations.Id<API>>(EUserScope.Admin) { params ->
+			associationService.getById(call.user, params.id)?.let {
 				call.respond(TAssociation(it, storageService.signer.sign))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Association ${params.id} inconnue")
@@ -233,6 +245,85 @@ class AssociationController(
 	private fun Route.getMetaData() {
 		get<Associations.MetaData<API>>(EUserScope.Root) {
 			call.respond(associationMapper.getMapperData())
+		}
+	}
+
+	private fun Route.getMyOnboarding() {
+		get<Associations.Me.Onboarding<API>>(EUserScope.Admin) {
+			call.respond(TOnboarding(call.user.association))
+		}
+	}
+
+	private fun Route.updateMyOnboarding() {
+		patch<Associations.Me.Onboarding<API>>(EUserScope.Admin) {
+			val update = call.receive<TOnboardingUpdate>()
+			associationService.updateAssociationOnboarding(call.user, call.user.association, update).onSuccess {
+				call.respond(TOnboarding(it))
+			}.onFailure {
+				when (it) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is AssociationOnboardingUserNotEditedException -> call.respond(HttpStatusCode.BadRequest, "Vous devez éditer le user avant ça")
+					is AssociationsOnboardingAssociationNotEditedException -> call.respond(HttpStatusCode.BadRequest, "Vous devez éditer votre association avant ça")
+					else -> call.respond(HttpStatusCode.InternalServerError)
+				}
+			}
+		}
+	}
+
+	private fun Route.getAssociationOnboarding() {
+		get<Associations.Id.Onboarding<API>>(EUserScope.Root) {
+			val association = associationService.getById(call.user, it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Association inconnue")
+				return@get
+			}
+			call.respond(TOnboarding(association))
+		}
+	}
+
+	private fun Route.getAllInvitationsByAssociations() {
+		get<Associations.Id.Invitations<API>>(EUserScope.Admin) {
+			val searchParam = call.request.queryParameters.getSearchParam(invitationMapper)
+			val host = call.request.headers["Host"]
+
+			if (host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@get
+			}
+
+			val association = associationService.getById(call.user, it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Association inconnue")
+				return@get
+			}
+			val count = invitationService.getAllCount(call.user, association, searchParam) ?: run {
+				call.respond(HttpStatusCode.Forbidden)
+				return@get
+			}
+			invitationService.getAll(call.user, association, searchParam).onSuccess { invitations ->
+				val dto = invitations.map { i ->
+					if(i.status == EInvitationStatus.Enabled) {
+						TInvitation(i, authService.generateLink(call.user, host, i))
+					} else {
+						TInvitation(i)
+					}
+				}
+				call.respond(TLists(
+					dto,
+					searchParam.page,
+					ceil(count.toDouble() / searchParam.perPage).toInt(),
+					searchParam.perPage,
+					count.toInt()
+				))
+			}.onFailure { e ->
+				when(e) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+				}
+			}
+		}
+	}
+
+	private fun Route.getAllInvitationsByAssociationsMetadata() {
+		get<Associations.Id.Invitations.MetaData<API>>(EUserScope.Admin) {
+			call.respond(invitationMapper.getMapperData())
 		}
 	}
 }

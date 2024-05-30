@@ -2,6 +2,7 @@ package hollybike.api
 
 import io.ktor.util.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.io.File
 
@@ -57,12 +58,23 @@ data class ConfStorage(
 	val ftpDirectory: String? = null
 )
 
-fun parseConf(): Conf {
+fun parseConf(): Conf? {
+
 	val f = File("./app.json")
 	return if (f.exists()) {
-		parseFileConf(f)
+		try {
+			parseFileConf(f)
+		} catch(e: SerializationException) {
+			println("Malformed file")
+			null
+		}
 	} else {
-		parseEnvConf()
+		try {
+			parseEnvConf()
+		} catch (_: NullPointerException) {
+			println("Misising configuration")
+			null
+		}
 	}
 }
 
@@ -100,17 +112,19 @@ private fun parseEnvConf() = Conf(
 	),
 )
 
-private fun parseEnvSMTPConv(): ConfSMTP? {
-	try {
-		val conf = ConfSMTP(
-			System.getenv("SMTP_URL"),
-			System.getenv("SMTP_PORT").toInt(),
-			System.getenv("SMTP_USERNAME"),
-			System.getenv("SMTP_PASSWORD"),
-			System.getenv("SMTP_SENDER"),
-		)
-		return conf
-	} catch (_: NullPointerException) {
-		return null
-	}
+private fun parseEnvSMTPConv(): ConfSMTP? = try {
+	val conf = ConfSMTP(
+		System.getenv("SMTP_URL"),
+		System.getenv("SMTP_PORT").toInt(),
+		System.getenv("SMTP_USERNAME"),
+		System.getenv("SMTP_PASSWORD"),
+		System.getenv("SMTP_SENDER"),
+	)
+	conf
+} catch (_: NullPointerException) {
+	println("Missing field in SMTP conf. Skipping")
+	null
+} catch (_: NumberFormatException) {
+	println("SMTP Port not integer")
+	null
 }

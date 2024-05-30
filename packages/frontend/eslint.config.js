@@ -21,6 +21,7 @@ export default [
       "prefer-object-spread": ["error"],
       "prefer-template": ["error"],
       "eol-last": ["error"],
+      "@typescript-eslint/no-explicit-any": ["off"]
     },
     files: ["src/**/*.{tsx,ts}"]
   },
@@ -45,7 +46,7 @@ export default [
       "@stylistic/js/function-call-spacing": ["error", "never"],
       "@stylistic/js/function-paren-newline": ["error", "multiline"],
       "@stylistic/js/generator-star-spacing": ["error", "before"],
-      "@stylistic/js/indent": ["off", "tab"],
+      "@stylistic/js/indent": ["error", "tab"],
       "@stylistic/js/jsx-quotes": ["error", "prefer-double"],
       "@stylistic/js/key-spacing": ["error", {beforeColon: false, afterColon: true, mode: "strict",}],
       "@stylistic/js/keyword-spacing": ["error", {before: true, after: true}],
@@ -82,7 +83,7 @@ export default [
       "@stylistic/jsx/jsx-curly-newline": ["error", "consistent"],
       "@stylistic/jsx/jsx-curly-spacing": ["error", {when: "always", children: true, allowMultiline: false, spacing: { objectLiterals: "never" }, attributes: false}],
       "@stylistic/jsx/jsx-first-prop-new-line": ["error", "multiline"],
-      "@stylistic/jsx/jsx-wrap-multilines": ["error", {return: "parens-new-line"}]
+      "@stylistic/jsx/jsx-wrap-multilines": ["off"]
     },
     files: ["src/**/*.tsx"],
   },

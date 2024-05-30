@@ -11,9 +11,7 @@ class Processor(
 ) : SymbolProcessor {
 	override fun process(resolver: Resolver): List<KSAnnotated> {
 		val sampleRaw = this::class.java.getResource("/reflect-config-sample.json")?.readText() ?: ""
-		val sample = sampleRaw.trim().let {
-			it.substring(1, it.length - 1)
-		}
+		val sample = sampleRaw.trim().trim('[', ']')
 		val ser = processSerializable(resolver)
 		val ent = processEntity(resolver)
 		val outStream = try {
