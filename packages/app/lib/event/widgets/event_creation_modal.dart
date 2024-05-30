@@ -4,8 +4,8 @@ import 'package:hollybike/event/widgets/event_discard_changes_dialog.dart';
 import 'package:hollybike/event/widgets/event_form.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
-import '../bloc/events_bloc.dart';
-import '../bloc/events_event.dart';
+import '../bloc/events_bloc/events_bloc.dart';
+import '../bloc/events_bloc/events_event.dart';
 
 class EventCreationModal extends StatefulWidget {
   const EventCreationModal({super.key});

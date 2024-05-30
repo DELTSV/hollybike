@@ -2,8 +2,6 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_details_bloc.dart';
-import 'package:hollybike/event/bloc/event_details_state.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
@@ -11,7 +9,9 @@ import 'package:hollybike/event/widgets/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../shared/widgets/app_toast.dart';
-import '../bloc/event_details_event.dart';
+import '../bloc/event_details_bloc/event_details_bloc.dart';
+import '../bloc/event_details_bloc/event_details_event.dart';
+import '../bloc/event_details_bloc/event_details_state.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {

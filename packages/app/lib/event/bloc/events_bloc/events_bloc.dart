@@ -1,12 +1,13 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/bloc/events_event.dart';
-import 'package:hollybike/event/bloc/events_state.dart';
 import 'package:hollybike/event/services/event_repository.dart';
 import 'package:hollybike/event/types/create_event.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+
+import 'events_event.dart';
+import 'events_state.dart';
 
 class EventsBloc extends Bloc<EventsEvent, EventsState> {
   final EventRepository eventRepository;
