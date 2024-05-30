@@ -128,7 +128,7 @@ class EventParticipationService(
 			Result.success(
 				EventParticipation.new {
 					user = caller
-					this.event = event
+					this.event = Event[eventId]
 					role = EEventRole.Member
 				}
 			)

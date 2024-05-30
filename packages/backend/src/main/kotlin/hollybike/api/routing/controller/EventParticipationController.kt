@@ -153,7 +153,7 @@ class EventParticipationController(
 	}
 
 	private fun Route.addUsersToEvent() {
-		post<Events.Id.Participations> { data ->
+		post<Events.Id.Participations.AddUsers> { data ->
 			val users = call.receive<TCreateParticipations>().userIds
 
 			if (users.isEmpty()) {
@@ -161,7 +161,7 @@ class EventParticipationController(
 				return@post
 			}
 
-			eventParticipationService.addParticipantsToEvent(call.user, data.eventId.id, users)
+			eventParticipationService.addParticipantsToEvent(call.user, data.participations.eventId.id, users)
 				.onSuccess { participations ->
 					call.respond(
 						HttpStatusCode.Created,

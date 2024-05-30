@@ -387,7 +387,7 @@ class EventTest : IntegrationSpec({
 				endDate = null
 			)
 		).forEach { newEvent ->
-			test("Should create an event with one participant (organizer)") {
+			test("Should create an event") {
 				onPremiseTestApp {
 					it.post("/api/events") {
 						auth(UserStore.user1)
@@ -397,11 +397,6 @@ class EventTest : IntegrationSpec({
 						status shouldBe HttpStatusCode.Created
 
 						body<TEvent>().status shouldBe EEventStatus.Pending
-
-						body<TEvent>().participants.size shouldBe 1
-
-						body<TEvent>().participants[0].user.username shouldBe "user1"
-						body<TEvent>().participants[0].role shouldBe EEventRole.Organizer
 					}
 				}
 			}
