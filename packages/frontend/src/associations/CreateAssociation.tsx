@@ -7,6 +7,8 @@ import {
 } from "../types/TNewAsso.ts";
 import { api } from "../utils/useApi.ts";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { TAssociation } from "../types/TAssociation.ts";
 
 export function CreateAssociation() {
 	const navigate = useNavigate();
@@ -23,12 +25,17 @@ export function CreateAssociation() {
 				/>
 				<Button
 					className={"col-span-2 justify-self-center"} onClick={() => {
-						api("/associations", {
+						api<TAssociation>("/associations", {
 							method: "POST",
 							body: newAsso,
 						}).then((res) => {
-							if (res.status === 201)
-								navigate(-1);
+							if (res.status === 201) {
+								toast("Association créer", { type: "success" });
+								navigate(`/associations/${res.data?.id}`);
+							} else if (res.status === 409)
+								toast(res.message, { type: "warning" });
+							else
+								toast(`Erreur: ${ res.message}`, { type: "error" });
 						});
 					}}
 				>

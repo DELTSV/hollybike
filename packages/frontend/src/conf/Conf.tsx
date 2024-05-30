@@ -12,6 +12,9 @@ import { ConfSMTP } from "./ConfSMTP.tsx";
 import { ConfS3 } from "./ConfS3.tsx";
 import { ConfFTP } from "./ConfFTP.tsx";
 import { ConfLocal } from "./ConfLocal.tsx";
+import { toast } from "react-toastify";
+import { TOnPremise } from "../types/TOnPremise.ts";
+import { useNavigate } from "react-router-dom";
 
 export interface ConfProps {
 	conf?: TConf
@@ -22,7 +25,14 @@ export interface ConfProps {
 export function Conf() {
 	const [reload, setReload] = useState(false);
 	const [conf, setConf] = useState<TConf>();
+	const onPremise = useApi<TOnPremise>("/on-premise");
 	const confAPI = useApi<TConf>("/conf", [reload]);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (onPremise.data?.is_on_premise === false)
+			navigate("/");
+	}, [onPremise, navigate]);
 
 	useEffect(() => {
 		setConf(confAPI.data);
@@ -48,9 +58,12 @@ export function Conf() {
 							method: "PUT",
 							body: conf,
 						},
-					).then(() => {
-						setReload(prev => !prev);
-						api("/restart", { method: "DELETE" });
+					).then((res) => {
+						if (res.status === 200) {
+							setReload(prev => !prev);
+							api("/restart", { method: "DELETE" });
+						} else
+							toast(`Erreur: ${res.message}`, { type: "error" });
 					});
 				}}
 			>

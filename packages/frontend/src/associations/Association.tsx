@@ -14,6 +14,7 @@ import { Input } from "../components/Input/Input.tsx";
 import { Select } from "../components/Select/Select.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import { useUser } from "../user/useUser.tsx";
+import { toast } from "react-toastify";
 
 export function Association() {
 	const { user } = useUser();
@@ -72,8 +73,8 @@ export function Association() {
 						}).then((res) => {
 							if (res.status === 200 && res.data)
 								setAssociationData(res.data);
-							else
-								console.log(res.message);
+							else if (res.status === 409)
+								toast("Ce nom d'association est déjà utilisé", { type: "warning" });
 						});
 					}}
 				>

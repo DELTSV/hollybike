@@ -16,6 +16,7 @@ import {
 } from "@material-ui/icons";
 import { TUserUpdate } from "../../types/TUserUpdate.ts";
 import { Select } from "../../components/Select/Select.tsx";
+import { toast } from "react-toastify";
 
 const emptyUser: TUser = {
 	id: -1,
@@ -129,10 +130,13 @@ export function UserDetail() {
 						method: "PATCH",
 						body: data,
 					}).then((res) => {
-						if (res.status === 200)
+						if (res.status === 200) {
 							doReload();
+							toast("L'utilisateur à été mis à jour");
+						} else if (res.status === 404)
+							toast(res.message, { type: "warning" });
 						else
-							console.log(res.message);
+							toast(`Erreur: ${res.message}`, { type: "error" });
 					});
 				}}
 			>

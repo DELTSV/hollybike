@@ -3,16 +3,21 @@ import { useUser } from "../user/useUser.tsx";
 import { useMemo } from "preact/hooks";
 import { useSideBar } from "./useSideBar.tsx";
 import { TAssociation } from "../types/TAssociation.ts";
+import { useApi } from "../utils/useApi.ts";
+import { TOnPremise } from "../types/TOnPremise.ts";
 
 export function SideBar() {
 	const { user } = useUser();
 	const { association } = useSideBar();
+	const onPremise = useApi<TOnPremise>("/on-premise");
+
+	console.log(onPremise);
 
 	const content = useMemo(() => {
 		if (user?.scope === "Root")
-			return rootMenu(association);
+			return rootMenu(association, onPremise.data?.is_on_premise ?? false);
 		 else
-			 return adminMenu(user?.association, false);
+			 return adminMenu(user?.association, false, onPremise.data?.is_on_premise ?? false);
 	}, [user, association]);
 
 	return (
@@ -25,8 +30,8 @@ export function SideBar() {
 	);
 }
 
-function adminMenu(association: TAssociation | undefined, root: boolean) {
-	return [
+function adminMenu(association: TAssociation | undefined, root: boolean, onPremise: boolean) {
+	const menus = [
 		<SideBarMenu to={`/associations/${association?.id}`}>
 			{ root ? association?.name :"Mon association" }
 		</SideBarMenu>,
@@ -37,9 +42,12 @@ function adminMenu(association: TAssociation | undefined, root: boolean) {
 			{ root ? `Invitations de ${association?.name}` : "Mes utilisateurs" }
 		</SideBarMenu>,
 	];
+	if (onPremise)
+		menus.push(<SideBarMenu to={"/conf"}>Configuration</SideBarMenu>);
+	return menus;
 }
 
-function rootMenu(association: TAssociation | undefined) {
+function rootMenu(association: TAssociation | undefined, onPremise: boolean) {
 	const menu = [
 		<SideBarMenu to={"/associations"}>
 			Associations
@@ -49,6 +57,6 @@ function rootMenu(association: TAssociation | undefined) {
 		</SideBarMenu>,
 	];
 	if (association !== undefined)
-		menu.push(...adminMenu(association, true));
+		menu.push(...adminMenu(association, true, onPremise));
 	return menu;
 }

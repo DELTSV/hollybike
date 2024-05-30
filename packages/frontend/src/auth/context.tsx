@@ -10,6 +10,7 @@ import {
 } from "preact/hooks";
 import { api } from "../utils/useApi.ts";
 import { useUser } from "../user/useUser.tsx";
+import { toast } from "react-toastify";
 
 type AuthContext = {
 	token?: string;
@@ -62,8 +63,10 @@ export const AuthContextProvider = ({ children }: Props) => {
 				localStorage.setItem("token", res.data!.token);
 				setToken(res.data!.token);
 				user.fetchUser();
-			} else
-				console.log(res.message);
+			} else if (res.status === 404)
+				toast(res.message, { type: "warning" });
+			else if (res.status === 401)
+				toast(res.message, { type: "warning" });
 		});
 	};
 

@@ -21,6 +21,8 @@ import { UserDetail } from "./user/userDetail/UserDetail.tsx";
 import { ListInvitations } from "./invitations/ListInvitations.tsx";
 import { CreateInvitation } from "./invitations/CreateInvitation.tsx";
 import { CreateAssociation } from "./associations/CreateAssociation.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -110,6 +112,7 @@ export function App() {
 			className={clsx(themeDark && "dark", "bg-slate-200 dark:bg-gray-900 w-screen h-screen" +
 				" text-slate-950 dark:text-slate-100")}
 		>
+			<ToastContainer stacked pauseOnHover={false} position={"top-right"} theme={themeDark ? "dark" : "light"}/>
 			<RouterProvider router={ router } />
 		</main>
 	);

@@ -11,6 +11,7 @@ import { api } from "../utils/useApi.ts";
 import { useReload } from "../utils/useReload.ts";
 import { useEffect } from "preact/hooks";
 import { TAssociation } from "../types/TAssociation.ts";
+import { toast } from "react-toastify";
 
 export function ListInvitations() {
 	const {
@@ -37,7 +38,7 @@ export function ListInvitations() {
 		<div className={"flex flex-col gap-2"}>
 			<Button className={"mx-2 self-start"} onClick={() => navigate("/invitations/new")}>Créer une invitation</Button>
 			<List
-				reload={reload}
+				reload={reload} filter={association !== undefined ? `association=eq:${association.id}` : ""}
 				columns={[
 					{
 						name: "Rôle",
@@ -85,8 +86,13 @@ export function ListInvitations() {
 						<LinkOff
 							className={"cursor-pointer"} onClick={() => {
 								api(`/invitation/${i.id}/disable`, { method: "PATCH" }).then((res) => {
-									if (res.status === 200)
+									if (res.status === 200) {
+										toast("Invitation désactivée", { type: "success" });
 										doReload();
+									} else if (res.status === 404)
+										toast(res.message, { type: "warning" });
+									else
+										toast(res.message, { type: "error" });
 								});
 							}}
 						/> }

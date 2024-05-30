@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { TInvitation } from "../types/TInvitation.ts";
 import { api } from "../utils/useApi.ts";
 import { Card } from "../components/Card/Card.tsx";
+import { toast } from "react-toastify";
 
 export function CreateInvitation() {
 	const { user } = useUser();
@@ -61,8 +62,12 @@ export function CreateInvitation() {
 						}).then((res) => {
 							if (res.status === 200)
 								navigate(-1);
-						 else
-								console.log(res.message);
+							else if (res.status === 404)
+								toast("L'association n'existe pas/plus", { type: "warning" });
+							else if (res.status === 409)
+								toast(res.message, { type: "warning" });
+							else
+								toast(res.message, { type: "error" });
 						});
 					}}
 				>
