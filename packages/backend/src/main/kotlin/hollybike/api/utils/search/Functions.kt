@@ -11,6 +11,8 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
@@ -21,7 +23,7 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 	val page = get("page")?.toIntOrNull() ?: 0
 	val perPage = get("per_page")?.toIntOrNull() ?: 20
 	val query = get("query")
-	val sort = getAll("sort")?.map {
+	val sort = getAll("sort")?.mapNotNull {
 		val (col, sort) = it.split(".")
 		if (col in mapper.keys) {
 			if (sort.uppercase() == "ASC") {
@@ -34,15 +36,24 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 		} else {
 			null
 		}
-	}?.filterNotNull() ?: emptyList()
+	} ?: emptyList()
 	val filter = mapper.asSequence().filter { (k, _) -> k in this }
 		.map { (k, v) ->
-			getAll(k)!!.map {
-				val (mode, value) = it.split(":", limit = 2)
+			getAll(k)!!.map allMap@{
+				val (mode, value) = if(':' in it) {
+					it.split(":", limit = 2).let { values -> values[0] to values[1] }
+				} else {
+					it to null
+				}
 				if (mode !in FilterMode) {
 					null
 				} else {
-					Filter(v, value, FilterMode[mode])
+					val filterMode = FilterMode[mode]
+					if(value == null && filterMode != FilterMode.IS_NULL && filterMode != FilterMode.IS_NOT_NULL) {
+						null
+					} else {
+						Filter(v, value, FilterMode[mode])
+					}
 				}
 			}
 		}.flatten().filterNotNull().toMutableList()
@@ -117,12 +128,14 @@ private fun Query.searchParamQuery(query: String): Op<Boolean>? {
 private fun searchParamFilter(filter: List<Filter>): Op<Boolean>? = filter
 	.mapNotNull {
 		when (it.mode) {
-			FilterMode.EQUAL -> it.column equal it.value
-			FilterMode.NOT_EQUAL -> it.column nEqual it.value
-			FilterMode.LOWER_THAN -> it.column lt it.value
-			FilterMode.GREATER_THAN -> it.column gt it.value
-			FilterMode.LESS_THAN_EQUAL -> it.column lte it.value
-			FilterMode.GREATER_THAN_EQUAL -> it.column gte it.value
+			FilterMode.EQUAL -> it.column equal it.value!!
+			FilterMode.NOT_EQUAL -> it.column nEqual it.value!!
+			FilterMode.LOWER_THAN -> it.column lt it.value!!
+			FilterMode.GREATER_THAN -> it.column gt it.value!!
+			FilterMode.LESS_THAN_EQUAL -> it.column lte it.value!!
+			FilterMode.GREATER_THAN_EQUAL -> it.column gte it.value!!
+			FilterMode.IS_NULL -> it.column.isNull()
+			FilterMode.IS_NOT_NULL -> it.column.isNotNull()
 		}
 	}.reduceOrNull { acc, v ->
 		acc and v

@@ -13,7 +13,7 @@ data class SearchParam(
 
 data class Filter(
 	val column: Column<out Any?>,
-	val value: String,
+	val value: String?,
 	val mode: FilterMode
 )
 
@@ -28,7 +28,9 @@ enum class FilterMode(val mode: String) {
 	LOWER_THAN("lt"),
 	GREATER_THAN("gt"),
 	LESS_THAN_EQUAL("lte"),
-	GREATER_THAN_EQUAL("gte");
+	GREATER_THAN_EQUAL("gte"),
+	IS_NULL("isnull"),
+	IS_NOT_NULL("isnotnull");
 
 	companion object {
 		operator fun get(mode: String): FilterMode = entries.find { it.mode == mode }!!
