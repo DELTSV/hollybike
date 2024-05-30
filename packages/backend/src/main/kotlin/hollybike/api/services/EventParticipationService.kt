@@ -86,6 +86,29 @@ class EventParticipationService(
 		}
 	}
 
+	fun updateUserImageVisibility(
+		caller: User,
+		eventId: Int,
+		isImagesPublic: Boolean
+	): Result<EventParticipation> =
+		transaction(db) {
+			val event = Event.find {
+				Events.id eq eventId and eventService.eventUserCondition(caller)
+			}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+
+			val participation = EventParticipation.find {
+				eventParticipationUserEventCondition(caller, event)
+			}.with(EventParticipation::user).firstOrNull()
+
+			if (participation == null) {
+				return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+			}
+
+			participation.isImagesPublic = isImagesPublic
+
+			Result.success(participation)
+		}
+
 	fun leaveEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
 		val event = Event.find {
 			Events.id eq eventId and eventService.eventUserCondition(caller)

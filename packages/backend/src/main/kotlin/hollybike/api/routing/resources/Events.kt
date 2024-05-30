@@ -40,7 +40,10 @@ class Events(val api: API = API()) {
 		class Pend(val pend: Id)
 
 		@Resource("participations")
-		class Participations(val participations: Id) {
+		class Participations(val eventId: Id) {
+			@Resource("images-visibility")
+			class ImagesVisibility(val participations: Participations)
+
 			@Resource("{userId}")
 			class User(val user: Participations, val userId: Int) {
 				@Resource("promote")

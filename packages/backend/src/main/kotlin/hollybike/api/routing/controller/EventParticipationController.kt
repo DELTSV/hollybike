@@ -7,11 +7,13 @@ import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.TEventParticipation
+import hollybike.api.types.event.TUpdateImagesVisibility
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
@@ -28,6 +30,7 @@ class EventParticipationController(
 		application.routing {
 			authenticate {
 				getParticipations()
+				updateImageVisibility()
 				participateEvent()
 				leaveEvent()
 				promoteParticipant()
@@ -42,7 +45,7 @@ class EventParticipationController(
 
 			val participations = eventParticipationService.getEventParticipations(
 				call.user,
-				data.participations.id,
+				data.eventId.id,
 				searchParam
 			).getOrElse {
 				eventParticipationService.handleEventExceptions(it, call)
@@ -51,7 +54,7 @@ class EventParticipationController(
 
 			val participationCount = eventParticipationService.getEventCount(
 				call.user,
-				data.participations.id
+				data.eventId.id
 			).getOrElse {
 				eventParticipationService.handleEventExceptions(it, call)
 				return@get
@@ -69,9 +72,25 @@ class EventParticipationController(
 		}
 	}
 
+	private fun Route.updateImageVisibility() {
+		patch<Events.Id.Participations.ImagesVisibility> { data ->
+			val update = call.receive<TUpdateImagesVisibility>()
+
+			eventParticipationService.updateUserImageVisibility(
+				call.user,
+				data.participations.eventId.id,
+				update.isImagesPublic
+			).onSuccess {
+				call.respond(TEventParticipation(it, storageService.signer.sign))
+			}.onFailure {
+				eventParticipationService.handleEventExceptions(it, call)
+			}
+		}
+	}
+
 	private fun Route.participateEvent() {
 		post<Events.Id.Participations> { data ->
-			eventParticipationService.participateEvent(call.user, data.participations.id).onSuccess {
+			eventParticipationService.participateEvent(call.user, data.eventId.id).onSuccess {
 				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer.sign))
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
@@ -81,7 +100,7 @@ class EventParticipationController(
 
 	private fun Route.leaveEvent() {
 		delete<Events.Id.Participations> { data ->
-			eventParticipationService.leaveEvent(call.user, data.participations.id).onSuccess {
+			eventParticipationService.leaveEvent(call.user, data.eventId.id).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
@@ -93,7 +112,7 @@ class EventParticipationController(
 		patch<Events.Id.Participations.User.Promote> { data ->
 			eventParticipationService.promoteParticipant(
 				call.user,
-				data.promote.user.participations.id,
+				data.promote.user.eventId.id,
 				data.promote.userId
 			)
 				.onSuccess {
@@ -108,7 +127,7 @@ class EventParticipationController(
 		patch<Events.Id.Participations.User.Demote> { data ->
 			eventParticipationService.demoteParticipant(
 				call.user,
-				data.demote.user.participations.id,
+				data.demote.user.eventId.id,
 				data.demote.userId
 			)
 				.onSuccess {
