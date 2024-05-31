@@ -55,9 +55,9 @@ class EventParticipationRepository {
     return pageResult;
   }
 
-  Future<PaginatedList<EventParticipation>> getParticipationsPreviewData(
-    int eventId,
+  Future<PaginatedList<EventParticipation>> fetchParticipationsPreviewData(
     AuthSession session,
+    int eventId,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,

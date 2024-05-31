@@ -22,3 +22,13 @@ class PublishEvent extends EventDetailsEvent {
 
   PublishEvent({required this.session, required this.eventId});
 }
+
+class GetEventParticipationsPreviewData extends EventDetailsEvent {
+  final AuthSession session;
+  final int eventId;
+
+  GetEventParticipationsPreviewData({
+    required this.session,
+    required this.eventId,
+  });
+}

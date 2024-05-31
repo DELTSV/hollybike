@@ -12,6 +12,7 @@ import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
+import '../widgets/event_participations_preview.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -156,7 +157,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               final Event event = state.event!;
 
               List<Widget> children = [
-                Text(event.startDate.toString()),
+                EventParticipationsPreview(
+                  event: event,
+                ),
               ];
 
               if (event.status == EventStatusState.pending) {

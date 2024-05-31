@@ -20,9 +20,11 @@ import 'package:intl/intl.dart';
 
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
+import 'event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'event/bloc/events_bloc/events_event.dart';
 import 'event/services/event/event_api.dart';
 import 'event/services/event/event_repository.dart';
+import 'event/services/event_participations/event_participation_api.dart';
 
 void main() {
   initializeDateFormatting("fr_FR")
@@ -56,6 +58,11 @@ class MyApp extends StatelessWidget {
               eventApi: EventApi(),
             ),
           ),
+          RepositoryProvider(
+            create: (context) => EventParticipationRepository(
+              eventParticipationsApi: EventParticipationsApi(),
+            ),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -82,6 +89,10 @@ class MyApp extends StatelessWidget {
               create: (context) => EventDetailsBloc(
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
+                eventParticipationRepository:
+                    RepositoryProvider.of<EventParticipationRepository>(
+                  context,
+                ),
               )..add(SubscribeToEvent()),
             ),
             BlocProvider<EventParticipationBloc>(
@@ -90,8 +101,7 @@ class MyApp extends StatelessWidget {
                           RepositoryProvider.of<EventParticipationRepository>(
                         context,
                       ),
-                    ) // ..add(SubscribeToEvent()),
-                ),
+                    )..add(SubscribeToEventParticipations())),
           ],
           child: RepositoryProvider<AuthSessionRepository>(
             create: (context) => AuthSessionRepository(

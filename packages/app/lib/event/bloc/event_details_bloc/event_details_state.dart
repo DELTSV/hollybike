@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hollybike/event/types/event.dart';
 
+import '../../types/event_participation.dart';
+
 enum EventDetailsStatus { loading, success, error, initial }
 
 @immutable
@@ -74,6 +76,37 @@ class EventOperationFailure extends EventDetailsState {
   final String errorMessage;
 
   EventOperationFailure(EventDetailsState state, {required this.errorMessage})
+      : super(
+          event: state.event,
+          status: EventDetailsStatus.error,
+        );
+}
+
+class EventParticipationsPreviewLoadInProgress extends EventDetailsState {
+  EventParticipationsPreviewLoadInProgress(EventDetailsState state)
+      : super(
+          event: state.event,
+          status: EventDetailsStatus.loading,
+        );
+}
+
+class EventParticipationsPreviewLoadSuccess extends EventDetailsState {
+  final List<EventParticipation> participants;
+  final int remainingParticipants;
+
+  EventParticipationsPreviewLoadSuccess(EventDetailsState state,
+      {required this.participants, required this.remainingParticipants})
+      : super(
+          event: state.event,
+          status: EventDetailsStatus.success,
+        );
+}
+
+class EventParticipationsPreviewLoadFailure extends EventDetailsState {
+  final String errorMessage;
+
+  EventParticipationsPreviewLoadFailure(EventDetailsState state,
+      {required this.errorMessage})
       : super(
           event: state.event,
           status: EventDetailsStatus.error,
