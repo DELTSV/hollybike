@@ -294,11 +294,11 @@ class AssociationController(
 				call.respond(HttpStatusCode.NotFound, "Association inconnue")
 				return@get
 			}
-			val count = invitationService.getAllCount(call.user, association, searchParam) ?: run {
+			val count = invitationService.getAllByAssociationCount(call.user, association, searchParam) ?: run {
 				call.respond(HttpStatusCode.Forbidden)
 				return@get
 			}
-			invitationService.getAll(call.user, association, searchParam).onSuccess { invitations ->
+			invitationService.getAllByAssociation(call.user, association, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
 						TInvitation(i, authService.generateLink(call.user, host, i))

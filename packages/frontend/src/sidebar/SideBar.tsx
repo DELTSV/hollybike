@@ -11,8 +11,6 @@ export function SideBar() {
 	const { association } = useSideBar();
 	const onPremise = useApi<TOnPremise>("/on-premise");
 
-	console.log(onPremise);
-
 	const content = useMemo(() => {
 		if (user?.scope === "Root")
 			return rootMenu(association, onPremise.data?.is_on_premise ?? false);
@@ -39,7 +37,7 @@ function adminMenu(association: TAssociation | undefined, root: boolean, onPremi
 			{ root ? `Utilisateurs de ${association?.name}` : "Mes utilisateurs" }
 		</SideBarMenu>,
 		<SideBarMenu to={`/associations/${association?.id}/invitations`}>
-			{ root ? `Invitations de ${association?.name}` : "Mes utilisateurs" }
+			{ root ? `Invitations de ${association?.name}` : "Mes Invitations" }
 		</SideBarMenu>,
 	];
 	if (onPremise)
@@ -54,6 +52,9 @@ function rootMenu(association: TAssociation | undefined, onPremise: boolean) {
 		</SideBarMenu>,
 		<SideBarMenu to={"/users"}>
 			Utilisateurs
+		</SideBarMenu>,
+		<SideBarMenu to={"/invitations"}>
+			Invitations
 		</SideBarMenu>,
 	];
 	if (association !== undefined)

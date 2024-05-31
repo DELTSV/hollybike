@@ -5,8 +5,9 @@ import {
 import { ArrowDropDown } from "@material-ui/icons";
 import { clsx } from "clsx";
 import { useRef } from "react";
+import { Input } from "../Input/Input.tsx";
 
-interface Option {
+export interface Option {
 	value: string | number,
 	name: string
 }
@@ -17,7 +18,9 @@ interface SelectProps {
 	default?: string | number,
 	value?: string | number,
 	onChange?: (value: string | number | undefined) => void,
-	disabled?: boolean
+	disabled?: boolean,
+	searchable?: boolean,
+	searchPlaceHolder?: string
 }
 
 let selectCount = 1000;
@@ -31,13 +34,15 @@ export function Select(props: SelectProps) {
 	const [text, setText] = useState(props.placeholder);
 
 	const [visible, setVisible] = useState(false);
+
+	const [search, setSearch] = useState("");
+
 	const container = useRef<HTMLDivElement>(null);
 
 	const handleOut = useCallback((e: MouseEvent) => {
 		if (
 			container.current &&
-			!container.current.contains(e.target as Node) &&
-			container.current
+			!container.current.contains(e.target as Node)
 		)
 			setVisible(false);
 	}, [container, setVisible]);
@@ -61,6 +66,17 @@ export function Select(props: SelectProps) {
 		};
 	}, [handleOut]);
 
+	const filteredOptions = useMemo(() => {
+		if (props.searchable)
+			return props.options.filter(o => o.name.toLowerCase().includes(search.toLowerCase()));
+		 else
+			return props.options;
+	}, [
+		props.options,
+		search,
+		props.searchable,
+	]);
+
 	return (
 		<div
 			className={clsx(
@@ -70,7 +86,9 @@ export function Select(props: SelectProps) {
 					"border-slate-300 text-slate-300 dark:border-slate-600 dark:text-slate-600 cursor-default" :
 					"border-slate-950 dark:border-slate-700 cursor-pointer",
 			)}
-			onClick={() => setVisible(true)} ref={container}
+			onClick={() => {
+				setVisible(prev => !prev);
+			}} ref={container}
 			style={`z-index: ${id}`}
 		>
 			<p>{ text }</p>
@@ -80,13 +98,16 @@ export function Select(props: SelectProps) {
 					className={"absolute top-full -left-0.5 bg-slate-100 dark:bg-slate-800 " +
 					"w-[calc(100%+4px)] border-2 border-slate-950 dark:border-slate-700 rounded-b"}
 				>
-					{ props.options.map(o =>
+					{ props.searchable && <Input value={search} onInput={e => setSearch(e.currentTarget.value)}/> }
+					{ filteredOptions.map(o =>
 						<p
 							className={"p-2 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900"}
-							onClick={() => {
+							onClick={(e) => {
 								props.onChange && props.onChange(o.value);
 								setVisible(false);
 								setText(o.name);
+								e.preventDefault();
+								e.stopPropagation();
 							}}
 						>
 							{ o.name }

@@ -102,7 +102,39 @@ class InvitationService(
 		} ?: return Result.failure(InvitationNotFoundException())
 	}
 
-	fun getAll(caller: User, association: Association, searchParam: SearchParam): Result<List<Invitation>> {
+	fun getAll(caller: User, searchParam: SearchParam): Result<List<Invitation>> {
+		if(caller.scope != EUserScope.Root) {
+			return Result.failure(NotAllowedException())
+		}
+		val invitations = transaction(db) {
+			Invitation.wrapRows(
+				Invitations
+					.innerJoin(Associations, { association }, { Associations.id })
+					.innerJoin(Users, { creator }, { Users.id })
+					.selectAll()
+					.applyParam(searchParam)
+			).with(Invitation::association).toList()
+		}
+		return Result.success(invitations)
+	}
+
+	fun getAllCount(caller: User, searchParam: SearchParam): Long? {
+		if(caller.scope != EUserScope.Root) {
+			return null
+		}
+		return transaction(db){
+			Invitations
+				.innerJoin(Associations, { this.association }, { Associations.id })
+				.innerJoin(Users, { creator }, { Users.id })
+				.selectAll()
+				.applyParam(searchParam)
+				.count()
+		}
+	}
+
+
+
+	fun getAllByAssociation(caller: User, association: Association, searchParam: SearchParam): Result<List<Invitation>> {
 		if ((caller.scope == EUserScope.Admin && association.id != caller.association.id)) {
 			return Result.failure(NotAllowedException())
 		}
@@ -122,7 +154,7 @@ class InvitationService(
 		return Result.success(invitations)
 	}
 
-	fun getAllCount(caller: User, association: Association, searchParam: SearchParam): Long? {
+	fun getAllByAssociationCount(caller: User, association: Association, searchParam: SearchParam): Long? {
 		if ((caller.scope == EUserScope.Admin && association.id != caller.association.id)) {
 			return null
 		}
@@ -132,6 +164,7 @@ class InvitationService(
 				.innerJoin(Users, { creator }, { Users.id })
 				.selectAll()
 				.applyParam(searchParam)
+				.andWhere { Associations.id eq association.id }
 				.count()
 		}
 	}

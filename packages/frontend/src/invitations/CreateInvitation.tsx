@@ -1,13 +1,23 @@
-import { useState } from "preact/hooks";
+import {
+	useEffect,
+	useMemo, useState,
+} from "preact/hooks";
 import { TInvitationCreation } from "../types/TInvitationCreation.ts";
 import { Input } from "../components/Input/Input.tsx";
 import { useUser } from "../user/useUser.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import { useNavigate } from "react-router-dom";
 import { TInvitation } from "../types/TInvitation.ts";
-import { api } from "../utils/useApi.ts";
+import {
+	api, useApi,
+} from "../utils/useApi.ts";
 import { Card } from "../components/Card/Card.tsx";
 import { toast } from "react-toastify";
+import {
+	Option, Select,
+} from "../components/Select/Select.tsx";
+import { TAssociation } from "../types/TAssociation.ts";
+import { TList } from "../types/TList.ts";
 
 export function CreateInvitation() {
 	const { user } = useUser();
@@ -15,6 +25,20 @@ export function CreateInvitation() {
 	const [invitation, setInvitation] = useState<TInvitationCreation>({ role: "User" });
 
 	const navigate = useNavigate();
+
+	const [total, setTotal] = useState(20);
+
+	const associations = useApi<TList<TAssociation>>(`/associations?per_page=${total}`);
+
+	const options: Option[] | undefined = useMemo(() => associations.data?.data?.map(a => ({
+		name: a.name,
+		value: a.id,
+	})), [associations]);
+
+	useEffect(() => {
+		if (associations.data?.total_data !== undefined)
+			setTotal(associations.data?.total_data);
+	}, [associations.data?.total_data]);
 
 	return (
 		<div className={"mx-2"}>
@@ -46,12 +70,7 @@ export function CreateInvitation() {
 				{ user?.scope === "Root" &&
 				<>
 					<p>Association</p>
-					<Input
-						value={invitation.association?.toString() ?? ""} onInput={e => setInvitation(prev => ({
-							...prev,
-							association: e.currentTarget.value === "" ? undefined : parseInt(e.currentTarget.value),
-						}))}
-					/>
+					<Select options={options ?? []} searchable={(associations.data?.total_data ?? 0) > 5}/>
 				</> }
 				<Button
 					className={"col-span-2 justify-self-center"}

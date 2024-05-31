@@ -44,7 +44,7 @@ class InvitationController(
 	}
 
 	private fun Route.getAll() {
-		get<Invitation>(EUserScope.Admin) {
+		get<Invitation>(EUserScope.Root) {
 			val searchParam = call.request.queryParameters.getSearchParam(invitationMapper)
 			val host = call.request.headers["Host"]
 
@@ -53,11 +53,11 @@ class InvitationController(
 				return@get
 			}
 
-			val count = invitationService.getAllCount(call.user, call.user.association, searchParam) ?: run {
+			val count = invitationService.getAllCount(call.user, searchParam) ?: run {
 				call.respond(HttpStatusCode.Forbidden)
 				return@get
 			}
-			invitationService.getAll(call.user, call.user.association, searchParam).onSuccess { invitations ->
+			invitationService.getAll(call.user, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
 						TInvitation(i, authService.generateLink(call.user, host, i))
@@ -75,8 +75,10 @@ class InvitationController(
 				)
 				)
 			}.onFailure { e ->
+				println(e)
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
 			}
 		}

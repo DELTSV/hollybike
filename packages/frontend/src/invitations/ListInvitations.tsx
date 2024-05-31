@@ -9,7 +9,9 @@ import {
 import { LinkOff } from "@material-ui/icons";
 import { api } from "../utils/useApi.ts";
 import { useReload } from "../utils/useReload.ts";
-import { useEffect } from "preact/hooks";
+import {
+	useEffect, useMemo,
+} from "preact/hooks";
 import { TAssociation } from "../types/TAssociation.ts";
 import { toast } from "react-toastify";
 
@@ -33,6 +35,12 @@ export function ListInvitations() {
 	} = useReload();
 
 	const navigate = useNavigate();
+
+	const url = useMemo(
+		() =>
+			id !== undefined ? `/associations/${association?.id}/invitations` : "/invitation"
+		, [],
+	);
 
 	return (
 		<div className={"flex flex-col gap-2"}>
@@ -65,7 +73,7 @@ export function ListInvitations() {
 						id: "",
 					},
 				]}
-				baseUrl={`/associations/${association?.id}/invitations`} line={(i: TInvitation) => [
+				baseUrl={url} line={(i: TInvitation) => [
 					<Cell>
 						{ i.role }
 					</Cell>,
