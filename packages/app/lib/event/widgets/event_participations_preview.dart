@@ -12,27 +12,31 @@ class EventParticipationsPreview extends StatefulWidget {
   const EventParticipationsPreview({super.key, required this.event});
 
   @override
-  State<EventParticipationsPreview> createState() => _EventParticipationsPreviewState();
+  State<EventParticipationsPreview> createState() =>
+      _EventParticipationsPreviewState();
 }
 
-class _EventParticipationsPreviewState extends State<EventParticipationsPreview> {
+class _EventParticipationsPreviewState
+    extends State<EventParticipationsPreview> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventParticipationBloc, EventParticipationsState>(builder: (context, state) {
-      if (state is EventParticipationsPreviewLoadInProgress) {
-        return Container();
-      }
+    return BlocBuilder<EventParticipationBloc, EventParticipationsState>(
+      builder: (context, state) {
+        if (state is EventParticipationsPreviewLoadInProgress) {
+          return Container();
+        }
 
-      if (state is EventParticipationsPreviewLoadFailure) {
-        return Container();
-      }
+        if (state is EventParticipationsPreviewLoadFailure) {
+          return Container();
+        }
 
-      return Row(
-        children: [
-          Text('Participants: ${state.participants.length}'),
-          Text('Remaining participants: ${state}'),
-        ],
-      );
-    });
+        return Row(
+          children: [
+            Text('Participants: ${state.participants.length}'),
+            Text('Remaining participants: ${state}'),
+          ],
+        );
+      },
+    );
   }
 }
