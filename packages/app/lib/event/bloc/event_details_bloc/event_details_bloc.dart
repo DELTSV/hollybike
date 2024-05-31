@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/services/event_repository.dart';
 import 'package:hollybike/event/types/event.dart';
 
+import '../../services/event/event_repository.dart';
 import 'event_details_event.dart';
 import 'event_details_state.dart';
 

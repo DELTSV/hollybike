@@ -3,8 +3,9 @@ import 'package:hollybike/event/types/create_event.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
-import '../types/event.dart';
-import '../types/minimal_event.dart';
+
+import '../../types/event.dart';
+import '../../types/minimal_event.dart';
 import 'event_api.dart';
 
 class EventRepository {

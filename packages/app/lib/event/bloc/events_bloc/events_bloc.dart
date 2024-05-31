@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/services/event_repository.dart';
 import 'package:hollybike/event/types/create_event.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
+import '../../services/event/event_repository.dart';
 import 'events_event.dart';
 import 'events_state.dart';
 
@@ -13,7 +13,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
   final EventRepository eventRepository;
   final int numberOfEventsPerRequest = 10;
 
-  EventsBloc({required this.eventRepository}) : super(const EventsState()) {
+  EventsBloc({required this.eventRepository}) : super(EventInitial()) {
     on<SubscribeToEvents>(_onSubscribeToEvents);
     on<LoadEventsNextPage>(_onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);

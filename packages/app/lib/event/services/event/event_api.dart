@@ -2,9 +2,9 @@ import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
-import '../../auth/types/auth_session.dart';
-import '../types/create_event.dart';
-import '../types/event.dart';
+import '../../../auth/types/auth_session.dart';
+import '../../types/create_event.dart';
+import '../../types/event.dart';
 
 class EventApi {
   Future<PaginatedList<MinimalEvent>> getEvents(
