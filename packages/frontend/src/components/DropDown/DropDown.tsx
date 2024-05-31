@@ -1,10 +1,10 @@
-import {ComponentChildren} from "preact";
+import { ComponentChildren } from "preact";
 import {
 	useEffect, useState,
 } from "preact/hooks";
-import {useRef} from "react";
+import { useRef } from "react";
 import style from "./DropDown.module.css";
-import {KeyboardArrowDown} from "@material-ui/icons";
+import { KeyboardArrowDown } from "@material-ui/icons";
 
 interface DropDownProps {
 	children: ComponentChildren,
@@ -25,7 +25,7 @@ export function DropDown({
 			setVisible(false);
 			setIsClosing(false);
 		}, 300);
-	}
+	};
 
 	useEffect(() => {
 		const handleOut = (e: MouseEvent) => {
@@ -49,12 +49,13 @@ export function DropDown({
 			onClick={() => visible ? close() : setVisible(true)}
 		>
 			<header className={style.button}>
-				<p>{text}</p>
+				<p>{ text }</p>
 				<KeyboardArrowDown/>
 			</header>
 			<section
-				className={`${style.itemsList} ${isClosing && visible ? style.closing : ""} ${!visible ? style.closed : ""}`}>
-				{children}
+				className={`${style.itemsList} ${isClosing && visible ? style.closing : ""} ${!visible ? style.closed : ""}`}
+			>
+				{ children }
 			</section>
 		</section>
 	);
@@ -66,14 +67,16 @@ interface DropDownElementProps {
 	onClick?: (e: MouseEvent) => void,
 }
 
-export function DropDownElement({onClick, children, animationOrder}: DropDownElementProps) {
+export function DropDownElement({
+	onClick, children, animationOrder,
+}: DropDownElementProps) {
 	return (
 		<section
 			class={style.item}
 			style={`transition-delay: ${(animationOrder ?? 0) * 0.1 + 0.2}s;`}
 			onClick={onClick}
 		>
-			{children}
+			{ children }
 		</section>
 	);
 }
