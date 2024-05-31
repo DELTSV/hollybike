@@ -4,6 +4,7 @@ import {
 } from "preact/hooks";
 import {useRef} from "react";
 import style from "./DropDown.module.css";
+import {KeyboardArrowDown} from "@material-ui/icons";
 
 interface DropDownProps {
 	children: ComponentChildren,
@@ -49,6 +50,7 @@ export function DropDown({
 		>
 			<header className={style.button}>
 				<p>{text}</p>
+				<KeyboardArrowDown/>
 			</header>
 			<section
 				className={`${style.itemsList} ${isClosing && visible ? style.closing : ""} ${!visible ? style.closed : ""}`}>
@@ -66,11 +68,12 @@ interface DropDownElementProps {
 
 export function DropDownElement({onClick, children, animationOrder}: DropDownElementProps) {
 	return (
-		<div
+		<section
+			class={style.item}
 			style={`transition-delay: ${(animationOrder ?? 0) * 0.1 + 0.2}s;`}
 			onClick={onClick}
 		>
 			{children}
-		</div>
+		</section>
 	);
 }
