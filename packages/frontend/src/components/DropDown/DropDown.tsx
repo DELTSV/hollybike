@@ -1,29 +1,41 @@
-import { ComponentChildren } from "preact";
+import {ComponentChildren} from "preact";
 import {
 	useEffect, useState,
 } from "preact/hooks";
-import { useRef } from "react";
-import { Card } from "../Card/Card.tsx";
-import { Button } from "../Button/Button.tsx";
+import {useRef} from "react";
+import style from "./DropDown.module.css";
+import {KeyboardArrowDown} from "@material-ui/icons";
 
 interface DropDownProps {
 	children: ComponentChildren,
 	text: ComponentChildren
 }
 
-export function DropDown(props: DropDownProps) {
+export function DropDown({
+							 text,
+							 children,
+						 }: DropDownProps) {
 	const [visible, setVisible] = useState(false);
-	const container = useRef<HTMLDivElement>(null);
+	const [isClosing, setIsClosing] = useState(false);
+	const dropdown = useRef<HTMLDivElement>(null);
 
-	const handleOut = (e: MouseEvent) => {
-		if (
-			container.current &&
-			!container.current.contains(e.target as Node) &&
-			container.current
-		)
+	const close = () => {
+		setIsClosing(true);
+		setTimeout(() => {
 			setVisible(false);
-	};
+			setIsClosing(false);
+		}, 300);
+	}
+
 	useEffect(() => {
+		const handleOut = (e: MouseEvent) => {
+			if (
+				dropdown.current &&
+				!dropdown.current.contains(e.target as Node) &&
+				dropdown.current
+			) close();
+		};
+
 		document.addEventListener("mousedown", handleOut);
 		return () => {
 			document.removeEventListener("mousedown", handleOut);
@@ -31,34 +43,37 @@ export function DropDown(props: DropDownProps) {
 	}, []);
 
 	return (
-		<div className={"relative"} ref={container}>
-			<Button onClick={() => setVisible(prev => !prev)}>{ props.text }</Button>
-			{ visible &&
-				<Card className={"flex flex-col absolute top-full left-1/2 -translate-x-1/2"}>
-					{ props.children }
-				</Card> }
-		</div>
-	);
-}
-
-export function Divider() {
-	return (
-		<div className={"h-0.5 bg-slate-200 dark:bg-slate-600"}/>
+		<section
+			ref={dropdown}
+			className={style.dropdown}
+			onClick={() => visible ? close() : setVisible(true)}
+		>
+			<header className={style.button}>
+				<p>{text}</p>
+				<KeyboardArrowDown/>
+			</header>
+			<section
+				className={`${style.itemsList} ${isClosing && visible ? style.closing : ""} ${!visible ? style.closed : ""}`}>
+				{children}
+			</section>
+		</section>
 	);
 }
 
 interface DropDownElementProps {
 	children: ComponentChildren,
-	onClick?: (e: MouseEvent) => void
+	animationOrder?: number,
+	onClick?: (e: MouseEvent) => void,
 }
 
-export function DropDownElement(props: DropDownElementProps) {
+export function DropDownElement({onClick, children, animationOrder}: DropDownElementProps) {
 	return (
-		<div
-			className={"p-2 text-center cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 rounded"}
-			onClick={props.onClick}
+		<section
+			class={style.item}
+			style={`transition-delay: ${(animationOrder ?? 0) * 0.1 + 0.2}s;`}
+			onClick={onClick}
 		>
-			{ props.children }
-		</div>
+			{children}
+		</section>
 	);
 }
