@@ -301,9 +301,9 @@ class AssociationController(
 			invitationService.getAllByAssociation(call.user, association, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
-						TInvitation(i, authService.generateLink(call.user, host, i))
+						TInvitation(i, storageService.signer.sign, authService.generateLink(call.user, host, i))
 					} else {
-						TInvitation(i)
+						TInvitation(i, storageService.signer.sign)
 					}
 				}
 				call.respond(TLists(

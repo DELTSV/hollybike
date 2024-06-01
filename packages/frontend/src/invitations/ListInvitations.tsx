@@ -4,6 +4,7 @@ import { List } from "../components/List/List.tsx";
 import { Cell } from "../components/List/Cell.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import {
+	Link,
 	useNavigate, useParams,
 } from "react-router-dom";
 import {
@@ -88,12 +89,18 @@ export function ListInvitations() {
 						id: "expiration",
 					},
 					{
+						name: "Association",
+						id: "association",
+						visible: id === undefined,
+					},
+					{
 						name: "Lien",
 						id: "link",
 					},
 					{
 						name: "Désactiver",
 						id: "",
+						width: "150px",
 					},
 				]}
 				baseUrl={url} line={(i: TInvitation) => [
@@ -109,6 +116,11 @@ export function ListInvitations() {
 					<Cell>
 						{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
 							`${ timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
+					</Cell>,
+					<Cell>
+						<Link to={`/associations/${ i.association.id}`}>
+							{ i.association.name }
+						</Link>
 					</Cell>,
 					<Cell className={"flex"}>
 						{ i.link !== undefined &&

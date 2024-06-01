@@ -9,6 +9,7 @@ import hollybike.api.repository.invitationMapper
 import hollybike.api.routing.resources.Invitation
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
@@ -30,7 +31,8 @@ import kotlin.math.ceil
 class InvitationController(
 	application: Application,
 	private val authService: AuthService,
-	private val invitationService: InvitationService
+	private val invitationService: InvitationService,
+	private val storageService: StorageService,
 ) {
 	init {
 		application.routing {
@@ -60,9 +62,9 @@ class InvitationController(
 			invitationService.getAll(call.user, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
-						TInvitation(i, authService.generateLink(call.user, host, i))
+						TInvitation(i, storageService.signer.sign, authService.generateLink(call.user, host, i))
 					} else {
-						TInvitation(i)
+						TInvitation(i, storageService.signer.sign)
 					}
 				}
 				call.respond(
@@ -107,7 +109,7 @@ class InvitationController(
 				invitationCreation.maxUses,
 				invitationCreation.expiration
 			).onSuccess {
-				call.respond(TInvitation(it, authService.generateLink(call.user, host, it)))
+				call.respond(TInvitation(it, storageService.signer.sign, authService.generateLink(call.user, host, it)))
 			}.onFailure {
 				when(it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
@@ -132,7 +134,7 @@ class InvitationController(
 			}
 
 			invitationService.disableInvitation(call.user, it.id.id).onSuccess {  i ->
-				call.respond(TInvitation(i))
+				call.respond(TInvitation(i, storageService.signer.sign))
 			}.onFailure {  e ->
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)

@@ -16,7 +16,8 @@ interface HeadProps {
 	className?: string,
 	sortable?: boolean,
 	sort?: Sort,
-	setSortOrder?: (order: "asc" | "desc" | "none") => void
+	setSortOrder?: (order: "asc" | "desc" | "none") => void,
+	width?: string
 }
 
 export function Head(props: HeadProps) {
@@ -38,6 +39,7 @@ export function Head(props: HeadProps) {
 			className={
 				clsx("text-center px-2 py-1", props.sortable && props.sort && props.setSortOrder && "cursor-pointer")
 			} onClick={onClick}
+			style={{ width: props.width ?? "auto" }}
 		>
 			{ props.children }
 			{ props.sortable &&

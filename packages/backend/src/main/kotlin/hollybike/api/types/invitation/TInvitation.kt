@@ -1,6 +1,7 @@
 package hollybike.api.types.invitation
 
 import hollybike.api.repository.Invitation
+import hollybike.api.types.association.TAssociation
 import hollybike.api.types.user.EUserScope
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
@@ -16,9 +17,10 @@ data class TInvitation(
 	val uses: Int,
 	@SerialName("max_uses")
 	val maxUses: Int?,
+	val association: TAssociation,
 	val link: String? = null
 ) {
-	constructor(invitation: Invitation, link: String? = null) : this(
+	constructor(invitation: Invitation, signer: (String) -> String, link: String? = null) : this(
 		invitation.id.value,
 		invitation.role,
 		invitation.status,
@@ -26,6 +28,7 @@ data class TInvitation(
 		invitation.creation,
 		invitation.uses,
 		invitation.maxUses,
+		TAssociation(invitation.association, signer),
 		link
 	)
 }

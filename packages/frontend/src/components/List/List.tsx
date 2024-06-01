@@ -95,25 +95,29 @@ export function List<T>(props: ListProps<T>) {
 				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
 				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
 			/>
-			<table className={"rounded bg-slate-100 dark:bg-slate-800"}>
+			<table className={"rounded bg-slate-100 dark:bg-slate-800 table-fixed"}>
 				<thead>
 					<tr>
 						{ props.columns.map((c) => {
 							const sortColumn = sort[c.id];
-							return (
-								<Head
-									sortable={sortColumn !== undefined}
-									sort={sortColumn}
-									setSortOrder={setOrder(c.id)}
-								>
-									{ c.name }
-								</Head>
-							);
+							if (c.visible !== false)
+								return (
+									<Head
+										sortable={sortColumn !== undefined}
+										sort={sortColumn}
+										setSortOrder={setOrder(c.id)}
+										width={c.width}
+									>
+										{ c.name }
+									</Head>
+								);
+							else
+								return null;
 						}) }
 					</tr>
 				</thead>
 				<tbody>
-					{ data.data?.data?.map(d => <tr className={"border-t-2 border-slate-600"}>{ props.line(d) }</tr>) }
+					{ data.data?.data?.map(d => <tr className={"border-t-2 border-slate-600"}>{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }</tr>) }
 				</tbody>
 			</table>
 			<div className={"flex items-center gap-4"}>
@@ -137,7 +141,9 @@ export function List<T>(props: ListProps<T>) {
 
 interface Columns {
 	name: string,
-	id: string
+	id: string,
+	width?: string,
+	visible?: boolean
 }
 
 interface TMetaData {
