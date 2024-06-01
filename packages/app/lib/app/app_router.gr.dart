@@ -61,6 +61,7 @@ abstract class $AppRouter extends _i7.RootStackRouter {
         child: _i5.LoginScreen(
           key: args.key,
           onAuthSuccess: args.onAuthSuccess,
+          canPop: args.canPop,
         ),
       );
     },
@@ -174,12 +175,14 @@ class LoginRoute extends _i7.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     _i8.Key? key,
     required dynamic Function() onAuthSuccess,
+    bool canPop = false,
     List<_i7.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
             key: key,
             onAuthSuccess: onAuthSuccess,
+            canPop: canPop,
           ),
           initialChildren: children,
         );
@@ -194,15 +197,18 @@ class LoginRouteArgs {
   const LoginRouteArgs({
     this.key,
     required this.onAuthSuccess,
+    this.canPop = false,
   });
 
   final _i8.Key? key;
 
   final dynamic Function() onAuthSuccess;
 
+  final bool canPop;
+
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, onAuthSuccess: $onAuthSuccess}';
+    return 'LoginRouteArgs{key: $key, onAuthSuccess: $onAuthSuccess, canPop: $canPop}';
   }
 }
 

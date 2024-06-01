@@ -13,15 +13,22 @@ import '../types/form_field_config.dart';
 @RoutePage()
 class LoginScreen extends StatelessWidget {
   final Function() onAuthSuccess;
+  final bool canPop;
 
   const LoginScreen({
     super.key,
     required this.onAuthSuccess,
+    this.canPop = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: canPop ? FloatingActionButton.small(
+        onPressed: () => context.router.maybePop(),
+        child: const Icon(Icons.arrow_back),
+      ): null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state.currentSession != null) onAuthSuccess.call();
