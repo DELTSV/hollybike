@@ -50,12 +50,12 @@ export function InputCalendar(props: CalendarProps) {
 	);
 }
 
-function dateToFrenchString(date: Date): string {
+export function dateToFrenchString(date: Date): string {
 	return `${formatDateTimeComponent(date.getDate())}/${formatDateTimeComponent(date.getMonth() + 1)}` +
 		`/${date.getFullYear()}`;
 }
 
-function timeToFrenchString(date: Date, seconds: boolean): string {
+export function timeToFrenchString(date: Date, seconds: boolean): string {
 	if (seconds)
 		return `${formatDateTimeComponent(date.getHours())}:${formatDateTimeComponent(date.getMinutes())}:` +
 			`${formatDateTimeComponent(date.getSeconds())}`;

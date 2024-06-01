@@ -14,6 +14,9 @@ import {
 } from "preact/hooks";
 import { TAssociation } from "../types/TAssociation.ts";
 import { toast } from "react-toastify";
+import {
+	dateToFrenchString, timeToFrenchString,
+} from "../components/Calendar/InputCalendar.tsx";
 
 export function ListInvitations() {
 	const {
@@ -84,7 +87,8 @@ export function ListInvitations() {
 						{ i.max_uses !== null ? i.max_uses : "Infini" }
 					</Cell>,
 					<Cell>
-						{ i.expiration !== null ? i.expiration : "Jamais" }
+						{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
+							`${ timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
 					</Cell>,
 					<Cell>
 						<a>{ i.link }</a>
