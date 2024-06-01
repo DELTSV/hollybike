@@ -48,7 +48,7 @@ class SignupLinkDialog extends StatelessWidget {
                       width: 30,
                       color: Colors.green,
                     ),
-                  ],Divider(thickness: 20,)),
+                  ],const Divider(thickness: 20,)),
                 ),
               ),
             ),

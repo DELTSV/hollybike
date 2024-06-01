@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/types/field_focus_node.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
