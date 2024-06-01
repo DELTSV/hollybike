@@ -1,22 +1,18 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/shared/widgets/app_banner.dart';
 
-@RoutePage()
-class AuthRoute extends StatelessWidget {
-  final Function() onAuthSuccess;
+class AuthContainer extends StatelessWidget {
+  final Widget child;
 
-  const AuthRoute({super.key, required this.onAuthSuccess});
+  const AuthContainer({
+    super.key,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state.currentSession != null) onAuthSuccess.call();
-      },
-      builder: (context, state) => Container(
+    return SafeArea(
+      child: Container(
         padding: const EdgeInsets.all(16),
         alignment: Alignment.center,
         child: Container(
@@ -33,11 +29,10 @@ class AuthRoute extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           clipBehavior: Clip.hardEdge,
-          child: const Wrap(
-            direction: Axis.horizontal,
+          child: Column(
             children: [
-              AppBanner(),
-              AutoRouter(),
+              const AppBanner(),
+              Expanded(child: child),
             ],
           ),
         ),

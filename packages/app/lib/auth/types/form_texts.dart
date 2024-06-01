@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 typedef Link = ({
   String? description,
   String buttonText,
-  PageRouteInfo<dynamic> destination,
+  void Function() onDestinationClick,
 });
 
 class FormTexts {

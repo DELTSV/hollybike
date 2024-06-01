@@ -12,50 +12,29 @@ class AppRouter extends $AppRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
-          page: NotificationRoute.page,
+          page: LoadingRoute.page,
+          path: '/load',
+        ),
+        AutoRoute(
+          guards: [AuthGuard(context: context)],
+          page: HudRoute.page,
           initial: true,
           children: [
+            RedirectRoute(path: '', redirectTo: 'events'),
             AutoRoute(
-              page: LoadingRoute.page,
-              path: 'load',
+              page: EventsRoute.page,
+              path: 'events',
             ),
-            AutoRoute(
-              guards: [AuthGuard(context: context)],
-              page: HudRoute.page,
-              initial: true,
-              children: [
-                RedirectRoute(path: '', redirectTo: 'events'),
-                AutoRoute(
-                  page: EventsRoute.page,
-                  path: 'events',
-                ),
-                CustomRoute(
-                  page: EventDetailsRoute.page,
-                  path: 'event-details',
-                  transitionsBuilder: TransitionsBuilders.fadeIn,
-                )
-              ],
-            ),
-            AutoRoute(
-              page: AuthRoute.page,
-              path: 'auth',
-              children: [
-                RedirectRoute(path: '', redirectTo: 'login'),
-                AutoRoute(
-                  page: LoginRoute.page,
-                  path: 'login',
-                ),
-                AutoRoute(
-                  page: SignupRoute.page,
-                  path: 'signup',
-                ),
-                AutoRoute(
-                  page: ForgotPasswordRoute.page,
-                  path: 'forgot-password',
-                ),
-              ],
-            ),
+            CustomRoute(
+              page: EventDetailsRoute.page,
+              path: 'event-details',
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            )
           ],
+        ),
+        AutoRoute(
+          page: LoginRoute.page,
+          path: '/login',
         ),
       ];
 }

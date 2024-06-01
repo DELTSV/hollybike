@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/notification/widgets/error_consumer.dart';
+import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:hollybike/shared/widgets/form_title.dart';
 
 import '../types/form_field_config.dart';
@@ -26,24 +27,12 @@ class FormBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraint) {
-        final height = MediaQuery.of(context).size.height;
-        return ConstrainedBox(
-          constraints:
-              BoxConstraints(maxHeight: height < 500 ? height - 150 : 500),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Wrap(
-                runSpacing: 24,
-                children:
-                    _renderHeader() + _renderError() + _renderTextInputs(),
-              ),
-            ),
-          ),
-        );
-      },
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: addSeparators(
+        _renderHeader() + _renderError() + _renderTextInputs(),
+        SizedBox.fromSize(size: const Size.square(16)),
+      ),
     );
   }
 

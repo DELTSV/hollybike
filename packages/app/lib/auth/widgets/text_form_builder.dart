@@ -94,7 +94,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     final linkDescription = FormTexts.toWidgetArray(texts.link!.description);
     final linkButton = <Widget>[
       GestureDetector(
-        onTap: () => context.router.replace(texts.link!.destination),
+        onTap: texts.link!.onDestinationClick,
         child: Text(
           texts.link!.buttonText,
           style: TextStyle(
