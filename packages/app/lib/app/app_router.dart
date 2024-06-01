@@ -30,6 +30,11 @@ class AppRouter extends $AppRouter {
               page: EventDetailsRoute.page,
               path: 'event-details',
               transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+            CustomRoute(
+              page: EventParticipationsRoute.page,
+              path: 'event-participations',
+              transitionsBuilder: TransitionsBuilders.fadeIn,
             )
           ],
         ),

@@ -8,6 +8,7 @@ import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/event/widgets/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
+import '../../app/app_router.gr.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
@@ -193,7 +194,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       child: Stack(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(6.0),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Row(
                               children: [
                                 SizedBox(
@@ -220,18 +221,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                             width: borderSize,
                                           ),
                                         ),
-                                        child: CircleAvatar(
-                                          radius: avatarRadius,
-                                          backgroundImage: participation
-                                                      .user.profilePicture !=
-                                                  null
-                                              ? Image.network(
-                                                  participation
-                                                      .user.profilePicture!,
-                                                ).image
-                                              : Image.asset(
-                                                      "assets/images/placeholder_profile_picture.jpg")
-                                                  .image,
+                                        child: Hero(
+                                          tag: "profile_picture_participation_${participation.user.id}",
+                                          child: CircleAvatar(
+                                            radius: avatarRadius,
+                                            backgroundImage: participation
+                                                        .user.profilePicture !=
+                                                    null
+                                                ? Image.network(
+                                                    participation
+                                                        .user.profilePicture!,
+                                                  ).image
+                                                : Image.asset(
+                                                        "assets/images/placeholder_profile_picture.jpg")
+                                                    .image,
+                                          ),
                                         ),
                                       );
 
@@ -260,7 +264,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: () {
-                                  print("Owner profile");
+                                  context.router.push(
+                                    EventParticipationsRoute(
+                                      eventId: event.id,
+                                    ),
+                                  );
                                 },
                                 borderRadius: BorderRadius.circular(12),
                               ),
