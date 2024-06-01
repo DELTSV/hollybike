@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/types/field_focus_node.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
@@ -94,7 +93,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     final linkDescription = FormTexts.toWidgetArray(texts.link!.description);
     final linkButton = <Widget>[
       GestureDetector(
-        onTap: () => context.router.replace(texts.link!.destination),
+        onTap: texts.link!.onDestinationClick,
         child: Text(
           texts.link!.buttonText,
           style: TextStyle(
