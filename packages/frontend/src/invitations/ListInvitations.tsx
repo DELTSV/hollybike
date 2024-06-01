@@ -6,17 +6,27 @@ import { Button } from "../components/Button/Button.tsx";
 import {
 	useNavigate, useParams,
 } from "react-router-dom";
-import { LinkOff } from "@material-ui/icons";
-import { api } from "../utils/useApi.ts";
+import {
+	CheckCircleOutlineRounded,
+	LinkOff, MailOutlineRounded,
+} from "@material-ui/icons";
+import {
+	api, useApi,
+} from "../utils/useApi.ts";
 import { useReload } from "../utils/useReload.ts";
 import {
-	useEffect, useMemo,
+	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { TAssociation } from "../types/TAssociation.ts";
 import { toast } from "react-toastify";
 import {
 	dateToFrenchString, timeToFrenchString,
 } from "../components/Calendar/InputCalendar.tsx";
+import { QRCodeScanner } from "../icons/QRCodeScanner.tsx";
+import { ContentCopy } from "../icons/ContentCopy.tsx";
+import { Modal } from "../components/Modal/Modal.tsx";
+import { QRCodeSVG } from "qrcode.react";
+import { useRef } from "react";
 
 export function ListInvitations() {
 	const {
@@ -44,6 +54,16 @@ export function ListInvitations() {
 			id !== undefined ? `/associations/${association?.id}/invitations` : "/invitation"
 		, [],
 	);
+
+	const smtp = useApi("/smtp");
+
+	const [qrCode, setQrCode] = useState("");
+
+	const [modalQrCode, setmodalQrCode] = useState(false);
+
+	const input = useRef<HTMLInputElement>(null);
+
+	const [copied, setCopied] = useState(false);
 
 	return (
 		<div className={"flex flex-col gap-2"}>
@@ -90,8 +110,37 @@ export function ListInvitations() {
 						{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
 							`${ timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
 					</Cell>,
-					<Cell>
-						<a>{ i.link }</a>
+					<Cell className={"flex"}>
+						{ i.link !== undefined &&
+							<div className={"flex gap-2"}>
+								<QRCodeScanner
+									className={"cursor-pointer"}
+									onClick={() => {
+										setmodalQrCode(true);
+										setQrCode(i.link!);
+									}}
+								/>
+								{ copied ?
+									<CheckCircleOutlineRounded className={"cursor-pointer text-green"}/>:
+									<ContentCopy
+										className={"cursor-pointer"}
+										onClick={() => {
+											if (input.current) {
+												input.current.select();
+												input.current.setSelectionRange(0, 999999);
+												navigator.clipboard.writeText(input.current.value).then(() => {
+													toast("Lien copié", { type: "success" });
+													setCopied(true);
+													setTimeout(() => {
+														setCopied(false);
+													}, 1500);
+												});
+											}
+										}}
+									/> }
+								<input className={"hidden"} value={i.link} ref={input}/>
+								{ smtp.status === 200 && <MailOutlineRounded/> }
+							</div> }
 					</Cell>,
 					<Cell>
 						{ i.status === "Enabled" &&
@@ -111,6 +160,11 @@ export function ListInvitations() {
 					</Cell>,
 				]}
 			/>
+			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setmodalQrCode} width={"w-auto"}>
+				<div className={"flex justify-center m-4"}>
+					<QRCodeSVG value={qrCode} height={"50vh"} width={"50vw"}/>
+				</div>
+			</Modal>
 		</div>
 	);
 }
