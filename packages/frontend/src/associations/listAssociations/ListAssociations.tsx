@@ -6,10 +6,16 @@ import { List } from "../../components/List/List.tsx";
 import { Cell } from "../../components/List/Cell.tsx";
 import { OpenInNew } from "@material-ui/icons";
 import { Button } from "../../components/Button/Button.tsx";
+import { useSideBar } from "../../sidebar/useSideBar.tsx";
 
 export function ListAssociations() {
 	const { user } = useUser();
 	const navigate = useNavigate();
+	const { setAssociation } = useSideBar();
+
+	useEffect(() => {
+		setAssociation(undefined);
+	}, [setAssociation]);
 
 	useEffect(() => {
 		if (user?.scope !== "Root")

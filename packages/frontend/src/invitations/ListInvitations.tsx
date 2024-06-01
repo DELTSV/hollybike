@@ -42,6 +42,8 @@ export function ListInvitations() {
 				if (res.status === 200 && res.data !== null && res.data !== undefined)
 					setAssociation(res.data);
 			});
+		else
+			setAssociation(undefined);
 	}, [id, setAssociation]);
 
 	const {
@@ -53,7 +55,7 @@ export function ListInvitations() {
 	const url = useMemo(
 		() =>
 			id !== undefined ? `/associations/${association?.id}/invitations` : "/invitation"
-		, [],
+		, [id, association],
 	);
 
 	const smtp = useApi("/smtp");

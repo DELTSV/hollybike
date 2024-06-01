@@ -25,6 +25,8 @@ export function ListUser() {
 				if (res.status === 200 && res.data !== null && res.data !== undefined)
 					setAssociation(res.data);
 			});
+		else
+			setAssociation(undefined);
 	}, [id, setAssociation]);
 
 	const filter = useMemo(() => {
