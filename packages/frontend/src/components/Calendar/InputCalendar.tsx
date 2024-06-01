@@ -3,10 +3,15 @@ import {
 } from "./Calendar.tsx";
 import { Input } from "../Input/Input.tsx";
 import {
-	useEffect, useState,
+	useCallback,
+	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { CalendarTodayRounded } from "@material-ui/icons";
 import { Card } from "../Card/Card.tsx";
+import {
+	decInputCount, inputCount,
+} from "../InputCount.ts";
+import { useRef } from "react";
 
 export function InputCalendar(props: CalendarProps) {
 	const [textValue, setTextValue] = useState(dateToFrenchString(props.value));
@@ -16,7 +21,10 @@ export function InputCalendar(props: CalendarProps) {
 	useEffect(() => {
 		if (props.time) {
 			const str = `${dateToFrenchString(props.value)} ${timeToFrenchString(props.value, props.seconds === true)}`;
-			setTextValue(str);
+			if (str === " ")
+				setTextValue("");
+			 else
+				setTextValue(str);
 		} else
 			setTextValue(dateToFrenchString(props.value));
 	}, [
@@ -28,15 +36,39 @@ export function InputCalendar(props: CalendarProps) {
 
 	useEffect(() => {
 		const date = frenchStringToDate(textValue, props.time === true, props.seconds === true);
-		if (date !== null)
+		if (date !== null && props.setValue)
 			props.setValue(date);
 	}, [
 		textValue,
 		props.time,
 		props.seconds,
 	]);
+
+	const id = useMemo(() => {
+		const id = inputCount;
+		decInputCount();
+		return id;
+	}, []);
+
+	const container = useRef<HTMLDivElement>(null);
+
+	const handleOut = useCallback((e: MouseEvent) => {
+		if (
+			container.current &&
+			!container.current.contains(e.target as Node)
+		)
+			setView(false);
+	}, [container, setView]);
+
+	useEffect(() => {
+		document.addEventListener("mousedown", handleOut);
+		return () => {
+			document.removeEventListener("mousedown", handleOut);
+		};
+	}, [handleOut]);
+
 	return (
-		<div className={"relative"}>
+		<div className={"relative"} style={`z-index: ${id}`} ref={container}>
 			<Input
 				value={textValue}
 				onInput={e => setTextValue(e.currentTarget.value)}
@@ -50,12 +82,18 @@ export function InputCalendar(props: CalendarProps) {
 	);
 }
 
-export function dateToFrenchString(date: Date): string {
+export function dateToFrenchString(date: Date | undefined): string {
+	if (date === undefined)
+		return "";
+
 	return `${formatDateTimeComponent(date.getDate())}/${formatDateTimeComponent(date.getMonth() + 1)}` +
 		`/${date.getFullYear()}`;
 }
 
-export function timeToFrenchString(date: Date, seconds: boolean): string {
+export function timeToFrenchString(date: Date | undefined, seconds: boolean): string {
+	if (date === undefined)
+		return "";
+
 	if (seconds)
 		return `${formatDateTimeComponent(date.getHours())}:${formatDateTimeComponent(date.getMinutes())}:` +
 			`${formatDateTimeComponent(date.getSeconds())}`;

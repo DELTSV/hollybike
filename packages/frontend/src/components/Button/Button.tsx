@@ -5,11 +5,13 @@ export interface ButtonProps {
 	onClick: (e: MouseEvent) => void,
 	children: ComponentChildren,
 	className?: string,
+	type?: string
 }
 
 export function Button(props: ButtonProps) {
 	return (
 		<button
+			type={props.type}
 			onClick={props.onClick} className={
 				clsx(
 					"px-2 py-1 rounded border-2 border-slate-950 dark:border-slate-100" +

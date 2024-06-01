@@ -41,12 +41,12 @@ export function CreateInvitation() {
 			setTotal(associations.data?.total_data);
 	}, [associations.data?.total_data]);
 
-	const [expire, setExpire] = useState(new Date());
+	const [expire, setExpire] = useState<Date>();
 
 	useEffect(() => {
 		setInvitation(prev => ({
 			...prev,
-			expiration: expire.toISOString(),
+			expiration: expire?.toISOString(),
 		}));
 	}, [expire]);
 
@@ -61,7 +61,7 @@ export function CreateInvitation() {
 					}))}
 				/>
 				<p>Expiration</p>
-				<InputCalendar value={expire} setValue={setExpire}/>
+				<InputCalendar value={expire} setValue={setExpire} time/>
 				<p>Utilisation max</p>
 				<Input
 					placeholder={"Utilisations max"}

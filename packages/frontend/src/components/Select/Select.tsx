@@ -6,6 +6,9 @@ import { ArrowDropDown } from "@material-ui/icons";
 import { clsx } from "clsx";
 import { useRef } from "react";
 import { Input } from "../Input/Input.tsx";
+import {
+	decInputCount, inputCount,
+} from "../InputCount.ts";
 
 export interface Option {
 	value: string | number,
@@ -23,12 +26,10 @@ interface SelectProps {
 	searchPlaceHolder?: string
 }
 
-let selectCount = 1000;
-
 export function Select(props: SelectProps) {
 	const id = useMemo(() => {
-		const tmp = selectCount;
-		selectCount--;
+		const tmp = inputCount;
+		decInputCount();
 		return tmp;
 	}, []);
 	const [text, setText] = useState(props.placeholder);
@@ -48,6 +49,13 @@ export function Select(props: SelectProps) {
 	}, [container, setVisible]);
 
 	useEffect(() => {
+		document.addEventListener("mousedown", handleOut);
+		return () => {
+			document.removeEventListener("mousedown", handleOut);
+		};
+	}, [handleOut]);
+
+	useEffect(() => {
 		if (props.default !== undefined) {
 			const opt = props.options.find(o => o.value == props.default);
 			setText(opt?.name ?? props.placeholder);
@@ -58,13 +66,6 @@ export function Select(props: SelectProps) {
 		props.default,
 		props.value,
 	]);
-
-	useEffect(() => {
-		document.addEventListener("mousedown", handleOut);
-		return () => {
-			document.removeEventListener("mousedown", handleOut);
-		};
-	}, [handleOut]);
 
 	const filteredOptions = useMemo(() => {
 		if (props.searchable)

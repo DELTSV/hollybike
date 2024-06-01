@@ -5,21 +5,27 @@ import {
 	ChevronLeft, ChevronRight,
 } from "@material-ui/icons";
 import { clsx } from "clsx";
+import { useEffect } from "preact/hooks";
 
 export interface CalendarProps {
 	time?: boolean,
 	seconds?: boolean
-	value: Date,
-	setValue: (value: Date | ((prev: Date) => Date)) => void
+	value?: Date,
+	setValue?: (value: Date | undefined | ((prev: Date | undefined) => Date | undefined)) => void
 }
 
 export function Calendar(props: CalendarProps) {
 	const {
-		calendar, viewPreviousMonth, viewNextMonth, viewing,
+		calendar, viewPreviousMonth, viewNextMonth, viewing, setViewing,
 	} = useLilius({
 		weekStartsOn: Day.MONDAY,
 		viewing: props.value,
 	});
+
+	useEffect(() => {
+		if (props.value)
+			setViewing(props.value);
+	}, [props.value, setViewing]);
 
 	const today = new Date();
 	return (
@@ -45,11 +51,14 @@ export function Calendar(props: CalendarProps) {
 										sameDay(d, props.value) && "border-2 border-green rounded-full",
 									)}
 									onClick={() => {
-										const tmp = new Date(d);
-										tmp.setHours(props.value.getHours());
-										tmp.setMinutes(props.value.getMinutes());
-										tmp.setSeconds(props.value.getSeconds());
-										props.setValue(tmp);
+										if (props.setValue !== undefined) {
+											const time = props.value ?? new Date();
+											const tmp = new Date(d);
+											tmp.setHours(time.getHours());
+											tmp.setMinutes(time.getMinutes());
+											tmp.setSeconds(time.getSeconds());
+											props.setValue(tmp);
+										}
 									}}
 								>
 									{ d.getDate() }
@@ -59,27 +68,32 @@ export function Calendar(props: CalendarProps) {
 						<div className={"flex justify-center"}>
 							<input
 								className={"bg-transparent text-center w-6 focus:outline-none"}
-								value={props.value.getHours()}
+								value={props.value?.getHours()}
 								onInput={(e) => {
-									if (validHour(trim0Start(e.currentTarget.value)))
+									if (validHour(trim0Start(e.currentTarget.value)) && props.setValue !== undefined)
 										props.setValue((prev) => {
-											const tmp = new Date(prev);
-											if (e.currentTarget.value === "")
-												tmp.setHours(0);
-											else
-												tmp.setHours(parseInt(e.currentTarget.value));
-											return tmp;
+											if (prev) {
+												const tmp = new Date(prev);
+												if (e.currentTarget.value === "")
+													tmp.setHours(0);
+												else
+													tmp.setHours(parseInt(e.currentTarget.value));
+												return tmp;
+											} else
+												return prev;
 										});
 								}}
 							/>
 							:
 							<input
 								className={"bg-transparent text-center w-6 focus:outline-none"}
-								value={props.value.getMinutes()}
+								value={formatDateTimeComponent(props.value?.getMinutes())}
 								onInput={(e) => {
-									console.log(validMinSec(trim0Start(e.currentTarget.value)));
-									if (validMinSec(trim0Start(e.currentTarget.value)))
+									if (validMinSec(trim0Start(e.currentTarget.value)) && props.setValue)
 										props.setValue((prev) => {
+											if (prev === undefined)
+												return undefined;
+
 											const tmp = new Date(prev);
 											if (e.currentTarget.value === "")
 												tmp.setMinutes(0);
@@ -89,22 +103,27 @@ export function Calendar(props: CalendarProps) {
 										});
 								}}
 							/>
-                            :
-							<input
-								className={"bg-transparent text-center w-6 focus:outline-none"}
-								value={formatDateTimeComponent(props.value.getSeconds())}
-								onInput={(e) => {
-									if (validMinSec(trim0Start(e.currentTarget.value)))
-										props.setValue((prev) => {
-											const tmp = new Date(prev);
-											if (e.currentTarget.value === "")
-												tmp.setSeconds(0);
-											else
-												tmp.setSeconds(parseInt(e.currentTarget.value));
-											return tmp;
-										});
-								}}
-							/>
+							{ props.seconds === true &&
+								<>
+									:
+									<input
+										className={"bg-transparent text-center w-6 focus:outline-none"}
+										value={formatDateTimeComponent(props.value?.getSeconds())}
+										onInput={(e) => {
+											if (validMinSec(trim0Start(e.currentTarget.value)) && props.setValue)
+												props.setValue((prev) => {
+													if (prev === undefined)
+														return prev;
+													const tmp = new Date(prev);
+													if (e.currentTarget.value === "")
+														tmp.setSeconds(0);
+													else
+														tmp.setSeconds(parseInt(e.currentTarget.value));
+													return tmp;
+												});
+										}}
+									/>
+								</> }
 						</div> }
 				</div>) }
 		</div>
@@ -126,11 +145,13 @@ const monthName = [
 	"Décembre",
 ];
 
-function sameDay(a: Date, b: Date) {
-	return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+function sameDay(a: Date, b: Date | undefined) {
+	return b !== undefined && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-export function formatDateTimeComponent(value: number): string {
+export function formatDateTimeComponent(value: number | undefined): string {
+	if (value === undefined)
+		return "";
 	if (value >= 10)
 		return value.toString();
 	else

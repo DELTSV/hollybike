@@ -34,7 +34,7 @@ export function Association() {
 		}
 	}, [association, setAssociation]);
 	return (
-		<div className={"flex items-start gap-2"}>
+		<form className={"flex items-start gap-2"} onSubmit={e => e.preventDefault()}>
 			<Card className={"grid grid-cols-2 gap-2 items-center"}>
 				<p>Nom de l'association :</p>
 				<Input
@@ -62,8 +62,9 @@ export function Association() {
 					default={associationData?.status}
 				/>
 				<p>Image :</p>
-				<img alt={"Logo de l'association"} src={""}/>
+				{ associationData.picture ? <img alt={"Logo de l'association"} src={""}/> : "Aucune image" }
 				<Button
+					type={"submit"}
 					className={"justify-self-center col-span-2"}
 					onClick={() => {
 						const url = user?.scope === "Admin" ? "/associations/me" : `/associations/${associationData.id}`;
@@ -71,10 +72,13 @@ export function Association() {
 							method: "PATCH",
 							body: associationData,
 						}).then((res) => {
-							if (res.status === 200 && res.data)
+							if (res.status === 200 && res.data) {
 								setAssociationData(res.data);
-							else if (res.status === 409)
+								toast("Association mise à jour", { type: "success" });
+							} else if (res.status === 409)
 								toast("Ce nom d'association est déjà utilisé", { type: "warning" });
+							else
+								toast(`Erreur: ${res.message}`, { type: "error" });
 						});
 					}}
 				>
@@ -87,6 +91,6 @@ export function Association() {
 				<p>Nombre de balade : TODO</p>
 				…
 			</Card>
-		</div>
+		</form>
 	);
 }
