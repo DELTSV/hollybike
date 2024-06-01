@@ -47,7 +47,7 @@ class _SecuredTextFieldState extends State<SecuredTextField> {
           _hide = !_hide;
         }),
         icon: Icon(
-          _hide ? Icons.visibility_off : Icons.visibility,
+          _hide ? Icons.visibility : Icons.visibility_off,
         ),
       ),
     );

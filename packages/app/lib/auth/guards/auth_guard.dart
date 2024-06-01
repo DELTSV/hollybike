@@ -19,7 +19,7 @@ class AuthGuard extends AutoRouteGuard {
     if (!isPersistentSessionsLoaded) {
       router.push(const LoadingRoute());
     } else if (currentSession == null) {
-      router.push(AuthRoute(onAuthSuccess: () => resolver.next(true)));
+      router.push(LoginRoute(onAuthSuccess: () => resolver.next(true)));
     } else {
       resolver.next(true);
     }
