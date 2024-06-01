@@ -7,6 +7,7 @@ import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
 import hollybike.api.types.event.EEventRole
 import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
 import kotlinx.datetime.Clock
@@ -100,7 +101,7 @@ class EventParticipationService(
 			)
 		}
 
-	fun getEventCount(caller: User, eventId: Int): Result<Int> = transaction(db) {
+	fun getEventParticipationsCount(caller: User, eventId: Int): Result<Int> = transaction(db) {
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
@@ -337,5 +338,25 @@ class EventParticipationService(
 					?: return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
 			)
 		}
+	}
+
+	fun getParticipationsPreview(caller: User, eventId: Int): Result<Pair<List<EventParticipation>, Int>> {
+		val searchParam = SearchParam(
+			sort = listOf(Sort(EventParticipations.joinedDateTime, SortOrder.DESC)),
+			query = null,
+			filter = mutableListOf(),
+			page = 0,
+			perPage = 5
+		)
+
+		val participations = getEventParticipations(caller, eventId, searchParam)
+			.getOrElse { return Result.failure(it) }
+
+		println(participations)
+
+		val participationCount = getEventParticipationsCount(caller, eventId)
+			.getOrElse { return Result.failure(it) }
+
+		return Result.success(participations to participationCount)
 	}
 }

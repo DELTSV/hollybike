@@ -1,42 +1,27 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
-import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_state.dart';
+import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
 
-import '../bloc/event_details_bloc/event_details_state.dart';
+import '../types/event_participation.dart';
 
-class EventParticipationsPreview extends StatefulWidget {
+class EventParticipationsPreview extends StatelessWidget {
   final Event event;
+  final List<EventParticipation> participations;
+  final int remainingParticipants;
 
-  const EventParticipationsPreview({super.key, required this.event});
+  const EventParticipationsPreview({
+    super.key,
+    required this.event,
+    required this.participations,
+    required this.remainingParticipants,
+  });
 
-  @override
-  State<EventParticipationsPreview> createState() =>
-      _EventParticipationsPreviewState();
-}
-
-class _EventParticipationsPreviewState
-    extends State<EventParticipationsPreview> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventParticipationBloc, EventParticipationsState>(
-      builder: (context, state) {
-        if (state is EventParticipationsPreviewLoadInProgress) {
-          return Container();
-        }
-
-        if (state is EventParticipationsPreviewLoadFailure) {
-          return Container();
-        }
-
-        return Row(
-          children: [
-            Text('Participants: ${state.participants.length}'),
-            Text('Remaining participants: ${state}'),
-          ],
-        );
-      },
+    return Row(
+      children: [
+        Text('Participants: ${participations.length}'),
+        Text('Remaining: $remainingParticipants'),
+      ],
     );
   }
 }

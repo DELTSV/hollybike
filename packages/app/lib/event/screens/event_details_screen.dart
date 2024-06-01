@@ -12,7 +12,7 @@ import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
-import '../widgets/event_participations_preview.dart';
+import '../types/event_participation.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -150,15 +150,33 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 return const Text("Error while loading event details");
               }
 
-              if (state.event == null) {
+              if (state.eventDetails == null) {
                 return const Text("Event not found");
               }
 
-              final Event event = state.event!;
+              final Event event = state.eventDetails!.event;
+              final List<EventParticipation> previewParticipants =
+                  state.eventDetails!.previewParticipants;
+
+              final int previewParticipantsCount =
+                  state.eventDetails!.previewParticipantsCount;
+
+              print(state.eventDetails);
 
               List<Widget> children = [
-                EventParticipationsPreview(
-                  event: event,
+                Row(
+                  children: [
+                    ...previewParticipants.map((participation) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            participation.user.username,
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
                 ),
               ];
 

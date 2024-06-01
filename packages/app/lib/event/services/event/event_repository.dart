@@ -1,5 +1,6 @@
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/types/create_event.dart';
+import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
@@ -10,13 +11,14 @@ import 'event_api.dart';
 
 class EventRepository {
   final EventApi eventApi;
-  late final _eventStreamController = BehaviorSubject<Event?>.seeded(null);
+  late final _eventStreamController =
+      BehaviorSubject<EventDetails?>.seeded(null);
   late final _eventsStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
   EventRepository({required this.eventApi});
 
-  Stream<Event?> get eventStream => _eventStreamController.stream;
+  Stream<EventDetails?> get eventDetailsStream => _eventStreamController.stream;
 
   Stream<List<MinimalEvent>> get eventsStream => _eventsStreamController.stream;
 
@@ -47,12 +49,13 @@ class EventRepository {
     return pageResult;
   }
 
-  Future<Event> fetchEvent(AuthSession session, int eventId) async {
-    final event = await eventApi.getEvent(session, eventId);
+  Future<EventDetails> fetchEventDetails(
+      AuthSession session, int eventId) async {
+    final eventDetails = await eventApi.getEventDetails(session, eventId);
 
-    _eventStreamController.add(event);
+    _eventStreamController.add(eventDetails);
 
-    return event;
+    return eventDetails;
   }
 
   Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {
@@ -60,9 +63,12 @@ class EventRepository {
   }
 
   Future<void> publishEvent(AuthSession session, int eventId) async {
+    final details = _eventStreamController.value!;
+
     _eventStreamController.add(
-      _eventStreamController.value!
-          .copyWith(status: EventStatusState.scheduled),
+      details.copyWith(
+        event: details.event.copyWith(status: EventStatusState.scheduled),
+      ),
     );
 
     _eventsStreamController.add(

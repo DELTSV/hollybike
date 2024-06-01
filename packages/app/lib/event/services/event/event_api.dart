@@ -5,6 +5,7 @@ import 'package:hollybike/shared/types/paginated_list.dart';
 import '../../../auth/types/auth_session.dart';
 import '../../types/create_event.dart';
 import '../../types/event.dart';
+import '../../types/event_details.dart';
 
 class EventApi {
   Future<PaginatedList<MinimalEvent>> getEvents(
@@ -27,14 +28,14 @@ class EventApi {
     return PaginatedList.fromJson(response.data, MinimalEvent.fromJson);
   }
 
-  Future<Event> getEvent(AuthSession session, int eventId) async {
-    final response = await DioClient(session).dio.get('/events/$eventId');
+  Future<EventDetails> getEventDetails(AuthSession session, int eventId) async {
+    final response = await DioClient(session).dio.get('/events/$eventId/details');
 
     if (response.statusCode != 200) {
-      throw Exception("Failed to fetch event");
+      throw Exception("Failed to fetch event details");
     }
 
-    return Event.fromJson(response.data);
+    return EventDetails.fromJson(response.data);
   }
 
   Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {

@@ -5,14 +5,13 @@ import hollybike.api.database.now
 import hollybike.api.exceptions.*
 import hollybike.api.repository.*
 import hollybike.api.repository.Event
-import hollybike.api.repository.Events
 import hollybike.api.repository.EventParticipation
-import hollybike.api.repository.EventParticipations
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -176,8 +175,8 @@ class EventService(
 
 	private fun futureEventsCondition(): Op<Boolean> {
 		return (Events.startDateTime greaterEq now()) or
-			((Events.endDateTime neq null) and(Events.endDateTime greaterEq now())) or
-			((Events.endDateTime eq null) and(addtime(Events.startDateTime, 4.hours) greaterEq now()))
+			((Events.endDateTime neq null) and (Events.endDateTime greaterEq now())) or
+			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) greaterEq now()))
 	}
 
 	fun getFutureEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
@@ -195,7 +194,7 @@ class EventService(
 	private fun archivedEventsCondition(): Op<Boolean> {
 		return (Events.startDateTime less now()) and
 			(((Events.endDateTime neq null) and (Events.endDateTime less now())) or
-			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
+				((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
 	}
 
 	fun getArchivedEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {

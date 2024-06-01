@@ -95,7 +95,7 @@ class EventParticipationController(
 				return@get
 			}
 
-			val participationCount = eventParticipationService.getEventCount(
+			val participationCount = eventParticipationService.getEventParticipationsCount(
 				call.user,
 				data.eventId.id
 			).getOrElse {
