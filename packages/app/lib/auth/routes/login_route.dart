@@ -29,21 +29,21 @@ class LoginRoute extends StatelessWidget {
         },
         formFields: {
           "host": FormFieldConfig(
-            label: "adresse du serveur",
+            label: "Adresse du serveur",
             validator: _inputValidator,
             defaultValue: "https://hollybike.fr",
             autofillHints: [AutofillHints.url],
             textInputType: TextInputType.url,
           ),
           "email": FormFieldConfig(
-            label: "adresse mail",
+            label: "Adresse mail",
             validator: _inputValidator,
             autofocus: true,
             autofillHints: [AutofillHints.email],
             textInputType: TextInputType.emailAddress,
           ),
           "password": FormFieldConfig(
-            label: "mot de passe",
+            label: "Mot de passe",
             validator: _inputValidator,
             isSecured: true,
             autofillHints: [AutofillHints.password],
