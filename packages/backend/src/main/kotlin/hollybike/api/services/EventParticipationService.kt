@@ -342,7 +342,7 @@ class EventParticipationService(
 
 	fun getParticipationsPreview(caller: User, eventId: Int): Result<Pair<List<EventParticipation>, Int>> {
 		val searchParam = SearchParam(
-			sort = listOf(Sort(EventParticipations.joinedDateTime, SortOrder.DESC)),
+			sort = listOf(Sort(EventParticipations.joinedDateTime, SortOrder.ASC)),
 			query = null,
 			filter = mutableListOf(),
 			page = 0,

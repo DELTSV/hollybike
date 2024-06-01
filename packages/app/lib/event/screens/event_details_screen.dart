@@ -65,6 +65,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
+  Widget _getParticipantsText(int count, int totalCount) {
+    if (totalCount == 1) {
+      return Text(
+        "1 participant",
+        style: Theme.of(context).textTheme.titleSmall,
+      );
+    }
+
+    if (totalCount > 5) {
+      return Text(
+        "+ ${totalCount - 5}",
+        style: Theme.of(context).textTheme.titleSmall,
+      );
+    }
+
+    return const SizedBox();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<EventDetailsBloc, EventDetailsState>(
@@ -161,21 +179,102 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               final int previewParticipantsCount =
                   state.eventDetails!.previewParticipantsCount;
 
-              print(state.eventDetails);
+              const avatarSize = 43.0;
+              const avatarRadius = avatarSize / 2;
+              const borderSize = 4.0;
 
               List<Widget> children = [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ...previewParticipants.map((participation) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            participation.user.username,
+                    SizedBox(
+                      width: 200,
+                      height: avatarSize + 12,
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  height: avatarSize,
+                                  width: (previewParticipants.length *
+                                          avatarRadius) +
+                                      avatarRadius,
+                                  child: Stack(
+                                    alignment: Alignment.topLeft,
+                                    children: previewParticipants
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      final participation = entry.value;
+                                      final index = entry.key;
+
+                                      final avatar = Container(
+                                        width: avatarSize,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            width: borderSize,
+                                          ),
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: avatarRadius,
+                                          backgroundImage: participation
+                                                      .user.profilePicture !=
+                                                  null
+                                              ? Image.network(
+                                                  participation
+                                                      .user.profilePicture!,
+                                                ).image
+                                              : Image.asset(
+                                                      "assets/images/placeholder_profile_picture.jpg")
+                                                  .image,
+                                        ),
+                                      );
+
+                                      if (index == 0) {
+                                        return avatar;
+                                      }
+
+                                      return Positioned(
+                                        top: -borderSize,
+                                        left: avatarRadius * index.toDouble(),
+                                        child: avatar,
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                _getParticipantsText(
+                                  previewParticipants.length,
+                                  previewParticipantsCount,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
+                          Positioned.fill(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  print("Owner profile");
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        print("Rejoindre");
+                      },
+                      child: const Text("Rejoindre"),
+                    ),
                   ],
                 ),
               ];
@@ -194,6 +293,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: children,
                 ),
               );
