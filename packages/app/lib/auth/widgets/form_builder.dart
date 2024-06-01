@@ -27,8 +27,8 @@ class FormBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: addSeparators(
         _renderHeader() + _renderError() + _renderTextInputs(),
         SizedBox.fromSize(size: const Size.square(16)),

@@ -32,7 +32,14 @@ class AuthContainer extends StatelessWidget {
           child: Column(
             children: [
               const AppBanner(),
-              Expanded(child: child),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: child,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
