@@ -11,32 +11,63 @@ class AuthContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const radius = Radius.circular(15);
+    final borderSide = BorderSide(
+      width: 2,
+      color: Theme.of(context).colorScheme.onPrimary,
+    );
+
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(16),
         alignment: Alignment.center,
         child: Container(
           constraints: const BoxConstraints(maxWidth: 450),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          foregroundDecoration: BoxDecoration(
-            border: Border.all(
-              width: 2,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          clipBehavior: Clip.hardEdge,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const AppBanner(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: child,
+              Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: radius,
+                    topLeft: radius,
+                  ),
+                ),
+                foregroundDecoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topRight: radius,
+                    topLeft: radius,
+                  ),
+                  border: Border(
+                    top: borderSide,
+                    left: borderSide,
+                    right: borderSide,
+                  ),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: const AppBanner(),
+              ),
+              Flexible(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: radius,
+                      bottomRight: radius,
+                    ),
+                  ),
+                  foregroundDecoration: BoxDecoration(
+                    border: Border.fromBorderSide(borderSide),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: radius,
+                      bottomRight: radius,
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: child,
+                    ),
                   ),
                 ),
               ),
