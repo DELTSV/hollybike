@@ -132,7 +132,7 @@ export function UserDetail() {
 					}).then((res) => {
 						if (res.status === 200) {
 							doReload();
-							toast("L'utilisateur à été mis à jour");
+							toast("L'utilisateur à été mis à jour", { type: "success" });
 						} else if (res.status === 404)
 							toast(res.message, { type: "warning" });
 						else

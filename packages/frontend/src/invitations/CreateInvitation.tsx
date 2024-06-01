@@ -18,6 +18,7 @@ import {
 } from "../components/Select/Select.tsx";
 import { TAssociation } from "../types/TAssociation.ts";
 import { TList } from "../types/TList.ts";
+import { InputCalendar } from "../components/Calendar/InputCalendar.tsx";
 
 export function CreateInvitation() {
 	const { user } = useUser();
@@ -40,6 +41,15 @@ export function CreateInvitation() {
 			setTotal(associations.data?.total_data);
 	}, [associations.data?.total_data]);
 
+	const [expire, setExpire] = useState(new Date());
+
+	useEffect(() => {
+		setInvitation(prev => ({
+			...prev,
+			expiration: expire.toISOString(),
+		}));
+	}, [expire]);
+
 	return (
 		<div className={"mx-2"}>
 			<Card className={"grid grid-cols-2 gap-2 items-center"}>
@@ -51,13 +61,7 @@ export function CreateInvitation() {
 					}))}
 				/>
 				<p>Expiration</p>
-				<Input
-					placeholder={"Expiration"}
-					value={invitation.expiration ?? ""} onInput={e => setInvitation(prev => ({
-						...prev,
-						expiration: e.currentTarget.value === "" ? undefined : e.currentTarget.value,
-					}))}
-				/>
+				<InputCalendar value={expire} setValue={setExpire}/>
 				<p>Utilisation max</p>
 				<Input
 					placeholder={"Utilisations max"}
