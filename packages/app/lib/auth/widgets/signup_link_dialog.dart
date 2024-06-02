@@ -1,60 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/shared/utils/add_separators.dart';
+import 'package:hollybike/shared/widgets/dialog/closable_dialog.dart';
 
 class SignupLinkDialog extends StatelessWidget {
   const SignupLinkDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            constraints: BoxConstraints.loose(const Size(double.infinity, 500)),
-            color: Colors.pink,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: addSeparators([
-                    Container(
-                      height: 60,
-                      width: 30,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      height: 60,
-                      width: 30,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      height: 60,
-                      width: 30,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      height: 60,
-                      width: 30,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      height: 60,
-                      width: 30,
-                      color: Colors.green,
-                    ),
-                    Container(
-                      height: 60,
-                      width: 30,
-                      color: Colors.green,
-                    ),
-                  ],const Divider(thickness: 20,)),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    return ClosableDialog(title: "Saisissez votre lien d'inscription", onClose: () => Navigator.pop(context),);
   }
 }
