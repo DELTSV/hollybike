@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../shared/utils/dates.dart';
+import '../../../shared/utils/dates.dart';
 
 class EventDateInput extends StatelessWidget {
   final DateTime date;

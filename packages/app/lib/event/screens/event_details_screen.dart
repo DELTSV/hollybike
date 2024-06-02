@@ -18,7 +18,7 @@ import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../bloc/events_bloc/events_bloc.dart';
 import '../types/event_participation.dart';
-import '../widgets/event_form_modal.dart';
+import '../widgets/event_form/event_form_modal.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -78,6 +78,85 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         return Scaffold(
           appBar: AppBar(
             title: const Text("Détails"),
+            actions: [
+              Builder(
+                builder: (context) {
+                  if (state is EventDetailsLoadInProgress) {
+                    return const SizedBox();
+                  }
+
+                  if (state is EventDetailsLoadFailure) {
+                    return const SizedBox();
+                  }
+
+                  if (state.eventDetails == null) {
+                    return const SizedBox();
+                  }
+
+                  final Event event = state.eventDetails!.event;
+
+                  return PopupMenuButton(itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem(
+                        value: "quit",
+                        child: Row(
+                          children: [
+                            Icon(Icons.exit_to_app),
+                            SizedBox(width: 10),
+                            Text("Quitter l'événement"),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: "delete",
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete),
+                            SizedBox(width: 10),
+                            Text("Supprimer l'événement"),
+                          ],
+                        ),
+                      ),
+                    ];
+                  }, onSelected: (value) {
+                    if (value == "delete") {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("Supprimer l'événement"),
+                            content: const Text("Êtes-vous sûr de vouloir supprimer cet événement ?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Annuler"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  withCurrentSession(context, (session) {
+                                    // context.read<EventsBloc>().add(
+                                    //       DeleteEvent(
+                                    //         eventId: event.id,
+                                    //         session: session,
+                                    //       ),
+                                    //     );
+                                  });
+
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Supprimer"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  });
+                },
+              ),
+            ],
           ),
           floatingActionButton: Builder(
             builder: (context) {

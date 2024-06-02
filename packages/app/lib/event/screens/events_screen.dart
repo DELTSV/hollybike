@@ -14,7 +14,7 @@ import '../../shared/utils/dates.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
-import '../widgets/event_form_modal.dart';
+import '../widgets/event_form/event_form_modal.dart';
 import '../widgets/event_preview_card.dart';
 
 @RoutePage()

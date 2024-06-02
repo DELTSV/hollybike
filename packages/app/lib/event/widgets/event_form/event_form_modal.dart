@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
-import 'package:hollybike/event/widgets/event_discard_changes_dialog.dart';
-import 'package:hollybike/event/widgets/event_form.dart';
+import 'package:hollybike/event/widgets/event_form/event_form.dart';
+
+import 'event_discard_changes_dialog.dart';
 
 class EventFormModal extends StatefulWidget {
   final void Function(EventFormData) onSubmit;
