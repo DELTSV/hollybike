@@ -108,118 +108,145 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        RefreshIndicator(
-          triggerMode: RefreshIndicatorTriggerMode.anywhere,
-          onRefresh: () async {
-            _refreshEvents();
-          },
-          child: MultiBlocListener(
-            listeners: [
-              BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthSessionSwitched) {
-                    _refreshEvents();
-                  }
-                },
-              ),
-              BlocListener<EventsBloc, EventsState>(listener: (context, state) {
-                if (state is EventCreationSuccess) {
-                  Toast.showSuccessToast(context, "Événement créé");
-
-                  Future.delayed(const Duration(milliseconds: 50), () {
-                    _navigateToEventDetails(
-                        context, state.createdEvent.toMinimalEvent(), false);
-
-                    Future.delayed(const Duration(milliseconds: 200), () {
-                      _refreshEvents();
-                    });
-                  });
-                }
-
-                if (state is EventCreationFailure) {
-                  Toast.showErrorToast(context, state.errorMessage);
-                }
-              }),
-            ],
-            child: BlocBuilder<EventsBloc, EventsState>(
-              builder: (context, state) {
-                if (state.events.isEmpty) {
-                  switch (state.status) {
-                    case EventStatus.initial:
-                      return const SizedBox();
-                    case EventStatus.loading:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case EventStatus.error:
-                      return const Center(
-                        child: Text('Oups, une erreur est survenue.'),
-                      );
-                    case EventStatus.success:
-                      return const Center(
-                        child: Text('Aucun post trouvé.'),
-                      );
-                  }
-                }
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                  ),
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
-                    ),
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
-                    ),
-                    itemCount: state.events.length + (state.hasMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == state.events.length) {
-                        if (state.status == EventStatus.error) {
-                          return const Center(
-                            child: Text('Oups, une erreur est survenue.'),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }
-
-                      final event = state.events[index];
-
-                      final columnWithHeader = getPreviewWithColumn(
-                        event,
-                        index == 0 ||
-                            event.startDate.month !=
-                                state.events[index - 1].startDate.month,
-                      );
-
-                      return TweenAnimationBuilder(
-                        tween: Tween<double>(begin: 0, end: 1),
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.ease,
-                        builder: (context, double value, child) {
-                          return Transform.translate(
-                            offset: Offset(50 * (1 - value), 0),
-                            child: Opacity(
-                              opacity: value,
-                              child: columnWithHeader,
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Événements'),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Timer(const Duration(milliseconds: 100), () {
+            showModalBottomSheet<void>(
+              context: context,
+              enableDrag: false,
+              builder: (BuildContext context) {
+                return const EventCreationModal();
               },
-            ),
+            );
+          });
+        },
+        label: Text(
+          'Ajouter',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
+        icon: const Icon(Icons.add),
+      ),
+      body: RefreshIndicator(
+        triggerMode: RefreshIndicatorTriggerMode.anywhere,
+        onRefresh: () async {
+          _refreshEvents();
+        },
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthSessionSwitched) {
+                  _refreshEvents();
+                }
+              },
+            ),
+            BlocListener<EventsBloc, EventsState>(listener: (context, state) {
+              if (state is EventCreationSuccess) {
+                Toast.showSuccessToast(context, "Événement créé");
+
+                Future.delayed(const Duration(milliseconds: 50), () {
+                  _navigateToEventDetails(
+                      context, state.createdEvent.toMinimalEvent(), false);
+
+                  Future.delayed(const Duration(milliseconds: 200), () {
+                    _refreshEvents();
+                  });
+                });
+              }
+
+              if (state is EventCreationFailure) {
+                Toast.showErrorToast(context, state.errorMessage);
+              }
+            }),
+          ],
+          child: BlocBuilder<EventsBloc, EventsState>(
+            builder: (context, state) {
+              if (state.events.isEmpty) {
+                switch (state.status) {
+                  case EventStatus.initial:
+                    return const SizedBox();
+                  case EventStatus.loading:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case EventStatus.error:
+                    return const Center(
+                      child: Text('Oups, une erreur est survenue.'),
+                    );
+                  case EventStatus.success:
+                    return const Center(
+                      child: Text('Aucun post trouvé.'),
+                    );
+                }
+              }
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                ),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                  ),
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  itemCount: state.events.length + (state.hasMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == state.events.length) {
+                      if (state.status == EventStatus.error) {
+                        return const Center(
+                          child: Text('Oups, une erreur est survenue.'),
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    }
+
+                    final event = state.events[index];
+
+                    final columnWithHeader = getPreviewWithColumn(
+                      event,
+                      index == 0 ||
+                          event.startDate.month !=
+                              state.events[index - 1].startDate.month,
+                    );
+
+                    return TweenAnimationBuilder(
+                      tween: Tween<double>(begin: 0, end: 1),
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.ease,
+                      builder: (context, double value, child) {
+                        return Transform.translate(
+                          offset: Offset(50 * (1 - value), 0),
+                          child: Opacity(
+                            opacity: value,
+                            child: columnWithHeader,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    return Stack(
+      children: [
+
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(

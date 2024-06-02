@@ -16,6 +16,7 @@ import 'package:hollybike/event/screens/event_details_screen.dart' as _i1;
 import 'package:hollybike/event/screens/event_participations_screen.dart'
     as _i2;
 import 'package:hollybike/event/screens/events_screen.dart' as _i3;
+import 'package:hollybike/event/types/event_participation.dart' as _i12;
 import 'package:hollybike/event/widgets/event_image.dart' as _i11;
 import 'package:hollybike/hud/routes/hud_route.dart' as _i4;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i7;
@@ -46,6 +47,7 @@ abstract class $AppRouter extends _i9.RootStackRouter {
         child: _i2.EventParticipationsScreen(
           key: args.key,
           eventId: args.eventId,
+          participationPreview: args.participationPreview,
         ),
       );
     },
@@ -159,12 +161,14 @@ class EventParticipationsRoute
   EventParticipationsRoute({
     _i10.Key? key,
     required int eventId,
+    required List<_i12.EventParticipation> participationPreview,
     List<_i9.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
           args: EventParticipationsRouteArgs(
             key: key,
             eventId: eventId,
+            participationPreview: participationPreview,
           ),
           initialChildren: children,
         );
@@ -179,15 +183,18 @@ class EventParticipationsRouteArgs {
   const EventParticipationsRouteArgs({
     this.key,
     required this.eventId,
+    required this.participationPreview,
   });
 
   final _i10.Key? key;
 
   final int eventId;
 
+  final List<_i12.EventParticipation> participationPreview;
+
   @override
   String toString() {
-    return 'EventParticipationsRouteArgs{key: $key, eventId: $eventId}';
+    return 'EventParticipationsRouteArgs{key: $key, eventId: $eventId, participationPreview: $participationPreview}';
   }
 }
 
