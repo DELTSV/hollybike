@@ -90,7 +90,7 @@ export function List<T>(props: ListProps<T>) {
 	);
 
 	return (
-		<div className={"px-2 flex flex-col grow gap-2"}>
+		<div className={"flex flex-col grow gap-2"}>
 			<Input
 				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
 				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
@@ -117,7 +117,10 @@ export function List<T>(props: ListProps<T>) {
 					</tr>
 				</thead>
 				<tbody>
-					{ data.data?.data?.map(d => <tr className={"border-t-2 border-slate-600"}>{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }</tr>) }
+					{ data.data?.data?.map(d =>
+						<tr className={"border-t-2 border-slate-600"}>
+							{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }
+						</tr>) }
 				</tbody>
 			</table>
 			<div className={"flex items-center gap-4"}>
