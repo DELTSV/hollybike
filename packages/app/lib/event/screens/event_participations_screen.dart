@@ -86,15 +86,16 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Timer(const Duration(milliseconds: 100), () {
-          //   showModalBottomSheet<void>(
-          //     context: context,
-          //     enableDrag: false,
-          //     builder: (BuildContext context) {
-          //       return const EventCreationModal();
-          //     },
-          //   );
-          // });
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+              builder: (context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.9,
+                  child: Container(),
+                );
+              },
+          );
         },
         label: Text(
           'Ajouter',

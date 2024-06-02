@@ -127,8 +127,8 @@ class _EventsScreenState extends State<EventsScreen> {
         label: Text(
           'Ajouter',
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+                color: Theme.of(context).colorScheme.primary,
+              ),
         ),
         icon: const Icon(Icons.add),
       ),
@@ -242,38 +242,6 @@ class _EventsScreenState extends State<EventsScreen> {
           ),
         ),
       ),
-    );
-
-    return Stack(
-      children: [
-
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                Timer(const Duration(milliseconds: 100), () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    enableDrag: false,
-                    builder: (BuildContext context) {
-                      return const EventCreationModal();
-                    },
-                  );
-                });
-              },
-              label: Text(
-                'Ajouter',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-              icon: const Icon(Icons.add),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
