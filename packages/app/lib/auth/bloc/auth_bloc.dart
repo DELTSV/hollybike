@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
+import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';

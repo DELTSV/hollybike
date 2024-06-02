@@ -18,6 +18,7 @@ class AppRouter extends $AppRouter {
         AutoRoute(
           guards: [AuthGuard(context: context)],
           page: HudRoute.page,
+          path: "/home",
           initial: true,
           children: [
             RedirectRoute(path: '', redirectTo: 'events'),
@@ -35,6 +36,14 @@ class AppRouter extends $AppRouter {
         AutoRoute(
           page: LoginRoute.page,
           path: '/login',
+        ),
+        AutoRoute(
+          page: SignupRoute.page,
+          path: '/invite',
+        ),
+        RedirectRoute(
+          path: '*',
+          redirectTo: "/home",
         ),
       ];
 }
