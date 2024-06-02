@@ -53,14 +53,8 @@ class EventService(
 		return Result.success(Unit)
 	}
 
-	private fun checkEventInputDates(startDate: String, endDate: String? = null): Result<Unit> {
-		val parsedStartDate = try {
-			Instant.parse(startDate)
-		} catch (e: IllegalArgumentException) {
-			return Result.failure(InvalidDateException("Format de la date de début invalide"))
-		}
-
-		if (parsedStartDate < Clock.System.now()) {
+	private fun checkEventInputDates(startDate: Instant, endDate: Instant? = null): Result<Unit> {
+		if (startDate < Clock.System.now()) {
 			return Result.failure(InvalidDateException("La date de début doit être dans le futur"))
 		}
 
@@ -68,13 +62,7 @@ class EventService(
 			return Result.success(Unit)
 		}
 
-		val parsedEndDate = try {
-			Instant.parse(endDate)
-		} catch (e: IllegalArgumentException) {
-			return Result.failure(InvalidDateException("Format de la date de fin invalide"))
-		}
-
-		if (parsedStartDate >= parsedEndDate) {
+		if (startDate >= endDate) {
 			return Result.failure(InvalidDateException("La date de fin doit être après la date de début"))
 		}
 
@@ -220,8 +208,8 @@ class EventService(
 		caller: User,
 		name: String,
 		description: String?,
-		startDate: String,
-		endDate: String?,
+		startDate: Instant,
+		endDate: Instant?,
 	): Result<Event> {
 		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
@@ -232,8 +220,8 @@ class EventService(
 				association = caller.association
 				this.name = name
 				this.description = description
-				this.startDateTime = Instant.parse(startDate)
-				this.endDateTime = endDate?.let { Instant.parse(it) }
+				this.startDateTime = startDate
+				this.endDateTime = endDate
 				status = EEventStatus.Pending
 			}
 
@@ -254,8 +242,8 @@ class EventService(
 		eventId: Int,
 		name: String,
 		description: String?,
-		startDate: String,
-		endDate: String?,
+		startDate: Instant,
+		endDate: Instant?,
 	): Result<Event> {
 		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
@@ -266,8 +254,8 @@ class EventService(
 					event.apply {
 						this.name = name
 						this.description = description
-						this.startDateTime = Instant.parse(startDate)
-						this.endDateTime = endDate?.let { Instant.parse(it) }
+						this.startDateTime = startDate
+						this.endDateTime = endDate
 					}
 
 					Result.success(event)
