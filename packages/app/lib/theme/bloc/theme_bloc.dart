@@ -163,6 +163,17 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     );
   }
 
+  IconThemeData get _iconTheme {
+    if (state.isDark) {
+      return IconThemeData(
+        color: Color(_darkColorScheme.onPrimary.value),
+      );
+    }
+    return IconThemeData(
+      color: Color(_brightColorScheme.onPrimary.value),
+    );
+  }
+
   TextSelectionThemeData get _textSelectionTheme {
     if (state.isDark) {
       return const TextSelectionThemeData(
@@ -185,6 +196,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       appBarTheme: _appBarTheme,
       textTheme: _textTheme,
       colorScheme: _colorScheme,
+      iconTheme: _iconTheme,
       inputDecorationTheme: _inputDecorationTheme,
       elevatedButtonTheme: _elevatedButtonTheme,
       floatingActionButtonTheme: _floatingActionButtonTheme,

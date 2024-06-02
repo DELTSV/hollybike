@@ -14,10 +14,11 @@ class EventApi {
     int eventsPerPage,
   ) async {
     final response = await DioClient(session).dio.get(
-      '/events/future?sort=start_date_time.asc',
+      '/events/future',
       queryParameters: {
         'page': page,
         'per_page': eventsPerPage,
+        'sort': 'start_date_time.asc',
       },
     );
 

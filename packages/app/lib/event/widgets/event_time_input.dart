@@ -52,7 +52,7 @@ class EventTimeInput extends StatelessWidget {
       children: [
         getText(),
         SizedBox(
-          height: 60,
+          height: 56,
           width: 120,
           child: Stack(
             children: [

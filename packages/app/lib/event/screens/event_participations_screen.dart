@@ -7,6 +7,7 @@ import 'package:hollybike/event/bloc/event_participations_bloc/event_participati
 import 'package:hollybike/event/types/event_participation.dart';
 
 import '../../shared/utils/with_current_session.dart';
+import '../widgets/event_participation_card.dart';
 
 @RoutePage()
 class EventParticipationsScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
         context.read<EventParticipationBloc>().add(
               RefreshEventParticipations(
                 eventId: widget.eventId,
+                participationPreview: widget.participationPreview,
                 session: session,
               ),
             );
@@ -50,29 +52,50 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
       const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final participation = participants[index];
-        return Row(
-          key: ValueKey(participation.user.id),
-          children: [
-            Hero(
-              tag:
-              "profile_picture_participation_${participation.user.id}",
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage:
-                participation.user.profilePicture != null
-                    ? Image.network(
-                  participation.user.profilePicture!,
-                ).image
-                    : Image.asset(
-                  "assets/images/placeholder_profile_picture.jpg",
-                ).image,
-              ),
-            ),
-            Text(
-              participation.user.username,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ],
+        return EventParticipationCard(
+          participation: participation,
+          onPromote: () {
+            withCurrentSession(
+              context,
+                  (session) {
+                // context.read<EventParticipationBloc>().add(
+                //   PromoteEventParticipation(
+                //     eventId: widget.eventId,
+                //     userId: participation.user.id,
+                //     session: session,
+                //   ),
+                // );
+              },
+            );
+          },
+          onDemote: () {
+            withCurrentSession(
+              context,
+                  (session) {
+                // context.read<EventParticipationBloc>().add(
+                //   DemoteEventParticipation(
+                //     eventId: widget.eventId,
+                //     userId: participation.user.id,
+                //     session: session,
+                //   ),
+                // );
+              },
+            );
+          },
+          onRemove: () {
+            withCurrentSession(
+              context,
+                  (session) {
+                // context.read<EventParticipationBloc>().add(
+                //   RemoveEventParticipation(
+                //     eventId: widget.eventId,
+                //     userId: participation.user.id,
+                //     session: session,
+                //   ),
+                // );
+              },
+            );
+          },
         );
       },
     );
@@ -111,10 +134,6 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: BlocBuilder<EventParticipationBloc, EventParticipationsState>(
             builder: (context, state) {
-              if (state is EventParticipationsPageLoadInProgress) {
-                return _buildList(widget.participationPreview);
-              }
-
               if (state is EventParticipationsPageLoadFailure) {
                 return Center(
                   child: Text(state.errorMessage),

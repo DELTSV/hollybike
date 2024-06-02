@@ -35,7 +35,7 @@ class EventDateInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
+      height: 56,
       width: double.infinity,
       child: Stack(
         children: [

@@ -33,7 +33,7 @@ class EventParticipationService(
 		(this.event eq eventId) and (isJoined eq true)
 	}
 
-	private fun eventCandidatesQuery(caller: User, eventId: Int, searchParam: SearchParam): Query {
+	private fun eventCandidatesQuery(caller: User, eventId: Int): Query {
 		return Users
 			.leftJoin(EventParticipations, { Users.id }, { user }, { EventParticipations.event eq eventId })
 			.leftJoin(
@@ -43,7 +43,6 @@ class EventParticipationService(
 			)
 			.selectAll()
 			.where(Users.association eq caller.association.id)
-			.applyParam(searchParam)
 	}
 
 	private fun findEvent(caller: User, eventId: Int): Event? {
@@ -60,7 +59,7 @@ class EventParticipationService(
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val query = eventCandidatesQuery(caller, eventId, searchParam)
+		val query = eventCandidatesQuery(caller, eventId).applyParam(searchParam)
 
 		Result.success(
 			query.map { row ->
@@ -81,7 +80,7 @@ class EventParticipationService(
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val query = eventCandidatesQuery(caller, eventId, searchParam)
+		val query = eventCandidatesQuery(caller, eventId).applyParam(searchParam, false)
 
 		Result.success(query.count().toInt())
 	}
@@ -101,14 +100,17 @@ class EventParticipationService(
 			)
 		}
 
-	fun getEventParticipationsCount(caller: User, eventId: Int): Result<Int> = transaction(db) {
+	fun getEventParticipationsCount(caller: User, eventId: Int, searchParam: SearchParam): Result<Int> = transaction(db) {
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		Result.success(
-			EventParticipation.find {
-				eventParticipationCondition(eventId)
-			}.count().toInt()
+			EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+				.selectAll()
+				.applyParam(searchParam, false)
+				.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
+				.count()
+				.toInt()
 		)
 	}
 
@@ -354,7 +356,7 @@ class EventParticipationService(
 
 		println(participations)
 
-		val participationCount = getEventParticipationsCount(caller, eventId)
+		val participationCount = getEventParticipationsCount(caller, eventId, searchParam)
 			.getOrElse { return Result.failure(it) }
 
 		return Result.success(participations to participationCount)

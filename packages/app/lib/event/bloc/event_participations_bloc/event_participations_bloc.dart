@@ -76,7 +76,9 @@ class EventParticipationBloc
     RefreshEventParticipations event,
     Emitter<EventParticipationsState> emit,
   ) async {
-    emit(EventParticipationsPageLoadInProgress(EventParticipationsInitial()));
+    emit(EventParticipationsPageLoadInProgress(EventParticipationsInitial().copyWith(
+      participants: event.participationPreview,
+    )));
 
     try {
       PaginatedList<EventParticipation> page =

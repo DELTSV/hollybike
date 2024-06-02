@@ -1,10 +1,12 @@
-import 'package:auto_route/annotations.dart';
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
+import 'package:hollybike/event/widgets/event_participations_preview.dart';
 import 'package:hollybike/event/widgets/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
@@ -66,24 +68,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  Widget _getParticipantsText(int count, int totalCount) {
-    if (totalCount == 1) {
-      return Text(
-        "1 participant",
-        style: Theme.of(context).textTheme.titleSmall,
-      );
-    }
-
-    if (totalCount > 5) {
-      return Text(
-        "+ ${totalCount - 5}",
-        style: Theme.of(context).textTheme.titleSmall,
-      );
-    }
-
-    return const SizedBox();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,8 +89,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         label: Text(
           'Modifier',
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+                color: Theme.of(context).colorScheme.primary,
+              ),
         ),
         icon: const Icon(Icons.edit),
       ),
@@ -167,8 +151,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       widget.eventName,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style:
-                                          Theme.of(context).textTheme.titleLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
                                     ),
                                   ),
                                 ),
@@ -204,103 +189,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 final int previewParticipantsCount =
                     state.eventDetails!.previewParticipantsCount;
 
-                const avatarSize = 43.0;
-                const avatarRadius = avatarSize / 2;
-                const borderSize = 4.0;
-
                 List<Widget> children = [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 200,
-                        height: avatarSize + 12,
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    height: avatarSize,
-                                    width: (previewParticipants.length *
-                                            avatarRadius) +
-                                        avatarRadius,
-                                    child: Stack(
-                                      alignment: Alignment.topLeft,
-                                      children: previewParticipants
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        final participation = entry.value;
-                                        final index = entry.key;
-
-                                        final avatar = Container(
-                                          width: avatarSize,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Theme.of(context)
-                                                  .scaffoldBackgroundColor,
-                                              width: borderSize,
-                                            ),
-                                          ),
-                                          child: Hero(
-                                            tag: "profile_picture_participation_${participation.user.id}",
-                                            child: CircleAvatar(
-                                              radius: avatarRadius,
-                                              backgroundImage: participation
-                                                          .user.profilePicture !=
-                                                      null
-                                                  ? Image.network(
-                                                      participation
-                                                          .user.profilePicture!,
-                                                    ).image
-                                                  : Image.asset(
-                                                          "assets/images/placeholder_profile_picture.jpg")
-                                                      .image,
-                                            ),
-                                          ),
-                                        );
-
-                                        if (index == 0) {
-                                          return avatar;
-                                        }
-
-                                        return Positioned(
-                                          top: -borderSize,
-                                          left: avatarRadius * index.toDouble(),
-                                          child: avatar,
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _getParticipantsText(
-                                    previewParticipants.length,
-                                    previewParticipantsCount,
-                                  ),
-                                ],
+                      EventParticipationsPreview(
+                        event: event,
+                        previewParticipants: previewParticipants,
+                        previewParticipantsCount: previewParticipantsCount,
+                        onTap: () {
+                          Timer(const Duration(milliseconds: 100), () {
+                            context.router.push(
+                              EventParticipationsRoute(
+                                eventId: event.id,
+                                participationPreview: previewParticipants,
                               ),
-                            ),
-                            Positioned.fill(
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    context.router.push(
-                                      EventParticipationsRoute(
-                                        eventId: event.id,
-                                        participationPreview: previewParticipants,
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                            );
+                          });
+                        },
                       ),
                       ElevatedButton(
                         onPressed: () {

@@ -15,6 +15,7 @@ class EventParticipationsApi {
       queryParameters: {
         'page': page,
         'per_page': eventsPerPage,
+        'sort': 'joined_date_time.asc',
       },
     );
 
