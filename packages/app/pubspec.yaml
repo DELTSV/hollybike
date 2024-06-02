@@ -52,6 +52,7 @@ dependencies:
   lottie: ^3.1.2
   simple_animations: ^5.0.2
   flutter_launcher_icons: ^0.13.1
+  camera: ^0.11.0+1
 
 dev_dependencies:
   flutter_test:

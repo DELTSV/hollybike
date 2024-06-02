@@ -26,6 +26,7 @@ class ClosableDialog extends StatelessWidget {
               child: Container(
                 constraints: const BoxConstraints(minHeight: 45),
                 alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.only(left: 8),
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium,
