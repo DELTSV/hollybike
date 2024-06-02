@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
+import 'package:hollybike/shared/widgets/camera/camera.dart';
 import 'package:hollybike/shared/widgets/dialog/closable_dialog.dart';
 import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
 
@@ -69,6 +70,7 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
                 SizedBox.fromSize(size: const Size.square(8)),
               ),
             ),
+            const Camera(),
           ],
           SizedBox.fromSize(size: const Size.square(16)),
         ),
