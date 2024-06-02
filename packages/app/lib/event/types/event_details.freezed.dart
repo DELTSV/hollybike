@@ -138,13 +138,12 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$EventDetailsImpl extends _EventDetails {
+class _$EventDetailsImpl implements _EventDetails {
   const _$EventDetailsImpl(
       {required this.event,
       required final List<EventParticipation> previewParticipants,
       required this.previewParticipantsCount})
-      : _previewParticipants = previewParticipants,
-        super._();
+      : _previewParticipants = previewParticipants;
 
   factory _$EventDetailsImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventDetailsImplFromJson(json);
@@ -203,12 +202,11 @@ class _$EventDetailsImpl extends _EventDetails {
   }
 }
 
-abstract class _EventDetails extends EventDetails {
+abstract class _EventDetails implements EventDetails {
   const factory _EventDetails(
       {required final Event event,
       required final List<EventParticipation> previewParticipants,
       required final int previewParticipantsCount}) = _$EventDetailsImpl;
-  const _EventDetails._() : super._();
 
   factory _EventDetails.fromJson(Map<String, dynamic> json) =
       _$EventDetailsImpl.fromJson;

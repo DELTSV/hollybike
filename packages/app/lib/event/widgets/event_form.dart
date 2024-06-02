@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/widgets/event_date_input.dart';
 import 'package:hollybike/event/widgets/event_date_range_input.dart';
 import 'package:hollybike/event/widgets/event_form_description_field.dart';
@@ -12,17 +13,14 @@ import 'event_date_warning_dialog.dart';
 import 'event_select_end_date_switch.dart';
 
 class EventForm extends StatefulWidget {
-  final void Function(
-    String name,
-    String? description,
-    DateTime startDate,
-    DateTime? endDate,
-  ) onSubmit;
+  final void Function(EventFormData) onSubmit;
 
   final void Function() onClose;
   final void Function() onTouched;
 
   final String submitButtonText;
+
+  final EventFormData? initialData;
 
   const EventForm({
     super.key,
@@ -30,6 +28,7 @@ class EventForm extends StatefulWidget {
     required this.onSubmit,
     required this.onClose,
     required this.submitButtonText,
+    this.initialData,
   });
 
   @override
@@ -67,6 +66,40 @@ class _EventFormState extends State<EventForm> {
   void initState() {
     super.initState();
 
+    if (widget.initialData != null) {
+      _initInitialValues();
+    } else {
+      _initDefaultValues();
+    }
+
+    _nameController.addListener(_onTouch);
+    _descriptionController.addListener(_onTouch);
+  }
+
+  void _initInitialValues() {
+    final data = widget.initialData!;
+
+    _nameController.text = data.name;
+    _descriptionController.text = data.description ?? "";
+
+    _date = data.startDate;
+
+    if (data.endDate != null) {
+      _selectEndDate = true;
+    }
+
+    final endDate = data.endDate ?? data.startDate.add(const Duration(hours: 1));
+
+    _dateRange = DateTimeRange(
+      start: data.startDate,
+      end: endDate,
+    );
+
+    _startTime = TimeOfDay.fromDateTime(data.startDate);
+    _endTime = TimeOfDay.fromDateTime(endDate);
+  }
+
+  void _initDefaultValues() {
     if (DateTime.now().hour >= 22) {
       _date = DateTime.now().add(const Duration(days: 1));
       _startTime = const TimeOfDay(hour: 8, minute: 30);
@@ -82,9 +115,6 @@ class _EventFormState extends State<EventForm> {
     );
 
     _endTime = _startTime.replacing(hour: _startTime.hour + 1);
-
-    _nameController.addListener(_onTouch);
-    _descriptionController.addListener(_onTouch);
   }
 
   void _onTouch() {
@@ -212,10 +242,12 @@ class _EventFormState extends State<EventForm> {
       }
 
       widget.onSubmit(
-        _nameController.text,
-        description,
-        startDate,
-        endDate,
+        EventFormData(
+          name: _nameController.text,
+          description: description,
+          startDate: startDate,
+          endDate: endDate,
+        ),
       );
     }
   }

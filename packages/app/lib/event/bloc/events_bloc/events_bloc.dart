@@ -105,10 +105,10 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       final createdEvent = await eventRepository.createEvent(
           event.session,
           CreateEventDTO(
-            name: event.name,
-            startDate: event.startDate,
-            endDate: event.endDate,
-            description: event.description,
+            name: event.formData.name,
+            startDate: event.formData.startDate,
+            endDate: event.formData.endDate,
+            description: event.formData.description,
           ));
 
       emit(EventCreationSuccess(state, createdEvent: createdEvent));

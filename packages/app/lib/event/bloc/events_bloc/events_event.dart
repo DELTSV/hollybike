@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../auth/types/auth_session.dart';
+import '../../types/event_form_data.dart';
 
 @immutable
 abstract class EventsEvent {}
@@ -23,16 +24,10 @@ class RefreshEvents extends EventsEvent {
 
 class CreateEvent extends EventsEvent {
   final AuthSession session;
-  final String name;
-  final String? description;
-  final DateTime startDate;
-  final DateTime? endDate;
+  final EventFormData formData;
 
   CreateEvent({
     required this.session,
-    required this.name,
-    this.description,
-    required this.startDate,
-    this.endDate,
+    required this.formData,
   });
 }

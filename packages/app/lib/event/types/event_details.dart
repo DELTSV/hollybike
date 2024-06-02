@@ -9,8 +9,6 @@ part 'event_details.g.dart';
 
 @freezed
 class EventDetails with _$EventDetails {
-  const EventDetails._();
-
   const factory EventDetails({
     required Event event,
     required List<EventParticipation> previewParticipants,

@@ -1,8 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
-import 'package:hollybike/shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
 
 import '../types/event_participation.dart';
 

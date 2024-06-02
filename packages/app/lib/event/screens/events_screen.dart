@@ -14,7 +14,7 @@ import '../../shared/utils/dates.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
-import '../widgets/event_creation_modal.dart';
+import '../widgets/event_form_modal.dart';
 import '../widgets/event_preview_card.dart';
 
 @RoutePage()
@@ -119,7 +119,21 @@ class _EventsScreenState extends State<EventsScreen> {
               context: context,
               enableDrag: false,
               builder: (BuildContext context) {
-                return const EventCreationModal();
+                return EventFormModal(
+                  onSubmit: (formData) {
+                    withCurrentSession(context, (session) {
+                      context.read<EventsBloc>().add(
+                            CreateEvent(
+                              session: session,
+                              formData: formData,
+                            ),
+                          );
+                    });
+
+                    Navigator.of(context).pop();
+                  },
+                  submitButtonText: 'Créer',
+                );
               },
             );
           });

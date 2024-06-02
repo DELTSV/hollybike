@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/widgets/event_discard_changes_dialog.dart';
 import 'package:hollybike/event/widgets/event_form.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 
-import '../bloc/events_bloc/events_bloc.dart';
-import '../bloc/events_bloc/events_event.dart';
+class EventFormModal extends StatefulWidget {
+  final void Function(EventFormData) onSubmit;
+  final String submitButtonText;
+  final EventFormData? initialData;
 
-class EventCreationModal extends StatefulWidget {
-  const EventCreationModal({super.key});
+  const EventFormModal({
+    super.key,
+    required this.onSubmit,
+    required this.submitButtonText,
+    this.initialData,
+  });
 
   @override
-  State<EventCreationModal> createState() => _EventCreationModalState();
+  State<EventFormModal> createState() => _EventFormModalState();
 }
 
-class _EventCreationModalState extends State<EventCreationModal> {
+class _EventFormModalState extends State<EventFormModal> {
   var touched = false;
-
-  void _onSubmit(
-    String name,
-    String? description,
-    DateTime startDate,
-    DateTime? endDate,
-  ) {
-    withCurrentSession(context, (session) {
-      context.read<EventsBloc>().add(
-            CreateEvent(
-              session: session,
-              name: name,
-              description: description,
-              startDate: startDate,
-              endDate: endDate,
-            ),
-          );
-    });
-
-    Navigator.of(context).pop();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +64,8 @@ class _EventCreationModalState extends State<EventCreationModal> {
             right: 16,
           ),
           child: EventForm(
-            submitButtonText: "Créer",
+            submitButtonText: widget.submitButtonText,
+            initialData: widget.initialData,
             onClose: () {
               if (!touched) {
                 Navigator.of(context).pop();
@@ -96,7 +81,7 @@ class _EventCreationModalState extends State<EventCreationModal> {
                 touched = true;
               });
             },
-            onSubmit: _onSubmit,
+            onSubmit: widget.onSubmit,
           ),
         ),
       ),
