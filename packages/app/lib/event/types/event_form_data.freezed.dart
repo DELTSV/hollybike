@@ -14,13 +14,20 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+EventFormData _$EventFormDataFromJson(Map<String, dynamic> json) {
+  return _EventFormData.fromJson(json);
+}
+
 /// @nodoc
 mixin _$EventFormData {
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  @JsonKey(toJson: _toJson)
   DateTime get startDate => throw _privateConstructorUsedError;
+  @JsonKey(toJson: _toJson)
   DateTime? get endDate => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $EventFormDataCopyWith<EventFormData> get copyWith =>
       throw _privateConstructorUsedError;
@@ -35,8 +42,8 @@ abstract class $EventFormDataCopyWith<$Res> {
   $Res call(
       {String name,
       String? description,
-      DateTime startDate,
-      DateTime? endDate});
+      @JsonKey(toJson: _toJson) DateTime startDate,
+      @JsonKey(toJson: _toJson) DateTime? endDate});
 }
 
 /// @nodoc
@@ -89,8 +96,8 @@ abstract class _$$EventFormDataImplCopyWith<$Res>
   $Res call(
       {String name,
       String? description,
-      DateTime startDate,
-      DateTime? endDate});
+      @JsonKey(toJson: _toJson) DateTime startDate,
+      @JsonKey(toJson: _toJson) DateTime? endDate});
 }
 
 /// @nodoc
@@ -131,21 +138,26 @@ class __$$EventFormDataImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$EventFormDataImpl implements _EventFormData {
   const _$EventFormDataImpl(
       {required this.name,
-      required this.description,
-      required this.startDate,
-      required this.endDate});
+      this.description,
+      @JsonKey(toJson: _toJson) required this.startDate,
+      @JsonKey(toJson: _toJson) this.endDate});
+
+  factory _$EventFormDataImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EventFormDataImplFromJson(json);
 
   @override
   final String name;
   @override
   final String? description;
   @override
+  @JsonKey(toJson: _toJson)
   final DateTime startDate;
   @override
+  @JsonKey(toJson: _toJson)
   final DateTime? endDate;
 
   @override
@@ -166,6 +178,7 @@ class _$EventFormDataImpl implements _EventFormData {
             (identical(other.endDate, endDate) || other.endDate == endDate));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, name, description, startDate, endDate);
@@ -175,22 +188,34 @@ class _$EventFormDataImpl implements _EventFormData {
   @pragma('vm:prefer-inline')
   _$$EventFormDataImplCopyWith<_$EventFormDataImpl> get copyWith =>
       __$$EventFormDataImplCopyWithImpl<_$EventFormDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EventFormDataImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _EventFormData implements EventFormData {
   const factory _EventFormData(
       {required final String name,
-      required final String? description,
-      required final DateTime startDate,
-      required final DateTime? endDate}) = _$EventFormDataImpl;
+      final String? description,
+      @JsonKey(toJson: _toJson) required final DateTime startDate,
+      @JsonKey(toJson: _toJson) final DateTime? endDate}) = _$EventFormDataImpl;
+
+  factory _EventFormData.fromJson(Map<String, dynamic> json) =
+      _$EventFormDataImpl.fromJson;
 
   @override
   String get name;
   @override
   String? get description;
   @override
+  @JsonKey(toJson: _toJson)
   DateTime get startDate;
   @override
+  @JsonKey(toJson: _toJson)
   DateTime? get endDate;
   @override
   @JsonKey(ignore: true)

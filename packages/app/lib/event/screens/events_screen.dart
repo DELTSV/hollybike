@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
@@ -176,6 +178,12 @@ class _EventsScreenState extends State<EventsScreen> {
 
               if (state is EventCreationFailure) {
                 Toast.showErrorToast(context, state.errorMessage);
+              }
+            }),
+            BlocListener<EventDetailsBloc, EventDetailsState>(listener: (context, state) {
+              if (state is DeleteEventSuccess) {
+                Toast.showSuccessToast(context, "Événement supprimé");
+                _refreshEvents();
               }
             }),
           ],

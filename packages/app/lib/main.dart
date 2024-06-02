@@ -89,10 +89,6 @@ class MyApp extends StatelessWidget {
               create: (context) => EventDetailsBloc(
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
-                eventParticipationRepository:
-                    RepositoryProvider.of<EventParticipationRepository>(
-                  context,
-                ),
               )..add(SubscribeToEvent()),
             ),
             BlocProvider<EventParticipationBloc>(

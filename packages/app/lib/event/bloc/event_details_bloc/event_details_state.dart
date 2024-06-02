@@ -29,7 +29,7 @@ class EventDetailsState {
     int? remainingParticipants,
   }) {
     return EventDetailsState(
-      eventDetails: event ?? this.eventDetails,
+      eventDetails: event ?? eventDetails,
       status: status ?? this.status,
     );
   }
@@ -72,4 +72,22 @@ class EventOperationFailure extends EventDetailsState {
   EventOperationFailure(EventDetailsState state, {required this.errorMessage})
       : super.state(state.copyWith(status: EventDetailsStatus.error));
 }
+
+class DeleteEventInProgress extends EventDetailsState {
+  DeleteEventInProgress(EventDetailsState state)
+      : super.state(state.copyWith(status: EventDetailsStatus.loading));
+}
+
+class DeleteEventSuccess extends EventDetailsState {
+  DeleteEventSuccess(EventDetailsState state)
+      : super.state(state.copyWith(status: EventDetailsStatus.success));
+}
+
+class DeleteEventFailure extends EventDetailsState {
+  final String errorMessage;
+
+  DeleteEventFailure(EventDetailsState state, {required this.errorMessage})
+      : super.state(state.copyWith(status: EventDetailsStatus.error));
+}
+
 

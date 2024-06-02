@@ -1,9 +1,10 @@
+import 'package:hollybike/event/types/event_form_data.dart';
+import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 import '../../../auth/types/auth_session.dart';
-import '../../types/create_event.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 
@@ -39,7 +40,7 @@ class EventApi {
     return EventDetails.fromJson(response.data);
   }
 
-  Future<Event> createEvent(AuthSession session, CreateEventDTO event) async {
+  Future<Event> createEvent(AuthSession session, EventFormData event) async {
     final response = await DioClient(session).dio.post(
           '/events',
           data: event.toJson(),
@@ -52,6 +53,19 @@ class EventApi {
     return Event.fromJson(response.data);
   }
 
+  Future<Event> editEvent(AuthSession session, int eventId, EventFormData event) async {
+    final response = await DioClient(session).dio.put(
+      '/events/$eventId',
+      data: event.toJson(),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to edit event");
+    }
+
+    return Event.fromJson(response.data);
+  }
+
   Future<void> publishEvent(AuthSession session, int eventId) async {
     final response = await DioClient(session).dio.patch(
           '/events/$eventId/schedule',
@@ -59,6 +73,38 @@ class EventApi {
 
     if (response.statusCode != 200) {
       throw Exception("Failed to publish event");
+    }
+  }
+
+  Future<EventParticipation> joinEvent(AuthSession session, int eventId) async {
+    final response = await DioClient(session).dio.post(
+      '/events/$eventId/participations',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to join event");
+    }
+
+    return EventParticipation.fromJson(response.data);
+  }
+
+  Future<void> deleteEvent(AuthSession session, int eventId) async {
+    final response = await DioClient(session).dio.delete(
+      '/events/$eventId',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to delete event");
+    }
+  }
+
+  Future<void> leaveEvent(AuthSession session, int eventId) async {
+    final response = await DioClient(session).dio.delete(
+      '/events/$eventId/participations',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to leave event");
     }
   }
 }

@@ -16,7 +16,6 @@ import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
-import '../bloc/events_bloc/events_bloc.dart';
 import '../types/event_participation.dart';
 import '../widgets/event_form/event_form_modal.dart';
 
@@ -40,9 +39,15 @@ class EventDetailsScreen extends StatefulWidget {
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  var eventName = "";
+
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      eventName = widget.eventName;
+    });
 
     withCurrentSession(
       context,
@@ -93,12 +98,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     return const SizedBox();
                   }
 
-                  final Event event = state.eventDetails!.event;
-
                   return PopupMenuButton(itemBuilder: (context) {
                     return [
                       const PopupMenuItem(
-                        value: "quit",
+                        value: "leave",
                         child: Row(
                           children: [
                             Icon(Icons.exit_to_app),
@@ -125,7 +128,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         builder: (context) {
                           return AlertDialog(
                             title: const Text("Supprimer l'événement"),
-                            content: const Text("Êtes-vous sûr de vouloir supprimer cet événement ?"),
+                            content: const Text(
+                                "Êtes-vous sûr de vouloir supprimer cet événement ?"),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -136,12 +140,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               TextButton(
                                 onPressed: () {
                                   withCurrentSession(context, (session) {
-                                    // context.read<EventsBloc>().add(
-                                    //       DeleteEvent(
-                                    //         eventId: event.id,
-                                    //         session: session,
-                                    //       ),
-                                    //     );
+                                    context.read<EventDetailsBloc>().add(
+                                          DeleteEvent(
+                                            eventId: state.eventDetails!.event.id,
+                                            session: session,
+                                          ),
+                                        );
                                   });
 
                                   Navigator.of(context).pop();
@@ -152,6 +156,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           );
                         },
                       );
+                    }
+
+                    if (value == "leave") {
+                      withCurrentSession(context, (session) {
+                        context.read<EventDetailsBloc>().add(
+                              LeaveEvent(
+                                eventId: state.eventDetails!.event.id,
+                                session: session,
+                              ),
+                            );
+                      });
                     }
                   });
                 },
@@ -170,24 +185,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         initialData: EventFormData(
                           name: state.eventDetails?.event.name ?? "",
                           description: state.eventDetails?.event.description,
-                          startDate: state.eventDetails?.event.startDate ?? DateTime.now(),
+                          startDate: state.eventDetails?.event.startDate ??
+                              DateTime.now(),
                           endDate: state.eventDetails?.event.endDate,
                         ),
                         onSubmit: (formData) {
                           withCurrentSession(context, (session) {
-                            print(formData.name);
-                            print(formData.description);
-                            print(formData.startDate);
-                            print(formData.endDate);
-                            // context.read<EventsBloc>().add(
-                            //   CreateEvent(
-                            //     session: session,
-                            //     name: name,
-                            //     description: description,
-                            //     startDate: startDate,
-                            //     endDate: endDate,
-                            //   ),
-                            // );
+                            context.read<EventDetailsBloc>().add(
+                                  EditEvent(
+                                    session: session,
+                                    eventId: widget.eventId,
+                                    formData: formData,
+                                  ),
+                                );
                           });
 
                           Navigator.of(context).pop();
@@ -199,7 +209,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 });
               };
 
-              if (state is EventDetailsLoadInProgress || state.eventDetails?.event == null) {
+              if (state is EventDetailsLoadInProgress ||
+                  state.eventDetails?.event == null) {
                 onPressed = null;
               }
 
@@ -212,8 +223,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                 label: Text(
                   'Modifier',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 ),
                 icon: const Icon(Icons.edit),
               );
@@ -223,11 +234,23 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             listener: (context, state) {
               if (state is EventOperationFailure) {
                 Toast.showErrorToast(context, state.errorMessage);
+              } else if (state is EventDetailsLoadFailure) {
+                Toast.showErrorToast(context, state.errorMessage);
+              } else if (state is DeleteEventFailure) {
+                Toast.showErrorToast(context, state.errorMessage);
               }
 
               if (state is EventOperationSuccess) {
                 Toast.showSuccessToast(context, state.successMessage);
               }
+
+              if (state is DeleteEventSuccess) {
+                context.router.maybePop();
+              }
+
+              setState(() {
+                eventName = state.eventDetails?.event.name ?? widget.eventName;
+              });
             },
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
@@ -275,7 +298,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       child: SizedBox(
                                         width: constraints.maxWidth - 20,
                                         child: Text(
-                                          widget.eventName,
+                                          eventName,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: Theme.of(context)
@@ -334,7 +357,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              print("Rejoindre");
+                              withCurrentSession(context, (session) {
+                                context.read<EventDetailsBloc>().add(
+                                      JoinEvent(
+                                        eventId: event.id,
+                                        session: session,
+                                      ),
+                                    );
+                              });
                             },
                             child: const Text("Rejoindre"),
                           ),
