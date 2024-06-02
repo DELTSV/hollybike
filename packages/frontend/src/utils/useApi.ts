@@ -85,8 +85,8 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 			message: "Erreur inconnue",
 		};
 	}
+	const responseText = await response.text();
 	if (response.status.toString()[0] !== "2") {
-		const responseText = await response.text();
 		if (response.status === 401)
 			externalDisconnect();
 
@@ -106,12 +106,12 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 	try {
 		return {
 			status: response.status,
-			data: await response.json(),
+			data: JSON.parse(responseText),
 		};
 	} catch (e) {
 		return {
 			status: response.status,
-			message: await response.text(),
+			message: responseText,
 		};
 	}
 }

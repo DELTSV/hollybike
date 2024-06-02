@@ -8,6 +8,9 @@ class Invitation(val api: API = API()) {
 	class Id(val invitation: Invitation = Invitation(), val id: Int) {
 		@Resource("disable")
 		class Disable(val id: Id)
+
+		@Resource("send-mail")
+		class SendMail(val id: Id)
 	}
 
 	@Resource("meta-data")

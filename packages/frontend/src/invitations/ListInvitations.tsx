@@ -153,7 +153,19 @@ export function ListInvitations() {
 										}}
 									/> }
 								<input className={"hidden"} value={i.link} ref={input}/>
-								{ smtp.status === 200 && <MailOutlineRounded/> }
+								{ smtp.status === 200 && <MailOutlineRounded
+									className={"cursor-pointer"} onClick={() => {
+										api(`/invitation/${i.id}/send-mail`, {
+											method: "POST",
+											body: { dest: "denis.turbiez@kamae.fr" },
+										}).then((res) => {
+											if (res.status === 200)
+												toast("Mail envoyé avec success", { type: "success" });
+											else
+												toast(`Erreur: ${res.message}`, { type: "error" });
+										});
+									}}
+								/> }
 							</div> }
 					</Cell>,
 					<Cell>

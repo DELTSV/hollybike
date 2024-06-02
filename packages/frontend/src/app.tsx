@@ -116,7 +116,12 @@ export function App() {
 			className={clsx(themeDark && "dark", "bg-slate-200 dark:bg-gray-900 w-screen h-screen" +
 				" text-slate-950 dark:text-slate-100")}
 		>
-			<ToastContainer stacked pauseOnHover={false} position={"top-right"} theme={themeDark ? "dark" : "light"}/>
+			<ToastContainer
+				pauseOnHover={false}
+				pauseOnFocusLoss={false}
+				position={"top-right"}
+				theme={themeDark ? "dark" : "light"}
+			/>
 			<RouterProvider router={ router } />
 		</main>
 	);

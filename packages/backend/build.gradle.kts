@@ -83,6 +83,7 @@ dependencies {
 	implementation("io.ktor:ktor-server-compression-jvm:$ktorVersion")
 	implementation("io.ktor:ktor-server-resources:$ktorVersion")
 	implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+	implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
 	implementation("de.nycode:bcrypt:2.2.0")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")

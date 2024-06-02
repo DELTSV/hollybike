@@ -10,11 +10,13 @@ import hollybike.api.routing.resources.Invitation
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
 import hollybike.api.services.storage.StorageService
+import hollybike.api.types.auth.TMailDest
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.MailSender
 import hollybike.api.utils.get
 import hollybike.api.utils.patch
 import hollybike.api.utils.post
@@ -23,6 +25,7 @@ import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -33,6 +36,7 @@ class InvitationController(
 	private val authService: AuthService,
 	private val invitationService: InvitationService,
 	private val storageService: StorageService,
+	private val mailSender: MailSender?
 ) {
 	init {
 		application.routing {
@@ -41,6 +45,9 @@ class InvitationController(
 				getMetaData()
 				createInvitation()
 				disableInvitation()
+				if(mailSender != null) {
+					sendMail()
+				}
 			}
 		}
 	}
@@ -120,6 +127,30 @@ class InvitationController(
 						call.respond(HttpStatusCode.InternalServerError)
 					}
 				}
+			}
+		}
+	}
+
+	private fun Route.sendMail() {
+		post<Invitation.Id.SendMail>(EUserScope.Admin) {
+			val host = call.request.headers["Host"]
+			if(host == null) {
+				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
+				return@post
+			}
+
+			val dest = call.receive<TMailDest>()
+
+			invitationService.getValidInvitation(it.id.id)?.let { invitation ->
+				val link = authService.generateLink(call.user, host, invitation)
+				try {
+					mailSender?.linkMail(link, dest.dest, invitation.association.name)?.join()
+					call.respond("Mail envoyé")
+				} catch (e: Exception) {
+					call.respond(HttpStatusCode.InternalServerError, e.message ?: "Erreur inconnue")
+				}
+			} ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'invitation n'a pas été trouvé ou n'est plus valide")
 			}
 		}
 	}

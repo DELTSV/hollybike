@@ -12,6 +12,7 @@ import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -51,7 +52,7 @@ class InvitationService(
 					(Invitations.status eq EInvitationStatus.Enabled.value) and
 					(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
 					(Invitations.expiration.isNull() or (Invitations.expiration less Clock.System.now()))
-		}.singleOrNull()
+		}.singleOrNull()?.load(Invitation::association)
 	}
 
 	fun createInvitation(
