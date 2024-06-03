@@ -117,7 +117,10 @@ export function List<T>(props: ListProps<T>) {
 					</tr>
 				</thead>
 				<tbody>
-					{ data.data?.data?.map(d => <tr className={"border-t-2 border-slate-600"}>{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }</tr>) }
+					{ data.data?.data?.map(d =>
+						<tr className={"border-t-2 border-slate-600"}>
+							{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }
+						</tr>) }
 				</tbody>
 			</table>
 			<div className={"flex items-center gap-4"}>

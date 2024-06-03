@@ -146,7 +146,10 @@ const monthName = [
 ];
 
 function sameDay(a: Date, b: Date | undefined) {
-	return b !== undefined && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+	return b !== undefined &&
+		a.getFullYear() === b.getFullYear() &&
+		a.getMonth() === b.getMonth() &&
+		a.getDate() === b.getDate();
 }
 
 export function formatDateTimeComponent(value: number | undefined): string {
