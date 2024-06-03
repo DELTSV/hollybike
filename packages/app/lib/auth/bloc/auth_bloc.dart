@@ -80,7 +80,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           consumerId: "signupForm",
         );
       } catch (e) {
-        print('error $e');
         notificationRepository.push(
           "Il semble que le lien d'invitation que vous utilisez est invalide.",
           isError: true,
