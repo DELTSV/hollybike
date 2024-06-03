@@ -104,7 +104,7 @@ class EventController(
 
 	private fun Route.getEventDetails() {
 		get<Events.Id.Details> { id ->
-			val event = eventService.getEvent(call.user, id.details.id)
+			val (event, callerParticipation) = eventService.getEventWithParticipation(call.user, id.details.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
 
 			eventParticipationService.getParticipationsPreview(call.user, id.details.id)
@@ -112,6 +112,7 @@ class EventController(
 					call.respond(
 						TEventDetails(
 							event,
+							callerParticipation,
 							participants,
 							participantsCount,
 							storageService.signer.sign

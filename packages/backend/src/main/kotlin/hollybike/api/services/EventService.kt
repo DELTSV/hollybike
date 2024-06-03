@@ -19,6 +19,7 @@ import io.ktor.server.response.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -209,10 +210,31 @@ class EventService(
 		}.count().toInt()
 	}
 
+	fun getEventWithParticipation(caller: User, id: Int): Pair<Event, EventParticipation?>? = transaction(db) {
+		val eventRow = Events.innerJoin(
+			Users,
+			{ owner },
+			{ Users.id }
+		).leftJoin(
+			EventParticipations,
+			{ Events.id },
+			{ event },
+			{ EventParticipations.user eq caller.id }
+		).selectAll().where {
+			Events.id eq id and eventUserCondition(caller)
+		}.firstOrNull() ?: return@transaction null
+
+		Event.wrapRow(eventRow).load(Event::owner) to try {
+			EventParticipation.wrapRow(eventRow)
+		} catch (e: Throwable) {
+			null
+		}
+	}
+
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
 		Event.find {
 			Events.id eq id and eventUserCondition(caller)
-		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull()
+		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return@transaction null
 	}
 
 	fun createEvent(
