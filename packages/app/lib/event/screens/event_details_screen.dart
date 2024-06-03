@@ -333,6 +333,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     final List<EventParticipation> previewParticipants =
                         state.eventDetails!.previewParticipants;
 
+                    print(previewParticipants);
+
                     final int previewParticipantsCount =
                         state.eventDetails!.previewParticipantsCount;
 

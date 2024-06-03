@@ -150,12 +150,13 @@ class __$$EventParticipationImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$EventParticipationImpl implements _EventParticipation {
+class _$EventParticipationImpl extends _EventParticipation {
   const _$EventParticipationImpl(
       {required this.user,
       required this.isImagesPublic,
       required this.role,
-      required this.joinedDateTime});
+      required this.joinedDateTime})
+      : super._();
 
   factory _$EventParticipationImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventParticipationImplFromJson(json);
@@ -207,12 +208,13 @@ class _$EventParticipationImpl implements _EventParticipation {
   }
 }
 
-abstract class _EventParticipation implements EventParticipation {
+abstract class _EventParticipation extends EventParticipation {
   const factory _EventParticipation(
       {required final MinimalUser user,
       required final bool isImagesPublic,
       required final EventRole role,
       required final DateTime joinedDateTime}) = _$EventParticipationImpl;
+  const _EventParticipation._() : super._();
 
   factory _EventParticipation.fromJson(Map<String, dynamic> json) =
       _$EventParticipationImpl.fromJson;

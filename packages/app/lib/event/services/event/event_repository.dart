@@ -63,7 +63,8 @@ class EventRepository {
     return eventApi.createEvent(session, event);
   }
 
-  Future<void> editEvent(AuthSession session, int eventId, EventFormData event) async {
+  Future<void> editEvent(
+      AuthSession session, int eventId, EventFormData event) async {
     final editedEvent = await eventApi.editEvent(session, eventId, event);
 
     final details = _eventStreamController.value;
@@ -114,20 +115,15 @@ class EventRepository {
       return;
     }
 
-    final newCount = details.previewParticipantsCount + 1;
-
-    if (details.previewParticipants.length < 5) {
-      _eventStreamController.add(
-        details.copyWith(
-          previewParticipants: details.previewParticipants + [participation],
-          previewParticipantsCount: newCount,
-        ),
-      );
-    }
+    final updatePreviewParticipants = details.previewParticipants.length < 5;
 
     _eventStreamController.add(
       details.copyWith(
-        previewParticipantsCount: newCount,
+        previewParticipants: updatePreviewParticipants
+            ? details.previewParticipants + [participation]
+            : details.previewParticipants,
+        previewParticipantsCount: details.previewParticipantsCount + 1,
+        callerParticipation: participation.toEventCallerParticipation(),
       ),
     );
   }
@@ -141,22 +137,13 @@ class EventRepository {
       return;
     }
 
-    final newCount = details.previewParticipantsCount - 1;
-
-    // if (details.previewParticipants.length <= 5) {
-    //   _eventStreamController.add(
-    //     details.copyWith(
-    //       previewParticipants: details.previewParticipants
-    //           .where((p) => p.user.id != session.userId)
-    //           .toList(),
-    //       previewParticipantsCount: newCount,
-    //     ),
-    //   );
-    // }
-
     _eventStreamController.add(
       details.copyWith(
-        previewParticipantsCount: newCount,
+        previewParticipants: details.previewParticipants
+            .where((p) => p.user.id != details.callerParticipation?.userId)
+            .toList(),
+        previewParticipantsCount: details.previewParticipantsCount - 1,
+        callerParticipation: null,
       ),
     );
   }

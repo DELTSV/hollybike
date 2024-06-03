@@ -7,13 +7,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TEventCallerParticipation(
 	val role: EEventRole,
-	val isOwner: Boolean,
+	val userId: Int,
 	val isImagesPublic: Boolean,
 	val joinedDateTime: Instant,
 ) {
-	constructor(entity: EventParticipation, isOwner: Boolean) : this(
+	constructor(entity: EventParticipation) : this(
 		role = entity.role,
-		isOwner = isOwner,
+		userId = entity.user.id.value,
 		isImagesPublic = entity.isImagesPublic,
 		joinedDateTime = entity.joinedDateTime
 	)

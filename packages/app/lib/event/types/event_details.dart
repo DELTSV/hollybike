@@ -24,7 +24,7 @@ class EventDetails with _$EventDetails {
   factory EventDetails.fromJson(JsonMap json) => _$EventDetailsFromJson(json);
 
   bool get isOwner =>
-      callerParticipation != null && callerParticipation!.isOwner;
+      callerParticipation != null && callerParticipation!.userId == event.owner.id;
 
   bool get isParticipating => callerParticipation != null;
 

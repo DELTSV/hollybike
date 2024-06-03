@@ -115,7 +115,6 @@ class EventController(
 							callerParticipation,
 							participants,
 							participantsCount,
-							isOwner = event.owner.id == call.user.id,
 							storageService.signer.sign
 						)
 					)

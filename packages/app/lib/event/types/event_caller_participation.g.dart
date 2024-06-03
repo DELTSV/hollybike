@@ -9,7 +9,7 @@ part of 'event_caller_participation.dart';
 _$EventCallerParticipationImpl _$$EventCallerParticipationImplFromJson(
         Map<String, dynamic> json) =>
     _$EventCallerParticipationImpl(
-      isOwner: json['isOwner'] as bool,
+      userId: (json['userId'] as num).toInt(),
       isImagesPublic: json['isImagesPublic'] as bool,
       role: $enumDecode(_$EventRoleEnumMap, json['role']),
       joinedDateTime: DateTime.parse(json['joinedDateTime'] as String),
@@ -18,7 +18,7 @@ _$EventCallerParticipationImpl _$$EventCallerParticipationImplFromJson(
 Map<String, dynamic> _$$EventCallerParticipationImplToJson(
         _$EventCallerParticipationImpl instance) =>
     <String, dynamic>{
-      'isOwner': instance.isOwner,
+      'userId': instance.userId,
       'isImagesPublic': instance.isImagesPublic,
       'role': _$EventRoleEnumMap[instance.role]!,
       'joinedDateTime': instance.joinedDateTime.toIso8601String(),
