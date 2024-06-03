@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/shared/widgets/app_banner.dart';
 
-class AuthContainer extends StatelessWidget {
-  final Widget child;
+class DialogContainer extends StatelessWidget {
+  final Widget? head;
+  final Widget? body;
 
-  const AuthContainer({
+  const DialogContainer({
     super.key,
-    required this.child,
+    this.head,
+    this.body,
   });
 
   @override
   Widget build(BuildContext context) {
     const radius = Radius.circular(15);
-    final borderSide = BorderSide(
+    final border = BorderSide(
       width: 2,
       color: Theme.of(context).colorScheme.onPrimary,
     );
@@ -27,8 +28,12 @@ class AuthContainer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
+                constraints: const BoxConstraints.tightFor(
+                  width: double.infinity,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.only(
                     topRight: radius,
                     topLeft: radius,
                   ),
@@ -39,16 +44,19 @@ class AuthContainer extends StatelessWidget {
                     topLeft: radius,
                   ),
                   border: Border(
-                    top: borderSide,
-                    left: borderSide,
-                    right: borderSide,
+                    top: border,
+                    left: border,
+                    right: border,
                   ),
                 ),
                 clipBehavior: Clip.hardEdge,
-                child: const AppBanner(),
+                child: head,
               ),
               Flexible(
                 child: Container(
+                  constraints: const BoxConstraints.tightFor(
+                    width: double.infinity,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: const BorderRadius.only(
@@ -57,7 +65,11 @@ class AuthContainer extends StatelessWidget {
                     ),
                   ),
                   foregroundDecoration: BoxDecoration(
-                    border: Border.fromBorderSide(borderSide),
+                    border: Border(
+                      left: border,
+                      right: border,
+                      bottom: border,
+                    ),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: radius,
                       bottomRight: radius,
@@ -66,7 +78,7 @@ class AuthContainer extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: child,
+                      child: body,
                     ),
                   ),
                 ),

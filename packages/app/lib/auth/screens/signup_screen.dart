@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
-import 'package:hollybike/auth/types/login_dto.dart';
+import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/auth/widgets/form_builder.dart';
-import 'package:hollybike/auth/widgets/signup_link_dialog.dart';
 import 'package:hollybike/shared/widgets/dialog/banner_dialog.dart';
 
 import '../types/form_field_config.dart';
 
 @RoutePage()
-class LoginScreen extends StatelessWidget {
-  final Function() onAuthSuccess;
+class SignupScreen extends StatelessWidget {
+  final Function()? onAuthSuccess;
   final bool canPop;
 
-  const LoginScreen({
+  const SignupScreen({
     super.key,
-    required this.onAuthSuccess,
+    this.onAuthSuccess,
     this.canPop = false,
   });
 
@@ -31,39 +30,35 @@ class LoginScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state.currentSession != null) onAuthSuccess.call();
         },
         child: BannerDialog(
           body: FormBuilder(
-            title: "Bienvenue!",
-            description: "Entrez vos identifiants pour vous connecter.",
-            notificationsConsumerId: "loginForm",
-            formTexts: FormTexts(
-              submit: "Connexion",
-              link: (
-              description: "Vous n'avez pas encore de compte ?",
-              buttonText: "Inscrivez-vous",
-              onDestinationClick: () => _signupLinkDialogBuilder(context)
-              ),
+            title: "Inscrivez-vous!",
+            description: "Saisissez les informations de votre nouveau compte.",
+            notificationsConsumerId: "signupForm",
+            formTexts: const FormTexts(
+              submit: "Inscription",
             ),
             onFormSubmit: (formValue) {
-              BlocProvider.of<AuthBloc>(context).add(AuthLogin(
-                host: formValue["host"] as String,
-                loginDto: LoginDto.fromMap(formValue),
+              final values = Map.from(context.routeData.queryParams.rawMap);
+              values.addAll(formValue);
+
+              BlocProvider.of<AuthBloc>(context).add(AuthSignup(
+                host: context.routeData.queryParams.getString("host"),
+                signupDto: SignupDto.fromMap(values),
               ));
             },
             formFields: {
-              "host": FormFieldConfig(
-                label: "Adresse du serveur",
+              "username": FormFieldConfig(
+                label: "Nom utilisateur",
                 validator: _inputValidator,
-                defaultValue: "https://hollybike.fr",
-                autofillHints: [AutofillHints.url],
-                textInputType: TextInputType.url,
+                autofocus: true,
+                autofillHints: [AutofillHints.newUsername],
+                textInputType: TextInputType.name,
               ),
               "email": FormFieldConfig(
                 label: "Adresse mail",
                 validator: _inputValidator,
-                autofocus: true,
                 autofillHints: [AutofillHints.email],
                 textInputType: TextInputType.emailAddress,
               ),
@@ -71,7 +66,8 @@ class LoginScreen extends StatelessWidget {
                 label: "Mot de passe",
                 validator: _inputValidator,
                 isSecured: true,
-                autofillHints: [AutofillHints.password],
+                hasControlField: true,
+                autofillHints: [AutofillHints.newPassword],
               ),
             },
           ),
@@ -85,12 +81,5 @@ class LoginScreen extends StatelessWidget {
       return "Ce champs ne peut pas être vide.";
     }
     return null;
-  }
-
-  Future<void> _signupLinkDialogBuilder(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) => const SignupLinkDialog(),
-    );
   }
 }
