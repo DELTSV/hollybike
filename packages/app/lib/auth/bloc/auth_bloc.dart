@@ -60,6 +60,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       }
     });
+    on<AuthSignup>((event, emit) async {
+      try {
+        final response = await authRepository.signup(
+          event.host,
+          event.signupDto,
+        );
+
+        if (response.statusCode != 200) {
+          throw NotificationException(response.body);
+        }
+
+        final session = AuthSession.fromResponseJson(event.host, response.body);
+        emit(AuthNewSession(session, state));
+      } on NotificationException catch (exception) {
+        notificationRepository.push(
+          exception.message,
+          isError: true,
+          consumerId: "signupForm",
+        );
+      } catch (e) {
+        print('error $e');
+        notificationRepository.push(
+          "Il semble que le lien d'invitation que vous utilisez est invalide.",
+          isError: true,
+          consumerId: "signupForm",
+        );
+      }
+    });
   }
 
   @override

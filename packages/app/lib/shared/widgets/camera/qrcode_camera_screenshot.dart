@@ -69,7 +69,7 @@ class QrcodeCameraScreenshot extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           width: 3,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                       constraints: const BoxConstraints.expand(),

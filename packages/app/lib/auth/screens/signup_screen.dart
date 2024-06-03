@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
+import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/auth/widgets/form_builder.dart';
 import 'package:hollybike/shared/widgets/dialog/banner_dialog.dart';
 
@@ -22,6 +23,7 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("ici ${context.routeData.queryParams}");
     return Scaffold(
       floatingActionButton: canPop ? FloatingActionButton.small(
         onPressed: () => context.router.maybePop(),
@@ -40,9 +42,12 @@ class SignupScreen extends StatelessWidget {
               submit: "Inscription",
             ),
             onFormSubmit: (formValue) {
-              BlocProvider.of<AuthBloc>(context).add(AuthLogin(
-                host: formValue["host"] as String,
-                loginDto: LoginDto.fromMap(formValue),
+              final values = Map.from(context.routeData.queryParams.rawMap);
+              values.addAll(formValue);
+
+              BlocProvider.of<AuthBloc>(context).add(AuthSignup(
+                host: context.routeData.queryParams.getString("host"),
+                signupDto: SignupDto.fromMap(values),
               ));
             },
             formFields: {
