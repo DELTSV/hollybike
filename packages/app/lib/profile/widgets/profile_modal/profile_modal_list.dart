@@ -7,7 +7,6 @@ import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_card/loading_profile_card.dart';
 import 'package:hollybike/shared/widgets/profile_card/profile_card.dart';
-import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:hollybike/shared/widgets/async_renderer.dart';
 
 class ProfileModalList extends StatelessWidget {
@@ -36,16 +35,10 @@ class ProfileModalList extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context, AuthState state) {
-    return SingleChildScrollView(
-      child: Wrap(
-        children: addSeparators(
-          _populateList(context, state.storedSessions),
-          Container(
-            constraints: const BoxConstraints.expand(height: 2),
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
-        ),
-      ),
+    return ListWheelScrollView(
+      itemExtent: 80,
+      diameterRatio: 3,
+      children:  _populateList(context, state.storedSessions),
     );
   }
 
@@ -63,21 +56,20 @@ class ProfileModalList extends StatelessWidget {
       ];
     }
 
-    return sessions
-        .map(
-          (session) => AsyncRenderer(
-            future: RepositoryProvider.of<ProfileRepository>(context)
-                .getSessionProfile(session),
-            builder: (profile) => ProfileCard(
-              session: session,
-              profile: profile,
-              onTap: _handleCardTap,
-              endChild: _buildDeleteButton(context, session),
-            ),
-            placeholder: const LoadingProfileCard(clickable: true),
-          ),
-        )
-        .toList();
+    return sessions.map((session) {
+      bool isCurrentSession = session.getIndexInList(sessions) == 0;
+      return AsyncRenderer(
+        future: RepositoryProvider.of<ProfileRepository>(context)
+            .getSessionProfile(session),
+        builder: (profile) => ProfileCard(
+          session: session,
+          profile: profile,
+          onTap: isCurrentSession ? null : _handleCardTap,
+          endChild: _buildDeleteButton(isCurrentSession, context, session),
+        ),
+        placeholder: const LoadingProfileCard(clickable: true),
+      );
+    }).toList();
   }
 
   void _handleCardTap(BuildContext context, AuthSession session, Profile _) {
@@ -85,8 +77,15 @@ class ProfileModalList extends StatelessWidget {
         .add(AuthSessionSwitch(newSession: session));
   }
 
-  Widget? _buildDeleteButton(BuildContext context, AuthSession session) {
-    if (!inEditMode) return null;
+  Widget? _buildDeleteButton(
+    bool isCurrentSession,
+    BuildContext context,
+    AuthSession session,
+  ) {
+    if (!inEditMode) {
+      if (isCurrentSession) return const Icon(Icons.person);
+      return null;
+    }
 
     return IconButton(
       onPressed: () {
