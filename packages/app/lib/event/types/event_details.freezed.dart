@@ -21,7 +21,7 @@ EventDetails _$EventDetailsFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$EventDetails {
   Event get event => throw _privateConstructorUsedError;
-  EventCallerParticipation get callerParticipation =>
+  EventCallerParticipation? get callerParticipation =>
       throw _privateConstructorUsedError;
   List<EventParticipation> get previewParticipants =>
       throw _privateConstructorUsedError;
@@ -41,12 +41,12 @@ abstract class $EventDetailsCopyWith<$Res> {
   @useResult
   $Res call(
       {Event event,
-      EventCallerParticipation callerParticipation,
+      EventCallerParticipation? callerParticipation,
       List<EventParticipation> previewParticipants,
       int previewParticipantsCount});
 
   $EventCopyWith<$Res> get event;
-  $EventCallerParticipationCopyWith<$Res> get callerParticipation;
+  $EventCallerParticipationCopyWith<$Res>? get callerParticipation;
 }
 
 /// @nodoc
@@ -63,7 +63,7 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
   @override
   $Res call({
     Object? event = null,
-    Object? callerParticipation = null,
+    Object? callerParticipation = freezed,
     Object? previewParticipants = null,
     Object? previewParticipantsCount = null,
   }) {
@@ -72,10 +72,10 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
           ? _value.event
           : event // ignore: cast_nullable_to_non_nullable
               as Event,
-      callerParticipation: null == callerParticipation
+      callerParticipation: freezed == callerParticipation
           ? _value.callerParticipation
           : callerParticipation // ignore: cast_nullable_to_non_nullable
-              as EventCallerParticipation,
+              as EventCallerParticipation?,
       previewParticipants: null == previewParticipants
           ? _value.previewParticipants
           : previewParticipants // ignore: cast_nullable_to_non_nullable
@@ -97,8 +97,12 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
 
   @override
   @pragma('vm:prefer-inline')
-  $EventCallerParticipationCopyWith<$Res> get callerParticipation {
-    return $EventCallerParticipationCopyWith<$Res>(_value.callerParticipation,
+  $EventCallerParticipationCopyWith<$Res>? get callerParticipation {
+    if (_value.callerParticipation == null) {
+      return null;
+    }
+
+    return $EventCallerParticipationCopyWith<$Res>(_value.callerParticipation!,
         (value) {
       return _then(_value.copyWith(callerParticipation: value) as $Val);
     });
@@ -115,14 +119,14 @@ abstract class _$$EventDetailsImplCopyWith<$Res>
   @useResult
   $Res call(
       {Event event,
-      EventCallerParticipation callerParticipation,
+      EventCallerParticipation? callerParticipation,
       List<EventParticipation> previewParticipants,
       int previewParticipantsCount});
 
   @override
   $EventCopyWith<$Res> get event;
   @override
-  $EventCallerParticipationCopyWith<$Res> get callerParticipation;
+  $EventCallerParticipationCopyWith<$Res>? get callerParticipation;
 }
 
 /// @nodoc
@@ -137,7 +141,7 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? event = null,
-    Object? callerParticipation = null,
+    Object? callerParticipation = freezed,
     Object? previewParticipants = null,
     Object? previewParticipantsCount = null,
   }) {
@@ -146,10 +150,10 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
           ? _value.event
           : event // ignore: cast_nullable_to_non_nullable
               as Event,
-      callerParticipation: null == callerParticipation
+      callerParticipation: freezed == callerParticipation
           ? _value.callerParticipation
           : callerParticipation // ignore: cast_nullable_to_non_nullable
-              as EventCallerParticipation,
+              as EventCallerParticipation?,
       previewParticipants: null == previewParticipants
           ? _value._previewParticipants
           : previewParticipants // ignore: cast_nullable_to_non_nullable
@@ -164,13 +168,14 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$EventDetailsImpl implements _EventDetails {
+class _$EventDetailsImpl extends _EventDetails {
   const _$EventDetailsImpl(
       {required this.event,
       required this.callerParticipation,
       required final List<EventParticipation> previewParticipants,
       required this.previewParticipantsCount})
-      : _previewParticipants = previewParticipants;
+      : _previewParticipants = previewParticipants,
+        super._();
 
   factory _$EventDetailsImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventDetailsImplFromJson(json);
@@ -178,7 +183,7 @@ class _$EventDetailsImpl implements _EventDetails {
   @override
   final Event event;
   @override
-  final EventCallerParticipation callerParticipation;
+  final EventCallerParticipation? callerParticipation;
   final List<EventParticipation> _previewParticipants;
   @override
   List<EventParticipation> get previewParticipants {
@@ -234,12 +239,13 @@ class _$EventDetailsImpl implements _EventDetails {
   }
 }
 
-abstract class _EventDetails implements EventDetails {
+abstract class _EventDetails extends EventDetails {
   const factory _EventDetails(
       {required final Event event,
-      required final EventCallerParticipation callerParticipation,
+      required final EventCallerParticipation? callerParticipation,
       required final List<EventParticipation> previewParticipants,
       required final int previewParticipantsCount}) = _$EventDetailsImpl;
+  const _EventDetails._() : super._();
 
   factory _EventDetails.fromJson(Map<String, dynamic> json) =
       _$EventDetailsImpl.fromJson;
@@ -247,7 +253,7 @@ abstract class _EventDetails implements EventDetails {
   @override
   Event get event;
   @override
-  EventCallerParticipation get callerParticipation;
+  EventCallerParticipation? get callerParticipation;
   @override
   List<EventParticipation> get previewParticipants;
   @override

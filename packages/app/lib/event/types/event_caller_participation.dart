@@ -10,6 +10,7 @@ part 'event_caller_participation.g.dart';
 @freezed
 class EventCallerParticipation with _$EventCallerParticipation {
   const factory EventCallerParticipation({
+    required bool isOwner,
     required bool isImagesPublic,
     required EventRole role,
     required DateTime joinedDateTime,

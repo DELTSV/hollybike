@@ -9,8 +9,10 @@ part of 'event_details.dart';
 _$EventDetailsImpl _$$EventDetailsImplFromJson(Map<String, dynamic> json) =>
     _$EventDetailsImpl(
       event: Event.fromJson(json['event'] as Map<String, dynamic>),
-      callerParticipation: EventCallerParticipation.fromJson(
-          json['callerParticipation'] as Map<String, dynamic>),
+      callerParticipation: json['callerParticipation'] == null
+          ? null
+          : EventCallerParticipation.fromJson(
+              json['callerParticipation'] as Map<String, dynamic>),
       previewParticipants: (json['previewParticipants'] as List<dynamic>)
           .map((e) => EventParticipation.fromJson(e as Map<String, dynamic>))
           .toList(),

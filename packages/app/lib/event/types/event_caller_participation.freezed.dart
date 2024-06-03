@@ -21,6 +21,7 @@ EventCallerParticipation _$EventCallerParticipationFromJson(
 
 /// @nodoc
 mixin _$EventCallerParticipation {
+  bool get isOwner => throw _privateConstructorUsedError;
   bool get isImagesPublic => throw _privateConstructorUsedError;
   EventRole get role => throw _privateConstructorUsedError;
   DateTime get joinedDateTime => throw _privateConstructorUsedError;
@@ -37,7 +38,11 @@ abstract class $EventCallerParticipationCopyWith<$Res> {
           $Res Function(EventCallerParticipation) then) =
       _$EventCallerParticipationCopyWithImpl<$Res, EventCallerParticipation>;
   @useResult
-  $Res call({bool isImagesPublic, EventRole role, DateTime joinedDateTime});
+  $Res call(
+      {bool isOwner,
+      bool isImagesPublic,
+      EventRole role,
+      DateTime joinedDateTime});
 }
 
 /// @nodoc
@@ -54,11 +59,16 @@ class _$EventCallerParticipationCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? isOwner = null,
     Object? isImagesPublic = null,
     Object? role = null,
     Object? joinedDateTime = null,
   }) {
     return _then(_value.copyWith(
+      isOwner: null == isOwner
+          ? _value.isOwner
+          : isOwner // ignore: cast_nullable_to_non_nullable
+              as bool,
       isImagesPublic: null == isImagesPublic
           ? _value.isImagesPublic
           : isImagesPublic // ignore: cast_nullable_to_non_nullable
@@ -84,7 +94,11 @@ abstract class _$$EventCallerParticipationImplCopyWith<$Res>
       __$$EventCallerParticipationImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isImagesPublic, EventRole role, DateTime joinedDateTime});
+  $Res call(
+      {bool isOwner,
+      bool isImagesPublic,
+      EventRole role,
+      DateTime joinedDateTime});
 }
 
 /// @nodoc
@@ -100,11 +114,16 @@ class __$$EventCallerParticipationImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? isOwner = null,
     Object? isImagesPublic = null,
     Object? role = null,
     Object? joinedDateTime = null,
   }) {
     return _then(_$EventCallerParticipationImpl(
+      isOwner: null == isOwner
+          ? _value.isOwner
+          : isOwner // ignore: cast_nullable_to_non_nullable
+              as bool,
       isImagesPublic: null == isImagesPublic
           ? _value.isImagesPublic
           : isImagesPublic // ignore: cast_nullable_to_non_nullable
@@ -125,13 +144,16 @@ class __$$EventCallerParticipationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$EventCallerParticipationImpl implements _EventCallerParticipation {
   const _$EventCallerParticipationImpl(
-      {required this.isImagesPublic,
+      {required this.isOwner,
+      required this.isImagesPublic,
       required this.role,
       required this.joinedDateTime});
 
   factory _$EventCallerParticipationImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventCallerParticipationImplFromJson(json);
 
+  @override
+  final bool isOwner;
   @override
   final bool isImagesPublic;
   @override
@@ -141,7 +163,7 @@ class _$EventCallerParticipationImpl implements _EventCallerParticipation {
 
   @override
   String toString() {
-    return 'EventCallerParticipation(isImagesPublic: $isImagesPublic, role: $role, joinedDateTime: $joinedDateTime)';
+    return 'EventCallerParticipation(isOwner: $isOwner, isImagesPublic: $isImagesPublic, role: $role, joinedDateTime: $joinedDateTime)';
   }
 
   @override
@@ -149,6 +171,7 @@ class _$EventCallerParticipationImpl implements _EventCallerParticipation {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EventCallerParticipationImpl &&
+            (identical(other.isOwner, isOwner) || other.isOwner == isOwner) &&
             (identical(other.isImagesPublic, isImagesPublic) ||
                 other.isImagesPublic == isImagesPublic) &&
             (identical(other.role, role) || other.role == role) &&
@@ -159,7 +182,7 @@ class _$EventCallerParticipationImpl implements _EventCallerParticipation {
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, isImagesPublic, role, joinedDateTime);
+      Object.hash(runtimeType, isOwner, isImagesPublic, role, joinedDateTime);
 
   @JsonKey(ignore: true)
   @override
@@ -178,13 +201,16 @@ class _$EventCallerParticipationImpl implements _EventCallerParticipation {
 
 abstract class _EventCallerParticipation implements EventCallerParticipation {
   const factory _EventCallerParticipation(
-      {required final bool isImagesPublic,
+      {required final bool isOwner,
+      required final bool isImagesPublic,
       required final EventRole role,
       required final DateTime joinedDateTime}) = _$EventCallerParticipationImpl;
 
   factory _EventCallerParticipation.fromJson(Map<String, dynamic> json) =
       _$EventCallerParticipationImpl.fromJson;
 
+  @override
+  bool get isOwner;
   @override
   bool get isImagesPublic;
   @override

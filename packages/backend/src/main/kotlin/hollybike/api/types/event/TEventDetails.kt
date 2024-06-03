@@ -16,10 +16,11 @@ data class TEventDetails(
 		callerParticipation: EventParticipation?,
 		participants: List<EventParticipation>,
 		participantsCount: Int,
+		isOwner: Boolean,
 		signer: (String) -> String,
 	) : this(
 		event = TEvent(event, signer),
-		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it) },
+		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it, isOwner) },
 		previewParticipants = participants.map { TEventParticipation(it, signer) },
 		previewParticipantsCount = participantsCount
 	)
