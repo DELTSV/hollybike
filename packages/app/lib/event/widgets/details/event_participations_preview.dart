@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 
-import '../types/event_participation.dart';
+import '../../types/event_participation.dart';
 
 class EventParticipationsPreview extends StatelessWidget {
   final Event event;

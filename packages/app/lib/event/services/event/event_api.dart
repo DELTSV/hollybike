@@ -107,4 +107,14 @@ class EventApi {
       throw Exception("Failed to leave event");
     }
   }
+
+  Future<void> cancelEvent(AuthSession session, int eventId) async {
+    final response = await DioClient(session).dio.patch(
+      '/events/$eventId/cancel',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to cancel event");
+    }
+  }
 }

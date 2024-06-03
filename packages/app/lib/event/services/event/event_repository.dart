@@ -152,6 +152,26 @@ class EventRepository {
     return eventApi.deleteEvent(session, eventId);
   }
 
+  Future<void> cancelEvent(AuthSession session, int eventId) async {
+    final details = _eventStreamController.value!;
+
+    await eventApi.cancelEvent(session, eventId);
+
+    _eventStreamController.add(
+      details.copyWith(
+        event: details.event.copyWith(status: EventStatusState.canceled),
+      ),
+    );
+
+    _eventsStreamController.add(
+      _eventsStreamController.value
+          .map((e) => e.id == eventId
+              ? e.copyWith(status: EventStatusState.canceled)
+              : e)
+          .toList(),
+    );
+  }
+
   Future<void> close() async {
     _eventStreamController.close();
     _eventsStreamController.close();

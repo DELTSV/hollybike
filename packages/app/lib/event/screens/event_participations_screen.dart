@@ -7,7 +7,7 @@ import 'package:hollybike/event/bloc/event_participations_bloc/event_participati
 import 'package:hollybike/event/types/event_participation.dart';
 
 import '../../shared/utils/with_current_session.dart';
-import '../widgets/event_participation_card.dart';
+import '../widgets/participations/event_participation_card.dart';
 
 @RoutePage()
 class EventParticipationsScreen extends StatefulWidget {

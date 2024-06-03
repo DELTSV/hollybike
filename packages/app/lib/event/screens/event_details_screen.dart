@@ -7,8 +7,8 @@ import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
-import 'package:hollybike/event/widgets/event_participations_preview.dart';
-import 'package:hollybike/event/widgets/event_pending_warning.dart';
+import 'package:hollybike/event/widgets/details/event_participations_preview.dart';
+import 'package:hollybike/event/widgets/details/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../app/app_router.gr.dart';
@@ -120,6 +120,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           ],
                         ),
                       ),
+                      const PopupMenuItem(
+                        value: "cancel",
+                        child: Row(
+                          children: [
+                            Icon(Icons.cancel),
+                            SizedBox(width: 10),
+                            Text("Annuler l'événement"),
+                          ],
+                        ),
+                      ),
                     ];
                   }, onSelected: (value) {
                     if (value == "delete") {
@@ -142,7 +152,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   withCurrentSession(context, (session) {
                                     context.read<EventDetailsBloc>().add(
                                           DeleteEvent(
-                                            eventId: state.eventDetails!.event.id,
+                                            eventId:
+                                                state.eventDetails!.event.id,
                                             session: session,
                                           ),
                                         );
@@ -167,6 +178,43 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               ),
                             );
                       });
+                    }
+
+                    if (value == "cancel") {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("Annuler l'événement"),
+                            content: const Text(
+                                "Êtes-vous sûr de vouloir annuler cet événement ?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Annuler"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  withCurrentSession(context, (session) {
+                                    context.read<EventDetailsBloc>().add(
+                                          CancelEvent(
+                                            eventId:
+                                                state.eventDetails!.event.id,
+                                            session: session,
+                                          ),
+                                        );
+                                  });
+
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Annuler l'événement"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   });
                 },
@@ -332,8 +380,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     final Event event = state.eventDetails!.event;
                     final List<EventParticipation> previewParticipants =
                         state.eventDetails!.previewParticipants;
-
-                    print(previewParticipants);
 
                     final int previewParticipantsCount =
                         state.eventDetails!.previewParticipantsCount;

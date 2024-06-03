@@ -21,6 +21,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<LeaveEvent>(_onLeaveEvent);
     on<EditEvent>(_onEditEvent);
     on<DeleteEvent>(_onDeleteEvent);
+    on<CancelEvent>(_onCancelEvent);
   }
 
   @override
@@ -180,6 +181,31 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
       emit(DeleteEventFailure(
         state,
         errorMessage: 'Impossible de supprimer l\'évènement',
+      ));
+    }
+  }
+
+  Future<void> _onCancelEvent(
+    CancelEvent event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    emit(EventOperationInProgress(state));
+
+    try {
+      await _eventRepository.cancelEvent(
+        event.session,
+        event.eventId,
+      );
+
+      emit(EventOperationSuccess(
+        state,
+        successMessage: 'Évènement annulé',
+      ));
+    } catch (e) {
+      log('Error while canceling event', error: e);
+      emit(EventOperationFailure(
+        state,
+        errorMessage: 'Impossible d\'annuler l\'évènement',
       ));
     }
   }
