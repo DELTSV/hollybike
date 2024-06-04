@@ -15,18 +15,21 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Row(
-        children: renderNullableWidgetToList(prefix) +
-            [
-              Expanded(
-                child: BarContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: title,
+      child: Padding(
+        padding: EdgeInsets.only(left: prefix == null ? 0 : 16),
+        child: Row(
+          children: renderNullableWidgetToList(prefix) +
+              [
+                Expanded(
+                  child: BarContainer(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: title,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+        ),
       ),
     );
   }

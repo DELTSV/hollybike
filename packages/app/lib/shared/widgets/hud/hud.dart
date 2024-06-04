@@ -28,7 +28,7 @@ class Hud extends StatelessWidget {
         children: [
           Column(children: <Widget>[
             const SizedBox.square(
-              dimension: 120,
+              dimension: 100,
             ),
             Expanded(
               child: body ?? Container(),
@@ -44,6 +44,8 @@ class Hud extends StatelessWidget {
                   Theme.of(context).colorScheme.surface,
                   Theme.of(context).colorScheme.surface,
                   Theme.of(context).colorScheme.surface,
+                  Colors.transparent,
+                  Colors.transparent,
                   Colors.transparent,
                 ],
               ),
