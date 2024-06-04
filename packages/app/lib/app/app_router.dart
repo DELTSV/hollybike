@@ -12,31 +12,22 @@ class AppRouter extends $AppRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
-          page: LoadingRoute.page,
-          path: '/load',
-        ),
-        AutoRoute(
-          guards: [AuthGuard(context: context)],
-          page: HudRoute.page,
-          path: "/home",
           initial: true,
-          children: [
-            RedirectRoute(path: '', redirectTo: 'events'),
-            AutoRoute(
-              page: EventsRoute.page,
-              path: 'events',
-            ),
-            CustomRoute(
-              page: EventDetailsRoute.page,
-              path: 'event-details',
-              transitionsBuilder: TransitionsBuilders.fadeIn,
-            ),
-            CustomRoute(
-              page: EventParticipationsRoute.page,
-              path: 'event-participations',
-              transitionsBuilder: TransitionsBuilders.fadeIn,
-            )
-          ],
+          guards: [AuthGuard(context: context)],
+          page: EventsRoute.page,
+          path: '/events',
+        ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
+          page: EventDetailsRoute.page,
+          path: '/event-details',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
+          page: EventParticipationsRoute.page,
+          path: '/event-participations',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         AutoRoute(
           page: LoginRoute.page,
@@ -46,9 +37,10 @@ class AppRouter extends $AppRouter {
           page: SignupRoute.page,
           path: '/invite',
         ),
-        RedirectRoute(
-          path: '*',
-          redirectTo: "/home",
+        AutoRoute(
+          page: LoadingRoute.page,
+          path: '/load',
         ),
+        RedirectRoute(path: '*', redirectTo: 'events'),
       ];
 }

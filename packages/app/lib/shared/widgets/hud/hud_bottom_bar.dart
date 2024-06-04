@@ -9,20 +9,22 @@ class HudBottomBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
       ),
       foregroundDecoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(16)),
-        border: Border.all(
-          width: 2,
-          color: Theme.of(context).colorScheme.onPrimary,
+        border: Border(
+          top: BorderSide(
+            width: 2,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
       ),
       clipBehavior: Clip.hardEdge,
-      child: const Row(
-        children: [
-          ProfileButton(),
-        ],
+      child: const SafeArea(
+        child: Row(
+          children: [
+            ProfileButton(),
+          ],
+        ),
       ),
     );
   }
