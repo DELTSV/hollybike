@@ -11,7 +11,7 @@ import 'event_participations_state.dart';
 class EventParticipationBloc
     extends Bloc<EventParticipationsEvent, EventParticipationsState> {
   final EventParticipationRepository eventParticipationsRepository;
-  final int numberOfParticipationsPerRequest = 10;
+  final int numberOfParticipationsPerRequest = 15;
 
   EventParticipationBloc({required this.eventParticipationsRepository})
       : super(EventParticipationsInitial()) {

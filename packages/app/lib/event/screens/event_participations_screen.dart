@@ -27,22 +27,29 @@ class EventParticipationsScreen extends StatefulWidget {
 }
 
 class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
+  late ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
 
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventParticipationBloc>().add(
-              RefreshEventParticipations(
-                eventId: widget.eventDetails.event.id,
-                participationPreview: widget.participationPreview,
-                session: session,
-              ),
-            );
-      },
-    );
+    _refreshParticipants();
+
+    _scrollController = ScrollController();
+
+    _scrollController.addListener(() {
+      var nextPageTrigger = 0.8 * _scrollController.position.maxScrollExtent;
+
+      if (_scrollController.position.pixels > nextPageTrigger) {
+        _loadNextPage();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -72,20 +79,27 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
         ),
         icon: const Icon(Icons.edit),
       ),
-      body: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: BlocBuilder<EventParticipationBloc, EventParticipationsState>(
-            builder: (context, state) {
-              if (state is EventParticipationsPageLoadFailure) {
-                return Center(
-                  child: Text(state.errorMessage),
-                );
-              }
+      body: RefreshIndicator(
+        triggerMode: RefreshIndicatorTriggerMode.anywhere,
+        onRefresh: () async {
+          _refreshParticipants();
+        },
+        child: Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child:
+                BlocBuilder<EventParticipationBloc, EventParticipationsState>(
+              builder: (context, state) {
+                if (state is EventParticipationsPageLoadFailure) {
+                  return Center(
+                    child: Text(state.errorMessage),
+                  );
+                }
 
-              return _buildList(state.participants);
-            },
+                return _buildList(state.participants);
+              },
+            ),
           ),
         ),
       ),
@@ -94,17 +108,66 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
 
   Widget _buildList(List<EventParticipation> participants) {
     return ListView.separated(
+      controller: _scrollController,
       padding: const EdgeInsets.symmetric(vertical: 10),
       itemCount: participants.length,
       separatorBuilder: (context, index) => const SizedBox(height: 10),
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
       itemBuilder: (context, index) {
         final participation = participants[index];
-        return EventParticipationCard(
-          participation: participation,
-          isOwner: widget.eventDetails.event.owner.id == participation.user.id,
-          isCurrentUser: participation.user.id == widget.eventDetails.callerParticipation?.userId,
-          isCurrentUserOrganizer: widget.eventDetails.isOrganizer,
+
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+          builder: (context, double value, child) {
+            return Transform.translate(
+              offset: Offset(50 * (1 - value), 0),
+              child: Opacity(
+                opacity: value,
+                child: EventParticipationCard(
+                  participation: participation,
+                  isOwner: widget.eventDetails.event.owner.id ==
+                      participation.user.id,
+                  isCurrentUser: participation.user.id ==
+                      widget.eventDetails.callerParticipation?.userId,
+                  isCurrentUserOrganizer: widget.eventDetails.isOrganizer,
+                ),
+              ),
+            );
+          },
         );
+      },
+    );
+  }
+
+  void _loadNextPage() {
+    withCurrentSession(
+      context,
+      (session) {
+        context.read<EventParticipationBloc>().add(
+              LoadEventParticipationsNextPage(
+                eventId: widget.eventDetails.event.id,
+                session: session,
+              ),
+            );
+      },
+    );
+  }
+
+  void _refreshParticipants() {
+    withCurrentSession(
+      context,
+      (session) {
+        context.read<EventParticipationBloc>().add(
+              RefreshEventParticipations(
+                eventId: widget.eventDetails.event.id,
+                participationPreview: widget.participationPreview,
+                session: session,
+              ),
+            );
       },
     );
   }
