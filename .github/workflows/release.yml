@@ -32,11 +32,11 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   build-app:
-    if: github.event.inputs.create-executables
     name: App
     uses: ./.github/workflows/app.yml
     with:
       version: ${{ github.event.inputs.version }}
+      create-executables: ${{ github.event.inputs.create-executables == 'true' }}
     secrets:
       ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
       ANDROID_KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
@@ -46,8 +46,8 @@ jobs:
     name: Create Release
     if: |
       always() &&
-      (needs.build-app.result == 'success' || needs.build-app.result == 'skipped') &&
-      (needs.build-frontend-backend.result == 'success')
+      needs.build-app.result == 'success' &&
+      needs.build-frontend-backend.result == 'success'
     needs:
       - build-app
       - build-frontend-backend
