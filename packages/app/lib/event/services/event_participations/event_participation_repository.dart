@@ -1,4 +1,5 @@
 import 'package:hollybike/event/types/event_participation.dart';
+import 'package:hollybike/event/types/event_role.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../auth/types/auth_session.dart';
@@ -57,5 +58,63 @@ class EventParticipationRepository {
 
   Future<void> close() async {
     _eventParticipationsStreamController.close();
+  }
+
+  Future<void> promoteParticipant(
+    int eventId,
+    int userId,
+    AuthSession session,
+  ) async {
+    await eventParticipationsApi.promoteParticipant(
+      eventId,
+      userId,
+      session,
+    );
+
+    _eventParticipationsStreamController.add(
+      _eventParticipationsStreamController.value
+          .map((participation) => participation.user.id == userId
+              ? participation.copyWith(role: EventRole.organizer)
+              : participation)
+          .toList(),
+    );
+  }
+
+  Future<void> demoteParticipant(
+    int eventId,
+    int userId,
+    AuthSession session,
+  ) async {
+    await eventParticipationsApi.demoteParticipant(
+      eventId,
+      userId,
+      session,
+    );
+
+    _eventParticipationsStreamController.add(
+      _eventParticipationsStreamController.value
+          .map((participation) => participation.user.id == userId
+              ? participation.copyWith(role: EventRole.member)
+              : participation)
+          .toList(),
+    );
+  }
+
+  Future<void> removeParticipant(
+    int eventId,
+    int userId,
+    AuthSession session,
+  ) async {
+    await eventParticipationsApi.removeParticipant(
+      eventId,
+      userId,
+      session,
+    );
+
+    _eventParticipationsStreamController.add(
+      _eventParticipationsStreamController.value
+          .where((participation) => participation.user.id != userId)
+          .toList(),
+    );
   }
 }

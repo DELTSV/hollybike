@@ -97,6 +97,8 @@ class MyApp extends StatelessWidget {
                           RepositoryProvider.of<EventParticipationRepository>(
                         context,
                       ),
+                      eventRepository:
+                          RepositoryProvider.of<EventRepository>(context),
                     )..add(SubscribeToEventParticipations())),
           ],
           child: RepositoryProvider<AuthSessionRepository>(

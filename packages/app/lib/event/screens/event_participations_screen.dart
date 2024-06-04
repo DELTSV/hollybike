@@ -8,6 +8,7 @@ import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_participation.dart';
 
 import '../../shared/utils/with_current_session.dart';
+import '../../shared/widgets/app_toast.dart';
 import '../widgets/participations/event_participation_card.dart';
 
 @RoutePage()
@@ -54,51 +55,69 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Participants"),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) {
-              return FractionallySizedBox(
-                heightFactor: 0.9,
-                child: Container(),
-              );
-            },
-          );
-        },
-        label: Text(
-          'Ajouter',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-        ),
-        icon: const Icon(Icons.edit),
-      ),
-      body: RefreshIndicator(
-        triggerMode: RefreshIndicatorTriggerMode.anywhere,
-        onRefresh: () async {
-          _refreshParticipants();
-        },
-        child: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child:
-                BlocBuilder<EventParticipationBloc, EventParticipationsState>(
-              builder: (context, state) {
-                if (state is EventParticipationsPageLoadFailure) {
-                  return Center(
-                    child: Text(state.errorMessage),
-                  );
-                }
+    return BlocListener<EventParticipationBloc, EventParticipationsState>(
+      listener: (context, state) {
+        if (state is EventParticipationsPageLoadFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        } else if (state is EventParticipationsDeletionFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        } else if (state is EventParticipationsOperationFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        }
 
-                return _buildList(state.participants);
+        if (state is EventParticipationsOperationSuccess) {
+          Toast.showSuccessToast(context, state.successMessage);
+        } else if (state is EventParticipationsDeleted) {
+          Toast.showSuccessToast(context, "Participant retiré");
+          // _refreshParticipants();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Participants"),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) {
+                return FractionallySizedBox(
+                  heightFactor: 0.9,
+                  child: Container(),
+                );
               },
+            );
+          },
+          label: Text(
+            'Ajouter',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+          ),
+          icon: const Icon(Icons.edit),
+        ),
+        body: RefreshIndicator(
+          triggerMode: RefreshIndicatorTriggerMode.anywhere,
+          onRefresh: () async {
+            _refreshParticipants();
+          },
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child:
+                  BlocBuilder<EventParticipationBloc, EventParticipationsState>(
+                builder: (context, state) {
+                  if (state is EventParticipationsPageLoadFailure) {
+                    return Center(
+                      child: Text(state.errorMessage),
+                    );
+                  }
+
+                  return _buildList(state.participants);
+                },
+              ),
             ),
           ),
         ),
@@ -128,6 +147,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
               child: Opacity(
                 opacity: value,
                 child: EventParticipationCard(
+                  eventId: widget.eventDetails.event.id,
                   participation: participation,
                   isOwner: widget.eventDetails.event.owner.id ==
                       participation.user.id,

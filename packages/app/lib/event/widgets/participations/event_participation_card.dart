@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 import 'package:hollybike/event/widgets/participations/event_participation_actions_menu.dart';
+import 'package:hollybike/shared/utils/with_current_session.dart';
+
+import '../../bloc/event_participations_bloc/event_participations_bloc.dart';
 
 class EventParticipationCard extends StatelessWidget {
+  final int eventId;
   final EventParticipation participation;
   final bool isOwner;
   final bool isCurrentUser;
@@ -15,6 +21,7 @@ class EventParticipationCard extends StatelessWidget {
     required this.isCurrentUser,
     required this.isCurrentUserOrganizer,
     required this.isOwner,
+    required this.eventId,
   });
 
   @override
@@ -64,9 +71,9 @@ class EventParticipationCard extends StatelessWidget {
                   participation: participation,
                   canEdit:
                       isCurrentUserOrganizer && (!isOwner && !isCurrentUser),
-                  onPromote: _onPromote,
-                  onDemote: _onDemote,
-                  onRemove: _onRemove,
+                  onPromote: () => _onPromote(context),
+                  onDemote: () => _onDemote(context),
+                  onRemove: () => _onRemove(context),
                 )
               ],
             ),
@@ -76,15 +83,39 @@ class EventParticipationCard extends StatelessWidget {
     );
   }
 
-  void _onPromote() {
-    // Handle promote action
+  void _onPromote(BuildContext context) {
+    withCurrentSession(context, (session) {
+      context.read<EventParticipationBloc>().add(
+            PromoteEventParticipant(
+              eventId: eventId,
+              userId: participation.user.id,
+              session: session,
+            ),
+          );
+    });
   }
 
-  void _onDemote() {
-    // Handle demote action
+  void _onDemote(BuildContext context) {
+    withCurrentSession(context, (session) {
+      context.read<EventParticipationBloc>().add(
+            DemoteEventParticipant(
+              eventId: eventId,
+              userId: participation.user.id,
+              session: session,
+            ),
+          );
+    });
   }
 
-  void _onRemove() {
-    // Handle remove action
+  void _onRemove(BuildContext context) {
+    withCurrentSession(context, (session) {
+      context.read<EventParticipationBloc>().add(
+            RemoveEventParticipant(
+              eventId: eventId,
+              userId: participation.user.id,
+              session: session,
+            ),
+          );
+    });
   }
 }

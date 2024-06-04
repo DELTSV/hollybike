@@ -133,19 +133,11 @@ class EventRepository {
 
     await eventApi.leaveEvent(session, eventId);
 
-    if (details == null) {
+    if (details == null || details.callerParticipation == null) {
       return;
     }
 
-    _eventStreamController.add(
-      details.copyWith(
-        previewParticipants: details.previewParticipants
-            .where((p) => p.user.id != details.callerParticipation?.userId)
-            .toList(),
-        previewParticipantsCount: details.previewParticipantsCount - 1,
-        callerParticipation: null,
-      ),
-    );
+    onParticipantRemoved(details.callerParticipation!.userId);
   }
 
   Future<void> deleteEvent(AuthSession session, int eventId) async {
@@ -169,6 +161,23 @@ class EventRepository {
               ? e.copyWith(status: EventStatusState.canceled)
               : e)
           .toList(),
+    );
+  }
+
+  void onParticipantRemoved(int userId) {
+    final details = _eventStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventStreamController.add(
+      details.copyWith(
+        previewParticipants: details.previewParticipants
+            .where((p) => p.user.id != userId)
+            .toList(),
+        previewParticipantsCount: details.previewParticipantsCount - 1,
+      ),
     );
   }
 

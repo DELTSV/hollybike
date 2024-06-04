@@ -20,7 +20,16 @@ class EventParticipationsState {
     this.status = EventParticipationsStatus.initial,
   });
 
+  EventParticipationsState.state(EventParticipationsState state)
+      : this(
+          participants: state.participants,
+          hasMore: state.hasMore,
+          nextPage: state.nextPage,
+          status: state.status,
+        );
+
   EventParticipationsState copyWith({
+    EventParticipationsStatus? status,
     List<EventParticipation>? participants,
     bool? hasMore,
     int? nextPage,
@@ -38,22 +47,12 @@ class EventParticipationsInitial extends EventParticipationsState {}
 
 class EventParticipationsPageLoadInProgress extends EventParticipationsState {
   EventParticipationsPageLoadInProgress(EventParticipationsState state)
-      : super(
-          participants: state.participants,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventParticipationsStatus.loading,
-        );
+      : super.state(state.copyWith(status: EventParticipationsStatus.loading));
 }
 
 class EventParticipationsPageLoadSuccess extends EventParticipationsState {
   EventParticipationsPageLoadSuccess(EventParticipationsState state)
-      : super(
-          participants: state.participants,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventParticipationsStatus.success,
-        );
+      : super.state(state.copyWith(status: EventParticipationsStatus.success));
 }
 
 class EventParticipationsPageLoadFailure extends EventParticipationsState {
@@ -61,10 +60,44 @@ class EventParticipationsPageLoadFailure extends EventParticipationsState {
 
   EventParticipationsPageLoadFailure(EventParticipationsState state,
       {required this.errorMessage})
-      : super(
-          participants: state.participants,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: EventParticipationsStatus.error,
-        );
+      : super.state(state.copyWith(status: EventParticipationsStatus.error));
+}
+
+class EventParticipationsOperationInProgress extends EventParticipationsState {
+  EventParticipationsOperationInProgress(EventParticipationsState state)
+      : super.state(state.copyWith(status: EventParticipationsStatus.loading));
+}
+
+class EventParticipationsOperationSuccess extends EventParticipationsState {
+  final String successMessage;
+
+  EventParticipationsOperationSuccess(EventParticipationsState state,
+      {required this.successMessage})
+      : super.state(state.copyWith(status: EventParticipationsStatus.loading));
+}
+
+class EventParticipationsOperationFailure extends EventParticipationsState {
+  final String errorMessage;
+
+  EventParticipationsOperationFailure(EventParticipationsState state,
+      {required this.errorMessage})
+      : super.state(state.copyWith(status: EventParticipationsStatus.error));
+}
+
+class EventParticipationsDeletionInProgress extends EventParticipationsState {
+  EventParticipationsDeletionInProgress(EventParticipationsState state)
+      : super.state(state.copyWith(status: EventParticipationsStatus.loading));
+}
+
+class EventParticipationsDeleted extends EventParticipationsState {
+  EventParticipationsDeleted(EventParticipationsState state)
+      : super.state(state.copyWith(status: EventParticipationsStatus.loading));
+}
+
+class EventParticipationsDeletionFailure extends EventParticipationsState {
+  final String errorMessage;
+
+  EventParticipationsDeletionFailure(EventParticipationsState state,
+      {required this.errorMessage})
+      : super.state(state.copyWith(status: EventParticipationsStatus.error));
 }
