@@ -94,7 +94,7 @@ jobs:
 #
 #      - name: Build APK
 #        if: ${{ inputs.externall_call }}
-#        run: flutter build apk --release --build-name=${{ inputs.version }} --build-number=${{ inputs.version }}
+#        run: flutter build apk --release --build-name=${{ inputs.version }} --build-number=$(echo ${{ inputs.version }} | tr -d .)
 #
 ##      - name: Create build directory
 ##        if: ${{ inputs.externall_call }}
@@ -134,7 +134,7 @@ jobs:
       KEYSTORE_PATH: android/upload-keystore.jks
       KEY_PROPS_PATH: android/key.properties
       SERVICE_ACCOUNT_PATH: store_credentials.json
-      version: 0.3.5
+      version: 0.3.6
     
     steps:
       - name: Checkout code
@@ -171,13 +171,12 @@ jobs:
           flutter build appbundle \
             --release --build-name=${{ env.version }} --build-number=$(echo ${{ env.version }} | tr -d .)
 
-#      - name: Deploy to Play Store (Internal testing)
-#        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-#        uses: r0adkll/upload-google-play@v1
-#        with:
-#          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
-#          packageName: com.hollybike.hollybike
-#          releaseFiles: ${{ env.AAB_PATH }}
-#          status: draft
-#          track: internal
+      - name: Deploy to Play Store (Internal testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
+          packageName: com.hollybike.hollybike
+          releaseFiles: ${{ env.AAB_PATH }}
+          status: draft
+          track: internal
   
