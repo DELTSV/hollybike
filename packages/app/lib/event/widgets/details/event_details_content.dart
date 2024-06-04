@@ -41,7 +41,7 @@ class EventDetailsContent extends StatelessWidget {
                   Timer(const Duration(milliseconds: 100), () {
                     context.router.push(
                       EventParticipationsRoute(
-                        eventId: event.id,
+                        eventDetails: eventDetails,
                         participationPreview: previewParticipants,
                       ),
                     );

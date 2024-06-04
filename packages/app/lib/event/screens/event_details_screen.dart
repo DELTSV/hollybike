@@ -97,7 +97,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
         floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
-            if (state is EventDetailsLoadFailure) {
+            if (state is EventDetailsLoadFailure ||
+                state is EventDetailsLoadInProgress ||
+                state.eventDetails == null) {
               return const SizedBox();
             }
 

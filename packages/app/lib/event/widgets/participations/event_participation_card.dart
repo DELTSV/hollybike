@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
+import 'package:hollybike/event/widgets/participations/event_participation_actions_menu.dart';
 
 class EventParticipationCard extends StatelessWidget {
   final EventParticipation participation;
-  final void Function() onPromote;
-  final void Function() onDemote;
-  final void Function() onRemove;
+  final bool isOwner;
+  final bool isCurrentUser;
+  final bool isCurrentUserOrganizer;
 
   const EventParticipationCard({
     super.key,
     required this.participation,
-    required this.onPromote,
-    required this.onDemote,
-    required this.onRemove,
+    required this.isCurrentUser,
+    required this.isCurrentUserOrganizer,
+    required this.isOwner,
   });
 
   @override
@@ -59,60 +60,31 @@ class EventParticipationCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const Spacer(),
-                PopupMenuButton(
-                  itemBuilder: (BuildContext context) {
-                    return [
-                      const PopupMenuItem(
-                        value: "promote",
-                        child: Row(
-                          children: [
-                            Icon(Icons.arrow_upward),
-                            SizedBox(width: 10),
-                            Text("Promouvoir organisateur"),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuItem(
-                        value: "demote",
-                        child: Row(
-                          children: [
-                            Icon(Icons.arrow_downward),
-                            SizedBox(width: 10),
-                            Text("Rétrograder membre"),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuItem(
-                        value: "remove",
-                        child: Row(
-                          children: [
-                            Icon(Icons.remove),
-                            SizedBox(width: 10),
-                            Text("Retirer de l'événement"),
-                          ],
-                        ),
-                      ),
-                    ];
-                  },
-                  onSelected: (String value) {
-                    switch (value) {
-                      case "promote":
-                        onPromote();
-                        break;
-                      case "demote":
-                        onDemote();
-                        break;
-                      case "remove":
-                        onRemove();
-                        break;
-                    }
-                  },
-                ),
+                EventParticipationActionsMenu(
+                  participation: participation,
+                  canEdit:
+                      isCurrentUserOrganizer && (!isOwner && !isCurrentUser),
+                  onPromote: _onPromote,
+                  onDemote: _onDemote,
+                  onRemove: _onRemove,
+                )
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _onPromote() {
+    // Handle promote action
+  }
+
+  void _onDemote() {
+    // Handle demote action
+  }
+
+  void _onRemove() {
+    // Handle remove action
   }
 }

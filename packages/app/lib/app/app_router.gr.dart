@@ -16,7 +16,8 @@ import 'package:hollybike/event/screens/event_details_screen.dart' as _i1;
 import 'package:hollybike/event/screens/event_participations_screen.dart'
     as _i2;
 import 'package:hollybike/event/screens/events_screen.dart' as _i3;
-import 'package:hollybike/event/types/event_participation.dart' as _i12;
+import 'package:hollybike/event/types/event_details.dart' as _i12;
+import 'package:hollybike/event/types/event_participation.dart' as _i13;
 import 'package:hollybike/event/widgets/event_image.dart' as _i11;
 import 'package:hollybike/hud/routes/hud_route.dart' as _i4;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i7;
@@ -46,7 +47,7 @@ abstract class $AppRouter extends _i9.RootStackRouter {
         routeData: routeData,
         child: _i2.EventParticipationsScreen(
           key: args.key,
-          eventId: args.eventId,
+          eventDetails: args.eventDetails,
           participationPreview: args.participationPreview,
         ),
       );
@@ -160,14 +161,14 @@ class EventParticipationsRoute
     extends _i9.PageRouteInfo<EventParticipationsRouteArgs> {
   EventParticipationsRoute({
     _i10.Key? key,
-    required int eventId,
-    required List<_i12.EventParticipation> participationPreview,
+    required _i12.EventDetails eventDetails,
+    required List<_i13.EventParticipation> participationPreview,
     List<_i9.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
           args: EventParticipationsRouteArgs(
             key: key,
-            eventId: eventId,
+            eventDetails: eventDetails,
             participationPreview: participationPreview,
           ),
           initialChildren: children,
@@ -182,19 +183,19 @@ class EventParticipationsRoute
 class EventParticipationsRouteArgs {
   const EventParticipationsRouteArgs({
     this.key,
-    required this.eventId,
+    required this.eventDetails,
     required this.participationPreview,
   });
 
   final _i10.Key? key;
 
-  final int eventId;
+  final _i12.EventDetails eventDetails;
 
-  final List<_i12.EventParticipation> participationPreview;
+  final List<_i13.EventParticipation> participationPreview;
 
   @override
   String toString() {
-    return 'EventParticipationsRouteArgs{key: $key, eventId: $eventId, participationPreview: $participationPreview}';
+    return 'EventParticipationsRouteArgs{key: $key, eventDetails: $eventDetails, participationPreview: $participationPreview}';
   }
 }
 
