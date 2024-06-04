@@ -219,7 +219,7 @@ class EventService(
 			EventParticipations,
 			{ Events.id },
 			{ event },
-			{ EventParticipations.user eq caller.id }
+			{ (EventParticipations.user eq caller.id) and (EventParticipations.isJoined eq true) }
 		).selectAll().where {
 			Events.id eq id and eventUserCondition(caller)
 		}.firstOrNull() ?: return@transaction null

@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/types/event_caller_participation.dart';
+import 'package:hollybike/event/types/event_status_state.dart';
 
 import '../../shared/types/json_map.dart';
 import 'event_participation.dart';
@@ -24,9 +25,13 @@ class EventDetails with _$EventDetails {
   factory EventDetails.fromJson(JsonMap json) => _$EventDetailsFromJson(json);
 
   bool get isOwner =>
-      callerParticipation != null && callerParticipation!.userId == event.owner.id;
+      callerParticipation != null &&
+      callerParticipation!.userId == event.owner.id;
 
   bool get isParticipating => callerParticipation != null;
+
+  bool get canJoin =>
+      !isParticipating && event.status == EventStatusState.scheduled;
 
   bool get isOrganizer =>
       callerParticipation != null &&

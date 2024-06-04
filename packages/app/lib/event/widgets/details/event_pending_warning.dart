@@ -27,13 +27,13 @@ class EventPendingWarning extends StatelessWidget {
   void _onPublish(BuildContext context) {
     withCurrentSession(
       context,
-          (session) {
+      (session) {
         context.read<EventDetailsBloc>().add(
-          PublishEvent(
-            eventId: eventId,
-            session: session,
-          ),
-        );
+              PublishEvent(
+                eventId: eventId,
+                session: session,
+              ),
+            );
       },
     );
   }

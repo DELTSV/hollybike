@@ -76,7 +76,8 @@ class EventParticipationBloc
     RefreshEventParticipations event,
     Emitter<EventParticipationsState> emit,
   ) async {
-    emit(EventParticipationsPageLoadInProgress(EventParticipationsInitial().copyWith(
+    emit(EventParticipationsPageLoadInProgress(
+        EventParticipationsInitial().copyWith(
       participants: event.participationPreview,
     )));
 

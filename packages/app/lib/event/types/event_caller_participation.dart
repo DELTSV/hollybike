@@ -6,7 +6,6 @@ import 'event_role.dart';
 part 'event_caller_participation.freezed.dart';
 part 'event_caller_participation.g.dart';
 
-
 @freezed
 class EventCallerParticipation with _$EventCallerParticipation {
   const factory EventCallerParticipation({
@@ -16,5 +15,6 @@ class EventCallerParticipation with _$EventCallerParticipation {
     required DateTime joinedDateTime,
   }) = _EventCallerParticipation;
 
-  factory EventCallerParticipation.fromJson(JsonMap json) => _$EventCallerParticipationFromJson(json);
+  factory EventCallerParticipation.fromJson(JsonMap json) =>
+      _$EventCallerParticipationFromJson(json);
 }

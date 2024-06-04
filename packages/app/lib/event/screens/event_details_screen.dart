@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +5,7 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/widgets/details/event_details_actions_menu.dart';
 import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
+import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
@@ -14,8 +13,6 @@ import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
-import '../types/event_details.dart';
-import '../widgets/event_form/event_form_modal.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -80,20 +77,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           actions: [
             BlocBuilder<EventDetailsBloc, EventDetailsState>(
               builder: (context, state) {
-                if (state is EventDetailsLoadInProgress) {
+                if (state is EventDetailsLoadInProgress ||
+                    state is EventDetailsLoadFailure ||
+                    state.eventDetails == null) {
                   return const SizedBox();
                 }
 
-                if (state is EventDetailsLoadFailure) {
-                  return const SizedBox();
-                }
-
-                if (state.eventDetails == null) {
-                  return const SizedBox();
-                }
+                final eventDetails = state.eventDetails!;
 
                 return EventDetailsActionsMenu(
-                  eventId: state.eventDetails!.event.id,
+                  eventId: eventDetails.event.id,
+                  isOwner: eventDetails.isOwner,
+                  isJoined: eventDetails.isParticipating,
+                  isOrganizer: eventDetails.isOrganizer,
                 );
               },
             ),
@@ -101,27 +97,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
         floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
-            bool canPress = true;
-
-            if (state is EventDetailsLoadInProgress ||
-                state.eventDetails?.event == null) {
-              canPress = false;
-            }
-
             if (state is EventDetailsLoadFailure) {
               return const SizedBox();
             }
 
-            return FloatingActionButton.extended(
-              onPressed:
-                  canPress ? () => _onOpenEditModal(state.eventDetails!) : null,
-              label: Text(
-                'Modifier',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-              icon: const Icon(Icons.edit),
+            final eventDetails = state.eventDetails!;
+
+            return EventEditFloatingButton(
+              canEdit: eventDetails.isOrganizer,
+              event: eventDetails.event,
+              onEdit: _onEdit,
             );
           },
         ),
@@ -175,36 +160,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  void _onOpenEditModal(EventDetails eventDetails) {
-    Timer(const Duration(milliseconds: 100), () {
-      showModalBottomSheet<void>(
-        context: context,
-        enableDrag: false,
-        builder: (BuildContext context) {
-          return EventFormModal(
-            initialData: EventFormData(
-              name: eventDetails.event.name,
-              description: eventDetails.event.description,
-              startDate: eventDetails.event.startDate,
-              endDate: eventDetails.event.endDate,
+  void _onEdit(EventFormData formData) {
+    withCurrentSession(context, (session) {
+      context.read<EventDetailsBloc>().add(
+            EditEvent(
+              session: session,
+              eventId: widget.eventId,
+              formData: formData,
             ),
-            onSubmit: (formData) {
-              withCurrentSession(context, (session) {
-                context.read<EventDetailsBloc>().add(
-                      EditEvent(
-                        session: session,
-                        eventId: widget.eventId,
-                        formData: formData,
-                      ),
-                    );
-              });
-
-              Navigator.of(context).pop();
-            },
-            submitButtonText: 'Sauvegarder',
           );
-        },
-      );
     });
+
+    Navigator.of(context).pop();
   }
 }

@@ -31,7 +31,8 @@ class EventApi {
   }
 
   Future<EventDetails> getEventDetails(AuthSession session, int eventId) async {
-    final response = await DioClient(session).dio.get('/events/$eventId/details');
+    final response =
+        await DioClient(session).dio.get('/events/$eventId/details');
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch event details");
@@ -53,11 +54,12 @@ class EventApi {
     return Event.fromJson(response.data);
   }
 
-  Future<Event> editEvent(AuthSession session, int eventId, EventFormData event) async {
+  Future<Event> editEvent(
+      AuthSession session, int eventId, EventFormData event) async {
     final response = await DioClient(session).dio.put(
-      '/events/$eventId',
-      data: event.toJson(),
-    );
+          '/events/$eventId',
+          data: event.toJson(),
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to edit event");
@@ -78,8 +80,8 @@ class EventApi {
 
   Future<EventParticipation> joinEvent(AuthSession session, int eventId) async {
     final response = await DioClient(session).dio.post(
-      '/events/$eventId/participations',
-    );
+          '/events/$eventId/participations',
+        );
 
     if (response.statusCode != 201) {
       throw Exception("Failed to join event");
@@ -90,8 +92,8 @@ class EventApi {
 
   Future<void> deleteEvent(AuthSession session, int eventId) async {
     final response = await DioClient(session).dio.delete(
-      '/events/$eventId',
-    );
+          '/events/$eventId',
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to delete event");
@@ -100,8 +102,8 @@ class EventApi {
 
   Future<void> leaveEvent(AuthSession session, int eventId) async {
     final response = await DioClient(session).dio.delete(
-      '/events/$eventId/participations',
-    );
+          '/events/$eventId/participations',
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to leave event");
@@ -110,8 +112,8 @@ class EventApi {
 
   Future<void> cancelEvent(AuthSession session, int eventId) async {
     final response = await DioClient(session).dio.patch(
-      '/events/$eventId/cancel',
-    );
+          '/events/$eventId/cancel',
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to cancel event");

@@ -7,6 +7,7 @@ import 'event_pending_warning.dart';
 
 class EventWarningFeed extends StatelessWidget {
   final Event event;
+
   const EventWarningFeed({
     super.key,
     required this.event,

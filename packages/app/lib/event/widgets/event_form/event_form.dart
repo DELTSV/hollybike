@@ -88,7 +88,8 @@ class _EventFormState extends State<EventForm> {
       _selectEndDate = true;
     }
 
-    final endDate = data.endDate ?? data.startDate.add(const Duration(hours: 1));
+    final endDate =
+        data.endDate ?? data.startDate.add(const Duration(hours: 1));
 
     _dateRange = DateTimeRange(
       start: data.startDate,

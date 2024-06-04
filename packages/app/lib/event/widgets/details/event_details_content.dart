@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
+import 'package:hollybike/event/widgets/details/event_join_button.dart';
 import 'package:hollybike/event/widgets/details/event_warning_feed.dart';
 
 import '../../../app/app_router.gr.dart';
@@ -47,9 +48,10 @@ class EventDetailsContent extends StatelessWidget {
                   });
                 },
               ),
-              ElevatedButton(
-                onPressed: () => _onJoin(context),
-                child: const Text("Rejoindre"),
+              EventJoinButton(
+                isJoined: eventDetails.isParticipating,
+                canJoin: eventDetails.canJoin,
+                onJoin: _onJoin,
               ),
             ],
           ),
@@ -61,13 +63,13 @@ class EventDetailsContent extends StatelessWidget {
   void _onJoin(BuildContext context) {
     withCurrentSession(
       context,
-          (session) {
+      (session) {
         context.read<EventDetailsBloc>().add(
-          JoinEvent(
-            eventId: eventDetails.event.id,
-            session: session,
-          ),
-        );
+              JoinEvent(
+                eventId: eventDetails.event.id,
+                session: session,
+              ),
+            );
       },
     );
   }

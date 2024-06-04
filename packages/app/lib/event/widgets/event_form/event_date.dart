@@ -3,7 +3,6 @@ import 'package:hollybike/shared/utils/dates.dart';
 
 import 'event_date_clipper.dart';
 
-
 class EventDate extends StatelessWidget {
   final DateTime date;
 

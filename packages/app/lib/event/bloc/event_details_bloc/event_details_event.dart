@@ -73,4 +73,3 @@ class EditEvent extends EventDetailsEvent {
     required this.formData,
   });
 }
-

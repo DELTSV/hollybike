@@ -15,8 +15,7 @@ class EventFormData with _$EventFormData {
     @JsonKey(toJson: _toJson) DateTime? endDate,
   }) = _EventFormData;
 
-  factory EventFormData.fromJson(JsonMap json) =>
-      _$EventFormDataFromJson(json);
+  factory EventFormData.fromJson(JsonMap json) => _$EventFormDataFromJson(json);
 }
 
 String? _toJson(DateTime? dateTime) => dateTime == null

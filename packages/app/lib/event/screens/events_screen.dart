@@ -180,7 +180,8 @@ class _EventsScreenState extends State<EventsScreen> {
                 Toast.showErrorToast(context, state.errorMessage);
               }
             }),
-            BlocListener<EventDetailsBloc, EventDetailsState>(listener: (context, state) {
+            BlocListener<EventDetailsBloc, EventDetailsState>(
+                listener: (context, state) {
               if (state is DeleteEventSuccess) {
                 Toast.showSuccessToast(context, "Événement supprimé");
                 _refreshEvents();

@@ -19,7 +19,8 @@ class EventParticipation with _$EventParticipation {
     required DateTime joinedDateTime,
   }) = _EventParticipation;
 
-  factory EventParticipation.fromJson(JsonMap json) => _$EventParticipationFromJson(json);
+  factory EventParticipation.fromJson(JsonMap json) =>
+      _$EventParticipationFromJson(json);
 
   EventCallerParticipation toEventCallerParticipation() {
     return EventCallerParticipation(

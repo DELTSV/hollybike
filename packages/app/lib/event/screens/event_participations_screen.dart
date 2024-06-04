@@ -48,8 +48,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 10),
       itemCount: participants.length,
-      separatorBuilder: (context, index) =>
-      const SizedBox(height: 10),
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
       itemBuilder: (context, index) {
         final participation = participants[index];
         return EventParticipationCard(
@@ -57,7 +56,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           onPromote: () {
             withCurrentSession(
               context,
-                  (session) {
+              (session) {
                 // context.read<EventParticipationBloc>().add(
                 //   PromoteEventParticipation(
                 //     eventId: widget.eventId,
@@ -71,7 +70,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           onDemote: () {
             withCurrentSession(
               context,
-                  (session) {
+              (session) {
                 // context.read<EventParticipationBloc>().add(
                 //   DemoteEventParticipation(
                 //     eventId: widget.eventId,
@@ -85,7 +84,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           onRemove: () {
             withCurrentSession(
               context,
-                  (session) {
+              (session) {
                 // context.read<EventParticipationBloc>().add(
                 //   RemoveEventParticipation(
                 //     eventId: widget.eventId,
@@ -112,12 +111,12 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-              builder: (context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.9,
-                  child: Container(),
-                );
-              },
+            builder: (context) {
+              return FractionallySizedBox(
+                heightFactor: 0.9,
+                child: Container(),
+              );
+            },
           );
         },
         label: Text(

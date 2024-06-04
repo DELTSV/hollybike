@@ -354,8 +354,6 @@ class EventParticipationService(
 		val participations = getEventParticipations(caller, eventId, searchParam)
 			.getOrElse { return Result.failure(it) }
 
-		println(participations)
-
 		val participationCount = getEventParticipationsCount(caller, eventId, searchParam)
 			.getOrElse { return Result.failure(it) }
 
