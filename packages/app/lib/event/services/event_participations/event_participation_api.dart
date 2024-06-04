@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';

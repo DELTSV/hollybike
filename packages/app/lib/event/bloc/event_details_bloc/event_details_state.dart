@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/types/event_details.dart';
 
 import '../../types/event_participation.dart';
