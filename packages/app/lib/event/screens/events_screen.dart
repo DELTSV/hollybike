@@ -9,6 +9,8 @@ import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../app/app_router.gr.dart';
@@ -112,8 +114,8 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Hud(
-      appBar: AppBar(
-        title: const Text('Événements'),
+      appBar: const TopBar(
+        title: TopBarTitle('Événements'),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
