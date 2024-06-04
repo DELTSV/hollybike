@@ -6,9 +6,9 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
-import 'package:hollybike/event/bloc/event_details_bloc.dart';
-import 'package:hollybike/event/bloc/events_bloc.dart';
-import 'package:hollybike/event/services/event_repository.dart';
+import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
+import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
@@ -17,9 +17,14 @@ import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'event/bloc/event_details_event.dart';
-import 'event/bloc/events_event.dart';
-import 'event/services/event_api.dart';
+
+import 'event/bloc/event_details_bloc/event_details_bloc.dart';
+import 'event/bloc/event_details_bloc/event_details_event.dart';
+import 'event/bloc/event_participations_bloc/event_participations_event.dart';
+import 'event/bloc/events_bloc/events_event.dart';
+import 'event/services/event/event_api.dart';
+import 'event/services/event/event_repository.dart';
+import 'event/services/event_participations/event_participation_api.dart';
 
 void main() {
   initializeDateFormatting("fr_FR")
@@ -53,6 +58,11 @@ class MyApp extends StatelessWidget {
               eventApi: EventApi(),
             ),
           ),
+          RepositoryProvider(
+            create: (context) => EventParticipationRepository(
+              eventParticipationsApi: EventParticipationsApi(),
+            ),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -81,6 +91,15 @@ class MyApp extends StatelessWidget {
                     RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvent()),
             ),
+            BlocProvider<EventParticipationBloc>(
+                create: (context) => EventParticipationBloc(
+                      eventParticipationsRepository:
+                          RepositoryProvider.of<EventParticipationRepository>(
+                        context,
+                      ),
+                      eventRepository:
+                          RepositoryProvider.of<EventRepository>(context),
+                    )..add(SubscribeToEventParticipations())),
           ],
           child: RepositoryProvider<AuthSessionRepository>(
             create: (context) => AuthSessionRepository(

@@ -1,20 +1,26 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_details_bloc.dart';
-import 'package:hollybike/event/bloc/event_details_state.dart';
-import 'package:hollybike/event/types/event.dart';
-import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/event/types/event_form_data.dart';
+import 'package:hollybike/event/widgets/details/event_details_actions_menu.dart';
+import 'package:hollybike/event/widgets/details/event_details_content.dart';
+import 'package:hollybike/event/widgets/details/event_details_header.dart';
+import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
-import 'package:hollybike/event/widgets/event_pending_warning.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../shared/widgets/app_toast.dart';
-import '../bloc/event_details_event.dart';
+import '../bloc/event_details_bloc/event_details_bloc.dart';
+import '../bloc/event_details_bloc/event_details_event.dart';
+import '../bloc/event_details_bloc/event_details_state.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
+  final int eventId;
+  final EventImage eventImage;
+  final String eventName;
+  final bool animate;
+
   const EventDetailsScreen({
     super.key,
     required this.eventId,
@@ -23,20 +29,126 @@ class EventDetailsScreen extends StatefulWidget {
     this.animate = true,
   });
 
-  final int eventId;
-  final EventImage eventImage;
-  final String eventName;
-  final bool animate;
-
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  var eventName = "";
+
   @override
   void initState() {
     super.initState();
 
+    setState(() {
+      eventName = widget.eventName;
+    });
+
+    _loadEventDetails();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<EventDetailsBloc, EventDetailsState>(
+      listener: (context, state) {
+        if (state is EventOperationFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        } else if (state is EventDetailsLoadFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        } else if (state is DeleteEventFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        }
+
+        if (state is EventOperationSuccess) {
+          Toast.showSuccessToast(context, state.successMessage);
+        }
+
+        if (state is DeleteEventSuccess) {
+          context.router.maybePop();
+        }
+
+        setState(() {
+          eventName = state.eventDetails?.event.name ?? widget.eventName;
+        });
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Détails"),
+          actions: [
+            BlocBuilder<EventDetailsBloc, EventDetailsState>(
+              builder: (context, state) {
+                if (state is EventDetailsLoadInProgress ||
+                    state is EventDetailsLoadFailure ||
+                    state.eventDetails == null) {
+                  return const SizedBox();
+                }
+
+                final eventDetails = state.eventDetails!;
+
+                return EventDetailsActionsMenu(
+                  eventId: eventDetails.event.id,
+                  isOwner: eventDetails.isOwner,
+                  isJoined: eventDetails.isParticipating,
+                  isOrganizer: eventDetails.isOrganizer,
+                );
+              },
+            ),
+          ],
+        ),
+        floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+          builder: (context, state) {
+            if (state is EventDetailsLoadFailure ||
+                state is EventDetailsLoadInProgress ||
+                state.eventDetails == null) {
+              return const SizedBox();
+            }
+
+            final eventDetails = state.eventDetails!;
+
+            return EventEditFloatingButton(
+              canEdit: eventDetails.isOrganizer,
+              event: eventDetails.event,
+              onEdit: _onEdit,
+            );
+          },
+        ),
+        body: Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: Column(
+            children: [
+              EventDetailsHeader(
+                eventId: widget.eventId,
+                eventName: eventName,
+                eventImage: widget.eventImage,
+                animate: widget.animate,
+              ),
+              BlocBuilder<EventDetailsBloc, EventDetailsState>(
+                builder: (context, state) {
+                  if (state is EventDetailsLoadInProgress) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  if (state is EventDetailsLoadFailure) {
+                    return const Text("Error while loading event details");
+                  }
+
+                  if (state.eventDetails == null) {
+                    return const Text("Event not found");
+                  }
+
+                  return EventDetailsContent(
+                    eventDetails: state.eventDetails!,
+                  );
+                },
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _loadEventDetails() {
     withCurrentSession(
       context,
       (session) {
@@ -50,136 +162,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 
-  void _onPublish() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventDetailsBloc>().add(
-              PublishEvent(
-                eventId: widget.eventId,
-                session: session,
-              ),
-            );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<EventDetailsBloc, EventDetailsState>(
-      listener: (context, state) {
-        if (state is EventOperationFailure) {
-          Toast.showErrorToast(context, state.errorMessage);
-        }
-
-        if (state is EventOperationSuccess) {
-          Toast.showSuccessToast(context, state.successMessage);
-        }
-      },
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 160,
-              width: double.infinity,
-              child: Stack(
-                children: [
-                  HeroMode(
-                    enabled: widget.animate,
-                    child: Hero(
-                      tag: "event-image-${widget.eventId}",
-                      child: Container(
-                        width: double.infinity,
-                        foregroundDecoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Theme.of(context).scaffoldBackgroundColor,
-                            ],
-                          ),
-                        ),
-                        child: widget.eventImage,
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: LayoutBuilder(builder: (context, constraints) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            HeroMode(
-                              enabled: widget.animate,
-                              child: Hero(
-                                tag: "event-name-${widget.eventId}",
-                                child: SizedBox(
-                                  width: constraints.maxWidth - 20,
-                                  child: Text(
-                                    widget.eventName,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                    ),
-                  ),
-                ],
-              ),
+  void _onEdit(EventFormData formData) {
+    withCurrentSession(context, (session) {
+      context.read<EventDetailsBloc>().add(
+            EditEvent(
+              session: session,
+              eventId: widget.eventId,
+              formData: formData,
             ),
-            BlocBuilder<EventDetailsBloc, EventDetailsState>(builder: (
-              context,
-              state,
-            ) {
-              if (state is EventDetailsLoadInProgress) {
-                return const CircularProgressIndicator();
-              }
+          );
+    });
 
-              if (state is EventDetailsLoadFailure) {
-                return const Text("Error while loading event details");
-              }
-
-              if (state.event == null) {
-                return const Text("Event not found");
-              }
-
-              final Event event = state.event!;
-
-              List<Widget> children = [
-                Text(event.startDate.toString()),
-              ];
-
-              if (event.status == EventStatusState.pending) {
-                children.insert(
-                  0,
-                  EventPendingWarning(
-                    onAction: () => {
-                      _onPublish(),
-                    },
-                  ),
-                );
-              }
-
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: children,
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
+    Navigator.of(context).pop();
   }
 }

@@ -7,6 +7,7 @@ import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
 import hollybike.api.types.event.EEventRole
 import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
 import kotlinx.datetime.Clock
@@ -32,7 +33,7 @@ class EventParticipationService(
 		(this.event eq eventId) and (isJoined eq true)
 	}
 
-	private fun eventCandidatesQuery(caller: User, eventId: Int, searchParam: SearchParam): Query {
+	private fun eventCandidatesQuery(caller: User, eventId: Int): Query {
 		return Users
 			.leftJoin(EventParticipations, { Users.id }, { user }, { EventParticipations.event eq eventId })
 			.leftJoin(
@@ -42,7 +43,6 @@ class EventParticipationService(
 			)
 			.selectAll()
 			.where(Users.association eq caller.association.id)
-			.applyParam(searchParam)
 	}
 
 	private fun findEvent(caller: User, eventId: Int): Event? {
@@ -59,7 +59,7 @@ class EventParticipationService(
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val query = eventCandidatesQuery(caller, eventId, searchParam)
+		val query = eventCandidatesQuery(caller, eventId).applyParam(searchParam)
 
 		Result.success(
 			query.map { row ->
@@ -80,7 +80,7 @@ class EventParticipationService(
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val query = eventCandidatesQuery(caller, eventId, searchParam)
+		val query = eventCandidatesQuery(caller, eventId).applyParam(searchParam, false)
 
 		Result.success(query.count().toInt())
 	}
@@ -100,14 +100,17 @@ class EventParticipationService(
 			)
 		}
 
-	fun getEventCount(caller: User, eventId: Int): Result<Int> = transaction(db) {
+	fun getEventParticipationsCount(caller: User, eventId: Int, searchParam: SearchParam): Result<Int> = transaction(db) {
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		Result.success(
-			EventParticipation.find {
-				eventParticipationCondition(eventId)
-			}.count().toInt()
+			EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+				.selectAll()
+				.applyParam(searchParam, false)
+				.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
+				.count()
+				.toInt()
 		)
 	}
 
@@ -337,5 +340,23 @@ class EventParticipationService(
 					?: return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
 			)
 		}
+	}
+
+	fun getParticipationsPreview(caller: User, eventId: Int): Result<Pair<List<EventParticipation>, Int>> {
+		val searchParam = SearchParam(
+			sort = listOf(Sort(EventParticipations.joinedDateTime, SortOrder.ASC)),
+			query = null,
+			filter = mutableListOf(),
+			page = 0,
+			perPage = 5
+		)
+
+		val participations = getEventParticipations(caller, eventId, searchParam)
+			.getOrElse { return Result.failure(it) }
+
+		val participationCount = getEventParticipationsCount(caller, eventId, searchParam)
+			.getOrElse { return Result.failure(it) }
+
+		return Result.success(participations to participationCount)
 	}
 }

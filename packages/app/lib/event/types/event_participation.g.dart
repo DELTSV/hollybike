@@ -1,0 +1,30 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'event_participation.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$EventParticipationImpl _$$EventParticipationImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EventParticipationImpl(
+      user: MinimalUser.fromJson(json['user'] as Map<String, dynamic>),
+      isImagesPublic: json['isImagesPublic'] as bool,
+      role: $enumDecode(_$EventRoleEnumMap, json['role']),
+      joinedDateTime: DateTime.parse(json['joinedDateTime'] as String),
+    );
+
+Map<String, dynamic> _$$EventParticipationImplToJson(
+        _$EventParticipationImpl instance) =>
+    <String, dynamic>{
+      'user': instance.user,
+      'isImagesPublic': instance.isImagesPublic,
+      'role': _$EventRoleEnumMap[instance.role]!,
+      'joinedDateTime': instance.joinedDateTime.toIso8601String(),
+    };
+
+const _$EventRoleEnumMap = {
+  EventRole.organizer: 'Organizer',
+  EventRole.member: 'Member',
+};
