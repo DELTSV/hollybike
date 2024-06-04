@@ -169,7 +169,7 @@ jobs:
       - name: Build app bundle
         run: |
           flutter build appbundle \
-            --release --build-name=${{ env.version }} --build-number=${{ env.version }}
+            --release --build-name=${{ env.version }} --build-number=$(echo ${{ env.version }} | tr -d .)
 
 #      - name: Deploy to Play Store (Internal testing)
 #        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
