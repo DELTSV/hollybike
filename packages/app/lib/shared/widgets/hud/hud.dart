@@ -9,9 +9,9 @@ class Hud extends StatelessWidget {
 
   const Hud({
     super.key,
-    required this.appBar,
-    required this.floatingActionButton,
-    required this.body,
+    this.appBar,
+    this.floatingActionButton,
+    this.body,
   });
 
   @override

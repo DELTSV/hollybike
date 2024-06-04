@@ -6,6 +6,7 @@ import 'package:hollybike/event/bloc/event_participations_bloc/event_participati
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_state.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_participation.dart';
+import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/utils/with_current_session.dart';
 import '../../shared/widgets/app_toast.dart';
@@ -72,7 +73,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           // _refreshParticipants();
         }
       },
-      child: Scaffold(
+      child: Hud(
         appBar: AppBar(
           title: const Text("Participants"),
         ),
