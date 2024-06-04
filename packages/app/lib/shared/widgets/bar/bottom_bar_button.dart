@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class HudButton extends StatelessWidget {
+class BottomBarButton extends StatelessWidget {
   final Widget child;
 
   final void Function()? onTap;
   final void Function()? onLongPress;
 
-  const HudButton({
+  const BottomBarButton({
     super.key,
     required this.child,
     this.onTap,

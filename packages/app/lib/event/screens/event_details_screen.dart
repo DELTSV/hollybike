@@ -2,12 +2,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
-import 'package:hollybike/event/widgets/details/event_details_actions_menu.dart';
 import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_prefix_button.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/widgets/app_toast.dart';
@@ -73,28 +75,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         });
       },
       child: Hud(
-        appBar: AppBar(
-          title: const Text("Détails"),
-          actions: [
-            BlocBuilder<EventDetailsBloc, EventDetailsState>(
-              builder: (context, state) {
-                if (state is EventDetailsLoadInProgress ||
-                    state is EventDetailsLoadFailure ||
-                    state.eventDetails == null) {
-                  return const SizedBox();
-                }
-
-                final eventDetails = state.eventDetails!;
-
-                return EventDetailsActionsMenu(
-                  eventId: eventDetails.event.id,
-                  isOwner: eventDetails.isOwner,
-                  isJoined: eventDetails.isParticipating,
-                  isOrganizer: eventDetails.isOrganizer,
-                );
-              },
-            ),
-          ],
+        appBar: TopBar(
+          prefix: TopBarPrefixButton(
+            onPressed: () => context.router.maybePop(),
+            icon: Icons.arrow_back,
+          ),
+          title: const TopBarTitle("Détails"),
         ),
         floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
