@@ -30,59 +30,64 @@ class _EventFormModalState extends State<EventFormModal> {
       width: 3,
     );
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (canPop) {
-        if (canPop) return;
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (canPop) {
+          if (canPop) return;
 
-        if (!touched) {
-          Navigator.of(context).pop();
-          return;
-        }
+          if (!touched) {
+            Navigator.of(context).pop();
+            return;
+          }
 
-        showEventDiscardChangesDialog(context, () {
-          Navigator.of(context).pop();
-        });
-      },
-      child: Container(
-        height: 400,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          border: Border(
-            top: border,
-            left: border,
-            right: border,
+          showEventDiscardChangesDialog(context, () {
+            Navigator.of(context).pop();
+          });
+        },
+        child: Container(
+          height: 400,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            border: Border(
+              top: border,
+              left: border,
+              right: border,
+            ),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(31),
+              topRight: Radius.circular(31),
+            ),
           ),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(31),
-            topRight: Radius.circular(31),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 18,
-            left: 16,
-            right: 16,
-          ),
-          child: EventForm(
-            submitButtonText: widget.submitButtonText,
-            initialData: widget.initialData,
-            onClose: () {
-              if (!touched) {
-                Navigator.of(context).pop();
-                return;
-              }
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 18,
+              left: 16,
+              right: 16,
+            ),
+            child: EventForm(
+              submitButtonText: widget.submitButtonText,
+              initialData: widget.initialData,
+              onClose: () {
+                if (!touched) {
+                  Navigator.of(context).pop();
+                  return;
+                }
 
-              showEventDiscardChangesDialog(context, () {
-                Navigator.of(context).pop();
-              });
-            },
-            onTouched: () {
-              setState(() {
-                touched = true;
-              });
-            },
-            onSubmit: widget.onSubmit,
+                showEventDiscardChangesDialog(context, () {
+                  Navigator.of(context).pop();
+                });
+              },
+              onTouched: () {
+                setState(() {
+                  touched = true;
+                });
+              },
+              onSubmit: widget.onSubmit,
+            ),
           ),
         ),
       ),
