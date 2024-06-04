@@ -76,27 +76,27 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
         appBar: AppBar(
           title: const Text("Participants"),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) {
-                return FractionallySizedBox(
-                  heightFactor: 0.9,
-                  child: Container(),
-                );
-              },
-            );
-          },
-          label: Text(
-            'Ajouter',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-          ),
-          icon: const Icon(Icons.edit),
-        ),
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: () {
+        //     showModalBottomSheet(
+        //       context: context,
+        //       isScrollControlled: true,
+        //       builder: (context) {
+        //         return FractionallySizedBox(
+        //           heightFactor: 0.9,
+        //           child: Container(),
+        //         );
+        //       },
+        //     );
+        //   },
+        //   label: Text(
+        //     'Ajouter',
+        //     style: Theme.of(context).textTheme.titleSmall?.copyWith(
+        //           color: Theme.of(context).colorScheme.primary,
+        //         ),
+        //   ),
+        //   icon: const Icon(Icons.edit),
+        // ),
         body: RefreshIndicator(
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           onRefresh: () async {
