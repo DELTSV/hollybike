@@ -23,24 +23,6 @@ class EventParticipationsPreview extends StatelessWidget {
     required this.onTap,
   });
 
-  Widget _getParticipantsText(BuildContext context, int count, int totalCount) {
-    if (totalCount == 1) {
-      return Text(
-        "1 participant",
-        style: Theme.of(context).textTheme.titleSmall,
-      );
-    }
-
-    if (totalCount > 5) {
-      return Text(
-        "+ ${totalCount - 5}",
-        style: Theme.of(context).textTheme.titleSmall,
-      );
-    }
-
-    return const SizedBox();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -110,5 +92,23 @@ class EventParticipationsPreview extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _getParticipantsText(BuildContext context, int count, int totalCount) {
+    if (totalCount == 1) {
+      return Text(
+        "1 participant",
+        style: Theme.of(context).textTheme.titleSmall,
+      );
+    }
+
+    if (totalCount > 5) {
+      return Text(
+        "+ ${totalCount - 5}",
+        style: Theme.of(context).textTheme.titleSmall,
+      );
+    }
+
+    return const SizedBox();
   }
 }
