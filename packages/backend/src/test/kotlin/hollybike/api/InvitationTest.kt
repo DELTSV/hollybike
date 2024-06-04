@@ -3,6 +3,8 @@ package hollybike.api
 import hollybike.api.base.IntegrationSpec
 import hollybike.api.base.auth
 import hollybike.api.stores.UserStore
+import hollybike.api.types.association.EAssociationsStatus
+import hollybike.api.types.association.TAssociation
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
 import hollybike.api.types.invitation.TInvitationCreation
@@ -19,26 +21,6 @@ import kotlinx.datetime.Instant
 
 class InvitationTest : IntegrationSpec({
 	context("Create invitation") {
-		test("Should not create the invitation link because no host is provided") {
-			onPremiseTestApp {
-				it.post("/api/invitation") {
-					auth(UserStore.admin1)
-					contentType(ContentType.Application.Json)
-					setBody(
-						TInvitationCreation(
-							role = EUserScope.User,
-							association = null,
-							maxUses = 1,
-							expiration = null
-						)
-					)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-					bodyAsText() shouldBe "Aucun Host fourni"
-				}
-			}
-		}
-
 		listOf(
 			TInvitationCreation(
 				role = EUserScope.User,
@@ -69,7 +51,6 @@ class InvitationTest : IntegrationSpec({
 				onPremiseTestApp {
 					it.post("/api/invitation") {
 						auth(UserStore.admin1)
-						header("Host", "localhost")
 						contentType(ContentType.Application.Json)
 						setBody(
 							invitationCreation
@@ -85,10 +66,12 @@ class InvitationTest : IntegrationSpec({
 								uses = 0,
 								creation = Instant.DISTANT_PAST,
 								expiration = invitationCreation.expiration,
+								association = TAssociation(0, "", EAssociationsStatus.Enabled, ""),
 								status = EInvitationStatus.Enabled
 							),
 							TInvitation::link,
-							TInvitation::creation
+							TInvitation::creation,
+							TInvitation::association
 						)
 					}
 				}
@@ -99,7 +82,6 @@ class InvitationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/invitation") {
 					auth(UserStore.user1)
-					header("Host", "localhost")
 					contentType(ContentType.Application.Json)
 					setBody(
 						TInvitationCreation(
@@ -122,7 +104,6 @@ class InvitationTest : IntegrationSpec({
 
 				it.post("/api/invitation") {
 					auth(UserStore.admin1)
-					header("Host", "localhost")
 					contentType(ContentType.Application.Json)
 					setBody(
 						TInvitationCreation(
@@ -143,7 +124,6 @@ class InvitationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.post("/api/invitation") {
 					auth(UserStore.root)
-					header("Host", "localhost")
 					contentType(ContentType.Application.Json)
 					setBody(
 						TInvitationCreation(
@@ -168,7 +148,6 @@ class InvitationTest : IntegrationSpec({
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
 					auth(UserStore.admin1)
-					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -181,23 +160,9 @@ class InvitationTest : IntegrationSpec({
 			onPremiseTestApp {
 				it.patch("/api/invitation/20/disable") {
 					auth(UserStore.admin1)
-					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 					bodyAsText() shouldBe "Invitation inconnue"
-				}
-			}
-		}
-
-		test("Should not disable the invitation if the host is not provided") {
-			onPremiseTestApp {
-				val invitation = generateInvitation(it, UserStore.admin1)
-
-				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
-					auth(UserStore.admin1)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-					bodyAsText() shouldBe "Aucun Host fourni"
 				}
 			}
 		}
@@ -208,7 +173,6 @@ class InvitationTest : IntegrationSpec({
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
 					auth(UserStore.user1)
-					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "You don't have sufficient permissions to access this resource"
@@ -222,7 +186,6 @@ class InvitationTest : IntegrationSpec({
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
 					auth(UserStore.admin2)
-					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 				}
@@ -235,7 +198,6 @@ class InvitationTest : IntegrationSpec({
 
 				it.patch("/api/invitation/${invitation["invitation"]!!.toInt()}/disable") {
 					auth(UserStore.root)
-					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -249,8 +211,7 @@ class InvitationTest : IntegrationSpec({
 		test("Should return an empty list of invitations") {
 			onPremiseTestApp {
 				it.get("/api/invitation") {
-					auth(UserStore.admin1)
-					header("Host", "localhost")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
@@ -259,11 +220,10 @@ class InvitationTest : IntegrationSpec({
 			}
 		}
 
-		test("Should not return the list of invitations because the user is not an admin") {
+		test("Should not return the list of invitations because the user is not a root") {
 			onPremiseTestApp {
 				it.get("/api/invitation") {
 					auth(UserStore.user1)
-					header("Host", "localhost")
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
 
@@ -272,25 +232,12 @@ class InvitationTest : IntegrationSpec({
 			}
 		}
 
-		test("Should not return the list of invitations if the host is not provided") {
-			onPremiseTestApp {
-				it.get("/api/invitation") {
-					auth(UserStore.admin1)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-
-					bodyAsText() shouldBe "Aucun Host fourni"
-				}
-			}
-		}
-
 		test("Should return list of invitations with links") {
 			onPremiseTestApp {
-				generateInvitation(it, UserStore.admin1)
+				generateInvitation(it, UserStore.root)
 
 				it.get("/api/invitation") {
-					auth(UserStore.admin1)
-					header("Host", "localhost")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TLists<TInvitation>>().let { body ->
@@ -308,11 +255,10 @@ class InvitationTest : IntegrationSpec({
 
 		test("Should return list of disabled invitations without links") {
 			onPremiseTestApp {
-				generateInvitation(it, UserStore.admin1, disabled = true)
+				generateInvitation(it, UserStore.root, disabled = true)
 
 				it.get("/api/invitation") {
-					auth(UserStore.admin1)
-					header("Host", "localhost")
+					auth(UserStore.root)
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 

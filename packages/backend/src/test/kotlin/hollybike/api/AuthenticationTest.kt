@@ -82,7 +82,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
@@ -107,7 +106,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = "invalid_email",
@@ -132,7 +130,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.user1.value,
@@ -151,37 +148,12 @@ class AuthenticationTest : IntegrationSpec({
 			}
 		}
 
-		test("Should not sign up the user if no host is provided") {
-			onPremiseTestApp {
-				val invitation = generateInvitation(it, UserStore.admin1)
-
-				it.post("/api/auth/signin") {
-					contentType(ContentType.Application.Json)
-					setBody(
-						TSignup(
-							email = UserStore.new.value,
-							password = "test",
-							username = "new_account",
-							verify = invitation["verify"]!!,
-							association = invitation["association"]!!.toInt(),
-							role = EUserScope.User,
-							invitation = invitation["invitation"]!!.toInt()
-						)
-					)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-					bodyAsText() shouldBe "Aucun Host"
-				}
-			}
-		}
-
 		test("Should not sign up the user with bad invitation id") {
 			onPremiseTestApp {
 				val invitation = generateInvitation(it, UserStore.admin1)
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
@@ -205,7 +177,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
@@ -229,7 +200,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
@@ -253,7 +223,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
@@ -277,7 +246,6 @@ class AuthenticationTest : IntegrationSpec({
 
 				it.post("/api/auth/signin") {
 					contentType(ContentType.Application.Json)
-					header("Host", "localhost")
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
