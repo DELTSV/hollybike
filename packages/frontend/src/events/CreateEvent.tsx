@@ -5,16 +5,36 @@ import { Button } from "../components/Button/Button.tsx";
 import {
 	useEffect, useState,
 } from "preact/hooks";
-import { api } from "../utils/useApi.ts";
+import {
+	api, useApi,
+} from "../utils/useApi.ts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { TEvent } from "../types/TEvent.ts";
+import { useUser } from "../user/useUser.tsx";
+import { EUserScope } from "../types/EUserScope.ts";
+import { Select } from "../components/Select/Select.tsx";
+import { TList } from "../types/TList.ts";
+import { TAssociation } from "../types/TAssociation.ts";
+import { TextArea } from "../components/Input/TextArea.tsx";
 
 export function CreateEvent() {
 	const navigate = useNavigate();
+	const { user } = useUser();
 	const [name, setName] = useState("");
-	const [description, setDesciption] = useState("");
+	const [description, setDescription] = useState("");
 	const [start, setStart] = useState<Date>();
+	const [end, setEnd] = useState<Date>();
+	const [association, setAssociation] = useState<number>();
+
+	const [total, setTotal] = useState(20);
+
+	const associations = useApi<TList<TAssociation>>(`/associations?per_page=${total}`);
+
+	useEffect(() => {
+		if (associations.data?.total_data !== undefined)
+			setTotal(associations.data?.total_data);
+	}, [associations.data?.total_data]);
 
 	useEffect(() => {
 		if (start === undefined) {
@@ -33,11 +53,23 @@ export function CreateEvent() {
 					<p>Nom de l'événement</p>
 					<Input value={name} onInput={e => setName(e.currentTarget.value)} placeholder={"Nom"}/>
 					<p>Description</p>
-					<textarea value={description} onInput={e => setDesciption(e.currentTarget.value)}></textarea>
+					<TextArea value={description} onInput={e => setDescription(e.currentTarget.value)}></TextArea>
 					<p>Date de début</p>
 					<InputCalendar value={start} setValue={setStart} time/>
 					<p>Date de fin</p>
-					<InputCalendar/>
+					<InputCalendar value={end} setValue={setEnd} time/>
+					{ user?.scope === EUserScope.Root &&
+						<>
+							<p>Association</p>
+							<Select
+								value={association} onChange={value => setAssociation(value as number)}
+								searchable={total > 5}
+								options={associations.data?.data?.map(a => ({
+									name: a.name,
+									value: a.id,
+								})) ?? []}
+							/>
+						</> }
 					<Button
 						type={"submit"}
 						className={"col-span-2 justify-self-center"} onClick={() => {
@@ -47,6 +79,8 @@ export function CreateEvent() {
 									name: name,
 									description: description,
 									start_date: start?.toISOString(),
+									end_date: end?.toISOString(),
+									association: user?.scope === EUserScope.Root ? association : undefined,
 								},
 							}).then((res) => {
 								if (res.status === 201 && res.data !== undefined) {

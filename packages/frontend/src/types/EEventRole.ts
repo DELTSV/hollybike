@@ -1,4 +1,4 @@
 export enum EEventRole {
-	Member,
-	Organizer
+	Member = "Member",
+	Organizer = "Organizer"
 }

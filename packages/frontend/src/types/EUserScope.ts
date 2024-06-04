@@ -1,5 +1,5 @@
 export enum EUserScope {
-	User,
-	Admin,
-	Root
+	User = "User",
+	Admin = "Admin",
+	Root = "Root"
 }

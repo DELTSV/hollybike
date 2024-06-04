@@ -106,7 +106,16 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 	try {
 		return {
 			status: response.status,
-			data: JSON.parse(responseText),
+			data: JSON.parse(responseText, (_, value) => {
+				if (typeof value === "string")
+					if (isISODateTime(value))
+						return new Date(value);
+					 else if (isISODate(value))
+						return new Date(value);
+
+
+				return value;
+			}),
 		};
 	} catch (e) {
 		return {
@@ -114,4 +123,15 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 			message: responseText,
 		};
 	}
+}
+
+export function isISODateTime(date: string): boolean {
+	const regex =
+		/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})$/i;
+	return regex.test(date);
+}
+
+export function isISODate(date: string): boolean {
+	const regex = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/i;
+	return regex.test(date);
 }

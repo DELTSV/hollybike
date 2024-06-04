@@ -1,7 +1,7 @@
 export enum EEventStatus {
-	Pending,
-	Scheduled,
-	Cancelled,
-	Finished,
-	Now
+	Pending= "Pending",
+	Scheduled = "Scheduled",
+	Cancelled = "Cancelled",
+	Finished = "Finished",
+	Now = "Now"
 }

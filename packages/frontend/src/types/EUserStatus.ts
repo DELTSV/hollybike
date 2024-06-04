@@ -1,4 +1,4 @@
 export enum EUserStatus {
-	Enabled,
-	Disabled
+	Enabled = "Enabled",
+	Disabled = "Disabled"
 }

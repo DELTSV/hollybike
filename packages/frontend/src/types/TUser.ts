@@ -10,7 +10,7 @@ export interface TUser {
 	email: string,
 	scope: EUserScope,
 	status: EUserStatus,
-	last_login: string,
+	last_login: Date,
 	association: TAssociation,
 	profile_picture?: string
 }
@@ -21,6 +21,6 @@ export const dummyUser: TUser = {
 	email: "dummy@example.com",
 	scope: EUserScope.User,
 	status: EUserStatus.Enabled,
-	last_login: "0-0-0T0:0:0",
+	last_login: new Date(),
 	association: dummyAssociation,
 };

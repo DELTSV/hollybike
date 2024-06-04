@@ -25,6 +25,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ListEvent } from "./events/ListEvent.tsx";
 import { CreateEvent } from "./events/CreateEvent.tsx";
+import { EventDetail } from "./events/EventDetail.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -87,6 +88,10 @@ export function App() {
 				{
 					path: "events/new",
 					element: <CreateEvent/>,
+				},
+				{
+					path: "events/:id",
+					element: <EventDetail/>,
 				},
 				{
 					path: "conf",

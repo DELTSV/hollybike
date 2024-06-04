@@ -1,5 +1,6 @@
 import { TUserPartial } from "./TUserPartial.ts";
 import { EEventStatus } from "./EEventStatus.ts";
+import { TAssociationPartial } from "./TAssociationPartial.ts";
 
 export interface TEvent {
 	id: number,
@@ -8,8 +9,9 @@ export interface TEvent {
 	image?: string,
 	status: EEventStatus,
 	owner: TUserPartial,
-	start_date_time: string
-	end_date_time?: string,
-	create_date_time: string,
-	update_date_time: string
+	start_date_time: Date
+	end_date_time?: Date,
+	create_date_time: Date,
+	update_date_time: Date,
+	association: TAssociationPartial
 }
