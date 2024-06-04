@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/hud/widgets/hud_button.dart';
 import 'package:hollybike/profile/widgets/profile_button_picture.dart';
 import 'package:hollybike/profile/widgets/profile_modal/profile_modal.dart';
+
+import '../../shared/widgets/hud/hud_button.dart';
 
 class ProfileButton extends StatelessWidget {
   const ProfileButton({super.key});

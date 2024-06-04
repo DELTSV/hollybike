@@ -8,6 +8,7 @@ import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
+import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
@@ -71,7 +72,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
           eventName = state.eventDetails?.event.name ?? widget.eventName;
         });
       },
-      child: Scaffold(
+      child: Hud(
         appBar: AppBar(
           title: const Text("Détails"),
           actions: [
