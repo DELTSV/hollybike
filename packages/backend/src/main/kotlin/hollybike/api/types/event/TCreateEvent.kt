@@ -11,5 +11,6 @@ data class TCreateEvent(
 	@SerialName("start_date")
 	val startDate: Instant,
 	@SerialName("end_date")
-	val endDate: Instant? = null
+	val endDate: Instant? = null,
+	val association: Int? = null
 )

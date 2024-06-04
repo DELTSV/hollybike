@@ -72,7 +72,7 @@ class EventService(
 	private fun foundEventIfOrganizer(eventId: Int, user: User): Result<Event> {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(user)
-		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return Result.failure(
+		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull() ?: return Result.failure(
 			EventNotFoundException("Event $eventId introuvable")
 		)
 
@@ -87,7 +87,19 @@ class EventService(
 	}
 
 	fun eventUserCondition(caller: User): Op<Boolean> {
-		return ((((Events.owner eq caller.id) and (Events.status eq EEventStatus.Pending.value)) or (Events.status neq EEventStatus.Pending.value)) and (Events.association eq caller.association.id))
+		return if(caller.scope !== EUserScope.Root) {
+			(
+				(((Events.owner eq caller.id) and (Events.status eq EEventStatus.Pending.value)) or
+					(Events.status neq EEventStatus.Pending.value)) and
+					(Events.association eq caller.association.id))
+		} else {
+			object: Op<Boolean>() {
+				override fun toQueryBuilder(queryBuilder: QueryBuilder) {
+					queryBuilder.append("true")
+				}
+
+			}
+		}
 	}
 
 	private fun eventsQuery(caller: User, searchParam: SearchParam, pagination: Boolean = true): SizedIterable<Event> {
@@ -155,7 +167,7 @@ class EventService(
 	}
 
 	fun getAllEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
-		eventsQuery(caller, searchParam).with(Event::owner).toList()
+		eventsQuery(caller, searchParam).with(Event::owner, Event::association).toList()
 	}
 
 	fun countAllEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -171,7 +183,7 @@ class EventService(
 	fun getFutureEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and futureEventsCondition()
-		}).with(Event::owner).toList()
+		}).with(Event::owner, Event::association).toList()
 	}
 
 	fun countFutureEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -189,7 +201,7 @@ class EventService(
 	fun getArchivedEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and archivedEventsCondition()
-		}).with(Event::owner).toList()
+		}).with(Event::owner, Event::association).toList()
 	}
 
 	fun countArchivedEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -201,7 +213,7 @@ class EventService(
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
 		Event.find {
 			Events.id eq id and eventUserCondition(caller)
-		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull()
+		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull()
 	}
 
 	fun createEvent(
@@ -210,6 +222,7 @@ class EventService(
 		description: String?,
 		startDate: Instant,
 		endDate: Instant?,
+		association: Association
 	): Result<Event> {
 		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
@@ -217,7 +230,7 @@ class EventService(
 		return transaction(db) {
 			val createdEvent = Event.new {
 				owner = caller
-				association = caller.association
+				this.association = association
 				this.name = name
 				this.description = description
 				this.startDateTime = startDate
