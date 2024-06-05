@@ -1,5 +1,4 @@
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/event/types/event_caller_participation.dart';
 
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
