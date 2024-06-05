@@ -53,8 +53,8 @@ class EventService(
 		return Result.success(Unit)
 	}
 
-	private fun checkEventInputDates(startDate: Instant, endDate: Instant? = null): Result<Unit> {
-		if (startDate < Clock.System.now()) {
+	private fun checkEventInputDates(startDate: Instant, endDate: Instant? = null, create: Boolean = true): Result<Unit> {
+		if (startDate < Clock.System.now() && create) {
 			return Result.failure(InvalidDateException("La date de début doit être dans le futur"))
 		}
 
@@ -75,6 +75,10 @@ class EventService(
 		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull() ?: return Result.failure(
 			EventNotFoundException("Event $eventId introuvable")
 		)
+
+		if(user.scope === EUserScope.Root) {
+			return Result.success(event)
+		}
 
 		val participation = event.participants.find { it.user.id == user.id }
 			?: return Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
@@ -97,7 +101,6 @@ class EventService(
 				override fun toQueryBuilder(queryBuilder: QueryBuilder) {
 					queryBuilder.append("true")
 				}
-
 			}
 		}
 	}
@@ -126,7 +129,7 @@ class EventService(
 		when (exception) {
 			is EventNotFoundException -> call.respond(
 				HttpStatusCode.NotFound,
-				exception.message ?: "Event not found"
+				exception.message ?: "Évènement inconnu"
 			)
 
 			is EventActionDeniedException -> call.respond(
@@ -136,27 +139,27 @@ class EventService(
 
 			is InvalidDateException -> call.respond(
 				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid date"
+				exception.message ?: "Date invalide"
 			)
 
 			is InvalidEventNameException -> call.respond(
 				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event name"
+				exception.message ?: "Nom de l'évènement vide ou invalide"
 			)
 
 			is InvalidEventDescriptionException -> call.respond(
 				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event description"
+				exception.message ?: "Description de l'événement invalide"
 			)
 
 			is AlreadyParticipatingToEventException -> call.respond(
 				HttpStatusCode.Conflict,
-				exception.message ?: "Already participating to event"
+				exception.message ?: "Vous participer déjà à l'événement"
 			)
 
 			is NotParticipatingToEventException -> call.respond(
 				HttpStatusCode.NotFound,
-				exception.message ?: "Not participating to event"
+				exception.message ?: "Vous ne participez pas à l'évènements"
 			)
 
 			else -> {
@@ -258,7 +261,7 @@ class EventService(
 		startDate: Instant,
 		endDate: Instant?,
 	): Result<Event> {
-		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
+		checkEventInputDates(startDate, endDate, false).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
 
 		return transaction(db) {
