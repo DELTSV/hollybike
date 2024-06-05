@@ -1,3 +1,4 @@
+import 'package:hollybike/event/types/event_candidate.dart';
 import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/types/event_role.dart';
 import 'package:rxdart/rxdart.dart';
@@ -12,10 +13,59 @@ class EventParticipationRepository {
   late final _eventParticipationsStreamController =
       BehaviorSubject<List<EventParticipation>>.seeded([]);
 
+  late final _eventCandidatesStreamController =
+      BehaviorSubject<List<EventCandidate>>.seeded([]);
+
+  Stream<List<EventCandidate>> get candidatesStream =>
+      _eventCandidatesStreamController.stream;
+
   Stream<List<EventParticipation>> get participationsStream =>
       _eventParticipationsStreamController.stream;
 
   EventParticipationRepository({required this.eventParticipationsApi});
+
+  Future<PaginatedList<EventCandidate>> fetchCandidates(
+    int eventId,
+    AuthSession session,
+    int page,
+    int eventsPerPage,
+    String? search,
+  ) async {
+    final pageResult = await eventParticipationsApi.getCandidates(
+      eventId,
+      session,
+      page,
+      eventsPerPage,
+      search,
+    );
+
+    _eventCandidatesStreamController.add(
+      _eventCandidatesStreamController.value + pageResult.items,
+    );
+
+    return pageResult;
+  }
+
+  Future<PaginatedList<EventCandidate>> refreshCandidates(
+    int eventId,
+    AuthSession session,
+    int eventsPerPage,
+    String? search,
+  ) async {
+    final pageResult = await eventParticipationsApi.getCandidates(
+      eventId,
+      session,
+      0,
+      eventsPerPage,
+      search,
+    );
+
+    _eventCandidatesStreamController.add(
+      pageResult.items,
+    );
+
+    return pageResult;
+  }
 
   Future<PaginatedList<EventParticipation>> fetchParticipations(
     int eventId,
@@ -54,10 +104,6 @@ class EventParticipationRepository {
     );
 
     return pageResult;
-  }
-
-  Future<void> close() async {
-    _eventParticipationsStreamController.close();
   }
 
   Future<void> promoteParticipant(
@@ -116,5 +162,10 @@ class EventParticipationRepository {
           .where((participation) => participation.user.id != userId)
           .toList(),
     );
+  }
+
+  Future<void> close() async {
+    _eventParticipationsStreamController.close();
+    _eventCandidatesStreamController.close();
   }
 }

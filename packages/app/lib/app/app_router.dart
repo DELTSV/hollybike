@@ -30,6 +30,12 @@ class AppRouter extends $AppRouter {
           path: '/event-participations',
           transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
+          page: EventCandidatesRoute.page,
+          path: '/event-candidates',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
         AutoRoute(
           page: LoginRoute.page,
           path: '/login',

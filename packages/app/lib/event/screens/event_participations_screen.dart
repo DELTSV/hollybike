@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_state.dart';
@@ -85,27 +86,28 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           ),
           title: const TopBarTitle("Participants"),
         ),
-        // floatingActionButton: FloatingActionButton.extended(
-        //   onPressed: () {
-        //     showModalBottomSheet(
-        //       context: context,
-        //       isScrollControlled: true,
-        //       builder: (context) {
-        //         return FractionallySizedBox(
-        //           heightFactor: 0.9,
-        //           child: Container(),
-        //         );
-        //       },
-        //     );
-        //   },
-        //   label: Text(
-        //     'Ajouter',
-        //     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-        //           color: Theme.of(context).colorScheme.primary,
-        //         ),
-        //   ),
-        //   icon: const Icon(Icons.edit),
-        // ),
+        floatingActionButton: Builder(builder: (context) {
+          if (!widget.eventDetails.isOrganizer) {
+            return const SizedBox();
+          }
+
+          return FloatingActionButton.extended(
+            onPressed: () {
+              context.router.push(
+                EventCandidatesRoute(
+                  eventId: widget.eventDetails.event.id,
+                ),
+              );
+            },
+            label: Text(
+              'Ajouter',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+            ),
+            icon: const Icon(Icons.group_add),
+          );
+        }),
         body: RefreshIndicator(
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           onRefresh: () async {
