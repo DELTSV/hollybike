@@ -2903,6 +2903,9 @@
 		"fields": [
 			{
 				"name": "owner$delegate"
+			},
+			{
+				"name": "participants$delegate"
 			}
 		],
 		"methods": [
@@ -2914,6 +2917,10 @@
 			},
 			{
 				"name": "getOwner",
+				"parameterTypes": []
+			},
+			{
+				"name": "getParticipants",
 				"parameterTypes": []
 			},
 			{
@@ -3050,5 +3057,22 @@
 	},
 	{
 		"name": "kotlin.collections.List"
+	},
+	{
+		"name": "hollybike.api.types.event.TUpdateEvent",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TUpdateEvent$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
 	}
 ]
