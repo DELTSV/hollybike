@@ -48,7 +48,7 @@ class EventParticipationService(
 			)
 			.selectAll()
 			.applyParam(searchParam, withPagination)
-			.andWhere { Users.association eq caller.association.id }
+			.andWhere { (Users.association eq caller.association.id) and (Users.id neq caller.id) }
 	}
 
 	private fun findEvent(caller: User, eventId: Int): Event? {
