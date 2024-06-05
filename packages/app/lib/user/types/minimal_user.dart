@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'minimal_user.freezed.dart';
-
 part 'minimal_user.g.dart';
 
 @freezed

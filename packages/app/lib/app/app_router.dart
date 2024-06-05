@@ -11,11 +11,12 @@ class AppRouter extends $AppRouter {
 
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(
+        CustomRoute(
           initial: true,
           guards: [AuthGuard(context: context)],
           page: EventsRoute.page,
           path: '/events',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],
@@ -27,6 +28,12 @@ class AppRouter extends $AppRouter {
           guards: [AuthGuard(context: context)],
           page: EventParticipationsRoute.page,
           path: '/event-participations',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
+          page: EventCandidatesRoute.page,
+          path: '/event-candidates',
           transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         AutoRoute(

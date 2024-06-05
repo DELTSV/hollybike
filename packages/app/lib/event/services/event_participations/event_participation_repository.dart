@@ -1,3 +1,4 @@
+import 'package:hollybike/event/types/event_candidate.dart';
 import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/types/event_role.dart';
 import 'package:rxdart/rxdart.dart';
@@ -12,22 +13,71 @@ class EventParticipationRepository {
   late final _eventParticipationsStreamController =
       BehaviorSubject<List<EventParticipation>>.seeded([]);
 
+  late final _eventCandidatesStreamController =
+      BehaviorSubject<List<EventCandidate>>.seeded([]);
+
+  Stream<List<EventCandidate>> get candidatesStream =>
+      _eventCandidatesStreamController.stream;
+
   Stream<List<EventParticipation>> get participationsStream =>
       _eventParticipationsStreamController.stream;
 
   EventParticipationRepository({required this.eventParticipationsApi});
 
+  Future<PaginatedList<EventCandidate>> fetchCandidates(
+    int eventId,
+    AuthSession session,
+    int page,
+    int candidatesPerPage,
+    String? search,
+  ) async {
+    final pageResult = await eventParticipationsApi.getCandidates(
+      eventId,
+      session,
+      page,
+      candidatesPerPage,
+      search,
+    );
+
+    _eventCandidatesStreamController.add(
+      _eventCandidatesStreamController.value + pageResult.items,
+    );
+
+    return pageResult;
+  }
+
+  Future<PaginatedList<EventCandidate>> refreshCandidates(
+    int eventId,
+    AuthSession session,
+    int candidatesPerPage,
+    String? search,
+  ) async {
+    final pageResult = await eventParticipationsApi.getCandidates(
+      eventId,
+      session,
+      0,
+      candidatesPerPage,
+      search,
+    );
+
+    _eventCandidatesStreamController.add(
+      pageResult.items,
+    );
+
+    return pageResult;
+  }
+
   Future<PaginatedList<EventParticipation>> fetchParticipations(
     int eventId,
     AuthSession session,
     int page,
-    int eventsPerPage,
+    int participationsPerPage,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,
       session,
       page,
-      eventsPerPage,
+      participationsPerPage,
     );
 
     _eventParticipationsStreamController.add(
@@ -40,13 +90,13 @@ class EventParticipationRepository {
   Future<PaginatedList<EventParticipation>> refreshParticipations(
     int eventId,
     AuthSession session,
-    int eventsPerPage,
+    int participationsPerPage,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,
       session,
       0,
-      eventsPerPage,
+      participationsPerPage,
     );
 
     _eventParticipationsStreamController.add(
@@ -54,10 +104,6 @@ class EventParticipationRepository {
     );
 
     return pageResult;
-  }
-
-  Future<void> close() async {
-    _eventParticipationsStreamController.close();
   }
 
   Future<void> promoteParticipant(
@@ -116,5 +162,31 @@ class EventParticipationRepository {
           .where((participation) => participation.user.id != userId)
           .toList(),
     );
+  }
+
+  Future<void> close() async {
+    _eventParticipationsStreamController.close();
+    _eventCandidatesStreamController.close();
+  }
+
+  Future<List<EventParticipation>> addParticipants(
+    int eventId,
+    AuthSession session,
+    List<int> userIds,
+    int participationsPerPage,
+  ) async {
+    final participations = await eventParticipationsApi.addParticipants(
+      eventId,
+      session,
+      userIds,
+    );
+
+    await refreshParticipations(
+      eventId,
+      session,
+      participationsPerPage,
+    );
+
+    return participations;
   }
 }

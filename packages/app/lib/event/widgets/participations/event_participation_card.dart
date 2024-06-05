@@ -7,6 +7,7 @@ import 'package:hollybike/event/widgets/participations/event_participation_actio
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../bloc/event_participations_bloc/event_participations_bloc.dart';
+import '../../types/event_role.dart';
 
 class EventParticipationCard extends StatelessWidget {
   final int eventId;
@@ -26,9 +27,8 @@ class EventParticipationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
+    return Card(
+      child: ListTile(
         onTap: () {
           // Handle container tap
           // Navigator.of(context).pushNamed(
@@ -38,49 +38,44 @@ class EventParticipationCard extends StatelessWidget {
           //   ),
           // );
         },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
-            ),
-            borderRadius: BorderRadius.circular(10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        dense: true,
+        leading: Hero(
+          tag: "profile_picture_participation_${participation.user.id}",
+          child: EventLoadingProfilePicture(
+            url: participation.user.profilePicture,
+            radius: 20,
+            userId: participation.user.id,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              key: ValueKey(participation.user.id),
-              children: [
-                Hero(
-                  tag: "profile_picture_participation_${participation.user.id}",
-                  child: EventLoadingProfilePicture(
-                    url: participation.user.profilePicture,
-                    radius: 20,
-                    userId: participation.user.id,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  participation.user.username,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                const Spacer(),
-                EventParticipationActionsMenu(
-                  participation: participation,
-                  canEdit:
-                      isCurrentUserOrganizer && (!isOwner && !isCurrentUser),
-                  onPromote: () => _onPromote(context),
-                  onDemote: () => _onDemote(context),
-                  onRemove: () => _onRemove(context),
-                )
-              ],
-            ),
-          ),
+        ),
+        title: Text(
+          participation.user.username,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        subtitle: Text(
+          _eventRoleName(participation.role),
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        trailing: EventParticipationActionsMenu(
+          participation: participation,
+          canEdit: isCurrentUserOrganizer && (!isOwner && !isCurrentUser),
+          onPromote: () => _onPromote(context),
+          onDemote: () => _onDemote(context),
+          onRemove: () => _onRemove(context),
         ),
       ),
     );
+  }
+
+  String _eventRoleName(EventRole role) {
+    switch (role) {
+      case EventRole.organizer:
+        return "Organisateur";
+      case EventRole.member:
+        return "Participant";
+    }
   }
 
   void _onPromote(BuildContext context) {
