@@ -1,7 +1,9 @@
 import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/event/types/event_caller_participation.dart';
 
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
+import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
@@ -115,17 +117,7 @@ class EventRepository {
       return;
     }
 
-    final updatePreviewParticipants = details.previewParticipants.length < 5;
-
-    _eventStreamController.add(
-      details.copyWith(
-        previewParticipants: updatePreviewParticipants
-            ? details.previewParticipants + [participation]
-            : details.previewParticipants,
-        previewParticipantsCount: details.previewParticipantsCount + 1,
-        callerParticipation: participation.toEventCallerParticipation(),
-      ),
-    );
+    onParticipantsAdded([participation], firstAsCaller: true);
   }
 
   Future<void> leaveEvent(AuthSession session, int eventId) async {
@@ -177,6 +169,31 @@ class EventRepository {
             .where((p) => p.user.id != userId)
             .toList(),
         previewParticipantsCount: details.previewParticipantsCount - 1,
+      ),
+    );
+  }
+
+  void onParticipantsAdded(List<EventParticipation> participants,
+      {bool firstAsCaller = false}) {
+    final details = _eventStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    final updatedPreviewParticipants = [
+      ...details.previewParticipants,
+      ...participants,
+    ].take(5).toList();
+
+    _eventStreamController.add(
+      details.copyWith(
+        previewParticipants: updatedPreviewParticipants,
+        previewParticipantsCount:
+            details.previewParticipantsCount + participants.length,
+        callerParticipation: firstAsCaller
+            ? participants.first.toEventCallerParticipation()
+            : details.callerParticipation,
       ),
     );
   }

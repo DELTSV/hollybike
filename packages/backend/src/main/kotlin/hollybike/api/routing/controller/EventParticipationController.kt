@@ -166,7 +166,6 @@ class EventParticipationController(
 			eventParticipationService.addParticipantsToEvent(call.user, data.participations.eventId.id, users)
 				.onSuccess { participations ->
 					call.respond(
-						HttpStatusCode.Created,
 						participations.map { TEventParticipation(it, storageService.signer.sign) }
 					)
 				}.onFailure {

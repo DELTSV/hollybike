@@ -68,3 +68,21 @@ class EventCandidatesPageLoadFailure extends EventCandidatesState {
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventCandidatesStatus.error));
 }
+
+class EventAddCandidatesInProgress extends EventCandidatesState {
+  EventAddCandidatesInProgress(EventCandidatesState state)
+      : super.state(state.copyWith(status: EventCandidatesStatus.loading));
+}
+
+class EventAddCandidatesSuccess extends EventCandidatesState {
+  EventAddCandidatesSuccess(EventCandidatesState state)
+      : super.state(state.copyWith(status: EventCandidatesStatus.success));
+}
+
+class EventAddCandidatesFailure extends EventCandidatesState {
+  final String errorMessage;
+
+  EventAddCandidatesFailure(EventCandidatesState state,
+      {required this.errorMessage})
+      : super.state(state.copyWith(status: EventCandidatesStatus.error));
+}

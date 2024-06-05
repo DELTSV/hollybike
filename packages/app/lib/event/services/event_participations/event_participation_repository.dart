@@ -28,14 +28,14 @@ class EventParticipationRepository {
     int eventId,
     AuthSession session,
     int page,
-    int eventsPerPage,
+    int candidatesPerPage,
     String? search,
   ) async {
     final pageResult = await eventParticipationsApi.getCandidates(
       eventId,
       session,
       page,
-      eventsPerPage,
+      candidatesPerPage,
       search,
     );
 
@@ -49,14 +49,14 @@ class EventParticipationRepository {
   Future<PaginatedList<EventCandidate>> refreshCandidates(
     int eventId,
     AuthSession session,
-    int eventsPerPage,
+    int candidatesPerPage,
     String? search,
   ) async {
     final pageResult = await eventParticipationsApi.getCandidates(
       eventId,
       session,
       0,
-      eventsPerPage,
+      candidatesPerPage,
       search,
     );
 
@@ -71,13 +71,13 @@ class EventParticipationRepository {
     int eventId,
     AuthSession session,
     int page,
-    int eventsPerPage,
+    int participationsPerPage,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,
       session,
       page,
-      eventsPerPage,
+      participationsPerPage,
     );
 
     _eventParticipationsStreamController.add(
@@ -90,13 +90,13 @@ class EventParticipationRepository {
   Future<PaginatedList<EventParticipation>> refreshParticipations(
     int eventId,
     AuthSession session,
-    int eventsPerPage,
+    int participationsPerPage,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,
       session,
       0,
-      eventsPerPage,
+      participationsPerPage,
     );
 
     _eventParticipationsStreamController.add(
@@ -167,5 +167,26 @@ class EventParticipationRepository {
   Future<void> close() async {
     _eventParticipationsStreamController.close();
     _eventCandidatesStreamController.close();
+  }
+
+  Future<List<EventParticipation>> addParticipants(
+    int eventId,
+    AuthSession session,
+    List<int> userIds,
+    int participationsPerPage,
+  ) async {
+    final participations = await eventParticipationsApi.addParticipants(
+      eventId,
+      session,
+      userIds,
+    );
+
+    await refreshParticipations(
+      eventId,
+      session,
+      participationsPerPage,
+    );
+
+    return participations;
   }
 }

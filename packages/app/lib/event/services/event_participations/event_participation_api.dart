@@ -38,6 +38,7 @@ class EventParticipationsApi {
     final queryParams = Map<String, dynamic>.from({
       'page': page,
       'per_page': eventsPerPage,
+      'sort': 'username.asc',
     });
 
     if (search != null && search.isNotEmpty) {
@@ -47,13 +48,9 @@ class EventParticipationsApi {
     }
 
     final response = await DioClient(session).dio.get(
-      '/events/$eventId/participations/candidates',
-      queryParameters: {
-        'page': page,
-        'per_page': eventsPerPage,
-        'sort': 'username.asc',
-      },
-    );
+          '/events/$eventId/participations/candidates',
+          queryParameters: queryParams,
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch candidates");
@@ -102,5 +99,26 @@ class EventParticipationsApi {
     if (response.statusCode != 200) {
       throw Exception("Failed to remove participation");
     }
+  }
+
+  Future<List<EventParticipation>> addParticipants(
+    int eventId,
+    AuthSession session,
+    List<int> userIds,
+  ) async {
+    final response = await DioClient(session).dio.post(
+      '/events/$eventId/participations/add-users',
+      data: {
+        'userIds': userIds,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to add participants");
+    }
+
+    return List<EventParticipation>.from(
+      response.data.map((participation) => EventParticipation.fromJson(participation)),
+    );
   }
 }

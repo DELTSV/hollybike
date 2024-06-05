@@ -6,6 +6,8 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
+import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc.dart';
+import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
@@ -92,14 +94,25 @@ class MyApp extends StatelessWidget {
               )..add(SubscribeToEvent()),
             ),
             BlocProvider<EventParticipationBloc>(
-                create: (context) => EventParticipationBloc(
-                      eventParticipationsRepository:
-                          RepositoryProvider.of<EventParticipationRepository>(
-                        context,
-                      ),
-                      eventRepository:
-                          RepositoryProvider.of<EventRepository>(context),
-                    )..add(SubscribeToEventParticipations())),
+              create: (context) => EventParticipationBloc(
+                eventParticipationsRepository:
+                    RepositoryProvider.of<EventParticipationRepository>(
+                  context,
+                ),
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
+              )..add(SubscribeToEventParticipations()),
+            ),
+            BlocProvider<EventCandidatesBloc>(
+              create: (context) => EventCandidatesBloc(
+                eventParticipationsRepository:
+                    RepositoryProvider.of<EventParticipationRepository>(
+                  context,
+                ),
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
+              )..add(SubscribeToEventCandidates()),
+            ),
           ],
           child: RepositoryProvider<AuthSessionRepository>(
             create: (context) => AuthSessionRepository(

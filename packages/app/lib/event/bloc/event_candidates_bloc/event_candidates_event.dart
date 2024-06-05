@@ -40,3 +40,15 @@ class SearchCandidates extends EventCandidatesEvent {
     required this.search,
   });
 }
+
+class AddCandidates extends EventCandidatesEvent {
+  final int eventId;
+  final AuthSession session;
+  final List<int> userIds;
+
+  AddCandidates({
+    required this.session,
+    required this.eventId,
+    required this.userIds,
+  });
+}

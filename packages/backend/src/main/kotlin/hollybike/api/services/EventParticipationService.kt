@@ -40,7 +40,11 @@ class EventParticipationService(
 		withPagination: Boolean = true
 	): Query {
 		return Users
-			.leftJoin(EventParticipations, { Users.id }, { user }, { EventParticipations.event eq eventId })
+			.leftJoin(
+				EventParticipations,
+				{ Users.id },
+				{ user },
+				{ (EventParticipations.event eq eventId) and (EventParticipations.isJoined eq true) })
 			.leftJoin(
 				Events,
 				{ EventParticipations.event },

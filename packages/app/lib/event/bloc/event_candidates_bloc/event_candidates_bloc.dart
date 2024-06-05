@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
 import 'package:hollybike/event/types/event_candidate.dart';
 
 import '../../../shared/types/paginated_list.dart';
+import '../../services/event/event_repository.dart';
 import 'event_candidates_event.dart';
 import 'event_candidates_state.dart';
 
@@ -23,6 +23,7 @@ class EventCandidatesBloc
     on<LoadEventCandidatesNextPage>(_onLoadEventCandidatesNextPage);
     on<RefreshEventCandidates>(_onRefreshEvents);
     on<SearchCandidates>(_onSearchCandidates);
+    on<AddCandidates>(_onAddCandidates);
   }
 
   @override
@@ -117,10 +118,9 @@ class EventCandidatesBloc
 
     try {
       PaginatedList<EventCandidate> page =
-          await eventParticipationsRepository.fetchCandidates(
+          await eventParticipationsRepository.refreshCandidates(
         event.eventId,
         event.session,
-        0,
         numberOfCandidatesPerRequest,
         event.search,
       );
@@ -132,6 +132,33 @@ class EventCandidatesBloc
     } catch (e) {
       log('Error while searching candidates', error: e);
       emit(EventCandidatesPageLoadFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+      return;
+    }
+  }
+
+  Future<void> _onAddCandidates(
+    AddCandidates event,
+    Emitter<EventCandidatesState> emit,
+  ) async {
+    emit(EventAddCandidatesInProgress(state));
+
+    try {
+      final addedParticipants = await eventParticipationsRepository.addParticipants(
+        event.eventId,
+        event.session,
+        event.userIds,
+        numberOfCandidatesPerRequest,
+      );
+
+      eventRepository.onParticipantsAdded(addedParticipants);
+
+      emit(EventAddCandidatesSuccess(state));
+    } catch (e) {
+      log('Error while adding candidates', error: e);
+      emit(EventAddCandidatesFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
