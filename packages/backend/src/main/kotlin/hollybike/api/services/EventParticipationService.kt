@@ -33,7 +33,12 @@ class EventParticipationService(
 		(this.event eq eventId) and (isJoined eq true)
 	}
 
-	private fun eventCandidatesQuery(caller: User, eventId: Int): Query {
+	private fun eventCandidatesQuery(
+		caller: User,
+		eventId: Int,
+		searchParam: SearchParam,
+		withPagination: Boolean = true
+	): Query {
 		return Users
 			.leftJoin(EventParticipations, { Users.id }, { user }, { EventParticipations.event eq eventId })
 			.leftJoin(
@@ -42,7 +47,8 @@ class EventParticipationService(
 				{ Events.id },
 			)
 			.selectAll()
-			.where(Users.association eq caller.association.id)
+			.applyParam(searchParam, withPagination)
+			.andWhere { Users.association eq caller.association.id }
 	}
 
 	private fun findEvent(caller: User, eventId: Int): Event? {
@@ -59,7 +65,7 @@ class EventParticipationService(
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val query = eventCandidatesQuery(caller, eventId).applyParam(searchParam)
+		val query = eventCandidatesQuery(caller, eventId, searchParam)
 
 		Result.success(
 			query.map { row ->
@@ -80,7 +86,7 @@ class EventParticipationService(
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val query = eventCandidatesQuery(caller, eventId).applyParam(searchParam, false)
+		val query = eventCandidatesQuery(caller, eventId, searchParam, false)
 
 		Result.success(query.count().toInt())
 	}
@@ -100,19 +106,20 @@ class EventParticipationService(
 			)
 		}
 
-	fun getEventParticipationsCount(caller: User, eventId: Int, searchParam: SearchParam): Result<Int> = transaction(db) {
-		findEvent(caller, eventId)
-			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+	fun getEventParticipationsCount(caller: User, eventId: Int, searchParam: SearchParam): Result<Int> =
+		transaction(db) {
+			findEvent(caller, eventId)
+				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		Result.success(
-			EventParticipations.innerJoin(Events, { this.event }, { Events.id })
-				.selectAll()
-				.applyParam(searchParam, false)
-				.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
-				.count()
-				.toInt()
-		)
-	}
+			Result.success(
+				EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+					.selectAll()
+					.applyParam(searchParam, false)
+					.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
+					.count()
+					.toInt()
+			)
+		}
 
 	fun participateEvent(caller: User, eventId: Int): Result<EventParticipation> = transaction(db) {
 		findEvent(caller, eventId)

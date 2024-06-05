@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
@@ -10,6 +11,9 @@ import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/utils/with_current_session.dart';
 import '../../shared/widgets/app_toast.dart';
+import '../../shared/widgets/bar/top_bar.dart';
+import '../../shared/widgets/bar/top_bar_prefix_button.dart';
+import '../../shared/widgets/bar/top_bar_title.dart';
 import '../widgets/participations/event_participation_card.dart';
 
 @RoutePage()
@@ -74,8 +78,12 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
         }
       },
       child: Hud(
-        appBar: AppBar(
-          title: const Text("Participants"),
+        appBar: TopBar(
+          prefix: TopBarPrefixButton(
+            onPressed: () => context.router.maybePop(),
+            icon: Icons.arrow_back,
+          ),
+          title: const TopBarTitle("Participants"),
         ),
         // floatingActionButton: FloatingActionButton.extended(
         //   onPressed: () {
@@ -140,11 +148,11 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
 
         return TweenAnimationBuilder(
           tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 250),
           curve: Curves.ease,
           builder: (context, double value, child) {
             return Transform.translate(
-              offset: Offset(50 * (1 - value), 0),
+              offset: Offset(30 * (1 - value), 0),
               child: Opacity(
                 opacity: value,
                 child: EventParticipationCard(

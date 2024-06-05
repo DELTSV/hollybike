@@ -11,11 +11,12 @@ class AppRouter extends $AppRouter {
 
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(
+        CustomRoute(
           initial: true,
           guards: [AuthGuard(context: context)],
           page: EventsRoute.page,
           path: '/events',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],

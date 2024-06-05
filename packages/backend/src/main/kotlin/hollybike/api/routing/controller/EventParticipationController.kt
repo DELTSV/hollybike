@@ -47,7 +47,7 @@ class EventParticipationController(
 
 	private fun Route.getParticipationCandidates() {
 		get<Events.Id.Participations.Candidates> { data ->
-			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper)
+			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper + eventParticipationMapper)
 
 			val candidates = eventParticipationService.getParticipationCandidates(
 				call.user,
