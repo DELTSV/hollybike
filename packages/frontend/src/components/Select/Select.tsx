@@ -45,8 +45,11 @@ export function Select(props: SelectProps) {
 		if (
 			container.current &&
 			!container.current.contains(e.target as Node) &&
-			input.current &&
-			!input.current.contains(e.target as Node)
+			(
+				input.current &&
+				!input.current.contains(e.target as Node) ||
+				input.current === null
+			)
 		)
 			setVisible(false);
 	}, [

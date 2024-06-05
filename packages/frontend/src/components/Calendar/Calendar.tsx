@@ -5,13 +5,15 @@ import {
 	ChevronLeft, ChevronRight,
 } from "@material-ui/icons";
 import { clsx } from "clsx";
-import { useEffect } from "preact/hooks";
+import {
+	Dispatch, StateUpdater, useEffect,
+} from "preact/hooks";
 
 export interface CalendarProps {
 	time?: boolean,
 	seconds?: boolean
 	value?: Date,
-	setValue?: (value: Date | undefined | ((prev: Date | undefined) => Date | undefined)) => void
+	setValue?: Dispatch<StateUpdater<Date | undefined>>
 }
 
 export function Calendar(props: CalendarProps) {
@@ -146,7 +148,8 @@ const monthName = [
 ];
 
 function sameDay(a: Date, b: Date | undefined) {
-	return b !== undefined && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+	return b !== undefined && a.getFullYear() === b.getFullYear() &&
+		a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
 export function formatDateTimeComponent(value: number | undefined): string {

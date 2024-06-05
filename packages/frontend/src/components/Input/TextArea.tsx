@@ -11,7 +11,7 @@ interface TextAreaProps {
 export function TextArea(props: TextAreaProps) {
 	return (
 		<textarea
-			className={"rounded border-2 border-slate-700 bg-slate-100 dark:bg-slate-800"}
+			className={"rounded border-2 border-slate-700 bg-slate-100 dark:bg-slate-800 p-2"}
 			value={props.value} onInput={props.onInput}
 		>
 			{ props.children }
