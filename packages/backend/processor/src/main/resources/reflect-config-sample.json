@@ -2931,6 +2931,9 @@
 		"name": "hollybike.api.repository.EventParticipation",
 		"fields": [
 			{
+				"name": "event$delegate"
+			},
+			{
 				"name": "user$delegate"
 			}
 		],
@@ -2942,8 +2945,18 @@
 				]
 			},
 			{
+				"name": "getEvent",
+				"parameterTypes": []
+			},
+			{
 				"name": "getUser",
 				"parameterTypes": []
+			},
+			{
+				"name": "setEvent",
+				"parameterTypes": [
+					"hollybike.api.repository.Event"
+				]
 			},
 			{
 				"name": "setUser",
@@ -2989,5 +3002,53 @@
 				"parameterTypes": []
 			}
 		]
+	},
+	{
+		"name": "hollybike.api.types.event.TCreateParticipations",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TCreateParticipations$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.user.TUserPartial",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.user.TUserPartial$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "java.sql.SQLException",
+		"fields": [
+			{
+				"name": "next"
+			}
+		]
+	},
+	{
+		"name": "java.util.List"
+	},
+	{
+		"name": "kotlin.collections.List"
 	}
 ]

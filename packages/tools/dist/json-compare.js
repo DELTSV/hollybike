@@ -35,4 +35,5 @@ function compareReflectEntries(jsonA, jsonB) {
 }
 const diff = compareReflectEntries(jsonAHash, jsonBHash);
 const diffWithout = diff.filter(entry => !entry.name.includes('jdk.internal'));
+console.log(`Found ${diff.length} missing or different entries in the sample reflect-config.json`);
 (0, node_fs_1.writeFileSync)('./data/diff.json', JSON.stringify(diffWithout, null, 2));
