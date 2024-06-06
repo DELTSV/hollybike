@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="reflect-merger" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/packages/tools/reflect-merger/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="start" />
+    </scripts>
+    <arguments value="-- $PROJECT_DIR$/packages/backend/processor/src/main/resources/reflect-config-sample.json $PROJECT_DIR$/packages/backend/native-image/reflect-config.json --replace-original" />
+    <node-interpreter value="project" />
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>
