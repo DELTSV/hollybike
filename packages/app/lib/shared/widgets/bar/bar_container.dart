@@ -21,7 +21,7 @@ class BarContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             width: 2,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.onPrimary.withAlpha(100),
           ),
         ),
         clipBehavior: Clip.hardEdge,

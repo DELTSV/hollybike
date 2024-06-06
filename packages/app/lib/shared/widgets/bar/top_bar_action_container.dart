@@ -20,7 +20,7 @@ class TopBarActionContainer extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
           border: Border.all(
             width: 2,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.onPrimary.withAlpha(100),
           ),
         ),
         child: InkWell(
