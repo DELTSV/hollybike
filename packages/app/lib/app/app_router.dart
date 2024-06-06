@@ -16,13 +16,11 @@ class AppRouter extends $AppRouter {
           guards: [AuthGuard(context: context)],
           page: EventsRoute.page,
           path: '/events',
-          transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],
           page: EventDetailsRoute.page,
           path: '/event-details',
-          transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],

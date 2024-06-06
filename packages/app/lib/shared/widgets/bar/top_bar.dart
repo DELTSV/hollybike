@@ -17,7 +17,8 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.only(
           left: prefix == null ? 0 : 16,
           right: suffix == null ? 0 : 16,
@@ -26,10 +27,13 @@ class TopBar extends StatelessWidget {
           children: renderNullableWidgetToList(prefix) +
               [
                 Expanded(
-                  child: BarContainer(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: title,
+                  child: AnimatedContainer(
+                    duration: const Duration(seconds: 1),
+                    child: BarContainer(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: title,
+                      ),
                     ),
                   ),
                 ),
