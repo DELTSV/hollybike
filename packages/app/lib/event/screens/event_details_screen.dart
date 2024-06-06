@@ -130,8 +130,42 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                     return const Text("Event not found");
                   }
 
-                  return EventDetailsContent(
-                    eventDetails: state.eventDetails!,
+                  return Expanded(
+                    child: DefaultTabController(
+                      length: 4,
+                      child: Column(
+                        children: [
+                          TabBar(
+                            labelColor: Theme.of(context).colorScheme.secondary,
+                            indicatorColor: Theme.of(context).colorScheme.secondary,
+                            tabs: const [
+                              Tab(icon: Icon(Icons.info)),
+                              Tab(icon: Icon(Icons.photo_library)),
+                              Tab(icon: Icon(Icons.image)),
+                              Tab(icon: Icon(Icons.map)),
+                            ],
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                EventDetailsContent(
+                                  eventDetails: state.eventDetails!,
+                                ),
+                                const Center(
+                                  child: Text("Images"),
+                                ),
+                                const Center(
+                                  child: Text("My images"),
+                                ),
+                                const Center(
+                                  child: Text("Map"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               )
