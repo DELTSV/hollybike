@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
@@ -8,7 +9,8 @@ import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart'
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
-import 'package:hollybike/shared/widgets/bar/top_bar_prefix_button.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
@@ -16,6 +18,7 @@ import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
+import '../widgets/details/event_details_actions_menu.dart';
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -75,12 +78,17 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         });
       },
       child: Hud(
-        appBar: TopBar(
-          prefix: TopBarPrefixButton(
-            onPressed: () => context.router.maybePop(),
-            icon: Icons.arrow_back,
-          ),
-          title: const TopBarTitle("Détails"),
+        appBar: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+          builder: (context, state) {
+            return TopBar(
+              prefix: TopBarActionIcon(
+                onPressed: () => context.router.maybePop(),
+                icon: Icons.arrow_back,
+              ),
+              title: const TopBarTitle("Détails"),
+              suffix: _renderActions(state),
+            );
+          },
         ),
         floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
@@ -131,6 +139,26 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget? _renderActions(EventDetailsState state) {
+    final event = state.eventDetails;
+
+    if (state is EventDetailsLoadInProgress ||
+        state is EventDetailsLoadFailure ||
+        event == null ||
+        (!event.isOwner && !event.isParticipating && !event.isOrganizer)) {
+      return null;
+    }
+
+    return TopBarActionContainer(
+      child: EventDetailsActionsMenu(
+        eventId: event.event.id,
+        isOwner: event.isOwner,
+        isJoined: event.isParticipating,
+        isOrganizer: event.isOrganizer,
       ),
     );
   }

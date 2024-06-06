@@ -7,11 +7,12 @@ import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_state.dart';
 import 'package:hollybike/event/widgets/candidates/event_candidate_card.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 
 import '../../shared/utils/with_current_session.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/bar/top_bar.dart';
-import '../../shared/widgets/bar/top_bar_prefix_button.dart';
+import '../../shared/widgets/bar/top_bar_action_container.dart';
 import '../../shared/widgets/bar/top_bar_title.dart';
 import '../../shared/widgets/hud/hud.dart';
 
@@ -96,7 +97,7 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
 
         return Hud(
           appBar: TopBar(
-            prefix: TopBarPrefixButton(
+            prefix: TopBarActionIcon(
               onPressed: () => context.router.maybePop(),
               icon: Icons.arrow_back,
             ),
