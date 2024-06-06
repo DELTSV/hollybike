@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
 
-class BarContainer extends StatelessWidget {
-  final Widget child;
+class TopBarActionContainer extends StatelessWidget {
+  final void Function()? onPressed;
+  final Widget? child;
 
-  const BarContainer({
+  const TopBarActionContainer({
     super.key,
+    this.onPressed,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(16),
+    return Material(
+      type: MaterialType.transparency,
+      child: Ink(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          shape: BoxShape.circle,
           color: Theme.of(context).colorScheme.primary,
-        ),
-        foregroundDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             width: 2,
             color: Theme.of(context).colorScheme.onPrimary.withAlpha(100),
           ),
         ),
-        clipBehavior: Clip.hardEdge,
-        child: child,
+        child: InkWell(
+          onTap: onPressed,
+          child: child,
+        ),
       ),
     );
   }

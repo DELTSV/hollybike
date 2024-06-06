@@ -7,12 +7,12 @@ import 'package:hollybike/event/bloc/event_participations_bloc/event_participati
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_state.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_participation.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/utils/with_current_session.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/bar/top_bar.dart';
-import '../../shared/widgets/bar/top_bar_prefix_button.dart';
 import '../../shared/widgets/bar/top_bar_title.dart';
 import '../widgets/participations/event_participation_card.dart';
 
@@ -79,7 +79,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
       },
       child: Hud(
         appBar: TopBar(
-          prefix: TopBarPrefixButton(
+          prefix: TopBarActionIcon(
             onPressed: () => context.router.maybePop(),
             icon: Icons.arrow_back,
           ),

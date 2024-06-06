@@ -28,29 +28,31 @@ class Hud extends StatelessWidget {
         children: [
           Column(children: <Widget>[
             const SizedBox.square(
-              dimension: 100,
+              dimension: 95,
             ),
             Expanded(
               child: body ?? Container(),
             )
           ]),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Theme.of(context).colorScheme.surface,
-                  Theme.of(context).colorScheme.surface,
-                  Theme.of(context).colorScheme.surface,
-                  Theme.of(context).colorScheme.surface,
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.transparent,
-                ],
+          Column(
+            children: [
+              const SizedBox.square(
+                dimension: 95,
               ),
-            ),
-            constraints: const BoxConstraints.expand(height: 180),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).colorScheme.surface,
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                constraints: const BoxConstraints.expand(height: 20),
+              ),
+            ],
           )
         ],
       ),
