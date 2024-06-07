@@ -14,6 +14,7 @@ import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/widgets/app_toast.dart';
+import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
@@ -106,69 +107,84 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             );
           },
         ),
-        body: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Column(
-            children: [
-              EventDetailsHeader(
-                eventId: widget.eventId,
-                eventName: eventName,
-                eventImage: widget.eventImage,
-                animate: widget.animate,
+        body: DefaultTabController(
+          length: 4,
+          child: CustomScrollView(
+            slivers: [
+              SliverMainAxisGroup(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: EventDetailsHeader(
+                      eventId: widget.eventId,
+                      eventName: eventName,
+                      eventImage: widget.eventImage,
+                      animate: widget.animate,
+                    ),
+                  ),
+                ],
               ),
-              BlocBuilder<EventDetailsBloc, EventDetailsState>(
-                builder: (context, state) {
-                  if (state is EventDetailsLoadInProgress) {
-                    return const CircularProgressIndicator();
-                  }
-
-                  if (state is EventDetailsLoadFailure) {
-                    return const Text("Error while loading event details");
-                  }
-
-                  if (state.eventDetails == null) {
-                    return const Text("Event not found");
-                  }
-
-                  return Expanded(
-                    child: DefaultTabController(
-                      length: 4,
-                      child: Column(
-                        children: [
-                          TabBar(
-                            labelColor: Theme.of(context).colorScheme.secondary,
-                            indicatorColor: Theme.of(context).colorScheme.secondary,
-                            tabs: const [
-                              Tab(icon: Icon(Icons.info)),
-                              Tab(icon: Icon(Icons.photo_library)),
-                              Tab(icon: Icon(Icons.image)),
-                              Tab(icon: Icon(Icons.map)),
-                            ],
-                          ),
-                          Expanded(
-                            child: TabBarView(
-                              children: [
-                                EventDetailsContent(
-                                  eventDetails: state.eventDetails!,
-                                ),
-                                const Center(
-                                  child: Text("Images"),
-                                ),
-                                const Center(
-                                  child: Text("My images"),
-                                ),
-                                const Center(
-                                  child: Text("Map"),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+              SliverMainAxisGroup(
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: PinnedHeaderDelegate(
+                      height: 50,
+                      child: Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: TabBar(
+                          labelColor: Theme.of(context).colorScheme.secondary,
+                          indicatorColor: Theme.of(context).colorScheme.secondary,
+                          tabs: const [
+                            Tab(icon: Icon(Icons.info)),
+                            Tab(icon: Icon(Icons.photo_library)),
+                            Tab(icon: Icon(Icons.image)),
+                            Tab(icon: Icon(Icons.map)),
+                          ],
+                        ),
                       ),
                     ),
-                  );
-                },
-              )
+                  ),
+                  SliverToBoxAdapter(
+                    child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+                      builder: (context, state) {
+                        if (state is EventDetailsLoadInProgress) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (state.eventDetails == null ||
+                            state is EventDetailsLoadFailure) {
+                          return const Center(
+                            child: Text(
+                                "Impossible de charger les détails de l'événement"),
+                          );
+                        }
+
+                        return SizedBox(
+                          height: 300,
+                          child: TabBarView(
+                            children: [
+                              EventDetailsContent(
+                                eventDetails: state.eventDetails!,
+                              ),
+                              const Center(
+                                child: Text("Images"),
+                              ),
+                              const Center(
+                                child: Text("My images"),
+                              ),
+                              const Center(
+                                child: Text("Map"),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
         ),

@@ -17,10 +17,18 @@ import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../shared/utils/dates.dart';
 import '../../shared/widgets/app_toast.dart';
+import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../widgets/event_form/event_form_modal.dart';
 import '../widgets/event_preview_card.dart';
+
+class EventSection {
+  String title;
+  List<MinimalEvent> events;
+
+  EventSection({required this.title, required this.events});
+}
 
 @RoutePage()
 class EventsScreen extends StatefulWidget {
@@ -109,6 +117,30 @@ class _EventsScreenState extends State<EventsScreen> {
         previewCard,
       ],
     );
+  }
+
+  List<EventSection> getEventSections(List<MinimalEvent> events) {
+    final sections = <EventSection>[];
+    List<List<MinimalEvent>> groupedEvents = [];
+
+    for (var i = 0; i < events.length; i++) {
+      final event = events[i];
+
+      if (i == 0 || event.startDate.month != events[i - 1].startDate.month) {
+        groupedEvents.add([]);
+      }
+
+      groupedEvents.last.add(event);
+    }
+
+    for (var i = 0; i < groupedEvents.length; i++) {
+      final events = groupedEvents[i];
+      final title = getMonthWithDistantYear(events.first.startDate);
+
+      sections.add(EventSection(title: title, events: events));
+    }
+
+    return sections;
   }
 
   @override
@@ -213,58 +245,93 @@ class _EventsScreenState extends State<EventsScreen> {
                 }
               }
 
+              final sections = getEventSections(state.events);
+
               return Padding(
                 padding: const EdgeInsets.only(
                   left: 16.0,
                   right: 16.0,
                   top: 16.0,
                 ),
-                child: ListView.builder(
+                child: CustomScrollView(
                   controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                  ),
                   physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics(),
                   ),
-                  itemCount: state.events.length + (state.hasMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == state.events.length) {
-                      if (state.status == EventStatus.error) {
-                        return const Center(
-                          child: Text('Oups, une erreur est survenue.'),
-                        );
-                      } else {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                    }
+                  slivers: [
+                    for (var section in sections)
+                      SliverPadding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        sliver: SliverMainAxisGroup(
+                          slivers: [
+                            SliverPersistentHeader(
+                              pinned: true,
+                              delegate: PinnedHeaderDelegate(
+                                height: 50,
+                                child: Container(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    child: Text(
+                                      section.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  final event = section.events[index];
 
-                    final event = state.events[index];
-
-                    final columnWithHeader = getPreviewWithColumn(
-                      event,
-                      index == 0 ||
-                          event.startDate.month !=
-                              state.events[index - 1].startDate.month,
-                    );
-
-                    return TweenAnimationBuilder(
-                      tween: Tween<double>(begin: 0, end: 1),
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.ease,
-                      builder: (context, double value, child) {
-                        return Transform.translate(
-                          offset: Offset(50 * (1 - value), 0),
-                          child: Opacity(
-                            opacity: value,
-                            child: columnWithHeader,
-                          ),
-                        );
-                      },
-                    );
-                  },
+                                  return TweenAnimationBuilder(
+                                    tween: Tween<double>(begin: 0, end: 1),
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                    builder: (context, double value, child) {
+                                      return Transform.translate(
+                                        offset: Offset(30 * (1 - value), 0),
+                                        child: Opacity(
+                                          opacity: value,
+                                          child: EventPreviewCard(
+                                            event: event,
+                                            onTap: () {
+                                              _navigateToEventDetails(
+                                                context,
+                                                event,
+                                                true,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                childCount: section.events.length,
+                              ),
+                            ),
+                            if (state.hasMore && section == sections.last)
+                              const SliverToBoxAdapter(
+                                child: Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                    ),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               );
             },
