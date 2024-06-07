@@ -371,19 +371,19 @@ class EventTest : IntegrationSpec({
 			TCreateEvent(
 				name = "New Event",
 				description = "New Event Description",
-				startDate = workingCreateDate.toString(),
-				endDate = workingEndDate.toString()
+				startDate = workingCreateDate,
+				endDate = workingEndDate
 			),
 			TCreateEvent(
 				name = "New Event",
 				description = null,
-				startDate = workingCreateDate.toString(),
-				endDate = workingEndDate.toString()
+				startDate = workingCreateDate,
+				endDate = workingEndDate
 			),
 			TCreateEvent(
 				name = "New Event",
 				description = "New Event Description",
-				startDate = workingCreateDate.toString(),
+				startDate = workingCreateDate,
 				endDate = null
 			)
 		).forEach { newEvent ->
@@ -414,7 +414,7 @@ class EventTest : IntegrationSpec({
 							startDate = Clock.System.now().minus(
 								DateTimePeriod(days = 1),
 								TimeZone.currentSystemDefault()
-							).toString(),
+							),
 							endDate = null
 						)
 					)
@@ -435,59 +435,17 @@ class EventTest : IntegrationSpec({
 						TCreateEvent(
 							name = "New Event",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = workingCreateDate.minus(
 								DateTimePeriod(days = 1),
 								TimeZone.currentSystemDefault()
-							).toString()
+							)
 						)
 					)
 				}.apply {
 					status shouldBe HttpStatusCode.BadRequest
 
 					bodyAsText() shouldBe "La date de fin doit être après la date de début"
-				}
-			}
-		}
-
-		test("Should not create an event because the start date is malformed") {
-			onPremiseTestApp {
-				it.post("/api/events") {
-					auth(UserStore.user1)
-					contentType(ContentType.Application.Json)
-					setBody(
-						TCreateEvent(
-							name = "New Event",
-							description = "New Event Description",
-							startDate = "malformed",
-							endDate = null
-						)
-					)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-
-					bodyAsText() shouldBe "Format de la date de début invalide"
-				}
-			}
-		}
-
-		test("Should not create an event because the end date is malformed") {
-			onPremiseTestApp {
-				it.post("/api/events") {
-					auth(UserStore.user1)
-					contentType(ContentType.Application.Json)
-					setBody(
-						TCreateEvent(
-							name = "New Event",
-							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
-							endDate = "malformed"
-						)
-					)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-
-					bodyAsText() shouldBe "Format de la date de fin invalide"
 				}
 			}
 		}
@@ -501,7 +459,7 @@ class EventTest : IntegrationSpec({
 						TCreateEvent(
 							name = "a".repeat(101),
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -522,7 +480,7 @@ class EventTest : IntegrationSpec({
 						TCreateEvent(
 							name = "",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -543,7 +501,7 @@ class EventTest : IntegrationSpec({
 						TCreateEvent(
 							name = "New Event",
 							description = "a".repeat(1001),
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -564,7 +522,7 @@ class EventTest : IntegrationSpec({
 						TCreateEvent(
 							name = "New Event",
 							description = "",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -582,19 +540,19 @@ class EventTest : IntegrationSpec({
 			TUpdateEvent(
 				name = "Updated Event",
 				description = "New Event Description",
-				startDate = workingCreateDate.toString(),
-				endDate = workingEndDate.toString()
+				startDate = workingCreateDate,
+				endDate = workingEndDate
 			),
 			TUpdateEvent(
 				name = "Updated Event",
 				description = null,
-				startDate = workingCreateDate.toString(),
-				endDate = workingEndDate.toString()
+				startDate = workingCreateDate,
+				endDate = workingEndDate
 			),
 			TUpdateEvent(
 				name = "Updated Event",
 				description = "New Event Description",
-				startDate = workingCreateDate.toString(),
+				startDate = workingCreateDate,
 				endDate = null
 			)
 		).forEach { newEvent ->
@@ -613,7 +571,7 @@ class EventTest : IntegrationSpec({
 			}
 		}
 
-		test("Should not update an event because the start date is in the past") {
+		test("Should update an event because the start date is in the past") {
 			onPremiseTestApp {
 				it.put("/api/events/${EventStore.event1Asso1User1.id}") {
 					auth(UserStore.user1)
@@ -625,14 +583,12 @@ class EventTest : IntegrationSpec({
 							startDate = Clock.System.now().minus(
 								DateTimePeriod(days = 1),
 								TimeZone.currentSystemDefault()
-							).toString(),
+							),
 							endDate = null
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-
-					bodyAsText() shouldBe "La date de début doit être dans le futur"
+					status shouldBe HttpStatusCode.OK
 				}
 			}
 		}
@@ -646,59 +602,17 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "New Event",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = workingCreateDate.minus(
 								DateTimePeriod(days = 1),
 								TimeZone.currentSystemDefault()
-							).toString()
+							)
 						)
 					)
 				}.apply {
 					status shouldBe HttpStatusCode.BadRequest
 
 					bodyAsText() shouldBe "La date de fin doit être après la date de début"
-				}
-			}
-		}
-
-		test("Should not update an event because the start date is malformed") {
-			onPremiseTestApp {
-				it.put("/api/events/${EventStore.event1Asso1User1.id}") {
-					auth(UserStore.user1)
-					contentType(ContentType.Application.Json)
-					setBody(
-						TUpdateEvent(
-							name = "New Event",
-							description = "New Event Description",
-							startDate = "malformed",
-							endDate = null
-						)
-					)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-
-					bodyAsText() shouldBe "Format de la date de début invalide"
-				}
-			}
-		}
-
-		test("Should not update an event because the end date is malformed") {
-			onPremiseTestApp {
-				it.put("/api/events/${EventStore.event1Asso1User1.id}") {
-					auth(UserStore.user1)
-					contentType(ContentType.Application.Json)
-					setBody(
-						TUpdateEvent(
-							name = "New Event",
-							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
-							endDate = "malformed"
-						)
-					)
-				}.apply {
-					status shouldBe HttpStatusCode.BadRequest
-
-					bodyAsText() shouldBe "Format de la date de fin invalide"
 				}
 			}
 		}
@@ -712,7 +626,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "a".repeat(101),
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -733,7 +647,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -754,7 +668,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "New Event",
 							description = "a".repeat(1001),
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -775,7 +689,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "New Event",
 							description = "",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -796,7 +710,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "New Event",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -817,7 +731,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "New Event",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
@@ -838,7 +752,7 @@ class EventTest : IntegrationSpec({
 						TUpdateEvent(
 							name = "New Event",
 							description = "New Event Description",
-							startDate = workingCreateDate.toString(),
+							startDate = workingCreateDate,
 							endDate = null
 						)
 					)
