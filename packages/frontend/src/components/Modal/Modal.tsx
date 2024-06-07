@@ -28,7 +28,7 @@ export function Modal(props: ModalProps) {
 					<div className={"flex gap-4 justify-between"}>
 						<div/>
 						<h1 className={"text-lg"}>{ props.title }</h1>
-						<button className={"right-2 top-2"}>
+						<button className={"right-2 top-2"} onClick={() => props.setVisible(false)}>
 							<Close/>
 						</button>
 					</div>

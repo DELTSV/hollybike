@@ -193,7 +193,7 @@ export function ListInvitations() {
 				</div>
 			</Modal>
 			<Modal title={"Envoyer un mail"} visible={modalMail} setVisible={setModalMail} width={"w-auto"}>
-				<div className={"flex flex-col items-center gap-2 p-4"}>
+				<form className={"flex flex-col items-center gap-2 p-4"} onSubmit={e => e.preventDefault()}>
 					<Input placeholder={"Email"} value={mail} onInput={e => setMail(e.currentTarget.value)}/>
 					<Button
 						onClick={() => {
@@ -212,7 +212,7 @@ export function ListInvitations() {
 					>
 						Envoyer le mail
 					</Button>
-				</div>
+				</form>
 			</Modal>
 		</div>
 	);
