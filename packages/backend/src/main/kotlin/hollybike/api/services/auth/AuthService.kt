@@ -51,10 +51,14 @@ class AuthService(
 		association: Int,
 		invitation: Int
 	): Boolean =
-		getLinkSignature(host, role, association, invitation) == signature
+		(getLinkSignature(host, role, association, invitation) == signature).apply {
+			println("true ? = $this")
+		}
 
 	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
 		val value = "$host$role$association$invitation"
+		println(value)
+		println(mac.doFinal(value.toByteArray()).encodeBase64String())
 		return mac.doFinal(value.toByteArray()).encodeBase64String()
 	}
 
