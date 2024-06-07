@@ -53,6 +53,7 @@ class AuthService(
 	): Boolean =
 		(getLinkSignature(host, role, association, invitation) == signature).apply {
 			println("true ? = $this")
+			println("Signature = $signature")
 		}
 
 	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
