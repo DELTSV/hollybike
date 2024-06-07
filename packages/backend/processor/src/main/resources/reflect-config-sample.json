@@ -2906,6 +2906,9 @@
 			},
 			{
 				"name": "participants$delegate"
+			},
+			{
+				"name": "association$delegate"
 			}
 		],
 		"methods": [
@@ -2927,6 +2930,16 @@
 				"name": "setOwner",
 				"parameterTypes": [
 					"hollybike.api.repository.User"
+				]
+			},
+			{
+				"name": "getAssociation",
+				"parameterTypes": []
+			},
+			{
+				"name": "setAssociation",
+				"parameterTypes": [
+					"hollybike.api.repository.Association"
 				]
 			}
 		]
@@ -3074,5 +3087,23 @@
 				"parameterTypes": []
 			}
 		]
+	},
+	{
+		"name": "hollybike.api.repository.Association$Companion"
+	},
+	{
+		"name": "hollybike.api.types.association.EAssociationsStatus"
+	},
+	{
+		"name": "org.glassfish.hk2.osgiresourcelocator.ServiceLoader"
+	},
+	{
+		"name": "org.simplejavamail.internal.batchsupport.BatchSupport"
+	},
+	{
+		"name": "org.simplejavamail.internal.dkimsupport.DKIMSigner"
+	},
+	{
+		"name": "org.simplejavamail.internal.smimesupport.SMIMESupport"
 	}
 ]
