@@ -51,7 +51,7 @@ class InvitationService(
 			(Invitations.id eq id) and
 					(Invitations.status eq EInvitationStatus.Enabled.value) and
 					(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
-					(Invitations.expiration.isNull() or (Invitations.expiration less Clock.System.now()))
+					(Invitations.expiration.isNull() or (Invitations.expiration greater Clock.System.now()))
 		}.singleOrNull()?.load(Invitation::association)
 	}
 
