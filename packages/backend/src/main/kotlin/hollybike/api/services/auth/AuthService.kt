@@ -1,6 +1,5 @@
 package hollybike.api.services.auth
 
-import aws.smithy.kotlin.runtime.text.encoding.encodeBase64String
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import de.nycode.bcrypt.verify
@@ -24,6 +23,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class AuthService(
 	private val db: Database,
@@ -35,6 +36,8 @@ class AuthService(
 	private val mac = Mac.getInstance("HmacSHA256").apply {
 		init(key)
 	}
+	@OptIn(ExperimentalEncodingApi::class)
+	private val encoder = Base64.UrlSafe
 
 	private fun generateJWT(email: String, scope: EUserScope) = JWT.create()
 		.withAudience(conf.audience)
@@ -50,17 +53,12 @@ class AuthService(
 		role: EUserScope,
 		association: Int,
 		invitation: Int
-	): Boolean =
-		(getLinkSignature(host, role, association, invitation) == signature).apply {
-			println("true ? = $this")
-			println("Signature = $signature")
-		}
+	): Boolean = getLinkSignature(host, role, association, invitation) == signature
 
+	@OptIn(ExperimentalEncodingApi::class)
 	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
 		val value = "$host$role$association$invitation"
-		println(value)
-		println(mac.doFinal(value.toByteArray()).encodeBase64String())
-		return mac.doFinal(value.toByteArray()).encodeBase64String()
+		return encoder.encode(mac.doFinal(value.toByteArray()))
 	}
 
 	fun generateLink(caller: User, host: String, invitation: Invitation): String {
