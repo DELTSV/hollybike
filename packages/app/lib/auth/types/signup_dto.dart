@@ -5,8 +5,8 @@ class SignupDto {
   final String username;
   final String email;
   final String password;
+  final String role;
   final int association;
-  final int role;
   final int invitation;
 
   const SignupDto({
@@ -53,7 +53,7 @@ class SignupDto {
       email: map[emailKey] as String,
       password: map[passwordKey] as String,
       association: int.parse(map[associationKey] as String),
-      role: int.parse(map[roleKey] as String),
+      role: map[roleKey] as String,
       invitation: int.parse(map[invitationKey] as String),
     );
   }
