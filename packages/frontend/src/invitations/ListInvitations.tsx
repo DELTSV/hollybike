@@ -28,6 +28,7 @@ import { ContentCopy } from "../icons/ContentCopy.tsx";
 import { Modal } from "../components/Modal/Modal.tsx";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef } from "react";
+import { Input } from "../components/Input/Input.tsx";
 
 export function ListInvitations() {
 	const {
@@ -62,11 +63,16 @@ export function ListInvitations() {
 
 	const [qrCode, setQrCode] = useState("");
 
-	const [modalQrCode, setmodalQrCode] = useState(false);
+	const [modalQrCode, setModalQrCode] = useState(false);
+
+	const [modalMail, setModalMail] = useState(false);
 
 	const input = useRef<HTMLInputElement>(null);
 
 	const [copied, setCopied] = useState(false);
+
+	const [mail, setMail] = useState("");
+	const [invitation, setInvitation] = useState(-1);
 
 	return (
 		<div className={"flex flex-col gap-2"}>
@@ -130,7 +136,7 @@ export function ListInvitations() {
 								<QRCodeScanner
 									className={"cursor-pointer"}
 									onClick={() => {
-										setmodalQrCode(true);
+										setModalQrCode(true);
 										setQrCode(i.link!);
 									}}
 								/>
@@ -155,15 +161,8 @@ export function ListInvitations() {
 								<input className={"hidden"} value={i.link} ref={input}/>
 								{ smtp.status === 200 && <MailOutlineRounded
 									className={"cursor-pointer"} onClick={() => {
-										api(`/invitation/${i.id}/send-mail`, {
-											method: "POST",
-											body: { dest: "denis.turbiez@kamae.fr" },
-										}).then((res) => {
-											if (res.status === 200)
-												toast("Mail envoyé avec success", { type: "success" });
-											else
-												toast(`Erreur: ${res.message}`, { type: "error" });
-										});
+										setModalMail(true);
+										setInvitation(i.id);
 									}}
 								/> }
 							</div> }
@@ -186,11 +185,33 @@ export function ListInvitations() {
 					</Cell>,
 				]}
 			/>
-			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setmodalQrCode} width={"w-auto"}>
+			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setModalQrCode} width={"w-auto"}>
 				<div className={"flex flex-col items-center justify-center m-4"}>
 					<div className={"bg-slate-300 p-4 rounded"}>
 						<QRCodeSVG bgColor={"transparent"} value={qrCode} height={"50vh"} width={"50vw"}/>
 					</div>
+				</div>
+			</Modal>
+			<Modal title={"Envoyer un mail"} visible={modalMail} setVisible={setModalMail} width={"w-auto"}>
+				<div className={"flex flex-col items-center gap-2 p-4"}>
+					<Input placeholder={"Email"} value={mail} onInput={e => setMail(e.currentTarget.value)}/>
+					<Button
+						onClick={() => {
+							api(`/invitation/${invitation}/send-mail`, {
+								method: "POST",
+								body: { dest: mail },
+							}).then((res) => {
+								if (res.status === 200) {
+									toast("Mail envoyé avec success", { type: "success" });
+									setMail("");
+									setModalMail(false);
+								} else
+									toast(`Erreur: ${res.message}`, { type: "error" });
+							});
+						}}
+					>
+						Envoyer le mail
+					</Button>
 				</div>
 			</Modal>
 		</div>
