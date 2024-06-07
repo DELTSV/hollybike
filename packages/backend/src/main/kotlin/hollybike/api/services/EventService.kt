@@ -227,7 +227,7 @@ class EventService(
 			Events.id eq id and eventUserCondition(caller)
 		}.firstOrNull() ?: return@transaction null
 
-		Event.wrapRow(eventRow).load(Event::owner) to try {
+		Event.wrapRow(eventRow).load(Event::owner, Event::association) to try {
 			EventParticipation.wrapRow(eventRow).load(EventParticipation::user)
 		} catch (e: Throwable) {
 			null
