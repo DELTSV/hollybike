@@ -79,7 +79,6 @@ class InvitationController(
 				)
 				)
 			}.onFailure { e ->
-				println(e)
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					else -> call.respond(HttpStatusCode.InternalServerError)

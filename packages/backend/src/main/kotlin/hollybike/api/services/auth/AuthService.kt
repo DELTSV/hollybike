@@ -54,13 +54,13 @@ class AuthService(
 		getLinkSignature(host, role, association, invitation) == signature
 
 	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
-		val value = "$host${role.value}$association$invitation"
+		val value = "$host$role$association$invitation"
 		return mac.doFinal(value.toByteArray()).encodeBase64String()
 	}
 
 	fun generateLink(caller: User, host: String, invitation: Invitation): String {
 		val sign = getLinkSignature(host, invitation.role, invitation.association.id.value, invitation.id.value)
-		return "https://hollybike.fr/invite?host=$host&role=${invitation.role.value}&association=${caller.association.id}&invitation=${invitation.id.value}&verify=$sign"
+		return "https://hollybike.fr/invite?host=$host&role=${invitation.role}&association=${caller.association.id}&invitation=${invitation.id.value}&verify=$sign"
 	}
 
 	fun login(login: TLogin): Result<String> {
