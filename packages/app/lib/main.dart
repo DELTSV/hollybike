@@ -65,21 +65,38 @@ class MyApp extends StatelessWidget {
               eventParticipationsApi: EventParticipationsApi(),
             ),
           ),
+          RepositoryProvider(
+            create: (context) => AuthSessionRepository(),
+          ),
+          RepositoryProvider(create: (context) => ProfileRepository(
+            profileApi: ProfileApi(),
+          )),
         ],
         child: MultiBlocProvider(
           providers: [
             BlocProvider<AuthBloc>(
               create: (context) => AuthBloc(
                 authRepository: RepositoryProvider.of<AuthRepository>(context),
+                authSessionRepository:
+                    RepositoryProvider.of<AuthSessionRepository>(context),
+                profileRepository:
+                    RepositoryProvider.of<ProfileRepository>(context),
                 notificationRepository:
                     RepositoryProvider.of<NotificationRepository>(context),
-              ),
+              )..add(SubscribeToAuthSessionExpiration()),
             ),
             BlocProvider<ThemeBloc>(
               create: (context) => ThemeBloc(),
             ),
             BlocProvider<ProfileBloc>(
-              create: (context) => ProfileBloc(),
+              create: (context) => ProfileBloc(
+                authSessionRepository: RepositoryProvider.of<AuthSessionRepository>(
+                  context,
+                ),
+                profileRepository: RepositoryProvider.of<ProfileRepository>(
+                  context,
+                ),
+              )..add(SubscribeToCurrentSessionChange()),
             ),
             BlocProvider<EventsBloc>(
               create: (context) => EventsBloc(
@@ -114,24 +131,7 @@ class MyApp extends StatelessWidget {
               )..add(SubscribeToEventCandidates()),
             ),
           ],
-          child: RepositoryProvider<AuthSessionRepository>(
-            create: (context) => AuthSessionRepository(
-              authBloc: BlocProvider.of<AuthBloc>(context),
-            ),
-            child: MultiRepositoryProvider(
-              providers: [
-                RepositoryProvider<ProfileRepository>(
-                  create: (context) => ProfileRepository(
-                    authSessionRepository:
-                        RepositoryProvider.of<AuthSessionRepository>(context),
-                    profileBloc: BlocProvider.of<ProfileBloc>(context),
-                    profileApi: ProfileApi(),
-                  ),
-                ),
-              ],
-              child: const App(),
-            ),
-          ),
+          child: const App(),
         ),
       ),
     );

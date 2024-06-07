@@ -114,6 +114,7 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Hud(
+      displayNavBar: true,
       appBar: const TopBar(
         title: TopBarTitle('Événements'),
       ),

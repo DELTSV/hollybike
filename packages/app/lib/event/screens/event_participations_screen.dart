@@ -115,7 +115,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           child: Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
               child:
                   BlocBuilder<EventParticipationBloc, EventParticipationsState>(
                 builder: (context, state) {

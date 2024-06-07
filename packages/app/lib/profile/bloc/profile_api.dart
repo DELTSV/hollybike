@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import '../types/profile.dart';
 
 class ProfileApi {
-  getSessionProfile(AuthSession session) async {
+  Future<Profile> getSessionProfile(AuthSession session) async {
     final AuthSession(:host, :token) = session;
     final uri = Uri.parse("$host/api/users/me");
 

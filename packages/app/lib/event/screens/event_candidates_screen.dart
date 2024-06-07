@@ -28,6 +28,7 @@ class EventCandidatesScreen extends StatefulWidget {
 class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
   late ScrollController _scrollController;
   Timer? _searchDebounceTimer;
+  String _searchQuery = "";
 
   final List<int> _selectedCandidates = [];
 
@@ -110,7 +111,7 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const SizedBox(height: 64),
+                const SizedBox(height: 32),
                 TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -149,11 +150,14 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                     }
 
                     if (state.candidates.isEmpty) {
-                      return const Column(
+                      return Column(
                         children: [
-                          SizedBox(height: 32),
+                          const SizedBox(height: 32),
                           Center(
-                            child: Text("Aucun utilisateur trouvé."),
+                            child: _searchQuery.isEmpty
+                                ? const Text(
+                                    "Tous les utilisateurs sont déjà inscrits")
+                                : const Text("Aucun utilisateur trouvé"),
                           ),
                         ],
                       );
@@ -206,6 +210,9 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
   }
 
   void _onSearchCandidates(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
     if (_searchDebounceTimer?.isActive ?? false) _searchDebounceTimer?.cancel();
     _searchDebounceTimer = Timer(const Duration(milliseconds: 500), () {
       _searchCandidates(query);

@@ -68,25 +68,27 @@ class _EventFormModalState extends State<EventFormModal> {
               left: 16,
               right: 16,
             ),
-            child: EventForm(
-              submitButtonText: widget.submitButtonText,
-              initialData: widget.initialData,
-              onClose: () {
-                if (!touched) {
-                  Navigator.of(context).pop();
-                  return;
-                }
+            child: SafeArea(
+              child: EventForm(
+                submitButtonText: widget.submitButtonText,
+                initialData: widget.initialData,
+                onClose: () {
+                  if (!touched) {
+                    Navigator.of(context).pop();
+                    return;
+                  }
 
-                showEventDiscardChangesDialog(context, () {
-                  Navigator.of(context).pop();
-                });
-              },
-              onTouched: () {
-                setState(() {
-                  touched = true;
-                });
-              },
-              onSubmit: widget.onSubmit,
+                  showEventDiscardChangesDialog(context, () {
+                    Navigator.of(context).pop();
+                  });
+                },
+                onTouched: () {
+                  setState(() {
+                    touched = true;
+                  });
+                },
+                onSubmit: widget.onSubmit,
+              ),
             ),
           ),
         ),
