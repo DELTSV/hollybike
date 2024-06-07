@@ -11,7 +11,6 @@ import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
-import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import io.ktor.server.application.*
