@@ -80,9 +80,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         appBar: BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
             return TopBar(
-              prefix: TopBarActionIcon(
-                onPressed: () => context.router.maybePop(),
-                icon: Icons.arrow_back,
+              prefix: TopBarActionContainer(
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    context.router.maybePop();
+                  },
+                ),
               ),
               title: const TopBarTitle("Détails"),
               suffix: _renderActions(state),
