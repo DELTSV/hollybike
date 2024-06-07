@@ -154,6 +154,7 @@ class _EventsScreenState extends State<EventsScreen> {
         onPressed: () {
           Timer(const Duration(milliseconds: 100), () {
             showModalBottomSheet<void>(
+              isScrollControlled: true,
               context: context,
               enableDrag: false,
               builder: (BuildContext context) {

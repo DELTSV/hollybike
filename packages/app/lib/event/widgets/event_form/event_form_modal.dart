@@ -49,7 +49,6 @@ class _EventFormModalState extends State<EventFormModal> {
           });
         },
         child: Container(
-          height: 400,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
             border: Border(
@@ -69,25 +68,28 @@ class _EventFormModalState extends State<EventFormModal> {
               right: 16,
             ),
             child: SafeArea(
-              child: EventForm(
-                submitButtonText: widget.submitButtonText,
-                initialData: widget.initialData,
-                onClose: () {
-                  if (!touched) {
-                    Navigator.of(context).pop();
-                    return;
-                  }
+              child: SizedBox(
+                height: 335,
+                child: EventForm(
+                  submitButtonText: widget.submitButtonText,
+                  initialData: widget.initialData,
+                  onClose: () {
+                    if (!touched) {
+                      Navigator.of(context).pop();
+                      return;
+                    }
 
-                  showEventDiscardChangesDialog(context, () {
-                    Navigator.of(context).pop();
-                  });
-                },
-                onTouched: () {
-                  setState(() {
-                    touched = true;
-                  });
-                },
-                onSubmit: widget.onSubmit,
+                    showEventDiscardChangesDialog(context, () {
+                      Navigator.of(context).pop();
+                    });
+                  },
+                  onTouched: () {
+                    setState(() {
+                      touched = true;
+                    });
+                  },
+                  onSubmit: widget.onSubmit,
+                ),
               ),
             ),
           ),

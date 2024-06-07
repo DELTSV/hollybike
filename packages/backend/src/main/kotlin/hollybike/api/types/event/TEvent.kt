@@ -2,7 +2,6 @@ package hollybike.api.types.event
 
 import hollybike.api.types.user.TUserPartial
 import hollybike.api.repository.Event
-import hollybike.api.types.association.TAssociation
 import hollybike.api.types.association.TPartialAssociation
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
@@ -19,7 +18,7 @@ data class TEvent(
 	@SerialName("start_date_time")
 	val startDateTime: Instant,
 	@SerialName("end_date_time")
-	val endDateTime: Instant?,
+	val endDateTime: Instant? = null,
 	@SerialName("create_date_time")
 	val createDateTime: Instant,
 	@SerialName("update_date_time")

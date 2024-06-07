@@ -10,16 +10,16 @@ _$EventFormDataImpl _$$EventFormDataImplFromJson(Map<String, dynamic> json) =>
     _$EventFormDataImpl(
       name: json['name'] as String,
       description: json['description'] as String?,
-      startDate: DateTime.parse(json['startDate'] as String),
-      endDate: json['endDate'] == null
+      startDate: DateTime.parse(json['start_date'] as String),
+      endDate: json['end_date'] == null
           ? null
-          : DateTime.parse(json['endDate'] as String),
+          : DateTime.parse(json['end_date'] as String),
     );
 
 Map<String, dynamic> _$$EventFormDataImplToJson(_$EventFormDataImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
-      'startDate': _toJson(instance.startDate),
-      'endDate': _toJson(instance.endDate),
+      'start_date': _toJson(instance.startDate),
+      'end_date': _toJson(instance.endDate),
     };
