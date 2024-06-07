@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/widgets/auth_container.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/widgets/form_builder.dart';
 import 'package:hollybike/auth/widgets/signup_link_dialog.dart';
+import 'package:hollybike/shared/widgets/dialog/banner_dialog.dart';
 
 import '../types/form_field_config.dart';
 
@@ -33,8 +33,8 @@ class LoginScreen extends StatelessWidget {
         listener: (context, state) {
           if (state.currentSession != null) onAuthSuccess.call();
         },
-        child: AuthContainer(
-          child: FormBuilder(
+        child: BannerDialog(
+          body: FormBuilder(
             title: "Bienvenue!",
             description: "Entrez vos identifiants pour vous connecter.",
             notificationsConsumerId: "loginForm",

@@ -5,14 +5,13 @@ import hollybike.api.database.now
 import hollybike.api.exceptions.*
 import hollybike.api.repository.*
 import hollybike.api.repository.Event
-import hollybike.api.repository.Events
 import hollybike.api.repository.EventParticipation
-import hollybike.api.repository.EventParticipations
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -20,6 +19,7 @@ import io.ktor.server.response.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -179,8 +179,8 @@ class EventService(
 
 	private fun futureEventsCondition(): Op<Boolean> {
 		return (Events.startDateTime greaterEq now()) or
-			((Events.endDateTime neq null) and(Events.endDateTime greaterEq now())) or
-			((Events.endDateTime eq null) and(addtime(Events.startDateTime, 4.hours) greaterEq now()))
+			((Events.endDateTime neq null) and (Events.endDateTime greaterEq now())) or
+			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) greaterEq now()))
 	}
 
 	fun getFutureEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
@@ -198,7 +198,7 @@ class EventService(
 	private fun archivedEventsCondition(): Op<Boolean> {
 		return (Events.startDateTime less now()) and
 			(((Events.endDateTime neq null) and (Events.endDateTime less now())) or
-			((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
+				((Events.endDateTime eq null) and (addtime(Events.startDateTime, 4.hours) less now())))
 	}
 
 	fun getArchivedEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
@@ -213,10 +213,31 @@ class EventService(
 		}.count().toInt()
 	}
 
+	fun getEventWithParticipation(caller: User, id: Int): Pair<Event, EventParticipation?>? = transaction(db) {
+		val eventRow = Events.innerJoin(
+			Users,
+			{ owner },
+			{ Users.id }
+		).leftJoin(
+			EventParticipations,
+			{ Events.id },
+			{ event },
+			{ (EventParticipations.user eq caller.id) and (EventParticipations.isJoined eq true) }
+		).selectAll().where {
+			Events.id eq id and eventUserCondition(caller)
+		}.firstOrNull() ?: return@transaction null
+
+		Event.wrapRow(eventRow).load(Event::owner) to try {
+			EventParticipation.wrapRow(eventRow).load(EventParticipation::user)
+		} catch (e: Throwable) {
+			null
+		}
+	}
+
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
 		Event.find {
 			Events.id eq id and eventUserCondition(caller)
-		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull()
+		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull() ?: return@transaction null
 	}
 
 	fun createEvent(

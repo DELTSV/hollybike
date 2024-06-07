@@ -1,5 +1,6 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.conf
 import hollybike.api.exceptions.*
 import hollybike.api.services.AssociationService
 import hollybike.api.isCloud
@@ -283,12 +284,7 @@ class AssociationController(
 	private fun Route.getAllInvitationsByAssociations() {
 		get<Associations.Id.Invitations<API>>(EUserScope.Admin) {
 			val searchParam = call.request.queryParameters.getSearchParam(invitationMapper)
-			val host = call.request.headers["Host"]
-
-			if (host == null) {
-				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
-				return@get
-			}
+			val host = call.application.attributes.conf.security.domain
 
 			val association = associationService.getById(call.user, it.id.id) ?: run {
 				call.respond(HttpStatusCode.NotFound, "Association inconnue")

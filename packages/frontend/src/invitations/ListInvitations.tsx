@@ -187,8 +187,10 @@ export function ListInvitations() {
 				]}
 			/>
 			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setmodalQrCode} width={"w-auto"}>
-				<div className={"flex justify-center m-4"}>
-					<QRCodeSVG value={qrCode} height={"50vh"} width={"50vw"}/>
+				<div className={"flex flex-col items-center justify-center m-4"}>
+					<div className={"bg-slate-300 p-4 rounded"}>
+						<QRCodeSVG bgColor={"transparent"} value={qrCode} height={"50vh"} width={"50vw"}/>
+					</div>
 				</div>
 			</Modal>
 		</div>

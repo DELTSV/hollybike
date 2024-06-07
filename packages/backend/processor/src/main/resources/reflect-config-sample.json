@@ -2897,5 +2897,182 @@
 				]
 			}
 		]
+	},
+	{
+		"name": "hollybike.api.repository.Event",
+		"fields": [
+			{
+				"name": "owner$delegate"
+			},
+			{
+				"name": "participants$delegate"
+			}
+		],
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.jetbrains.exposed.dao.id.EntityID"
+				]
+			},
+			{
+				"name": "getOwner",
+				"parameterTypes": []
+			},
+			{
+				"name": "getParticipants",
+				"parameterTypes": []
+			},
+			{
+				"name": "setOwner",
+				"parameterTypes": [
+					"hollybike.api.repository.User"
+				]
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.repository.Event$Companion"
+	},
+	{
+		"name": "hollybike.api.repository.EventParticipation",
+		"fields": [
+			{
+				"name": "event$delegate"
+			},
+			{
+				"name": "user$delegate"
+			}
+		],
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.jetbrains.exposed.dao.id.EntityID"
+				]
+			},
+			{
+				"name": "getEvent",
+				"parameterTypes": []
+			},
+			{
+				"name": "getUser",
+				"parameterTypes": []
+			},
+			{
+				"name": "setEvent",
+				"parameterTypes": [
+					"hollybike.api.repository.Event"
+				]
+			},
+			{
+				"name": "setUser",
+				"parameterTypes": [
+					"hollybike.api.repository.User"
+				]
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.repository.EventParticipation$Companion"
+	},
+	{
+		"name": "hollybike.api.types.event.TEventDetails",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TEventDetails$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TEventParticipation",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TEventParticipation$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TCreateParticipations",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TCreateParticipations$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.user.TUserPartial",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.user.TUserPartial$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "java.sql.SQLException",
+		"fields": [
+			{
+				"name": "next"
+			}
+		]
+	},
+	{
+		"name": "java.util.List"
+	},
+	{
+		"name": "kotlin.collections.List"
+	},
+	{
+		"name": "hollybike.api.types.event.TUpdateEvent",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.TUpdateEvent$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
 	}
 ]

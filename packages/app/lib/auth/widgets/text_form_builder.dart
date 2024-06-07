@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hollybike/auth/types/field_editing_controller.dart';
 import 'package:hollybike/auth/types/field_focus_node.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
@@ -26,7 +27,7 @@ class TextFormBuilder extends StatefulWidget {
 class _TextFormBuilderState extends State<TextFormBuilder> {
   late final GlobalKey<FormState> _formKey;
   late final Map<String, FieldFocusNode> _formFocusNodes;
-  late final Map<String, TextEditingController> _formControllers;
+  late final Map<String, FieldEditingController> _formControllers;
 
   @override
   void initState() {
@@ -34,7 +35,10 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     _formControllers = Map.fromIterables(
       widget.formFields.keys,
       widget.formFields.values.map(
-        (field) => TextEditingController(text: field.defaultValue),
+        (field) => FieldEditingController(
+          hasControlNode: field.isSecured && field.hasControlField,
+          defaultValue: field.defaultValue,
+        ),
       ),
     );
     _formFocusNodes = Map.fromIterables(
@@ -130,7 +134,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     next() {
       final nextKey = getNextKey(key);
 
-      if(nextKey == null) {
+      if (nextKey == null) {
         _handleFormSubmit();
         return;
       }
@@ -144,7 +148,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
         CommonTextField(
           validator: config.validator,
           title: config.label,
-          controller: controller,
+          controller: controller?.editingController,
           focusNode: focusNode?.focusNode,
           onEditingDone: next,
           autofocus: config.autofocus,
@@ -156,11 +160,13 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
 
     var fields = <Widget>[
       SecuredTextField(
-        controller: controller,
+        controller: controller?.editingController,
         title: config.label,
         validator: config.validator,
         focusNode: focusNode?.focusNode,
-        onEditingDone: config.hasControlField ? () => focusNode?.controlFocusNode?.requestFocus() : next,
+        onEditingDone: config.hasControlField
+            ? () => focusNode?.controlFocusNode?.requestFocus()
+            : next,
         autofocus: config.autofocus,
         autofillHints: config.autofillHints,
         textInputType: config.textInputType,
@@ -169,7 +175,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
 
     if (config.hasControlField) {
       fields.add(ControlTextField(
-        controller: controller,
+        controller: controller?.controlEditingController,
         controlledFieldTitle: config.label,
         focusNode: focusNode?.controlFocusNode,
         onEditingDone: next,
@@ -193,7 +199,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     if (_formKey.currentState!.validate()) {
       final data = Map.fromIterables(
         _formControllers.keys,
-        _formControllers.values.map((controller) => controller.text),
+        _formControllers.values.map((controller) => controller.editingController.text),
       );
       widget.onFormSubmit(data);
     }

@@ -8,6 +8,7 @@ import 'package:hollybike/shared/widgets/profile_titles/profile_title.dart';
 class ProfileCard extends StatelessWidget {
   final AuthSession session;
   final Profile profile;
+  final bool isCurrentUser;
   final Widget? endChild;
 
   final void Function(
@@ -20,6 +21,7 @@ class ProfileCard extends StatelessWidget {
     super.key,
     required this.session,
     required this.profile,
+    this.isCurrentUser = false,
     this.onTap,
     this.endChild,
   });

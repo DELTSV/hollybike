@@ -1,5 +1,6 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.conf
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.InvitationAlreadyExist
 import hollybike.api.exceptions.InvitationNotFoundException
@@ -25,7 +26,6 @@ import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.html.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -55,12 +55,7 @@ class InvitationController(
 	private fun Route.getAll() {
 		get<Invitation>(EUserScope.Root) {
 			val searchParam = call.request.queryParameters.getSearchParam(invitationMapper)
-			val host = call.request.headers["Host"]
-
-			if (host == null) {
-				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
-				return@get
-			}
+			val host = call.application.attributes.conf.security.domain
 
 			val count = invitationService.getAllCount(call.user, searchParam) ?: run {
 				call.respond(HttpStatusCode.Forbidden)
@@ -101,12 +96,7 @@ class InvitationController(
 
 	private fun Route.createInvitation() {
 		post<Invitation>(EUserScope.Admin) {
-			val host = call.request.headers["Host"]
-
-			if (host == null) {
-				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
-				return@post
-			}
+			val host = call.application.attributes.conf.security.domain
 
 			val invitationCreation = call.receive<TInvitationCreation>()
 			invitationService.createInvitation(
@@ -133,11 +123,7 @@ class InvitationController(
 
 	private fun Route.sendMail() {
 		post<Invitation.Id.SendMail>(EUserScope.Admin) {
-			val host = call.request.headers["Host"]
-			if(host == null) {
-				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
-				return@post
-			}
+			val host = call.application.attributes.conf.security.domain
 
 			val dest = call.receive<TMailDest>()
 
@@ -157,13 +143,6 @@ class InvitationController(
 
 	private fun Route.disableInvitation() {
 		patch<Invitation.Id.Disable>(EUserScope.Admin) {
-			val host = call.request.headers["Host"]
-
-			if (host == null) {
-				call.respond(HttpStatusCode.BadRequest, "Aucun Host fourni")
-				return@patch
-			}
-
 			invitationService.disableInvitation(call.user, it.id.id).onSuccess {  i ->
 				call.respond(TInvitation(i, storageService.signer.sign))
 			}.onFailure {  e ->

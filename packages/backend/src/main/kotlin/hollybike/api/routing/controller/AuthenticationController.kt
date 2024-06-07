@@ -1,5 +1,6 @@
 package hollybike.api.routing.controller
 
+import hollybike.api.conf
 import hollybike.api.exceptions.*
 import hollybike.api.routing.resources.Auth
 import hollybike.api.services.auth.AuthService
@@ -42,10 +43,7 @@ class AuthenticationController(
 	private fun Route.signup() {
 		post<Auth.Signup> {
 			val signup = call.receive<TSignup>()
-			val host = call.request.headers["Host"] ?: run {
-				call.respond(HttpStatusCode.BadRequest, "Aucun Host")
-				return@post
-			}
+			val host = call.application.attributes.conf.security.domain
 			authService.signup(host, signup).onSuccess {
 				call.respond(TAuthInfo(it))
 			}.onFailure {

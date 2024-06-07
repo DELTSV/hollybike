@@ -31,3 +31,10 @@ final class AuthLogin extends AuthEvent {
 
   AuthLogin({required this.host, required this.loginDto});
 }
+
+final class AuthSignup extends AuthEvent {
+  final String host;
+  final SignupDto signupDto;
+
+  AuthSignup({required this.host, required this.signupDto});
+}

@@ -2,6 +2,7 @@ package hollybike.api.routing.controller
 
 import hollybike.api.plugins.user
 import hollybike.api.repository.eventMapper
+import hollybike.api.repository.eventParticipationMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
@@ -46,7 +47,7 @@ class EventParticipationController(
 
 	private fun Route.getParticipationCandidates() {
 		get<Events.Id.Participations.Candidates> { data ->
-			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper)
+			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper + eventParticipationMapper)
 
 			val candidates = eventParticipationService.getParticipationCandidates(
 				call.user,
@@ -84,7 +85,7 @@ class EventParticipationController(
 
 	private fun Route.getParticipations() {
 		get<Events.Id.Participations> { data ->
-			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper)
+			val searchParam = call.parameters.getSearchParam(userMapper + eventMapper + eventParticipationMapper)
 
 			val participations = eventParticipationService.getEventParticipations(
 				call.user,
@@ -95,9 +96,10 @@ class EventParticipationController(
 				return@get
 			}
 
-			val participationCount = eventParticipationService.getEventCount(
+			val participationCount = eventParticipationService.getEventParticipationsCount(
 				call.user,
-				data.eventId.id
+				data.eventId.id,
+				searchParam
 			).getOrElse {
 				eventParticipationService.handleEventExceptions(it, call)
 				return@get
@@ -164,7 +166,6 @@ class EventParticipationController(
 			eventParticipationService.addParticipantsToEvent(call.user, data.participations.eventId.id, users)
 				.onSuccess { participations ->
 					call.respond(
-						HttpStatusCode.Created,
 						participations.map { TEventParticipation(it, storageService.signer.sign) }
 					)
 				}.onFailure {

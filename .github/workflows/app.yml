@@ -12,6 +12,10 @@ on:
         description: 'Version of the release'
         type: string
         required: true
+      create-executables:
+        description: 'Create executables'
+        type: boolean
+        required: true
     secrets:
       ANDROID_KEYSTORE:
         required: true
@@ -48,7 +52,6 @@ jobs:
       AAB_PATH: packages/app/build/app/outputs/bundle/release/app-release.aab
       KEYSTORE_PATH: android/upload-keystore.jks
       KEY_PROPS_PATH: android/key.properties
-      SERVICE_ACCOUNT_PATH: store_credentials.json
 
     steps:
       - name: Checkout code
@@ -75,39 +78,39 @@ jobs:
         run: flutter test
 
       - name: Decode Android keystore
-        if: ${{ inputs.externall_call }}
+        if: inputs.create-executables
         run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
 
       - name: Copy keystore
-        if: ${{ inputs.externall_call }}
+        if: inputs.create-executables
         run: cp ${{ env.KEYSTORE_PATH }} android/app/upload-keystore.jks
 
       - name: Decode Android key properties
-        if: ${{ inputs.externall_call }}
+        if: inputs.create-executables
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
 
       - name: Decode Android Service Account
-        if: ${{ inputs.externall_call }}
+        if: inputs.create-executables
         run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
       - name: Build APK
-        if: ${{ inputs.externall_call }}
-        run: flutter build apk --release
+        if: inputs.create-executables
+        run: flutter build apk --release --build-name=${{ inputs.version }} --build-number=$(echo ${{ inputs.version }} | tr -d .)
 
 #      - name: Create build directory
-#        if: ${{ inputs.externall_call }}
+#        if: inputs.create-executables
 #        run: mkdir -p build/app/outputs/flutter-apk
 #
 #      - name: Create fake APK
-#        if: ${{ inputs.externall_call }}
+#        if: inputs.create-executables
 #        run: touch build/app/outputs/flutter-apk/app-release.apk
 
       - name: Rename APK
-        if: ${{ inputs.externall_call }}
+        if: inputs.create-executables
         run: mv build/app/outputs/flutter-apk/app-release.apk hollybike-Android-${{ inputs.version }}.apk
 
       - name: Upload APK to artifacts
-        if: ${{ inputs.externall_call }}
+        if: inputs.create-executables
         uses: actions/upload-artifact@v4
         with:
           name: HollyBike-${{ inputs.version }}-Android
@@ -123,26 +126,57 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
 
+    defaults:
+      run:
+        working-directory: packages/app
+
     env:
+      AAB_PATH: packages/app/build/app/outputs/bundle/release/app-release.aab
+      KEYSTORE_PATH: android/upload-keystore.jks
+      KEY_PROPS_PATH: android/key.properties
       SERVICE_ACCOUNT_PATH: store_credentials.json
-    
+
     steps:
-      - name: Dymmy
-        run: echo "Dummy"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-#      - name: Build aab
-#        if: ${{ inputs.externall_call }}
-#        run: |
-#          flutter build appbundle \
-#            --release
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v4
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: flutter-install-cache
 
-#      - name: Deploy to Play Store (Internal testing)
-#        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
-#        uses: r0adkll/upload-google-play@v1
-#        with:
-#          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
-#          packageName: com.hollybike.hollybike
-#          releaseFiles: ${{ env.AAB_PATH }}
-#          status: draft
-#          track: internal
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Decode Android keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
+
+      - name: Copy keystore
+        run: cp ${{ env.KEYSTORE_PATH }} android/app/upload-keystore.jks
+
+      - name: Decode Android key properties
+        run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
+
+      - name: Decode Android Service Account
+        run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
+
+      - name: Build app bundle
+        run: |
+          flutter build appbundle \
+            --release --build-name=${{ inputs.version }} --build-number=$(echo ${{ inputs.version }} | tr -d .)
+
+      - name: Deploy to Play Store (Internal testing)
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
+          packageName: com.hollybike.hollybike
+          releaseFiles: ${{ env.AAB_PATH }}
+          status: completed
+          track: internal
   

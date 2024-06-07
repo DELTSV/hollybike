@@ -1,6 +1,7 @@
 package hollybike.api.repository
 
 import hollybike.api.types.event.EEventRole
+import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -29,3 +30,7 @@ object EventParticipations : IntIdTable("event_participations", "id_participatio
 	val joinedDateTime = timestamp("joined_date_time").clientDefault { Clock.System.now() }
 	val leftDateTime = timestamp("left_date_time").nullable()
 }
+
+val eventParticipationMapper: Mapper = mapOf(
+	"joined_date_time" to EventParticipations.joinedDateTime,
+)

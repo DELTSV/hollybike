@@ -17,6 +17,19 @@ class AuthSession {
     return host == other.host && token == other.token;
   }
 
+  int? getIndexInList(List<AuthSession> list) {
+    if(list.isNotEmpty) {
+      int index;
+      for (index = 0; index < list.length; index++) {
+        final sessionFromIndex = list[index];
+        if (sessionFromIndex.token == token && sessionFromIndex.host == host) {
+          return index;
+        }
+      }
+    }
+    return null;
+  }
+
   static AuthSession fromJson(String json) {
     final object = jsonDecode(json);
 

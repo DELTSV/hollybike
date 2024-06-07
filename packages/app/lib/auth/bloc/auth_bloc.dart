@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
+import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,6 +57,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           "Oups! Il semble y avoir une erreur. Veuillez vérifier l'adresse du serveur et réessayer.",
           isError: true,
           consumerId: "loginForm",
+        );
+      }
+    });
+    on<AuthSignup>((event, emit) async {
+      try {
+        final response = await authRepository.signup(
+          event.host,
+          event.signupDto,
+        );
+
+        if (response.statusCode != 200) {
+          throw NotificationException(response.body);
+        }
+
+        final session = AuthSession.fromResponseJson(event.host, response.body);
+        emit(AuthNewSession(session, state));
+      } on NotificationException catch (exception) {
+        notificationRepository.push(
+          exception.message,
+          isError: true,
+          consumerId: "signupForm",
+        );
+      } catch (e) {
+        notificationRepository.push(
+          "Il semble que le lien d'invitation que vous utilisez est invalide.",
+          isError: true,
+          consumerId: "signupForm",
         );
       }
     });

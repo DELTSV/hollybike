@@ -39,17 +39,20 @@ class CommonTextField extends StatelessWidget {
       suffixIcon: iconButton,
     );
 
-    return TextFormField(
-      controller: controller,
-      validator: validator,
-      obscureText: obscureText,
-      decoration: decoration,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      autofocus: autofocus,
-      autofillHints: autofillHints,
-      keyboardType: textInputType,
-      focusNode: focusNode,
-      onEditingComplete: onEditingDone,
+    return Material(
+      color: Colors.transparent,
+      child: TextFormField(
+        controller: controller,
+        validator: validator,
+        obscureText: obscureText,
+        decoration: decoration,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autofocus: autofocus,
+        autofillHints: autofillHints,
+        keyboardType: textInputType,
+        focusNode: focusNode,
+        onEditingComplete: onEditingDone,
+      ),
     );
   }
 }

@@ -144,6 +144,36 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     );
   }
 
+  AppBarTheme get _appBarTheme {
+    if (state.isDark) {
+      return AppBarTheme(
+        backgroundColor: _darkColorScheme.primary,
+        foregroundColor: _darkColorScheme.onPrimary,
+        titleTextStyle: _textTheme.titleMedium?.copyWith(
+          color: _darkColorScheme.onPrimary,
+        ),
+      );
+    }
+    return AppBarTheme(
+      backgroundColor: _brightColorScheme.primary,
+      foregroundColor: _brightColorScheme.onPrimary,
+      titleTextStyle: _textTheme.titleMedium?.copyWith(
+        color: _brightColorScheme.onPrimary,
+      ),
+    );
+  }
+
+  IconThemeData get _iconTheme {
+    if (state.isDark) {
+      return IconThemeData(
+        color: Color(_darkColorScheme.onPrimary.value),
+      );
+    }
+    return IconThemeData(
+      color: Color(_brightColorScheme.onPrimary.value),
+    );
+  }
+
   TextSelectionThemeData get _textSelectionTheme {
     if (state.isDark) {
       return const TextSelectionThemeData(
@@ -163,8 +193,10 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     return ThemeData(
       useMaterial3: true,
       fontFamily: 'Inter',
+      appBarTheme: _appBarTheme,
       textTheme: _textTheme,
       colorScheme: _colorScheme,
+      iconTheme: _iconTheme,
       inputDecorationTheme: _inputDecorationTheme,
       elevatedButtonTheme: _elevatedButtonTheme,
       floatingActionButtonTheme: _floatingActionButtonTheme,

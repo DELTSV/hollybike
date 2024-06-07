@@ -7,6 +7,7 @@ import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.AssociationService
+import hollybike.api.services.EventParticipationService
 import hollybike.api.services.EventService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.*
@@ -33,6 +34,7 @@ import kotlin.math.ceil
 class EventController(
 	application: Application,
 	private val eventService: EventService,
+	private val eventParticipationService: EventParticipationService,
 	private val storageService: StorageService,
 	private val associationService: AssociationService
 ) {
@@ -44,6 +46,7 @@ class EventController(
 				getAllEvents()
 				getFutureEvents()
 				getArchivedEvents()
+				getEventDetails()
 				getEvent()
 				createEvent()
 				updateEvent()
@@ -98,6 +101,28 @@ class EventController(
 			val totalEvents = eventService.countArchivedEvents(call.user, searchParam)
 
 			call.respond(getEventsPagination(events, totalEvents, searchParam))
+		}
+	}
+
+	private fun Route.getEventDetails() {
+		get<Events.Id.Details> { id ->
+			val (event, callerParticipation) = eventService.getEventWithParticipation(call.user, id.details.id)
+				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
+
+			eventParticipationService.getParticipationsPreview(call.user, id.details.id)
+				.onSuccess { (participants, participantsCount) ->
+					call.respond(
+						TEventDetails(
+							event,
+							callerParticipation,
+							participants,
+							participantsCount,
+							storageService.signer.sign
+						)
+					)
+				}.onFailure {
+					eventService.handleEventExceptions(it, call)
+				}
 		}
 	}
 
