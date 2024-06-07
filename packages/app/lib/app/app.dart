@@ -11,10 +11,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0x20000000),
-      systemNavigationBarColor: Color(0x20000000),
-    ));
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top],
@@ -24,17 +20,34 @@ class App extends StatelessWidget {
     final authChangeNotifier = AuthStream(context);
 
     return BlocBuilder<ThemeBloc, ThemeState>(
-      builder: (context, state) => MaterialApp.router(
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        supportedLocales: const [
-          Locale('fr', 'FR'),
-        ],
-        title: 'Hollybike',
-        theme: BlocProvider.of<ThemeBloc>(context).getThemeData,
-        routerConfig: appRouter.config(
-          reevaluateListenable: authChangeNotifier,
-        ),
-      ),
+      builder: (context, state) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
+            systemStatusBarContrastEnforced: false,
+            systemNavigationBarIconBrightness:
+            state.isDark ? Brightness.light : Brightness.dark,
+            statusBarIconBrightness:
+            state.isDark ? Brightness.light : Brightness.dark,
+          ),
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: MaterialApp.router(
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              supportedLocales: const [
+                Locale('fr', 'FR'),
+              ],
+              title: 'Hollybike',
+              theme: BlocProvider.of<ThemeBloc>(context).getThemeData,
+              routerConfig: appRouter.config(
+                reevaluateListenable: authChangeNotifier,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

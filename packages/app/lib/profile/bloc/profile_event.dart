@@ -12,3 +12,21 @@ class ProfileSave extends ProfileEvent {
     required this.profile,
   });
 }
+
+class ProfileLoad extends ProfileEvent {
+  final AuthSession session;
+
+  ProfileLoad({
+    required this.session,
+  });
+}
+
+class ProfileCurrentSessionChange extends ProfileEvent {
+  final AuthSession? session;
+
+  ProfileCurrentSessionChange({
+    required this.session,
+  });
+}
+
+class SubscribeToCurrentSessionChange extends ProfileEvent {}

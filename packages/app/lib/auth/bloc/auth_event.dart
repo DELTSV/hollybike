@@ -3,6 +3,10 @@ part of 'auth_bloc.dart';
 @immutable
 abstract class AuthEvent {}
 
+final class SubscribeToAuthSessionExpiration extends AuthEvent {
+  SubscribeToAuthSessionExpiration();
+}
+
 final class AuthPersistentSessionsLoaded extends AuthEvent {
   final List<AuthSession> sessionsJson;
 
