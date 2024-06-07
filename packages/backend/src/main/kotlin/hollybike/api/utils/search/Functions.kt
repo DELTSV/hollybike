@@ -40,7 +40,7 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 	val filter = mapper.asSequence().filter { (k, _) -> k in this }
 		.map { (k, v) ->
 			getAll(k)!!.map allMap@{
-				val (mode, value) = if(':' in it) {
+				val (mode, value) = if (':' in it) {
 					it.split(":", limit = 2).let { values -> values[0] to values[1] }
 				} else {
 					it to null
@@ -49,7 +49,7 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 					null
 				} else {
 					val filterMode = FilterMode[mode]
-					if(value == null && filterMode != FilterMode.IS_NULL && filterMode != FilterMode.IS_NOT_NULL) {
+					if (value == null && filterMode != FilterMode.IS_NULL && filterMode != FilterMode.IS_NOT_NULL) {
 						null
 					} else {
 						Filter(v, value, FilterMode[mode])
@@ -62,7 +62,8 @@ fun Parameters.getSearchParam(mapper: Mapper): SearchParam {
 		sort,
 		filter,
 		page,
-		perPage
+		perPage,
+		mapper
 	)
 }
 
@@ -75,8 +76,8 @@ fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Quer
 	val filter = searchParamFilter(searchParam.filter)
 	val query = if ((searchParam.query?.split(" ")?.size ?: 0) == 2) {
 		val values = searchParam.query!!.split(" ")
-		val val1 = q.searchParamQuery(values.joinToString("%") { it.replace("%", "\\%") })
-		val val2 = q.searchParamQuery(values.reversed().joinToString("%") { it.replace("%", "\\%") })
+		val val1 = q.searchParamQuery(values.joinToString("%") { it.replace("%", "\\%") }, searchParam.mapper)
+		val val2 = q.searchParamQuery(values.reversed().joinToString("%") { it.replace("%", "\\%") }, searchParam.mapper)
 		if (val1 != null) {
 			if (val2 != null) {
 				val1 or val2
@@ -87,7 +88,7 @@ fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Quer
 			val2
 		}
 	} else {
-		searchParam.query?.let { query -> q.searchParamQuery(query.replace("%", "\\%").replace(" ", "%")) }
+		searchParam.query?.let { query -> q.searchParamQuery(query.replace("%", "\\%").replace(" ", "%"), searchParam.mapper) }
 	}
 	val where = if (query == null) {
 		filter
@@ -102,23 +103,21 @@ fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Quer
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun Query.searchParamQuery(query: String): Op<Boolean>? {
+private fun Query.searchParamQuery(query: String, mapper: Mapper): Op<Boolean>? {
 	var op: Op<Boolean>? = null
-	this.targets.forEach { table ->
-		table.columns.forEach { col ->
-			when (col.columnType) {
-				is IntegerColumnType -> {
-					query.toIntOrNull()?.let {
-						op = op?.or((col as Column<Int?>) eq it) ?: ((col as Column<Int?>) eq it)
-					}
+	mapper.forEach { (_, col) ->
+		when (col.columnType) {
+			is IntegerColumnType -> {
+				query.toIntOrNull()?.let {
+					op = op?.or((col as Column<Int?>) eq it) ?: ((col as Column<Int?>) eq it)
 				}
+			}
 
-				is VarCharColumnType -> {
-					op =
-						op?.or(lower(unaccent(col as Column<String>)) like lower(unaccent("%$query%"))) ?: (lower(
-							unaccent((col as Column<String>))
-						) like lower(unaccent("%$query%")))
-				}
+			is VarCharColumnType -> {
+				op =
+					op?.or(lower(unaccent(col as Column<String>)) like lower(unaccent("%$query%"))) ?: (lower(
+						unaccent((col as Column<String>))
+					) like lower(unaccent("%$query%")))
 			}
 		}
 	}

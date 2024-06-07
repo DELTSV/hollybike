@@ -359,7 +359,8 @@ class EventParticipationService(
 			query = null,
 			filter = mutableListOf(),
 			page = 0,
-			perPage = 5
+			perPage = 5,
+			mapper = emptyMap()
 		)
 
 		val participations = getEventParticipations(caller, eventId, searchParam)
