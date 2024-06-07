@@ -17,14 +17,16 @@ import {
 import { TUserUpdate } from "../../types/TUserUpdate.ts";
 import { Select } from "../../components/Select/Select.tsx";
 import { toast } from "react-toastify";
+import { EUserStatus } from "../../types/EUserStatus.ts";
+import { EUserScope } from "../../types/EUserScope.ts";
 
 const emptyUser: TUser = {
 	id: -1,
 	username: "",
 	email: "",
-	status: "Enabled",
-	scope: "User",
-	last_login: "",
+	status: EUserStatus.Enabled,
+	scope: EUserScope.User,
+	last_login: new Date(),
 	association: dummyAssociation,
 };
 
@@ -78,20 +80,20 @@ export function UserDetail() {
 					value={userData.scope}
 					onChange={v => setUserData(prev => ({
 						...prev,
-						scope: v!.toString(),
+						scope: (v ?? "User") as EUserScope,
 					}))}
 					options={[
 						{
 							name: "Utilisateur",
-							value: "User",
+							value: EUserScope.User,
 						},
 						{
 							name: "Administrateur",
-							value: "Admin",
+							value: EUserScope.Admin,
 						},
 						{
 							name: "Root",
-							value: "Root",
+							value: EUserScope.Root,
 						},
 					]}
 					default={userData.scope}
@@ -101,16 +103,16 @@ export function UserDetail() {
 					value={userData.status}
 					onChange={v => setUserData(prev => ({
 						...prev,
-						status: v!.toString(),
+						status: (v ?? "Enabled") as EUserStatus,
 					}))}
 					options={[
 						{
 							name: "Activé",
-							value: "Enabled",
+							value: EUserStatus.Enabled,
 						},
 						{
 							name: "Désactivé",
-							value: "Disabled",
+							value: EUserStatus.Disabled,
 						},
 					]}
 					default={userData.status}

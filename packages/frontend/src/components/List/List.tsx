@@ -90,7 +90,7 @@ export function List<T>(props: ListProps<T>) {
 	);
 
 	return (
-		<div className={"px-2 flex flex-col grow gap-2"}>
+		<div className={"flex flex-col grow gap-2"}>
 			<Input
 				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
 				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}

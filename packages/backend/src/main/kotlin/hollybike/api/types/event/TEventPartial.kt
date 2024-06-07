@@ -2,6 +2,7 @@ package hollybike.api.types.event
 
 import hollybike.api.types.user.TUserPartial
 import hollybike.api.repository.Event
+import hollybike.api.types.association.TPartialAssociation
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -22,6 +23,7 @@ data class TEventPartial(
 	val createDateTime: Instant,
 	@SerialName("update_date_time")
 	val updateDateTime: Instant,
+	val association: TPartialAssociation
 ) {
 	constructor(entity: Event, signer: (String) -> String) : this(
 		id = entity.id.value,
@@ -33,6 +35,7 @@ data class TEventPartial(
 		startDateTime = entity.startDateTime,
 		endDateTime = entity.endDateTime,
 		createDateTime = entity.createDateTime,
-		updateDateTime = entity.updateDateTime
+		updateDateTime = entity.updateDateTime,
+		association = TPartialAssociation(entity.association, signer)
 	)
 }

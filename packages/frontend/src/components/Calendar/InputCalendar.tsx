@@ -82,6 +82,10 @@ export function InputCalendar(props: CalendarProps) {
 	);
 }
 
+export function dateTimeToFrenchString(date: Date | undefined, seconds: boolean) {
+	return `${dateToFrenchString(date)} ${timeToFrenchString(date, seconds)}`;
+}
+
 export function dateToFrenchString(date: Date | undefined): string {
 	if (date === undefined)
 		return "";

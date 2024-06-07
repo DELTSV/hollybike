@@ -56,7 +56,7 @@ fun Application.api() {
 	UserController(this, userService, storageService)
 	AssociationController(this, associationService, invitationService, authService, storageService)
 	InvitationController(this, authService, invitationService, storageService, mailSender)
-	EventController(this, eventService, eventParticipationService, storageService)
+	EventController(this, eventService, eventParticipationService, storageService, associationService)
 	EventParticipationController(this, eventParticipationService, storageService)
 	EventImageController(this, eventImageService, storageService)
 

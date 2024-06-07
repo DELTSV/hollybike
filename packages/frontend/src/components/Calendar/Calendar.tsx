@@ -5,13 +5,15 @@ import {
 	ChevronLeft, ChevronRight,
 } from "@material-ui/icons";
 import { clsx } from "clsx";
-import { useEffect } from "preact/hooks";
+import {
+	Dispatch, StateUpdater, useEffect,
+} from "preact/hooks";
 
 export interface CalendarProps {
 	time?: boolean,
 	seconds?: boolean
 	value?: Date,
-	setValue?: (value: Date | undefined | ((prev: Date | undefined) => Date | undefined)) => void
+	setValue?: Dispatch<StateUpdater<Date | undefined>>
 }
 
 export function Calendar(props: CalendarProps) {

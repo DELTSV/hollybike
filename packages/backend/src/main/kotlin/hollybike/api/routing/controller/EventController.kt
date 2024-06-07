@@ -6,6 +6,7 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
+import hollybike.api.services.AssociationService
 import hollybike.api.services.EventParticipationService
 import hollybike.api.services.EventService
 import hollybike.api.services.storage.StorageService
@@ -35,6 +36,7 @@ class EventController(
 	private val eventService: EventService,
 	private val eventParticipationService: EventParticipationService,
 	private val storageService: StorageService,
+	private val associationService: AssociationService
 ) {
 	private val mapper = eventMapper + associationMapper + userMapper
 
@@ -137,12 +139,17 @@ class EventController(
 		post<Events> {
 			val newEvent = call.receive<TCreateEvent>()
 
+			val association = newEvent.association?.let {
+				associationService.getById(call.user, newEvent.association)
+			} ?: call.user.association
+
 			eventService.createEvent(
 				call.user,
 				newEvent.name,
 				newEvent.description,
 				newEvent.startDate,
-				newEvent.endDate
+				newEvent.endDate,
+				association
 			).onSuccess {
 				call.respond(HttpStatusCode.Created, TEvent(it, storageService.signer.sign))
 			}.onFailure {

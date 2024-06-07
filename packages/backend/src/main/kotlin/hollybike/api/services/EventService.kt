@@ -53,14 +53,8 @@ class EventService(
 		return Result.success(Unit)
 	}
 
-	private fun checkEventInputDates(startDate: String, endDate: String? = null): Result<Unit> {
-		val parsedStartDate = try {
-			Instant.parse(startDate)
-		} catch (e: IllegalArgumentException) {
-			return Result.failure(InvalidDateException("Format de la date de début invalide"))
-		}
-
-		if (parsedStartDate < Clock.System.now()) {
+	private fun checkEventInputDates(startDate: Instant, endDate: Instant? = null, create: Boolean = true): Result<Unit> {
+		if (startDate < Clock.System.now() && create) {
 			return Result.failure(InvalidDateException("La date de début doit être dans le futur"))
 		}
 
@@ -68,13 +62,7 @@ class EventService(
 			return Result.success(Unit)
 		}
 
-		val parsedEndDate = try {
-			Instant.parse(endDate)
-		} catch (e: IllegalArgumentException) {
-			return Result.failure(InvalidDateException("Format de la date de fin invalide"))
-		}
-
-		if (parsedStartDate >= parsedEndDate) {
+		if (startDate >= endDate) {
 			return Result.failure(InvalidDateException("La date de fin doit être après la date de début"))
 		}
 
@@ -84,9 +72,13 @@ class EventService(
 	private fun foundEventIfOrganizer(eventId: Int, user: User): Result<Event> {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(user)
-		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return Result.failure(
+		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull() ?: return Result.failure(
 			EventNotFoundException("Event $eventId introuvable")
 		)
+
+		if(user.scope === EUserScope.Root) {
+			return Result.success(event)
+		}
 
 		val participation = event.participants.find { it.user.id == user.id }
 			?: return Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
@@ -99,7 +91,18 @@ class EventService(
 	}
 
 	fun eventUserCondition(caller: User): Op<Boolean> {
-		return ((((Events.owner eq caller.id) and (Events.status eq EEventStatus.Pending.value)) or (Events.status neq EEventStatus.Pending.value)) and (Events.association eq caller.association.id))
+		return if(caller.scope !== EUserScope.Root) {
+			(
+				(((Events.owner eq caller.id) and (Events.status eq EEventStatus.Pending.value)) or
+					(Events.status neq EEventStatus.Pending.value)) and
+					(Events.association eq caller.association.id))
+		} else {
+			object: Op<Boolean>() {
+				override fun toQueryBuilder(queryBuilder: QueryBuilder) {
+					queryBuilder.append("true")
+				}
+			}
+		}
 	}
 
 	private fun eventsQuery(caller: User, searchParam: SearchParam, pagination: Boolean = true): SizedIterable<Event> {
@@ -126,7 +129,7 @@ class EventService(
 		when (exception) {
 			is EventNotFoundException -> call.respond(
 				HttpStatusCode.NotFound,
-				exception.message ?: "Event not found"
+				exception.message ?: "Évènement inconnu"
 			)
 
 			is EventActionDeniedException -> call.respond(
@@ -136,27 +139,27 @@ class EventService(
 
 			is InvalidDateException -> call.respond(
 				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid date"
+				exception.message ?: "Date invalide"
 			)
 
 			is InvalidEventNameException -> call.respond(
 				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event name"
+				exception.message ?: "Nom de l'évènement vide ou invalide"
 			)
 
 			is InvalidEventDescriptionException -> call.respond(
 				HttpStatusCode.BadRequest,
-				exception.message ?: "Invalid event description"
+				exception.message ?: "Description de l'événement invalide"
 			)
 
 			is AlreadyParticipatingToEventException -> call.respond(
 				HttpStatusCode.Conflict,
-				exception.message ?: "Already participating to event"
+				exception.message ?: "Vous participer déjà à l'événement"
 			)
 
 			is NotParticipatingToEventException -> call.respond(
 				HttpStatusCode.NotFound,
-				exception.message ?: "Not participating to event"
+				exception.message ?: "Vous ne participez pas à l'évènements"
 			)
 
 			else -> {
@@ -167,7 +170,7 @@ class EventService(
 	}
 
 	fun getAllEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
-		eventsQuery(caller, searchParam).with(Event::owner).toList()
+		eventsQuery(caller, searchParam).with(Event::owner, Event::association).toList()
 	}
 
 	fun countAllEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -183,7 +186,7 @@ class EventService(
 	fun getFutureEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and futureEventsCondition()
-		}).with(Event::owner).toList()
+		}).with(Event::owner, Event::association).toList()
 	}
 
 	fun countFutureEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -201,7 +204,7 @@ class EventService(
 	fun getArchivedEvents(caller: User, searchParam: SearchParam): List<Event> = transaction(db) {
 		Event.wrapRows(Events.selectAll().applyParam(searchParam).andWhere {
 			eventUserCondition(caller) and archivedEventsCondition()
-		}).with(Event::owner).toList()
+		}).with(Event::owner, Event::association).toList()
 	}
 
 	fun countArchivedEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -234,15 +237,16 @@ class EventService(
 	fun getEvent(caller: User, id: Int): Event? = transaction(db) {
 		Event.find {
 			Events.id eq id and eventUserCondition(caller)
-		}.with(Event::owner, Event::participants, EventParticipation::user).firstOrNull() ?: return@transaction null
+		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull() ?: return@transaction null
 	}
 
 	fun createEvent(
 		caller: User,
 		name: String,
 		description: String?,
-		startDate: String,
-		endDate: String?,
+		startDate: Instant,
+		endDate: Instant?,
+		association: Association
 	): Result<Event> {
 		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
@@ -250,11 +254,11 @@ class EventService(
 		return transaction(db) {
 			val createdEvent = Event.new {
 				owner = caller
-				association = caller.association
+				this.association = association
 				this.name = name
 				this.description = description
-				this.startDateTime = Instant.parse(startDate)
-				this.endDateTime = endDate?.let { Instant.parse(it) }
+				this.startDateTime = startDate
+				this.endDateTime = endDate
 				status = EEventStatus.Pending
 			}
 
@@ -275,10 +279,10 @@ class EventService(
 		eventId: Int,
 		name: String,
 		description: String?,
-		startDate: String,
-		endDate: String?,
+		startDate: Instant,
+		endDate: Instant?,
 	): Result<Event> {
-		checkEventInputDates(startDate, endDate).onFailure { return Result.failure(it) }
+		checkEventInputDates(startDate, endDate, false).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
 
 		return transaction(db) {
@@ -287,8 +291,8 @@ class EventService(
 					event.apply {
 						this.name = name
 						this.description = description
-						this.startDateTime = Instant.parse(startDate)
-						this.endDateTime = endDate?.let { Instant.parse(it) }
+						this.startDateTime = startDate
+						this.endDateTime = endDate
 					}
 
 					Result.success(event)

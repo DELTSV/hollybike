@@ -23,6 +23,9 @@ import { CreateInvitation } from "./invitations/CreateInvitation.tsx";
 import { CreateAssociation } from "./associations/CreateAssociation.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ListEvent } from "./events/ListEvent.tsx";
+import { CreateEvent } from "./events/CreateEvent.tsx";
+import { EventDetail } from "./events/EventDetail.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -67,12 +70,28 @@ export function App() {
 					element: <ListUser/>,
 				},
 				{
+					path: "associations/:id/events",
+					element: <ListEvent/>,
+				},
+				{
 					path: "invitations",
 					element: <ListInvitations/>,
 				},
 				{
 					path: "invitations/new",
 					element: <CreateInvitation/>,
+				},
+				{
+					path: "events",
+					element: <ListEvent/>,
+				},
+				{
+					path: "events/new",
+					element: <CreateEvent/>,
+				},
+				{
+					path: "events/:id",
+					element: <EventDetail/>,
 				},
 				{
 					path: "conf",

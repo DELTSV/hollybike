@@ -5,7 +5,6 @@ import {
 import { ArrowDropDown } from "@material-ui/icons";
 import { clsx } from "clsx";
 import { useRef } from "react";
-import { Input } from "../Input/Input.tsx";
 import {
 	decInputCount, inputCount,
 } from "../InputCount.ts";
@@ -40,13 +39,24 @@ export function Select(props: SelectProps) {
 
 	const container = useRef<HTMLDivElement>(null);
 
+	const input = useRef<HTMLInputElement>(null);
+
 	const handleOut = useCallback((e: MouseEvent) => {
 		if (
 			container.current &&
-			!container.current.contains(e.target as Node)
+			!container.current.contains(e.target as Node) &&
+			(
+				input.current &&
+				!input.current.contains(e.target as Node) ||
+				input.current === null
+			)
 		)
 			setVisible(false);
-	}, [container, setVisible]);
+	}, [
+		container,
+		input,
+		setVisible,
+	]);
 
 	useEffect(() => {
 		document.addEventListener("mousedown", handleOut);
@@ -87,8 +97,9 @@ export function Select(props: SelectProps) {
 					"border-slate-300 text-slate-300 dark:border-slate-600 dark:text-slate-600 cursor-default" :
 					"border-slate-950 dark:border-slate-700 cursor-pointer",
 			)}
-			onClick={() => {
-				setVisible(prev => !prev);
+			onClick={(e) => {
+				if (input.current?.contains(e.target as Node) !== true)
+					setVisible(prev => !prev);
 			}} ref={container}
 			style={`z-index: ${id}`}
 		>
@@ -96,10 +107,15 @@ export function Select(props: SelectProps) {
 			<ArrowDropDown className={clsx("transition", visible && "rotate-180")}/>
 			{ visible &&
 				<div
-					className={"absolute top-full -left-0.5 bg-slate-100 dark:bg-slate-800 " +
+					className={"absolute top-full -left-0.5 bg-slate-100 dark:bg-slate-800 flex flex-col " +
 					"w-[calc(100%+4px)] border-2 border-slate-950 dark:border-slate-700 rounded-b"}
 				>
-					{ props.searchable && <Input value={search} onInput={e => setSearch(e.currentTarget.value)}/> }
+					{ props.searchable &&
+						<input
+							className={"bg-transparent m-1 p-1 border-2 border-slate-700 rounded focus:outline-none"}
+							ref={input} value={search}
+							onInput={e => setSearch(e.currentTarget.value)}
+						/> }
 					{ filteredOptions.map(o =>
 						<p
 							className={"p-2 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900"}
