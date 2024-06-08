@@ -6,6 +6,7 @@ import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
+import 'package:hollybike/map/widgets/map_preview.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
@@ -158,12 +159,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             state is EventDetailsLoadFailure) {
                           return const Center(
                             child: Text(
-                                "Impossible de charger les détails de l'événement"),
+                              "Impossible de charger les détails de l'événement",
+                            ),
                           );
                         }
 
                         return SizedBox(
-                          height: 300,
+                          height: 500,
                           child: TabBarView(
                             children: [
                               EventDetailsContent(
@@ -175,9 +177,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               const Center(
                                 child: Text("My images"),
                               ),
-                              const Center(
-                                child: Text("Map"),
-                              ),
+                              const MapPreview(),
                             ],
                           ),
                         );

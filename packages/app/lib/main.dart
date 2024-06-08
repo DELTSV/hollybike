@@ -17,9 +17,6 @@ import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
-
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
 import 'event/bloc/event_participations_bloc/event_participations_event.dart';
@@ -29,8 +26,6 @@ import 'event/services/event/event_repository.dart';
 import 'event/services/event_participations/event_participation_api.dart';
 
 void main() {
-  initializeDateFormatting("fr_FR")
-      .then((value) => Intl.defaultLocale = "fr_FR");
   runApp(const MyApp());
 }
 
@@ -68,9 +63,11 @@ class MyApp extends StatelessWidget {
           RepositoryProvider(
             create: (context) => AuthSessionRepository(),
           ),
-          RepositoryProvider(create: (context) => ProfileRepository(
-            profileApi: ProfileApi(),
-          )),
+          RepositoryProvider(
+            create: (context) => ProfileRepository(
+              profileApi: ProfileApi(),
+            ),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -90,7 +87,8 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<ProfileBloc>(
               create: (context) => ProfileBloc(
-                authSessionRepository: RepositoryProvider.of<AuthSessionRepository>(
+                authSessionRepository:
+                    RepositoryProvider.of<AuthSessionRepository>(
                   context,
                 ),
                 profileRepository: RepositoryProvider.of<ProfileRepository>(
