@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
+import 'package:hollybike/profile/widgets/profile_description/placeholder_profile_description.dart';
+import 'package:hollybike/profile/widgets/profile_description/profile_description.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 
 import '../../shared/widgets/bar/top_bar.dart';
@@ -34,16 +36,18 @@ class ProfileScreen extends StatelessWidget {
             return const Column(
               children: [
                 PlaceholderProfileBanner(),
+                PlaceholderProfileDescription(),
               ],
             );
           }
 
-          return Column(
-            children: [
-              ProfileBanner(
-                profile: profile,
-              )
-            ],
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ProfileBanner(profile: profile),
+                ProfileDescription(profile: profile),
+              ],
+            ),
           );
         },
       ),
