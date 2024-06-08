@@ -133,7 +133,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         color: Theme.of(context).scaffoldBackgroundColor,
                         child: TabBar(
                           labelColor: Theme.of(context).colorScheme.secondary,
-                          indicatorColor: Theme.of(context).colorScheme.secondary,
+                          indicatorColor:
+                              Theme.of(context).colorScheme.secondary,
                           tabs: const [
                             Tab(icon: Icon(Icons.info)),
                             Tab(icon: Icon(Icons.photo_library)),
@@ -157,7 +158,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             state is EventDetailsLoadFailure) {
                           return const Center(
                             child: Text(
-                                "Impossible de charger les détails de l'événement"),
+                              "Impossible de charger les détails de l'événement",
+                            ),
                           );
                         }
 
