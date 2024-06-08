@@ -26,7 +26,7 @@ class _AppState extends State<App> {
         .then((value) => Intl.defaultLocale = "fr_FR");
 
     MapboxOptions.setAccessToken(
-      const String.fromEnvironment("PUBLIC_ACCESS_TOKEN"),
+      const String.fromEnvironment('PUBLIC_ACCESS_TOKEN'),
     );
   }
 
