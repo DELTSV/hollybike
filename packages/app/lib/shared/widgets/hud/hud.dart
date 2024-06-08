@@ -30,7 +30,7 @@ class Hud extends StatelessWidget {
         children: [
           Column(children: <Widget>[
             const SizedBox.square(
-              dimension: 95,
+              dimension: 105,
             ),
             Expanded(
               child: SafeArea(
@@ -40,26 +40,6 @@ class Hud extends StatelessWidget {
               ),
             )
           ]),
-          // Column(
-          //   children: [
-          //     const SizedBox.square(
-          //       dimension: 95,
-          //     ),
-          //     Container(
-          //       decoration: BoxDecoration(
-          //         gradient: LinearGradient(
-          //           begin: Alignment.topCenter,
-          //           end: Alignment.bottomCenter,
-          //           colors: [
-          //             Theme.of(context).colorScheme.surface,
-          //             Colors.transparent,
-          //           ],
-          //         ),
-          //       ),
-          //       constraints: const BoxConstraints.expand(height: 20),
-          //     ),
-          //   ],
-          // )
         ],
       ),
       bottomNavigationBar: displayNavBar ? const BottomBar() : null,
