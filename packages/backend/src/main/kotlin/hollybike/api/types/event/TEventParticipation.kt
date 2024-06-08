@@ -12,8 +12,8 @@ data class TEventParticipation(
 	val isImagesPublic: Boolean,
 	val joinedDateTime: Instant,
 ) {
-	constructor(entity: EventParticipation, signer: (String) -> String) : this(
-		user = TUserPartial(entity.user, signer),
+	constructor(entity: EventParticipation) : this(
+		user = TUserPartial(entity.user),
 		role = entity.role,
 		isImagesPublic = entity.isImagesPublic,
 		joinedDateTime = entity.joinedDateTime

@@ -20,7 +20,7 @@ data class TInvitation(
 	val association: TAssociation,
 	val link: String? = null
 ) {
-	constructor(invitation: Invitation, signer: (String) -> String, link: String? = null) : this(
+	constructor(invitation: Invitation, link: String? = null) : this(
 		invitation.id.value,
 		invitation.role,
 		invitation.status,
@@ -28,7 +28,7 @@ data class TInvitation(
 		invitation.creation,
 		invitation.uses,
 		invitation.maxUses,
-		TAssociation(invitation.association, signer),
+		TAssociation(invitation.association),
 		link
 	)
 }

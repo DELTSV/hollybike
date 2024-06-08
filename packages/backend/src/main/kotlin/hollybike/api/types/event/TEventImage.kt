@@ -12,10 +12,10 @@ data class TEventImage(
 	val size: Int,
 	val uploadDateTime: String,
 ) {
-	constructor(entity: EventImage, signer: (String) -> String) : this(
+	constructor(entity: EventImage) : this(
 		id = entity.id.value,
-		owner = TUserPartial(entity.owner, signer),
-		path = signer(entity.path),
+		owner = TUserPartial(entity.owner),
+		path = entity.path,
 		size = entity.size,
 		uploadDateTime = entity.uploadDateTime.toString()
 	)

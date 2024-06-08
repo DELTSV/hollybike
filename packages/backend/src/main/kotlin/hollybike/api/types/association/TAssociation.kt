@@ -10,10 +10,10 @@ data class TAssociation(
 	val status: EAssociationsStatus,
 	val picture: String? = null
 ) {
-	constructor(entity: Association, signer: (String) -> String) : this(
+	constructor(entity: Association) : this(
 		entity.id.value,
 		entity.name,
 		entity.status,
-		entity.picture?.let { signer(it) }
+		entity.picture
 	)
 }

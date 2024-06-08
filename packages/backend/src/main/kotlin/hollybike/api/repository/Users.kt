@@ -1,5 +1,6 @@
 package hollybike.api.repository
 
+import hollybike.api.signatureService
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
 import hollybike.api.utils.search.Mapper
@@ -28,7 +29,7 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 	var scope by Users.scope.transform({ it.value }, { EUserScope[it] })
 	var association by Association referencedOn Users.association
 	var lastLogin by Users.lastLogin
-	var profilePicture by Users.profilePicture
+	var profilePicture by Users.profilePicture.transform({ it }, { it?.let { signatureService.sign(it) } })
 
 	companion object : IntEntityClass<User>(Users) }
 

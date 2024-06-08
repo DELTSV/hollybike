@@ -27,8 +27,7 @@ import kotlin.math.ceil
 
 class EventImageController(
 	application: Application,
-	private val eventImageService: EventImageService,
-	private val storageService: StorageService
+	private val eventImageService: EventImageService
 ) {
 	private val mapper = eventImagesMapper + eventMapper
 
@@ -49,7 +48,7 @@ class EventImageController(
 		val imageCount = eventImageService.countImages(user, searchParam)
 
 		return TLists(
-			data = images.map { image -> TEventImage(image, storageService.signer.sign) },
+			data = images.map { image -> TEventImage(image) },
 			page = searchParam.page,
 			perPage = searchParam.perPage,
 			totalPage = ceil(imageCount.toDouble() / searchParam.perPage).toInt(),
@@ -92,7 +91,7 @@ class EventImageController(
 			}
 
 			eventImageService.uploadImages(call.user, data.event.id, images).onSuccess {
-				call.respond(HttpStatusCode.Created, it.map { image -> TEventImage(image, storageService.signer.sign) })
+				call.respond(HttpStatusCode.Created, it.map { image -> TEventImage(image) })
 			}.onFailure {
 				eventImageService.handleEventExceptions(it, call)
 			}

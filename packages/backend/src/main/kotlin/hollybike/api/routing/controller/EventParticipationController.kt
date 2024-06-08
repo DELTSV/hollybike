@@ -26,8 +26,7 @@ import kotlin.math.ceil
 
 class EventParticipationController(
 	application: Application,
-	private val eventParticipationService: EventParticipationService,
-	private val storageService: StorageService,
+	private val eventParticipationService: EventParticipationService
 ) {
 	init {
 		application.routing {
@@ -72,7 +71,7 @@ class EventParticipationController(
 					data = candidates.map {
 						val (user, participation) = it
 						val isOwner = user.id == participation?.event?.owner?.id
-						TUserPartial(user, isOwner, participation?.role, storageService.signer.sign)
+						TUserPartial(user, isOwner, participation?.role)
 					},
 					page = searchParam.page,
 					perPage = searchParam.perPage,
@@ -107,7 +106,7 @@ class EventParticipationController(
 
 			call.respond(
 				TLists(
-					data = participations.map { TEventParticipation(it, storageService.signer.sign) },
+					data = participations.map { TEventParticipation(it) },
 					page = searchParam.page,
 					perPage = searchParam.perPage,
 					totalPage = ceil(participationCount.toDouble() / searchParam.perPage).toInt(),
@@ -126,7 +125,7 @@ class EventParticipationController(
 				data.participations.eventId.id,
 				update.isImagesPublic
 			).onSuccess {
-				call.respond(TEventParticipation(it, storageService.signer.sign))
+				call.respond(TEventParticipation(it))
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
 			}
@@ -136,7 +135,7 @@ class EventParticipationController(
 	private fun Route.participateEvent() {
 		post<Events.Id.Participations> { data ->
 			eventParticipationService.participateEvent(call.user, data.eventId.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it, storageService.signer.sign))
+				call.respond(HttpStatusCode.Created, TEventParticipation(it))
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
 			}
@@ -166,7 +165,7 @@ class EventParticipationController(
 			eventParticipationService.addParticipantsToEvent(call.user, data.participations.eventId.id, users)
 				.onSuccess { participations ->
 					call.respond(
-						participations.map { TEventParticipation(it, storageService.signer.sign) }
+						participations.map { TEventParticipation(it) }
 					)
 				}.onFailure {
 					eventParticipationService.handleEventExceptions(it, call)
@@ -192,7 +191,7 @@ class EventParticipationController(
 				data.promote.userId
 			)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
+					call.respond(HttpStatusCode.OK, TEventParticipation(it))
 				}.onFailure {
 					eventParticipationService.handleEventExceptions(it, call)
 				}
@@ -207,7 +206,7 @@ class EventParticipationController(
 				data.demote.userId
 			)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it, storageService.signer.sign))
+					call.respond(HttpStatusCode.OK, TEventParticipation(it))
 				}.onFailure {
 					eventParticipationService.handleEventExceptions(it, call)
 				}

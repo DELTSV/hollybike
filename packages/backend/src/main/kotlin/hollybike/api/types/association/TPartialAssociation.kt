@@ -9,9 +9,9 @@ data class TPartialAssociation(
 	val name: String,
 	val picture: String? = null
 ) {
-	constructor(entity: Association, signer: (String) -> String) : this(
+	constructor(entity: Association) : this(
 		entity.id.value,
 		entity.name,
-		entity.picture?.let { signer(it) }
+		entity.picture
 	)
 }

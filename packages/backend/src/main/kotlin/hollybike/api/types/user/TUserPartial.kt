@@ -18,20 +18,20 @@ data class TUserPartial(
 	@SerialName("is_owner")
 	val isOwner: Boolean? = null
 ) {
-	constructor(entity: User, signer: (String) -> String) : this(
+	constructor(entity: User) : this(
 		id = entity.id.value,
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
-		profilePicture = entity.profilePicture?.let { signer(it) }
+		profilePicture = entity.profilePicture
 	)
 
-	constructor(entity: User, isOwner: Boolean, eventRole: EEventRole?, signer: (String) -> String) : this(
+	constructor(entity: User, isOwner: Boolean, eventRole: EEventRole?) : this(
 		id = entity.id.value,
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
-		profilePicture = entity.profilePicture?.let { signer(it) },
+		profilePicture = entity.profilePicture,
 		eventRole = eventRole,
 		isOwner = isOwner
 	)
