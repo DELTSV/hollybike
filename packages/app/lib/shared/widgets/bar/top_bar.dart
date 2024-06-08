@@ -34,6 +34,7 @@ class TopBar extends StatelessWidget {
                   Expanded(
                     child: Hero(
                       tag: "top_bar_title",
+                      transitionOnUserGestures: true,
                       child: BarContainer(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
