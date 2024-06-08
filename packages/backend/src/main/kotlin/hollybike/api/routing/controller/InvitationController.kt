@@ -61,6 +61,7 @@ class InvitationController(
 				call.respond(HttpStatusCode.Forbidden)
 				return@get
 			}
+			println(count)
 			invitationService.getAll(call.user, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {

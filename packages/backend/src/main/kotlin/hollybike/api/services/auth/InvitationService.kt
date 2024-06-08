@@ -131,7 +131,7 @@ class InvitationService(
 				.innerJoin(Associations, { this.association }, { Associations.id })
 				.innerJoin(Users, { creator }, { Users.id })
 				.selectAll()
-				.applyParam(searchParam)
+				.applyParam(searchParam, pagination = false)
 				.count()
 		}
 	}

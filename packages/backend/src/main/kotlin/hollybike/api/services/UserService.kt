@@ -45,7 +45,9 @@ class UserService(
 
 	private fun authorizeUpdate(caller: User, target: User, update: TUserUpdate) = when (caller.scope){
 		EUserScope.Root -> true
-		EUserScope.Admin -> caller.association.id == target.association.id && update.association == caller.association.id.value
+		EUserScope.Admin -> caller.association.id == target.association.id &&
+			update.association == caller.association.id.value &&
+			caller.scope atLeast update.scope
 		else -> false
 	}
 

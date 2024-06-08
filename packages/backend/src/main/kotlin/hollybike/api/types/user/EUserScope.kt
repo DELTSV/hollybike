@@ -12,7 +12,7 @@ enum class EUserScope(val value: Int) {
 		operator fun get(value: Int) = entries.first { it.value == value }
 	}
 
-	infix fun atLeast(other: EUserScope): Boolean = this.value >= other.value
+	infix fun atLeast(other: EUserScope?): Boolean = this.value >= (other?.value ?: 0)
 
 	infix fun not(other: EUserScope): Boolean = this.value < other.value
 }
