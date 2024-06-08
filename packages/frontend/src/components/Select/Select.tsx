@@ -50,8 +50,9 @@ export function Select(props: SelectProps) {
 				!input.current.contains(e.target as Node) ||
 				input.current === null
 			)
-		)
+		) {
 			setVisible(false);
+		}
 	}, [
 		container,
 		input,
@@ -78,10 +79,11 @@ export function Select(props: SelectProps) {
 	]);
 
 	const filteredOptions = useMemo(() => {
-		if (props.searchable)
+		if (props.searchable) {
 			return props.options.filter(o => o.name.toLowerCase().includes(search.toLowerCase()));
-		 else
+		} else {
 			return props.options;
+		}
 	}, [
 		props.options,
 		search,
@@ -98,8 +100,9 @@ export function Select(props: SelectProps) {
 					"border-slate-950 dark:border-slate-700 cursor-pointer",
 			)}
 			onClick={(e) => {
-				if (input.current?.contains(e.target as Node) !== true)
+				if (input.current?.contains(e.target as Node) !== true && props.disabled !== true) {
 					setVisible(prev => !prev);
+				}
 			}} ref={container}
 			style={`z-index: ${id}`}
 		>

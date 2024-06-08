@@ -21,12 +21,14 @@ export function InputCalendar(props: CalendarProps) {
 	useEffect(() => {
 		if (props.time) {
 			const str = `${dateToFrenchString(props.value)} ${timeToFrenchString(props.value, props.seconds === true)}`;
-			if (str === " ")
+			if (str === " ") {
 				setTextValue("");
-			 else
+			} else {
 				setTextValue(str);
-		} else
+			}
+		} else {
 			setTextValue(dateToFrenchString(props.value));
+		}
 	}, [
 		props.value,
 		props.time,
@@ -36,8 +38,9 @@ export function InputCalendar(props: CalendarProps) {
 
 	useEffect(() => {
 		const date = frenchStringToDate(textValue, props.time === true, props.seconds === true);
-		if (date !== null && props.setValue)
+		if (date !== null && props.setValue) {
 			props.setValue(date);
+		}
 	}, [
 		textValue,
 		props.time,
@@ -56,8 +59,9 @@ export function InputCalendar(props: CalendarProps) {
 		if (
 			container.current &&
 			!container.current.contains(e.target as Node)
-		)
+		) {
 			setView(false);
+		}
 	}, [container, setView]);
 
 	useEffect(() => {
@@ -87,53 +91,60 @@ export function dateTimeToFrenchString(date: Date | undefined, seconds: boolean)
 }
 
 export function dateToFrenchString(date: Date | undefined): string {
-	if (date === undefined)
+	if (date === undefined) {
 		return "";
-
+	}
 	return `${formatDateTimeComponent(date.getDate())}/${formatDateTimeComponent(date.getMonth() + 1)}` +
 		`/${date.getFullYear()}`;
 }
 
 export function timeToFrenchString(date: Date | undefined, seconds: boolean): string {
-	if (date === undefined)
+	if (date === undefined) {
 		return "";
-
-	if (seconds)
+	}
+	if (seconds) {
 		return `${formatDateTimeComponent(date.getHours())}:${formatDateTimeComponent(date.getMinutes())}:` +
 			`${formatDateTimeComponent(date.getSeconds())}`;
-	else
+	} else {
 		return `${formatDateTimeComponent(date.getHours())}:${formatDateTimeComponent(date.getMinutes())}`;
+	}
 }
 
 function frenchStringToDate(s: string, time: boolean, seconds: boolean): Date | null {
 	const dateAndTime = s.split(" ");
-	if (time && dateAndTime.length !== 2)
+	if (time && dateAndTime.length !== 2) {
 		return null;
-	else if (!time && dateAndTime.length !== 1)
+	} else if (!time && dateAndTime.length !== 1) {
 		return null;
+	}
 	const els = dateAndTime[0].split("/");
-	if (els.length !== 3)
+	if (els.length !== 3) {
 		return null;
-	if (els.find(el => el.length < 2 || isNaN(parseInt(el))) !== undefined)
+	}
+	if (els.find(el => el.length < 2 || isNaN(parseInt(el))) !== undefined) {
 		return null;
+	}
 	const d = new Date();
 	d.setDate(parseInt(els[0]));
 	d.setMonth(parseInt(els[1]) - 1);
 	d.setFullYear(parseInt(els[2]));
 	if (time) {
 		const tEls = dateAndTime[1].split(":");
-		if (seconds && tEls.length !== 3)
+		if (seconds && tEls.length !== 3) {
 			return null;
-		else if (!seconds && tEls.length !== 2)
+		} else if (!seconds && tEls.length !== 2) {
 			return null;
-		if (tEls.find(el => isNaN(parseInt(el))) !== undefined)
+		}
+		if (tEls.find(el => isNaN(parseInt(el))) !== undefined) {
 			return null;
+		}
 		d.setHours(parseInt(tEls[0]));
 		d.setMinutes(parseInt(tEls[1]));
-		if (seconds)
+		if (seconds) {
 			d.setSeconds(parseInt(tEls[2]));
-		else
+		} else {
 			d.setSeconds(0);
+		}
 	}
 	return d;
 }

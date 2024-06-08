@@ -42,7 +42,7 @@ export function List<T>(props: ListProps<T>) {
 	}, [sortFilterColumns, setSort]);
 
 	const setOrder = useCallback((col: string) => {
-		if (sort[col] !== undefined)
+		if (sort[col] !== undefined) {
 			return (order: "asc" | "desc" | "none") => {
 				const tmp = { ...sort[col] };
 				tmp.order = order;
@@ -50,32 +50,36 @@ export function List<T>(props: ListProps<T>) {
 				res[col] = tmp;
 				setSort(res);
 			};
+		}
 
 		return undefined;
 	}, [sort, setSort]);
 
 	const onPageChange = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
 		const p = parseInt(e.currentTarget.value);
-		if (!isNaN(p) && p > 0 && p <= (data.data?.total_page ?? 1))
+		if (!isNaN(p) && p > 0 && p <= (data.data?.total_page ?? 1)) {
 			setPage(parseInt(e.currentTarget.value) - 1);
+		}
 	}, []);
 
 	const orderQuery = useMemo(() => {
 		const sortStrings = Object.values(sort)
 			.filter(s => s.order !== "none")
 			.map(s => `sort=${s.column}.${s.order}`);
-		if (sortStrings.length > 0)
+		if (sortStrings.length > 0) {
 			return `&${ sortStrings.join("&")}`;
-		 else
+		} else {
 			return "";
+		}
 	}, [sort]);
 
 	const filterQuery = useMemo(() => {
-		if (props.filter !== undefined && props.filter.length !== 0)
-			return `&${ props.filter}`;
-		 else
+		if (props.filter !== undefined && props.filter.length !== 0) {
+			return `&${props.filter}`;
+		} else {
 			return "";
-	}, []);
+		}
+	}, [props.filter]);
 
 	const data = useApi<TList<T>>(
 		`${props.baseUrl}?page=${page}&per_page=${props.perPage ?? 10}&query=${search}${orderQuery}${filterQuery}`,
@@ -100,7 +104,7 @@ export function List<T>(props: ListProps<T>) {
 					<tr>
 						{ props.columns.map((c) => {
 							const sortColumn = sort[c.id];
-							if (c.visible !== false)
+							if (c.visible !== false) {
 								return (
 									<Head
 										sortable={sortColumn !== undefined}
@@ -111,8 +115,9 @@ export function List<T>(props: ListProps<T>) {
 										{ c.name }
 									</Head>
 								);
-							else
+							} else {
 								return null;
+							}
 						}) }
 					</tr>
 				</thead>

@@ -73,7 +73,7 @@ export function ConfSMTP(props: ConfProps) {
 						},
 					}))} value={conf?.smtp?.password ?? ""}
 					onFocusIn={(e) => {
-						if (e.currentTarget.value === "******")
+						if (e.currentTarget.value === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -83,9 +83,10 @@ export function ConfSMTP(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					onFocusOut={(e) => {
-						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******")
+						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -95,6 +96,7 @@ export function ConfSMTP(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					rightIcon={visiblePassword ?
 						<VisibilityOff className={"cursor-pointer"} onClick={() => setVisiblePassword(false)}/> :

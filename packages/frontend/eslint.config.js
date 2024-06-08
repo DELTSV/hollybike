@@ -10,7 +10,7 @@ export default [
       "no-unused-vars": ["off"],
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "arrow-body-style": ["error", "as-needed"],
-      "curly": ["error", "multi"],
+      "curly": ["error", "all"],
       "no-undef-init": ["error"],
       "no-var": ["error"],
       "prefer-arrow-callback": ["error"],

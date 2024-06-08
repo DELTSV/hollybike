@@ -30,8 +30,9 @@ export function Conf() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (onPremise.data?.is_on_premise === false)
+		if (onPremise.data?.is_on_premise === false) {
 			navigate("/");
+		}
 	}, [onPremise, navigate]);
 
 	useEffect(() => {
@@ -62,8 +63,9 @@ export function Conf() {
 						if (res.status === 200) {
 							setReload(prev => !prev);
 							api("/restart", { method: "DELETE" });
-						} else
+						} else {
 							toast(`Erreur: ${res.message}`, { type: "error" });
+						}
 					});
 				}}
 			>

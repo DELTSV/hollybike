@@ -77,7 +77,7 @@ export function ConfFTP(props: ConfProps) {
 						}
 					))} value={conf?.storage?.ftpPassword ?? ""}
 					onFocusIn={(e) => {
-						if (e.currentTarget.value === "******")
+						if (e.currentTarget.value === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -87,9 +87,10 @@ export function ConfFTP(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					onFocusOut={(e) => {
-						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******")
+						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -99,6 +100,7 @@ export function ConfFTP(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					rightIcon={visiblePassword ?
 						<VisibilityOff className={"cursor-pointer"} onClick={() => setVisiblePassword(false)}/> :

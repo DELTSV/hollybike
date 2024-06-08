@@ -33,7 +33,9 @@ export function DropDown({
 				dropdown.current &&
 				!dropdown.current.contains(e.target as Node) &&
 				dropdown.current
-			) close();
+			) {
+				close();
+			}
 		};
 
 		document.addEventListener("mousedown", handleOut);

@@ -75,10 +75,11 @@ export function Association() {
 							if (res.status === 200 && res.data) {
 								setAssociationData(res.data);
 								toast("Association mise à jour", { type: "success" });
-							} else if (res.status === 409)
+							} else if (res.status === 409) {
 								toast("Ce nom d'association est déjà utilisé", { type: "warning" });
-							else
+							} else {
 								toast(`Erreur: ${res.message}`, { type: "error" });
+							}
 						});
 					}}
 				>

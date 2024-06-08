@@ -32,10 +32,11 @@ export function CreateAssociation() {
 							if (res.status === 201) {
 								toast("Association créer", { type: "success" });
 								navigate(`/associations/${res.data?.id}`);
-							} else if (res.status === 409)
+							} else if (res.status === 409) {
 								toast(res.message, { type: "warning" });
-							else
+							} else {
 								toast(`Erreur: ${ res.message}`, { type: "error" });
+							}
 						});
 					}}
 				>

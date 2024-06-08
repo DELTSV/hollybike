@@ -7,7 +7,8 @@ import { externalDisconnect } from "../auth/context.tsx";
 
 interface UseApiOptions {
 	method?: string,
-	body?: any
+	body?: any,
+	if?: boolean
 }
 
 interface APIResponse<T> {
@@ -19,13 +20,15 @@ interface APIResponse<T> {
 interface ApiOptions {
 	method?: string,
 	body?: any,
-	headers?: Record<string, string>
+	headers?: Record<string, string>,
+	if?: boolean
 }
 
 interface ApiRawOptions {
 	method?: string,
 	body?: BodyInit,
-	headers?: Record<string, string>
+	headers?: Record<string, string>,
+	if?: boolean
 }
 
 export function useApi<T>(
@@ -61,6 +64,7 @@ export async function api<T>(url: string, options?: ApiOptions): Promise<APIResp
 		method: options?.method,
 		body: JSON.stringify(options?.body),
 		headers: options?.headers,
+		if: options?.if,
 	});
 }
 
@@ -77,41 +81,42 @@ export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptio
 		credentials: "same-origin",
 	};
 	let response: Response;
-	try {
-		response = await fetch(backendBaseUrl + url, init);
-	} catch (e) {
-		return {
-			status: -1,
-			message: "Erreur inconnue",
-		};
+	if (options?.if !== false) {
+		try {
+			response = await fetch(backendBaseUrl + url, init);
+		} catch (e) {
+			return {
+				status: -1,
+				message: "Erreur inconnue",
+			};
+		}
+	} else {
+		return { status: 0 };
 	}
 	const responseText = await response.text();
 	if (response.status.toString()[0] !== "2") {
-		if (response.status === 401)
-			externalDisconnect();
+		if (response.status === 401) { externalDisconnect(); }
 
-		if (responseText.length != 0)
+		if (responseText.length != 0) {
 			return {
 				status: response.status,
 				message: responseText,
 			};
-		else
+		} else {
 			return {
 				status: response.status,
 				message: "Erreur inconnue",
 			};
+		}
 	}
-	if (response.status == 204)
-		return { status: response.status };
+	if (response.status == 204) { return { status: response.status }; }
 	try {
 		return {
 			status: response.status,
 			data: JSON.parse(responseText, (_, value) => {
-				if (typeof value === "string")
-					if (isISODateTime(value))
-						return new Date(value);
-					 else if (isISODate(value))
-						return new Date(value);
+				if (typeof value === "string") {
+					if (isISODateTime(value)) { return new Date(value); } else if (isISODate(value)) { return new Date(value); }
+				}
 
 
 				return value;

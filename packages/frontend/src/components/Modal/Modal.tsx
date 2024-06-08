@@ -12,7 +12,7 @@ interface ModalProps {
 }
 
 export function Modal(props: ModalProps) {
-	if (props.visible)
+	if (props.visible) {
 		return (
 			<div
 				onClick={() => props.setVisible(false)}
@@ -36,6 +36,7 @@ export function Modal(props: ModalProps) {
 				</Card>
 			</div>
 		);
-	else
+	} else {
 		return null;
+	}
 }

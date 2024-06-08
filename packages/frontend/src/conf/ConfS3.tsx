@@ -89,7 +89,7 @@ export function ConfS3(props: ConfProps) {
 						}
 					))} value={conf?.storage?.s3Password ?? ""}
 					onFocusIn={(e) => {
-						if (e.currentTarget.value === "******")
+						if (e.currentTarget.value === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -99,9 +99,10 @@ export function ConfS3(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					onFocusOut={(e) => {
-						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******")
+						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -111,6 +112,7 @@ export function ConfS3(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					rightIcon={visiblePassword ?
 						<VisibilityOff className={"cursor-pointer"} onClick={() => setVisiblePassword(false)}/> :

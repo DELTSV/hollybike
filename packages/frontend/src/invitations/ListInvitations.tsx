@@ -38,13 +38,13 @@ export function ListInvitations() {
 	const { id } = useParams();
 
 	useEffect(() => {
-		if (id)
+		if (id) {
 			api<TAssociation>(`/associations/${id}`).then((res) => {
-				if (res.status === 200 && res.data !== null && res.data !== undefined)
-					setAssociation(res.data);
+				if (res.status === 200 && res.data !== null && res.data !== undefined) { setAssociation(res.data); }
 			});
-		else
+		} else {
 			setAssociation(undefined);
+		}
 	}, [id, setAssociation]);
 
 	const {
@@ -74,11 +74,15 @@ export function ListInvitations() {
 	const [mail, setMail] = useState("");
 	const [invitation, setInvitation] = useState(-1);
 
+	const filter = useMemo(() => {
+		if (id !== undefined) { return `association=eq:${id}&status=neq:-1`; } else { return "status=neq:-1"; }
+	}, [id]);
+
 	return (
-		<div className={"flex flex-col gap-2"}>
+		<div className={"flex flex-col gap-2 w-full"}>
 			<Button className={"mx-2 self-start"} onClick={() => navigate("/invitations/new")}>Créer une invitation</Button>
 			<List
-				reload={reload} filter={association !== undefined ? `association=eq:${association.id}` : ""}
+				reload={reload} filter={filter}
 				columns={[
 					{
 						name: "Rôle",
@@ -104,6 +108,7 @@ export function ListInvitations() {
 					{
 						name: "Lien",
 						id: "link",
+						width: "90px",
 					},
 					{
 						name: "Désactiver",
@@ -175,10 +180,11 @@ export function ListInvitations() {
 									if (res.status === 200) {
 										toast("Invitation désactivée", { type: "success" });
 										doReload();
-									} else if (res.status === 404)
+									} else if (res.status === 404) {
 										toast(res.message, { type: "warning" });
-									else
+									} else {
 										toast(res.message, { type: "error" });
+									}
 								});
 							}}
 						/> }
@@ -205,8 +211,9 @@ export function ListInvitations() {
 									toast("Mail envoyé avec success", { type: "success" });
 									setMail("");
 									setModalMail(false);
-								} else
+								} else {
 									toast(`Erreur: ${res.message}`, { type: "error" });
+								}
 							});
 						}}
 					>

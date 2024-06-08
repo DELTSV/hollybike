@@ -31,8 +31,9 @@ export function ThemeContextProvider(props: ThemeProps) {
 
 	useEffect(() => {
 		const localTheme = localStorage.getItem("theme");
-		if (localTheme !== null)
+		if (localTheme !== null) {
 			setTheme(localTheme as Theme);
+		}
 	}, []);
 
 	const set = useCallback((theme: Theme) => {

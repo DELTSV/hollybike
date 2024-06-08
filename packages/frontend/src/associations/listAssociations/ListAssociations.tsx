@@ -18,8 +18,9 @@ export function ListAssociations() {
 	}, [setAssociation]);
 
 	useEffect(() => {
-		if (user?.scope !== "Root")
+		if (user?.scope !== "Root") {
 			navigate("/");
+		}
 	}, [user, navigate]);
 
 	return (

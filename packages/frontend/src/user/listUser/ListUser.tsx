@@ -11,6 +11,7 @@ import {
 	useEffect, useMemo,
 } from "preact/hooks";
 import { OpenInNew } from "@material-ui/icons";
+import { equals } from "../../utils/equals.ts";
 
 export function ListUser() {
 	const {
@@ -20,38 +21,41 @@ export function ListUser() {
 	const { id } = useParams();
 
 	useEffect(() => {
-		if (id && !association)
+		if (id && !association) {
 			api<TAssociation>(`/associations/${id}`).then((res) => {
-				if (res.status === 200 && res.data !== null && res.data !== undefined)
-					setAssociation(res.data);
+				if (res.status === 200 && res.data !== null && res.data !== undefined) {
+					if (!equals(res.data, association)) {
+						setAssociation(res.data);
+					}
+				}
 			});
-		else
-			setAssociation(undefined);
-	}, [id, setAssociation]);
+		}
+	}, [
+		id,
+		setAssociation,
+		association,
+	]);
 
 	const filter = useMemo(() => {
-		if (association === undefined)
+		if (association === undefined) {
 			return "";
-		 else
-			return `associations=eq:${association.id}`;
+		} else {
+			return `id_association=eq:${association.id}`;
+		}
 	}, [association]);
 
 	return (
 		<List
 			line={(u: TUser) => [
-				<Cell><Link to={`/users/${u.id}`}><OpenInNew/></Link></Cell>,
 				<Cell>{ u.email }</Cell>,
 				<Cell>{ u.username }</Cell>,
 				<Cell>{ u.scope }</Cell>,
 				<Cell>{ u.status }</Cell>,
 				<Cell>{ new Date(u.last_login).toLocaleString() }</Cell>,
 				<Cell><Link to={`/associations/${ u.association.id}`}>{ u.association.name }</Link></Cell>,
+				<Cell><Link to={`/users/${u.id}`}><OpenInNew/></Link></Cell>,
 			]}
 			columns={[
-				{
-					name: "",
-					id: "",
-				},
 				{
 					name: "Mail",
 					id: "email",
@@ -76,6 +80,10 @@ export function ListUser() {
 				{
 					name: "Association",
 					id: "associations",
+				},
+				{
+					name: "",
+					id: "",
 				},
 			]}
 			baseUrl={"/users"} filter={filter}

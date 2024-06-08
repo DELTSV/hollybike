@@ -8,8 +8,9 @@ export function useSystemDarkMode() {
 		const onChange = (e: MediaQueryListEvent) => {
 			setDarkMode(e.matches);
 		};
-		if (window.matchMedia)
+		if (window.matchMedia) {
 			window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", onChange);
+		}
 
 		return () => {
 			window.matchMedia("(prefers-color-scheme: dark)").removeEventListener("change", onChange);

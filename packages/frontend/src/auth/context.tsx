@@ -50,8 +50,9 @@ export const AuthContextProvider = ({ children }: Props) => {
 			user.fetchUser().then(() => {
 				setLoading(false);
 			});
-		} else
+		} else {
 			setLoading(false);
+		}
 	}, []);
 
 	const login = (data: TLogin) => {
@@ -63,10 +64,11 @@ export const AuthContextProvider = ({ children }: Props) => {
 				localStorage.setItem("token", res.data!.token);
 				setToken(res.data!.token);
 				user.fetchUser();
-			} else if (res.status === 404)
+			} else if (res.status === 404) {
 				toast(res.message, { type: "warning" });
-			else if (res.status === 401)
+			} else if (res.status === 401) {
 				toast(res.message, { type: "warning" });
+			}
 		});
 	};
 

@@ -116,16 +116,19 @@ export function App() {
 	const confMode = useApi<TConfDone>("/conf-done");
 
 	useEffect(() => {
-		if (!auth.loading)
+		if (!auth.loading) {
 			setLoaded(true);
+		}
 	}, [auth.loading]);
 
 	useEffect(() => {
-		if (loaded)
-			if (confMode.data?.conf_done === false)
+		if (loaded) {
+			if (confMode.data?.conf_done === false) {
 				router.navigate("/conf-mode");
-			else if (!auth.isLoggedIn)
+			} else if (!auth.isLoggedIn) {
 				router.navigate("/login");
+			}
+		}
 	}, [confMode, auth.isLoggedIn]);
 
 	const themeDark = useMemo(() => theme.theme === "dark" || theme.theme === "os" && systemDark, [theme.theme]);

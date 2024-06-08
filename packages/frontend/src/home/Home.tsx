@@ -21,14 +21,16 @@ export function Home() {
 	}, [setLocalOnboarding, onboarding]);
 
 	useEffect(() => {
-		if (!equals(localOnboarding, onboarding.data) && localOnboarding !== undefined)
+		if (!equals(localOnboarding, onboarding.data) && localOnboarding !== undefined) {
 			api<TOnboarding>("/associations/me/onboarding", {
 				method: "PATCH",
 				body: localOnboarding,
 			}).then((res) => {
-				if (res.status === 400)
+				if (res.status === 400) {
 					setLocalOnboarding(onboarding.data);
+				}
 			});
+		}
 	}, [
 		localOnboarding,
 		onboarding,
@@ -45,13 +47,14 @@ export function Home() {
 							<CheckBox
 								checked={localOnboarding?.update_default_user}
 								toggle={() => setLocalOnboarding((prev) => {
-									if (prev === undefined)
+									if (prev === undefined) {
 										return prev;
-									else
+									} else {
 										return {
 											...prev,
 											update_default_user: !prev.update_default_user,
 										};
+									}
 								})}
 							/>
 							<Link to={`/users/${ user.user?.id}`}>Mettre à jour l'utilisateur par défaut</Link>
@@ -60,13 +63,14 @@ export function Home() {
 							<CheckBox
 								checked={localOnboarding?.update_association}
 								toggle={() => setLocalOnboarding((prev) => {
-									if (prev === undefined)
+									if (prev === undefined) {
 										return prev;
-									else
+									} else {
 										return {
 											...prev,
 											update_association: !prev.update_association,
 										};
+									}
 								})}
 							/>
 							<Link to={`/associations/${ user.user?.association?.id}`}><span>Personnaliser l'association</span></Link>
@@ -75,13 +79,14 @@ export function Home() {
 							<CheckBox
 								checked={localOnboarding?.create_invitation}
 								toggle={() => setLocalOnboarding((prev) => {
-									if (prev === undefined)
+									if (prev === undefined) {
 										return undefined;
-									else
+									} else {
 										return {
 											...prev,
 											create_invitation: !prev.create_invitation,
 										};
+									}
 								})}
 							/>
 							<Link to={`associations/${ user.user?.association.id }/invitations/`}>

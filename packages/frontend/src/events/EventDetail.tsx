@@ -21,8 +21,7 @@ export function EventDetail() {
 	const [eventData, setEventData] = useState<TEvent>(dummyEvent);
 
 	useEffect(() => {
-		if (event.status === 200 && event.data !== undefined)
-			setEventData(event.data);
+		if (event.status === 200 && event.data !== undefined) { setEventData(event.data); }
 	}, [event, setEventData]);
 	return (
 		<div className={"flex-col flex gap-2 mx-2"}>
@@ -46,33 +45,38 @@ export function EventDetail() {
 				<p>Date de début</p>
 				<InputCalendar
 					value={eventData.start_date_time} setValue={(d) => {
-						if (d !== undefined)
-							if (typeof d === "function")
+						if (d !== undefined) {
+							if (typeof d === "function") {
 								setEventData(prev => ({
 									...prev,
 									start_date_time: d(prev.start_date_time)!,
 								}));
-							 else
+							} else {
 								setEventData(prev => ({
 									...prev,
 									start_date_time: d,
 								}));
+							}
+						}
 					}}
+					time
 				/>
 				<p>Date de fin</p>
 				<InputCalendar
 					value={eventData.end_date_time} setValue={(d) => {
-						if (typeof d === "function")
+						if (typeof d === "function") {
 							setEventData(prev => ({
 								...prev,
 								end_date_time: d(prev.end_date_time),
 							}));
-						else
+						} else {
 							setEventData(prev => ({
 								...prev,
 								end_date_time: d,
 							}));
+						}
 					}}
+					time
 				/>
 				<Button
 					onClick={() => {
@@ -85,10 +89,12 @@ export function EventDetail() {
 								end_date: eventData.end_date_time,
 							},
 						}).then((res) => {
-							if (res.status === 200 && res.data !== undefined)
+							if (res.status === 200 && res.data !== undefined) {
 								setEventData(res.data);
-							else if (res.status === 404 || res.status === 400)
+								toast("Évènement mis à jour", { type: "success" });
+							} else if (res.status === 404 || res.status === 400) {
 								toast(res.message, { type: "warning" });
+							}
 						});
 					}}
 				>

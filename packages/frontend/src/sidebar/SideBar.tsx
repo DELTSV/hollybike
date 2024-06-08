@@ -12,10 +12,11 @@ export function SideBar() {
 	const onPremise = useApi<TOnPremise>("/on-premise");
 
 	const content = useMemo(() => {
-		if (user?.scope === "Root")
+		if (user?.scope === "Root") {
 			return rootMenu(association, onPremise.data?.is_on_premise ?? false);
-		 else
-			 return adminMenu(user?.association, false, onPremise.data?.is_on_premise ?? false);
+		} else {
+			return adminMenu(user?.association, false, onPremise.data?.is_on_premise ?? false);
+		}
 	}, [user, association]);
 
 	return (
@@ -39,12 +40,13 @@ function adminMenu(association: TAssociation | undefined, root: boolean, onPremi
 		<SideBarMenu to={`/associations/${association?.id}/invitations`}>
 			{ root ? `Invitations de ${association?.name}` : "Mes Invitations" }
 		</SideBarMenu>,
-		<SideBarMenu to={`/assocations/${association?.id}/events`}>
+		<SideBarMenu to={`/associations/${association?.id}/events`}>
 			{ root ? `Événements de ${association?.name}` : "Mes événements" }
 		</SideBarMenu>,
 	];
-	if (onPremise)
+	if (onPremise) {
 		menus.push(<SideBarMenu to={"/conf"}>Configuration</SideBarMenu>);
+	}
 	return menus;
 }
 
@@ -63,7 +65,8 @@ function rootMenu(association: TAssociation | undefined, onPremise: boolean) {
 			Événements
 		</SideBarMenu>,
 	];
-	if (association !== undefined)
+	if (association !== undefined) {
 		menu.push(...adminMenu(association, true, onPremise));
+	}
 	return menu;
 }

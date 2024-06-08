@@ -29,11 +29,16 @@ export function CreateEvent() {
 
 	const [total, setTotal] = useState(20);
 
-	const associations = useApi<TList<TAssociation>>(`/associations?per_page=${total}`);
+	const associations = useApi<TList<TAssociation>>(
+		`/associations?per_page=${total}`,
+		[],
+		{ if: user?.scope === EUserScope.Root },
+	);
 
 	useEffect(() => {
-		if (associations.data?.total_data !== undefined)
+		if (associations.data?.total_data !== undefined) {
 			setTotal(associations.data?.total_data);
+		}
 	}, [associations.data?.total_data]);
 
 	useEffect(() => {
@@ -53,7 +58,12 @@ export function CreateEvent() {
 					<p>Nom de l'événement</p>
 					<Input value={name} onInput={e => setName(e.currentTarget.value)} placeholder={"Nom"}/>
 					<p>Description</p>
-					<TextArea value={description} onInput={e => setDescription(e.currentTarget.value)}></TextArea>
+					<TextArea
+						placeHolder={"Description"}
+						value={description}
+						onInput={e => setDescription(e.currentTarget.value)}
+					>
+					</TextArea>
 					<p>Date de début</p>
 					<InputCalendar value={start} setValue={setStart} time/>
 					<p>Date de fin</p>
@@ -77,7 +87,7 @@ export function CreateEvent() {
 								method: "POST",
 								body: {
 									name: name,
-									description: description,
+									description: description.length !== 0 ? description : undefined,
 									start_date: start?.toISOString(),
 									end_date: end?.toISOString(),
 									association: user?.scope === EUserScope.Root ? association : undefined,
@@ -86,10 +96,11 @@ export function CreateEvent() {
 								if (res.status === 201 && res.data !== undefined) {
 									toast("Événements créer", { type: "success" });
 									navigate(`/events/${res.data.id}`);
-								} else if (res.status === 400)
+								} else if (res.status === 400) {
 									toast(res.message, { type: "warning" });
-								 else
+								} else {
 									toast(`Erreur: ${ res.message}`, { type: "error" });
+								}
 							});
 						}}
 					>

@@ -39,8 +39,9 @@ export function UserProvider(props: UserProviderProps) {
 			method: "PATCH",
 			body: { username: username },
 		}).then((res) => {
-			if (res.status === 200)
+			if (res.status === 200) {
 				setUser(res.data!);
+			}
 		});
 	}, []);
 
@@ -49,8 +50,9 @@ export function UserProvider(props: UserProviderProps) {
 			method: "PATCH",
 			body: passwordChange,
 		}).then((res) => {
-			if (res.status === 200)
+			if (res.status === 200) {
 				setUser(res.data!);
+			}
 		});
 	}, []);
 

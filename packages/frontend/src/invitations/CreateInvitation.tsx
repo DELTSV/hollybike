@@ -1,6 +1,5 @@
 import {
-	useEffect,
-	useMemo, useState,
+	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { TInvitationCreation } from "../types/TInvitationCreation.ts";
 import { Input } from "../components/Input/Input.tsx";
@@ -18,7 +17,44 @@ import {
 } from "../components/Select/Select.tsx";
 import { TAssociation } from "../types/TAssociation.ts";
 import { TList } from "../types/TList.ts";
-import { InputCalendar } from "../components/Calendar/InputCalendar.tsx";
+import {
+	EUserScope, scopes, scopesName,
+} from "../types/EUserScope.ts";
+
+const expirationOptions: Option[] = [
+	{
+		name: "Dans 1 heure",
+		value: 1,
+	},
+	{
+		name: "Dans 6 heures",
+		value: 6,
+	},
+	{
+		name: "Dans 1 jour",
+		value: 24,
+	},
+	{
+		name: "Dans 1 mois",
+		value: -1,
+	},
+	{
+		name: "Jamais",
+		value: 0,
+	},
+];
+
+function getDate(hours: number) {
+	if (hours === 0) { return undefined; } else if (hours === -1) {
+		const now = new Date();
+		now.setMonth(now.getMonth() + 1);
+		return now;
+	} else {
+		const now = new Date();
+		now.setHours(now.getHours() + hours);
+		return now;
+	}
+}
 
 export function CreateInvitation() {
 	const { user } = useUser();
@@ -29,7 +65,11 @@ export function CreateInvitation() {
 
 	const [total, setTotal] = useState(20);
 
-	const associations = useApi<TList<TAssociation>>(`/associations?per_page=${total}`);
+	const associations = useApi<TList<TAssociation>>(
+		`/associations?per_page=${total}`,
+		[],
+		{ if: user?.scope === EUserScope.Root },
+	);
 
 	const options: Option[] | undefined = useMemo(() => associations.data?.data?.map(a => ({
 		name: a.name,
@@ -37,31 +77,42 @@ export function CreateInvitation() {
 	})), [associations]);
 
 	useEffect(() => {
-		if (associations.data?.total_data !== undefined)
-			setTotal(associations.data?.total_data);
+		if (associations.data?.total_data !== undefined) { setTotal(associations.data?.total_data); }
 	}, [associations.data?.total_data]);
 
-	const [expire, setExpire] = useState<Date>();
+	const [expire, setExpire] = useState<number>(1);
 
 	useEffect(() => {
 		setInvitation(prev => ({
 			...prev,
-			expiration: expire?.toISOString(),
+			expiration: getDate(expire)?.toISOString(),
 		}));
 	}, [expire]);
+
+	const scopeOptions: Option[] = useMemo(() =>
+		scopes.filter(s => user?.scope === EUserScope.Root || s !== "Root").map(s => ({
+			name: scopesName[s],
+			value: s,
+		})), [user]);
 
 	return (
 		<div className={"mx-2"}>
 			<Card className={"grid grid-cols-2 gap-2 items-center"}>
 				<p>Rôle</p>
-				<Input
-					value={invitation.role} onInput={e => setInvitation(prev => ({
+				<Select
+					default={invitation.role}
+					value={invitation.role} onChange={v => setInvitation(prev => ({
 						...prev,
-						role: e.currentTarget.value,
+						role: v as EUserScope,
 					}))}
+					options={scopeOptions}
 				/>
 				<p>Expiration</p>
-				<InputCalendar value={expire} setValue={setExpire} time/>
+				<Select
+					default={expire}
+					value={expire} onChange={v => setExpire(parseInt((v ?? "0").toString()))}
+					options={expirationOptions}
+				/>
 				<p>Utilisation max</p>
 				<Input
 					placeholder={"Utilisations max"}
@@ -74,7 +125,15 @@ export function CreateInvitation() {
 				{ user?.scope === "Root" &&
 				<>
 					<p>Association</p>
-					<Select options={options ?? []} searchable={(associations.data?.total_data ?? 0) > 5}/>
+					<Select
+						options={options ?? []}
+						searchable={(associations.data?.total_data ?? 0) > 5}
+						value={invitation.association}
+						onChange={v => setInvitation(prev => ({
+							...prev,
+							association: v as number,
+						}))}
+					/>
 				</> }
 				<Button
 					className={"col-span-2 justify-self-center"}
@@ -83,14 +142,15 @@ export function CreateInvitation() {
 							method: "POST",
 							body: invitation,
 						}).then((res) => {
-							if (res.status === 200)
+							if (res.status === 200) {
 								navigate(-1);
-							else if (res.status === 404)
+							} else if (res.status === 404) {
 								toast("L'association n'existe pas/plus", { type: "warning" });
-							else if (res.status === 409)
+							} else if (res.status === 409) {
 								toast(res.message, { type: "warning" });
-							else
+							} else {
 								toast(res.message, { type: "error" });
+							}
 						});
 					}}
 				>

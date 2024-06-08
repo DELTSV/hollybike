@@ -22,13 +22,15 @@ interface HeadProps {
 
 export function Head(props: HeadProps) {
 	const onClick = useCallback(() => {
-		if (props.sortable && props.setSortOrder)
-			if (props.sort?.order === "asc")
+		if (props.sortable && props.setSortOrder) {
+			if (props.sort?.order === "asc") {
 				props.setSortOrder("desc");
-			else if (props.sort?.order === "desc")
+			} else if (props.sort?.order === "desc") {
 				props.setSortOrder("none");
-			else
+			} else {
 				props.setSortOrder("asc");
+			}
+		}
 	}, [
 		props.setSortOrder,
 		props.sort,

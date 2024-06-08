@@ -8,13 +8,43 @@ import { TEvent } from "../types/TEvent.ts";
 import { Button } from "../components/Button/Button.tsx";
 import { OpenInNew } from "@material-ui/icons";
 import { dateTimeToFrenchString } from "../components/Calendar/InputCalendar.tsx";
+import {
+	useEffect, useMemo,
+} from "preact/hooks";
+import { useSideBar } from "../sidebar/useSideBar.tsx";
+import { api } from "../utils/useApi.ts";
+import { TAssociation } from "../types/TAssociation.ts";
 
 export function ListEvent() {
 	const { id } = useParams();
+	const {
+		association, setAssociation,
+	} = useSideBar();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (id && !association) {
+			api<TAssociation>(`/associations/${id}`).then((res) => {
+				if (res.status === 200 && res.data !== undefined) { setAssociation(res.data); }
+			});
+		}
+	}, [
+		id,
+		setAssociation,
+		association,
+	]);
+
+	const filter = useMemo(() => {
+		if (id === undefined) {
+			return "";
+		} else {
+			return `id_association=eq:${association?.id}`;
+		}
+	}, [association]);
+
 	return (
-		<div className={"mx-2 gap-2 flex flex-col items-start"}>
-			<Button onClick={() => navigate("/events/new")}>
+		<div className={"mx-2 gap-2 flex flex-col w-full"}>
+			<Button className={"self-start"} onClick={() => navigate("/events/new")}>
 				Créer un événement
 			</Button>
 			<List
@@ -56,7 +86,7 @@ export function ListEvent() {
 						name: "",
 						id: "",
 					},
-				]}
+				]} filter={filter}
 				baseUrl={"/events"} line={(e: TEvent) => [
 					<Cell>
 						{ e.name }
@@ -82,7 +112,7 @@ export function ListEvent() {
 						{ dateTimeToFrenchString(e.create_date_time, false) }
 					</Cell>,
 					<Cell>
-						<Link to={`/associations${ e.association.id}`}>
+						<Link to={`/associations/${e.association.id}`}>
 							{ e.association.name }
 						</Link>
 					</Cell>,

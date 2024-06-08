@@ -25,8 +25,9 @@ export function Calendar(props: CalendarProps) {
 	});
 
 	useEffect(() => {
-		if (props.value)
+		if (props.value) {
 			setViewing(props.value);
+		}
 	}, [props.value, setViewing]);
 
 	const today = new Date();
@@ -72,18 +73,21 @@ export function Calendar(props: CalendarProps) {
 								className={"bg-transparent text-center w-6 focus:outline-none"}
 								value={props.value?.getHours()}
 								onInput={(e) => {
-									if (validHour(trim0Start(e.currentTarget.value)) && props.setValue !== undefined)
+									if (validHour(trim0Start(e.currentTarget.value)) && props.setValue !== undefined) {
 										props.setValue((prev) => {
 											if (prev) {
 												const tmp = new Date(prev);
-												if (e.currentTarget.value === "")
+												if (e.currentTarget.value === "") {
 													tmp.setHours(0);
-												else
+												} else {
 													tmp.setHours(parseInt(e.currentTarget.value));
+												}
 												return tmp;
-											} else
+											} else {
 												return prev;
+											}
 										});
+									}
 								}}
 							/>
 							:
@@ -91,18 +95,21 @@ export function Calendar(props: CalendarProps) {
 								className={"bg-transparent text-center w-6 focus:outline-none"}
 								value={formatDateTimeComponent(props.value?.getMinutes())}
 								onInput={(e) => {
-									if (validMinSec(trim0Start(e.currentTarget.value)) && props.setValue)
+									if (validMinSec(trim0Start(e.currentTarget.value)) && props.setValue) {
 										props.setValue((prev) => {
-											if (prev === undefined)
+											if (prev === undefined) {
 												return undefined;
+											}
 
 											const tmp = new Date(prev);
-											if (e.currentTarget.value === "")
+											if (e.currentTarget.value === "") {
 												tmp.setMinutes(0);
-											 else
+											} else {
 												tmp.setMinutes(parseInt(e.currentTarget.value));
+											}
 											return tmp;
 										});
+									}
 								}}
 							/>
 							{ props.seconds === true &&
@@ -112,17 +119,18 @@ export function Calendar(props: CalendarProps) {
 										className={"bg-transparent text-center w-6 focus:outline-none"}
 										value={formatDateTimeComponent(props.value?.getSeconds())}
 										onInput={(e) => {
-											if (validMinSec(trim0Start(e.currentTarget.value)) && props.setValue)
+											if (validMinSec(trim0Start(e.currentTarget.value)) && props.setValue) {
 												props.setValue((prev) => {
-													if (prev === undefined)
-														return prev;
+													if (prev === undefined) { return prev; }
 													const tmp = new Date(prev);
-													if (e.currentTarget.value === "")
+													if (e.currentTarget.value === "") {
 														tmp.setSeconds(0);
-													else
+													} else {
 														tmp.setSeconds(parseInt(e.currentTarget.value));
+													}
 													return tmp;
 												});
+											}
 										}}
 									/>
 								</> }
@@ -155,12 +163,14 @@ function sameDay(a: Date, b: Date | undefined) {
 }
 
 export function formatDateTimeComponent(value: number | undefined): string {
-	if (value === undefined)
+	if (value === undefined) {
 		return "";
-	if (value >= 10)
+	}
+	if (value >= 10) {
 		return value.toString();
-	else
+	} else {
 		return `0${value}`;
+	}
 }
 
 function max2Digit(value: string): boolean {
@@ -176,7 +186,8 @@ function validMinSec(value: string): boolean {
 }
 
 function trim0Start(s: string) {
-	while (s.charAt(0) === "0")
+	while (s.charAt(0) === "0") {
 		s = s.substring(1);
+	}
 	return s;
 }

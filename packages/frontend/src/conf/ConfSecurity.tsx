@@ -66,7 +66,7 @@ export function ConfSecurity(props: ConfProps) {
 						}
 					))}
 					onFocusIn={(e) => {
-						if (e.currentTarget.value === "******")
+						if (e.currentTarget.value === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -76,9 +76,10 @@ export function ConfSecurity(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					onFocusOut={(e) => {
-						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******")
+						if (e.currentTarget.value === "" && props.baseConf?.db?.password === "******") {
 							setConf(prev => (
 								{
 									...prev,
@@ -88,6 +89,7 @@ export function ConfSecurity(props: ConfProps) {
 									},
 								}
 							));
+						}
 					}}
 					value={conf?.security?.secret ?? ""}
 					rightIcon={visiblePassword ?

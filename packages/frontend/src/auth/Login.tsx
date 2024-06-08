@@ -27,8 +27,9 @@ export default function () {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (auth.isLoggedIn)
+		if (auth.isLoggedIn) {
 			navigate("/");
+		}
 	}, [auth.isLoggedIn]);
 
 	return (

@@ -7,7 +7,7 @@ import { Card } from "../../components/Card/Card.tsx";
 import { useReload } from "../../utils/useReload.ts";
 import { Input } from "../../components/Input/Input.tsx";
 import {
-	useEffect, useState,
+	useEffect, useMemo, useState,
 } from "preact/hooks";
 import { dummyAssociation } from "../../types/TAssociation.ts";
 import { Button } from "../../components/Button/Button.tsx";
@@ -15,10 +15,15 @@ import {
 	Visibility, VisibilityOff,
 } from "@material-ui/icons";
 import { TUserUpdate } from "../../types/TUserUpdate.ts";
-import { Select } from "../../components/Select/Select.tsx";
+import {
+	Option, Select,
+} from "../../components/Select/Select.tsx";
 import { toast } from "react-toastify";
 import { EUserStatus } from "../../types/EUserStatus.ts";
-import { EUserScope } from "../../types/EUserScope.ts";
+import {
+	EUserScope, scopes, scopesName,
+} from "../../types/EUserScope.ts";
+import { useUser } from "../useUser.tsx";
 
 const emptyUser: TUser = {
 	id: -1,
@@ -37,6 +42,8 @@ export function UserDetail() {
 		reload, doReload,
 	} = useReload();
 
+	const { user: self } = useUser();
+
 	const user = useApi<TUser>(`/users/${ id}`, [reload]);
 
 	const [userData, setUserData] = useState<TUser>(emptyUser);
@@ -45,9 +52,14 @@ export function UserDetail() {
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
 	useEffect(() => {
-		if (user.data !== undefined)
-			setUserData(user.data);
+		if (user.data !== undefined) { setUserData(user.data); }
 	}, [user]);
+
+	const scopeOptions: Option[] = useMemo(() =>
+		scopes.filter(s => self?.scope === EUserScope.Root || s !== "Root").map(s => ({
+			name: scopesName[s],
+			value: s,
+		})), [self]);
 
 	return (
 		<Card>
@@ -82,20 +94,7 @@ export function UserDetail() {
 						...prev,
 						scope: (v ?? "User") as EUserScope,
 					}))}
-					options={[
-						{
-							name: "Utilisateur",
-							value: EUserScope.User,
-						},
-						{
-							name: "Administrateur",
-							value: EUserScope.Admin,
-						},
-						{
-							name: "Root",
-							value: EUserScope.Root,
-						},
-					]}
+					options={scopeOptions}
 					default={userData.scope}
 				/>
 				<p>Statut</p>
@@ -135,10 +134,11 @@ export function UserDetail() {
 						if (res.status === 200) {
 							doReload();
 							toast("L'utilisateur à été mis à jour", { type: "success" });
-						} else if (res.status === 404)
+						} else if (res.status === 404) {
 							toast(res.message, { type: "warning" });
-						else
+						} else {
 							toast(`Erreur: ${res.message}`, { type: "error" });
+						}
 					});
 				}}
 			>
