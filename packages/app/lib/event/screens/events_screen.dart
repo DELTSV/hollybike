@@ -269,7 +269,9 @@ class _EventsScreenState extends State<EventsScreen> {
                               pinned: true,
                               delegate: PinnedHeaderDelegate(
                                 height: 50,
+                                animationDuration: 300,
                                 child: Container(
+                                  width: double.infinity,
                                   color:
                                       Theme.of(context).scaffoldBackgroundColor,
                                   child: Padding(

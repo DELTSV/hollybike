@@ -133,7 +133,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         color: Theme.of(context).scaffoldBackgroundColor,
                         child: TabBar(
                           labelColor: Theme.of(context).colorScheme.secondary,
-                          indicatorColor: Theme.of(context).colorScheme.secondary,
+                          indicatorColor:
+                              Theme.of(context).colorScheme.secondary,
                           tabs: const [
                             Tab(icon: Icon(Icons.info)),
                             Tab(icon: Icon(Icons.photo_library)),
