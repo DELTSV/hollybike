@@ -20,7 +20,7 @@ class FutureEvents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _loadNextPage(context);
+    _refreshEvents(context);
     return MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
