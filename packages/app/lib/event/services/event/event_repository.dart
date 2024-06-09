@@ -26,10 +26,16 @@ class EventRepository {
 
   Future<PaginatedList<MinimalEvent>> fetchEvents(
     AuthSession session,
+    String requestType,
     int page,
     int eventsPerPage,
   ) async {
-    final pageResult = await eventApi.getEvents(session, page, eventsPerPage);
+    final pageResult = await eventApi.getEvents(
+      session,
+      requestType,
+      page,
+      eventsPerPage,
+    );
 
     _eventsStreamController.add(
       _eventsStreamController.value + pageResult.items,
@@ -40,9 +46,15 @@ class EventRepository {
 
   Future<PaginatedList<MinimalEvent>> refreshEvents(
     AuthSession session,
+    String requestType,
     int eventsPerPage,
   ) async {
-    final pageResult = await eventApi.getEvents(session, 0, eventsPerPage);
+    final pageResult = await eventApi.getEvents(
+      session,
+      requestType,
+      0,
+      eventsPerPage,
+    );
 
     _eventsStreamController.add(
       pageResult.items,

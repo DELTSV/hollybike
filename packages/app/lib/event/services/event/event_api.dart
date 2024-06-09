@@ -11,11 +11,12 @@ import '../../types/event_details.dart';
 class EventApi {
   Future<PaginatedList<MinimalEvent>> getEvents(
     AuthSession session,
+    String requestType,
     int page,
     int eventsPerPage,
   ) async {
     final response = await DioClient(session).dio.get(
-      '/events/future',
+      '/events/$requestType',
       queryParameters: {
         'page': page,
         'per_page': eventsPerPage,

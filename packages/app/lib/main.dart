@@ -9,7 +9,7 @@ import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
-import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
@@ -96,8 +96,8 @@ class MyApp extends StatelessWidget {
                 ),
               )..add(SubscribeToCurrentSessionChange()),
             ),
-            BlocProvider<EventsBloc>(
-              create: (context) => EventsBloc(
+            BlocProvider<FutureEventsBloc>(
+              create: (context) => FutureEventsBloc(
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvents()),
