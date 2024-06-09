@@ -8,9 +8,9 @@ import '../../shared/utils/with_current_session.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
-import '../bloc/events_bloc/events_bloc.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
+import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
 import '../widgets/event_image.dart';
 import '../widgets/event_list.dart';
@@ -20,7 +20,7 @@ class FutureEvents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _loadNextPage(context);
+    _refreshEvents(context);
     return MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -30,7 +30,7 @@ class FutureEvents extends StatelessWidget {
               }
             },
           ),
-          BlocListener<EventsBloc, EventsState>(listener: (context, state) {
+          BlocListener<FutureEventsBloc, EventsState>(listener: (context, state) {
             if (state is EventCreationSuccess) {
               Toast.showSuccessToast(context, "Événement créé");
 
@@ -57,7 +57,7 @@ class FutureEvents extends StatelessWidget {
             },
           ),
         ],
-        child: BlocBuilder<EventsBloc, EventsState>(
+        child: BlocBuilder<FutureEventsBloc, EventsState>(
           builder: (context, state) {
             if (state.events.isEmpty) {
               switch (state.status) {
@@ -98,13 +98,13 @@ class FutureEvents extends StatelessWidget {
 
   void _loadNextPage(BuildContext context) {
     withCurrentSession(context, (session) {
-      context.read<EventsBloc>().add(LoadEventsNextPage(session: session));
+      context.read<FutureEventsBloc>().add(LoadEventsNextPage(session: session));
     });
   }
 
   void _refreshEvents(BuildContext context) {
     withCurrentSession(context, (session) {
-      context.read<EventsBloc>().add(RefreshEvents(session: session));
+      context.read<FutureEventsBloc>().add(RefreshEvents(session: session));
     });
   }
 
