@@ -3,20 +3,10 @@ part of 'profile_bloc.dart';
 @immutable
 abstract class ProfileEvent {}
 
-class ProfileSave extends ProfileEvent {
-  final AuthSession session;
-  final Profile profile;
-
-  ProfileSave({
-    required this.session,
-    required this.profile,
-  });
-}
-
-class ProfileLoad extends ProfileEvent {
+class ProfileLoadBySession extends ProfileEvent {
   final AuthSession session;
 
-  ProfileLoad({
+  ProfileLoadBySession({
     required this.session,
   });
 }
@@ -24,9 +14,14 @@ class ProfileLoad extends ProfileEvent {
 class ProfileCurrentSessionChange extends ProfileEvent {
   final AuthSession? session;
 
-  ProfileCurrentSessionChange({
-    required this.session,
-  });
+  ProfileCurrentSessionChange({required this.session});
+}
+
+class ProfileLoadById extends ProfileEvent {
+  final AuthSession sessionSearching;
+  final int id;
+
+  ProfileLoadById({required this.sessionSearching, required this.id});
 }
 
 class SubscribeToCurrentSessionChange extends ProfileEvent {}

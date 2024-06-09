@@ -1,13 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
-import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_bottom_bar_button.dart';
 import 'package:hollybike/shared/widgets/bar/bottom_bar_icon_button.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../profile/widgets/profile_modal/profile_modal.dart';
+import '../../../profile/bloc/profile_bloc.dart';
 
 class NavRoute {
   final String routeName;
@@ -37,8 +35,8 @@ class _BottomBarState extends State<BottomBar> {
       route: MyEventsRoute(),
     ),
     const NavRoute(
-      routeName: ProfileRoute.name,
-      route: ProfileRoute(),
+      routeName: MeRoute.name,
+      route: MeRoute(),
     ),
   ];
 

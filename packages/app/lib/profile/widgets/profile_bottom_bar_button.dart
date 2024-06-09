@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_modal/profile_modal.dart';
+import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../event/widgets/event_loading_profile_picture.dart';
+import '../bloc/profile_bloc.dart';
 
 class ProfileBottomBarButton extends StatelessWidget {
   const ProfileBottomBarButton({super.key});
@@ -35,15 +35,15 @@ class ProfileBottomBarButton extends StatelessWidget {
   }
 
   Widget _renderProfilePicture() {
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
+    return BlocProvidedBuilder<ProfileBloc, ProfileState>(
+      builder: (context, bloc, state) {
         return GestureDetector(
           onLongPress: () => _handleLongPress(context),
           child: EventLoadingProfilePicture(
-            url: state.currentProfile?.profilePicture,
+            url: bloc.currentProfile?.profilePicture,
             radius: 12,
-            isLoading: state.currentProfile == null,
-            userId: state.currentProfile?.id,
+            isLoading: bloc.currentProfile == null,
+            userId: bloc.currentProfile?.id,
           ),
         );
       },

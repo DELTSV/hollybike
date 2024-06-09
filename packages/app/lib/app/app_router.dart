@@ -44,8 +44,14 @@ class AppRouter extends $AppRouter {
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],
+          page: MeRoute.page,
+          path: '/me',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
           page: ProfileRoute.page,
-          path: '/profile',
+          path: '/profile/:id',
           transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
         AutoRoute(

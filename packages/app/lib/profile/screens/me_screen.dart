@@ -1,6 +1,5 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
 import 'package:hollybike/profile/widgets/profile_page/profile_page.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
@@ -9,12 +8,11 @@ import '../../shared/widgets/bar/top_bar.dart';
 import '../../shared/widgets/bar/top_bar_title.dart';
 import '../../shared/widgets/hud/hud.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/profile_modal/profile_modal.dart';
 
 @RoutePage()
-class ProfileScreen extends StatelessWidget {
-  final String? id;
-
-  const ProfileScreen({super.key, @PathParam('id') this.id});
+class MeScreen extends StatelessWidget {
+  const MeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +20,22 @@ class ProfileScreen extends StatelessWidget {
       displayNavBar: true,
       appBar: TopBar(
         prefix: TopBarActionIcon(
-          icon: Icons.arrow_back,
-          onPressed: () => context.router.maybePop(),
+          icon: Icons.swap_horiz,
+          onPressed: () => _handlePrefixClick(context),
         ),
         title: const TopBarTitle('Mon profil'),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) {
-          if (id == null) return const PlaceholderProfilePage();
-
-          return ProfilePage(profile: bloc.getProfileById(int.parse(id as String)));
-        },
+        builder: (context, bloc, state) => ProfilePage(profile: bloc.currentProfile),
       ),
+    );
+  }
+
+  void _handlePrefixClick(context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const ProfileModal(),
     );
   }
 }
