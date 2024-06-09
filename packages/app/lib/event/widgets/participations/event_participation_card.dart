@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
@@ -30,13 +31,7 @@ class EventParticipationCard extends StatelessWidget {
     return Card(
       child: ListTile(
         onTap: () {
-          // Handle container tap
-          // Navigator.of(context).pushNamed(
-          //   AppRoutes.profile,
-          //   arguments: ProfileScreenArguments(
-          //     userId: participation.user.id,
-          //   ),
-          // );
+          context.router.pushNamed("/profile/${participation.user.id}");
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
