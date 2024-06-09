@@ -6,7 +6,6 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../shared/widgets/bar/top_bar.dart';
-import '../../shared/widgets/bar/top_bar_title.dart';
 import '../../shared/widgets/hud/hud.dart';
 import '../bloc/profile_bloc.dart';
 
@@ -25,7 +24,6 @@ class ProfileScreen extends StatelessWidget {
           icon: Icons.arrow_back,
           onPressed: () => context.router.maybePop(),
         ),
-        title: const TopBarTitle('Mon profil'),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
         builder: (context, bloc, state) {
