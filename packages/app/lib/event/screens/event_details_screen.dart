@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
@@ -6,6 +7,7 @@ import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
+import 'package:hollybike/event/widgets/images/add_photos_floating_button.dart';
 import 'package:hollybike/map/widgets/map_preview.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
@@ -20,6 +22,8 @@ import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../widgets/details/event_details_actions_menu.dart';
+
+enum EventDetailsTab { info, photos, myPhotos, map }
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -40,18 +44,38 @@ class EventDetailsScreen extends StatefulWidget {
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
-class _EventDetailsScreenState extends State<EventDetailsScreen> {
+class _EventDetailsScreenState extends State<EventDetailsScreen> with SingleTickerProviderStateMixin {
   var eventName = "";
+  late TabController _tabController;
+  EventDetailsTab currentTab = EventDetailsTab.info;
 
   @override
   void initState() {
     super.initState();
+
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        return;
+      }
+
+      setState(() {
+        currentTab = EventDetailsTab.values[_tabController.index];
+      });
+    });
 
     setState(() {
       eventName = widget.eventName;
     });
 
     _loadEventDetails();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -91,23 +115,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             );
           },
         ),
-        floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-          builder: (context, state) {
-            if (state is EventDetailsLoadFailure ||
-                state is EventDetailsLoadInProgress ||
-                state.eventDetails == null) {
-              return const SizedBox();
-            }
-
-            final eventDetails = state.eventDetails!;
-
-            return EventEditFloatingButton(
-              canEdit: eventDetails.isOrganizer,
-              event: eventDetails.event,
-              onEdit: _onEdit,
-            );
-          },
-        ),
+        floatingActionButton: _getFloatingButton(),
         body: DefaultTabController(
           length: 4,
           child: CustomScrollView(
@@ -133,6 +141,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       child: Container(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         child: TabBar(
+                          controller: _tabController,
                           labelColor: Theme.of(context).colorScheme.secondary,
                           indicatorColor:
                               Theme.of(context).colorScheme.secondary,
@@ -167,6 +176,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         return SizedBox(
                           height: 500,
                           child: TabBarView(
+                            controller: _tabController,
                             children: [
                               EventDetailsContent(
                                 eventDetails: state.eventDetails!,
@@ -191,6 +201,35 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
       ),
     );
+  }
+
+  Widget? _getFloatingButton() {
+    switch (currentTab) {
+      case EventDetailsTab.info:
+        return BlocBuilder<EventDetailsBloc, EventDetailsState>(
+          builder: (context, state) {
+            if (state is EventDetailsLoadFailure ||
+                state is EventDetailsLoadInProgress ||
+                state.eventDetails == null) {
+              return const SizedBox();
+            }
+
+            final eventDetails = state.eventDetails!;
+
+            return EventEditFloatingButton(
+              canEdit: eventDetails.isOrganizer,
+              event: eventDetails.event,
+              onEdit: _onEdit,
+            );
+          },
+        );
+      case EventDetailsTab.photos:
+        return null;
+      case EventDetailsTab.myPhotos:
+        return const AddPhotosFloatingButton();
+      case EventDetailsTab.map:
+        return null;
+    }
   }
 
   Widget? _renderActions(EventDetailsState state) {
