@@ -5,7 +5,6 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../shared/widgets/bar/top_bar.dart';
-import '../../shared/widgets/bar/top_bar_title.dart';
 import '../../shared/widgets/hud/hud.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/profile_modal/profile_modal.dart';
@@ -23,10 +22,10 @@ class MeScreen extends StatelessWidget {
           icon: Icons.swap_horiz,
           onPressed: () => _handlePrefixClick(context),
         ),
-        title: const TopBarTitle('Mon profil'),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) => ProfilePage(profile: bloc.currentProfile),
+        builder: (context, bloc, state) =>
+            ProfilePage(profile: bloc.currentProfile),
       ),
     );
   }
