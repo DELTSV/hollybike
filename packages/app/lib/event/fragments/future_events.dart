@@ -62,7 +62,6 @@ class FutureEvents extends StatelessWidget {
             if (state.events.isEmpty) {
               switch (state.status) {
                 case EventStatus.initial:
-                  print("object");
                   return const SizedBox();
                 case EventStatus.loading:
                   return const Center(

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../shared/utils/dates.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
-import '../bloc/events_bloc/events_bloc.dart';
-import '../bloc/events_bloc/events_state.dart';
 import '../types/minimal_event.dart';
 import 'event_preview_card.dart';
 
