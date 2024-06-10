@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:intl/intl.dart';
 
 import '../../shared/types/json_map.dart';
+import '../../shared/utils/dates.dart';
 
 part 'event_form_data.freezed.dart';
 part 'event_form_data.g.dart';
@@ -11,13 +11,9 @@ class EventFormData with _$EventFormData {
   const factory EventFormData({
     required String name,
     String? description,
-    @JsonKey(toJson: _toJson, name: "start_date") required DateTime startDate,
-    @JsonKey(toJson: _toJson, name: "end_date") DateTime? endDate,
+    @JsonKey(toJson: dateToJson, name: "start_date") required DateTime startDate,
+    @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate,
   }) = _EventFormData;
 
   factory EventFormData.fromJson(JsonMap json) => _$EventFormDataFromJson(json);
 }
-
-String? _toJson(DateTime? dateTime) => dateTime == null
-    ? null
-    : DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTime);

@@ -7,7 +7,7 @@ import hollybike.api.repository.*
 import hollybike.api.repository.Event
 import hollybike.api.repository.EventParticipation
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.event.EEventRole
+import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.SearchParam

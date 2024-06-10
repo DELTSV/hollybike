@@ -43,7 +43,6 @@ class _AddPhotoImageContainerState extends State<AddPhotoImageContainer> {
         ),
       ),
 
-      // top left corner check icon with border with scaffold color
       Positioned(
         right: 0,
         child: AnimatedScale(

@@ -21,6 +21,8 @@ import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
+import '../bloc/event_images_bloc/event_images_bloc.dart';
+import '../bloc/event_images_bloc/event_images_state.dart';
 import '../widgets/details/event_details_actions_menu.dart';
 
 enum EventDetailsTab { info, photos, myPhotos, map }
@@ -44,7 +46,8 @@ class EventDetailsScreen extends StatefulWidget {
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
-class _EventDetailsScreenState extends State<EventDetailsScreen> with SingleTickerProviderStateMixin {
+class _EventDetailsScreenState extends State<EventDetailsScreen>
+    with SingleTickerProviderStateMixin {
   var eventName = "";
   late TabController _tabController;
   EventDetailsTab currentTab = EventDetailsTab.info;
@@ -184,8 +187,26 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> with SingleTick
                               const Center(
                                 child: Text("Images"),
                               ),
-                              const Center(
-                                child: Text("My images"),
+                              BlocListener<EventImagesBloc, EventImagesState>(
+                                listener: (context, state) {
+                                  if (state is EventImagesUploadFailure) {
+                                    Toast.showErrorToast(
+                                      context,
+                                      state.errorMessage,
+                                    );
+                                  }
+
+                                  if (state is EventImagesUploadSuccess) {
+                                    Toast.showSuccessToast(
+                                      context,
+                                      "Photos ajoutées avec succès",
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                                child: const Center(
+                                  child: Text("My images"),
+                                ),
                               ),
                               const MapPreview(),
                             ],
@@ -226,7 +247,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> with SingleTick
       case EventDetailsTab.photos:
         return null;
       case EventDetailsTab.myPhotos:
-        return const AddPhotosFloatingButton();
+        return BlocBuilder<EventDetailsBloc, EventDetailsState>(
+          builder: (context, state) {
+            if (state is EventDetailsLoadFailure ||
+                state is EventDetailsLoadInProgress ||
+                state.eventDetails == null) {
+              return const SizedBox();
+            }
+
+            final eventDetails = state.eventDetails!;
+
+            return AddPhotosFloatingButton(
+              eventId: eventDetails.event.id,
+            );
+          },
+        );
       case EventDetailsTab.map:
         return null;
     }

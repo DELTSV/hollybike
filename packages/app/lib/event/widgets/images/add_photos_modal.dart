@@ -5,19 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/images/add_photo_button_container.dart';
 import 'package:hollybike/event/widgets/images/add_photo_image_container.dart';
 import 'package:hollybike/event/widgets/images/add_photo_selected_image.dart';
+import 'package:hollybike/images/types/file_with_metadata.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
+import '../../../images/types/image_metadata.dart';
+import '../../../images/types/image_position_metadata.dart';
+
 class Img {
   final Image image;
-  final Map<String, IfdTag> exif;
   final File file;
   final String? mediumId;
 
   Img({
     required this.image,
-    required this.exif,
     required this.file,
     this.mediumId,
   });
@@ -25,7 +28,7 @@ class Img {
 
 class AddPhotosModal extends StatefulWidget {
   final void Function() onClose;
-  final void Function() onSubmit;
+  final void Function(List<ImageWithMetadata>) onSubmit;
 
   const AddPhotosModal({
     super.key,
@@ -183,8 +186,21 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
     );
   }
 
+  Future<List<ImageWithMetadata>> _getImagesWithMetadata() async {
+    return Future.wait(_selectedImages.map((img) async {
+      final imageMetadata = await _getImageMetadata(img.file);
+
+      return ImageWithMetadata(
+        file: img.file,
+        metadata: imageMetadata,
+      );
+    }));
+  }
+
   void _onSubmit() {
-    widget.onSubmit();
+    _getImagesWithMetadata().then((images) {
+      widget.onSubmit(images);
+    });
   }
 
   List<Widget> _buildImages() {
@@ -221,8 +237,87 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
     }).toList();
   }
 
-  Future<Map<String, IfdTag>> _getExifData(File file) {
-    return readExifFromBytes(file.readAsBytesSync());
+  Future<Map<String, IfdTag>> _getExifData(File file) async {
+    return readExifFromBytes(await file.readAsBytes());
+  }
+
+  Future<ImageMetadata> _getImageMetadata(File file) async {
+    final exifTags = await _getExifData(file);
+
+    final latitude = _parseGeographicCoordinate(
+      exifTags['GPS GPSLatitude'],
+      exifTags['GPS GPSLatitudeRef'],
+    );
+
+    final longitude = _parseGeographicCoordinate(
+      exifTags['GPS GPSLongitude'],
+      exifTags['GPS GPSLongitudeRef'],
+    );
+
+    // EXIF OffsetTimeOriginal
+
+    final dateTime = _parseDateTime(
+      exifTags['EXIF DateTimeOriginal'],
+      exifTags['EXIF OffsetTimeOriginal'],
+    );
+
+    final altitude = _parseAltitude(exifTags['GPS GPSAltitude']);
+
+    return ImageMetadata(
+      takenDateTime: dateTime,
+      position: latitude != null && longitude != null
+          ? ImagePositionMetadata(
+              latitude: latitude,
+              longitude: longitude,
+              altitude: altitude,
+            )
+          : null,
+    );
+  }
+
+  int? _parseAltitude(IfdTag? tag) {
+    if (tag == null) {
+      return null;
+    }
+
+    return tag.values.toList().firstOrNull?.numerator;
+  }
+
+  DateTime? _parseDateTime(IfdTag? dateTimeTag, IfdTag? offsetTag) {
+    if (dateTimeTag == null) {
+      return null;
+    }
+
+    String date = dateTimeTag.printable;
+
+    String? parsed = DateFormat("yyyy:MM:dd HH:mm:ss").tryParse(date)?.toIso8601String();
+
+    if (offsetTag != null && parsed != null) {
+      parsed += offsetTag.printable;
+    }
+
+    return parsed != null ? DateTime.parse(parsed) : null;
+  }
+
+  double? _parseGeographicCoordinate(IfdTag? tag, IfdTag? signalTag) {
+    if (tag == null || signalTag == null) {
+      return null;
+    }
+
+    final values = tag.values
+        .toList()
+        .map<double>(
+            (item) => (item.numerator.toDouble() / item.denominator.toDouble()))
+        .toList();
+    final signal = signalTag.printable;
+
+    final result = values[0] + (values[1] / 60) + (values[2] / 3600);
+
+    if (signal == 'S' || signal == 'W') {
+      return -result;
+    }
+
+    return result;
   }
 
   _onGalleryTap() async {
@@ -344,11 +439,8 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
       },
     );
 
-    final exif = await _getExifData(file);
-
     return Img(
       image: image,
-      exif: exif,
       file: file,
     );
   }
@@ -376,11 +468,8 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
       },
     );
 
-    final exif = await _getExifData(file);
-
     return Img(
       image: image,
-      exif: exif,
       file: file,
       mediumId: mediumId,
     );

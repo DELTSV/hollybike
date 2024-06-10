@@ -8,10 +8,12 @@ import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
+import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
+import 'package:hollybike/images/services/image_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
@@ -25,6 +27,7 @@ import 'event/bloc/events_bloc/events_event.dart';
 import 'event/services/event/event_api.dart';
 import 'event/services/event/event_repository.dart';
 import 'event/services/event_participations/event_participation_api.dart';
+import 'images/services/image_api.dart';
 
 void main() {
   runApp(const MyApp());
@@ -67,6 +70,11 @@ class MyApp extends StatelessWidget {
           RepositoryProvider(
             create: (context) => ProfileRepository(
               profileApi: ProfileApi(),
+            ),
+          ),
+          RepositoryProvider(
+            create: (context) => ImageRepository(
+              imageApi: ImageApi(),
             ),
           ),
         ],
@@ -134,6 +142,13 @@ class MyApp extends StatelessWidget {
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEventCandidates()),
+            ),
+            BlocProvider<EventImagesBloc>(
+              create: (context) => EventImagesBloc(
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
             ),
           ],
           child: const App(),

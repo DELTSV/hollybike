@@ -1,4 +1,4 @@
-package hollybike.api.types.event
+package hollybike.api.types.event.image
 
 import hollybike.api.repository.EventImage
 import hollybike.api.types.user.TUserPartial

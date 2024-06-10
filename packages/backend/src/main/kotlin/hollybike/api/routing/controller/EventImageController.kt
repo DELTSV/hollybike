@@ -8,7 +8,7 @@ import hollybike.api.repository.eventMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventImageService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.event.TEventImage
+import hollybike.api.types.event.image.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.checkContentType
@@ -23,6 +23,7 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
+import kotlinx.serialization.json.Json
 import kotlin.math.ceil
 
 class EventImageController(
@@ -78,17 +79,41 @@ class EventImageController(
 	private fun Route.uploadImages() {
 		post<Events.Id.Images> { data ->
 			val multipart = call.receiveMultipart()
+			val allParts = multipart.readAllParts()
 
-			val images = multipart.readAllParts().mapNotNull { item ->
-				if (item is PartData.FileItem) {
-					val contentType = checkContentType(item).getOrElse {
-						return@post call.respond(HttpStatusCode.BadRequest, it.message!!)
+			val images = allParts.filterIsInstance<PartData.FileItem>().map { item ->
+				val pattern = Regex("""image-(\d+)""")
+
+				(item.name ?: "<empty>").let {
+					if (!pattern.matches(it)) {
+						return@post call.respond(
+							HttpStatusCode.BadRequest,
+							"Invalid file name $it, must be image-<index>"
+						)
+					}
+				}
+
+				val index = pattern.matchEntire(item.name!!)!!.groupValues[1].toInt()
+
+				val metadata = allParts.filterIsInstance<PartData.FormItem>().firstOrNull {
+					it.name == "metadata-$index"
+				}.let {
+					if (it == null) {
+						return@post call.respond(HttpStatusCode.BadRequest, "Missing metadata for file ${item.name}")
 					}
 
-					item.streamProvider().readBytes() to contentType.toString()
-				} else {
-					null
+					Json.decodeFromString<TImageMetadata>(it.value)
 				}
+
+				val contentType = checkContentType(item).getOrElse {
+					return@post call.respond(HttpStatusCode.BadRequest, it.message!!)
+				}
+
+				TImageDataWithMetadata(
+					data = item.streamProvider().readBytes(),
+					contentType = contentType.toString(),
+					metadata = metadata
+				)
 			}
 
 			eventImageService.uploadImages(call.user, data.event.id, images).onSuccess {

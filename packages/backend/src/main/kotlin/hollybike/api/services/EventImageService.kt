@@ -4,6 +4,7 @@ import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.repository.*
 import hollybike.api.services.storage.StorageService
+import hollybike.api.types.event.image.TImageDataWithMetadata
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
@@ -75,29 +76,32 @@ class EventImageService(
 	suspend fun uploadImages(
 		caller: User,
 		eventId: Int,
-		images: List<Pair<ByteArray, String>>
+		images: List<TImageDataWithMetadata>
 	): Result<List<EventImage>> {
 		val foundEvent =
 			eventService.getEvent(caller, eventId)
 				?: return Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val createdImages = transaction(db) {
-			val newImages = images.map { (data, contentType) ->
+			val newImages = images.map { image ->
 				val uuid = UUID.randomUUID().toString()
+
+				println(image.metadata.takenDateTime)
+				println(image.metadata.position?.latitude)
+				println(image.metadata.position?.longitude)
+				println(image.metadata.position?.altitude)
 
 				EventImage.new {
 					owner = caller
 					event = foundEvent
 					path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
-					size = data.size
-				} to (data to contentType)
+					size = image.data.size
+				} to image
 			}
 
 			runBlocking {
 				newImages.forEach { (image, file) ->
-					val (data, contentType) = file
-
-					storageService.store(data, image.path, contentType)
+					storageService.store(file.data, image.path, file.contentType)
 				}
 			}
 

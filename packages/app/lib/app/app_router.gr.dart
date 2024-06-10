@@ -9,6 +9,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i12;
+import 'package:flutter/cupertino.dart' as _i14;
 import 'package:flutter/material.dart' as _i13;
 import 'package:hollybike/auth/screens/login_screen.dart' as _i6;
 import 'package:hollybike/auth/screens/signup_screen.dart' as _i11;
@@ -18,9 +19,9 @@ import 'package:hollybike/event/screens/event_participations_screen.dart'
     as _i3;
 import 'package:hollybike/event/screens/events_screen.dart' as _i4;
 import 'package:hollybike/event/screens/my_events_screen.dart' as _i8;
-import 'package:hollybike/event/types/event_details.dart' as _i15;
-import 'package:hollybike/event/types/event_participation.dart' as _i16;
-import 'package:hollybike/event/widgets/event_image.dart' as _i14;
+import 'package:hollybike/event/types/event_details.dart' as _i16;
+import 'package:hollybike/event/types/event_participation.dart' as _i17;
+import 'package:hollybike/event/widgets/event_image.dart' as _i15;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i9;
 import 'package:hollybike/profile/screens/me_screen.dart' as _i7;
 import 'package:hollybike/profile/screens/profile_screen.dart' as _i10;
@@ -176,9 +177,9 @@ class EventCandidatesRouteArgs {
 /// [_i2.EventDetailsScreen]
 class EventDetailsRoute extends _i12.PageRouteInfo<EventDetailsRouteArgs> {
   EventDetailsRoute({
-    _i13.Key? key,
+    _i14.Key? key,
     required int eventId,
-    required _i14.EventImage eventImage,
+    required _i15.EventImage eventImage,
     required String eventName,
     bool animate = true,
     List<_i12.PageRouteInfo>? children,
@@ -209,11 +210,11 @@ class EventDetailsRouteArgs {
     this.animate = true,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
   final int eventId;
 
-  final _i14.EventImage eventImage;
+  final _i15.EventImage eventImage;
 
   final String eventName;
 
@@ -231,8 +232,8 @@ class EventParticipationsRoute
     extends _i12.PageRouteInfo<EventParticipationsRouteArgs> {
   EventParticipationsRoute({
     _i13.Key? key,
-    required _i15.EventDetails eventDetails,
-    required List<_i16.EventParticipation> participationPreview,
+    required _i16.EventDetails eventDetails,
+    required List<_i17.EventParticipation> participationPreview,
     List<_i12.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
@@ -259,9 +260,9 @@ class EventParticipationsRouteArgs {
 
   final _i13.Key? key;
 
-  final _i15.EventDetails eventDetails;
+  final _i16.EventDetails eventDetails;
 
-  final List<_i16.EventParticipation> participationPreview;
+  final List<_i17.EventParticipation> participationPreview;
 
   @override
   String toString() {

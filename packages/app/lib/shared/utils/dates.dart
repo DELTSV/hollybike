@@ -65,3 +65,7 @@ bool checkSameDate(DateTime date1, DateTime date2) {
       date1.month == date2.month &&
       date1.day == date2.day;
 }
+
+String? dateToJson(DateTime? dateTime) => dateTime == null
+    ? null
+    : DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTime);

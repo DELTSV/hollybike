@@ -1,6 +1,6 @@
 package hollybike.api.repository
 
-import hollybike.api.types.event.EEventRole
+import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity

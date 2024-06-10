@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:hollybike/images/types/event_image.dart';
+import 'package:hollybike/images/types/file_with_metadata.dart';
 
 import '../../auth/types/auth_session.dart';
 import '../../shared/types/paginated_list.dart';
@@ -30,5 +33,13 @@ class ImageRepository {
         await imageApi.getEventImages(session, eventId, 0, eventsPerPage);
 
     return pageResult;
+  }
+
+  Future<void> uploadEventImages(
+    AuthSession session,
+    int eventId,
+    List<ImageWithMetadata> images,
+  ) async {
+    await imageApi.uploadEventImages(session, eventId, images);
   }
 }

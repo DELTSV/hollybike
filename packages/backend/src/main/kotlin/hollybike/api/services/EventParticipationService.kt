@@ -5,7 +5,7 @@ import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
-import hollybike.api.types.event.EEventRole
+import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam

@@ -1,20 +1,19 @@
-package hollybike.api.types.event
+package hollybike.api.types.event.participation
 
 import hollybike.api.repository.EventParticipation
-import hollybike.api.types.user.TUserPartial
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TEventParticipation(
-	val user: TUserPartial,
+data class TEventCallerParticipation(
 	val role: EEventRole,
+	val userId: Int,
 	val isImagesPublic: Boolean,
 	val joinedDateTime: Instant,
 ) {
-	constructor(entity: EventParticipation, signer: (String) -> String) : this(
-		user = TUserPartial(entity.user, signer),
+	constructor(entity: EventParticipation) : this(
 		role = entity.role,
+		userId = entity.user.id.value,
 		isImagesPublic = entity.isImagesPublic,
 		joinedDateTime = entity.joinedDateTime
 	)
