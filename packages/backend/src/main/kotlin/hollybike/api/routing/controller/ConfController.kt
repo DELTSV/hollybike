@@ -14,10 +14,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.routing
 import io.ktor.server.routing.Route
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
-import kotlinx.serialization.json.internal.decodeStringToJsonTree
 import java.io.File
 
 class ConfController(
@@ -96,12 +94,11 @@ class ConfController(
 		}
 	}
 
-	@OptIn(InternalSerializationApi::class)
 	private fun getConfText(conf: String): String {
 		return if (conf.isEmpty()) {
 					"{}"
 				} else {
-					val a = json.decodeStringToJsonTree(hollybike.api.Conf.serializer(), conf)
+					val a = json.parseToJsonElement(conf)
 					val b = if (a is JsonObject) {
 						JsonObject(a.mapValues { (_, el) ->
 							if (el is JsonObject) {
@@ -123,15 +120,14 @@ class ConfController(
 				}
 			}
 
-	@OptIn(InternalSerializationApi::class)
 	private fun getConfTextWithPassword(text: String): String {
 		val f = File("./app.json")
 		val ref = if (f.exists()) {
-			f.readText().let { conf -> json.decodeStringToJsonTree(hollybike.api.Conf.serializer(), conf) }
+			f.readText().let { conf -> json.parseToJsonElement(conf) }
 		} else {
 			null
 		}
-		val a = json.decodeStringToJsonTree(hollybike.api.Conf.serializer(), text)
+		val a = json.parseToJsonElement(text)
 		val b = if (a is JsonObject) {
 			JsonObject(a.mapValues { (k, el) ->
 				if (el is JsonObject) {

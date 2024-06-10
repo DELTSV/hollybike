@@ -32,7 +32,6 @@ class StorageController(
 
 	private fun Route.storage() {
 		get<Storage.Object> {
-			println("ICI")
 			val data = storageService.retrieve(call.objectPath) ?: return@get call.respondText(
 				"Inconnu",
 				status = HttpStatusCode.NotFound

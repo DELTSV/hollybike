@@ -7,6 +7,7 @@ import hollybike.api.routing.controller.*
 import hollybike.api.services.*
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
+import hollybike.api.services.journey.JourneyService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.services.storage.StorageServiceFactory
 import hollybike.api.services.storage.signature.StorageSignatureMode

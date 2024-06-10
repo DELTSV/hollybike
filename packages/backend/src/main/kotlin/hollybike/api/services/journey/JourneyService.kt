@@ -1,8 +1,9 @@
-package hollybike.api.services
+package hollybike.api.services.journey
 
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.*
+import hollybike.api.services.AssociationService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.journey.TNewJourney
 import hollybike.api.types.user.EUserScope

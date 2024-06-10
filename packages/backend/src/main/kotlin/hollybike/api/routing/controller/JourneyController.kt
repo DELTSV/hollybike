@@ -7,12 +7,11 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.journeysMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Journeys
-import hollybike.api.services.JourneyService
-import hollybike.api.types.journey.TJourney
-import hollybike.api.types.journey.TNewJourney
+import hollybike.api.services.journey.JourneyService
+import hollybike.api.services.journey.toGeoJson
+import hollybike.api.types.journey.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.GeoJson
-import hollybike.api.utils.checkContentType
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -23,6 +22,12 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import nl.adaptivity.xmlutil.*
+import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
+import nl.adaptivity.xmlutil.serialization.XML
 import kotlin.math.ceil
 
 class JourneyController(
@@ -39,6 +44,20 @@ class JourneyController(
 				addFile()
 			}
 		}
+	}
+
+	@OptIn(ExperimentalXmlUtilApi::class)
+	private val xml = XML {
+		defaultPolicy {
+			unknownChildHandler =
+				UnknownChildHandler { _, _, _, name, _ ->
+					emptyList()
+				}
+		}
+	}
+
+	private val json = Json {
+		ignoreUnknownKeys = true
 	}
 
 	private fun Route.getAll() {
@@ -93,6 +112,20 @@ class JourneyController(
 
 			val file = multipart.readPart() as PartData.FileItem
 
+			val text = file.streamProvider().readBytes().toString(Charsets.UTF_8)
+
+			val geoJson = try {
+				xml.decodeFromString<Gpx>(text).toGeoJson()
+			} catch (e: Exception) {
+				try {
+					json.decodeFromString<GeoJson>(text)
+				} catch (e: Exception) {
+					null
+				}
+			} ?: run {
+				return@post call.respond(HttpStatusCode.BadRequest, "Le fichier n'est n'y un GPX ni un GeoJSON")
+			}
+
 			val contentType = ContentType.Application.GeoJson
 
 			val journey = journeyService.getById(call.user, it.id.id) ?: run {
@@ -103,7 +136,7 @@ class JourneyController(
 			journeyService.uploadFile(
 				call.user,
 				journey,
-				file.streamProvider().readBytes(),
+				json.encodeToString(geoJson).toByteArray(),
 				contentType.toString()
 			).onSuccess {
 				call.respond(HttpStatusCode.OK, TJourney(journey))
