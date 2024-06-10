@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:exif/exif.dart';
 import 'package:flutter/material.dart';
+import 'package:hollybike/event/widgets/images/add_photo_button_container.dart';
 import 'package:hollybike/event/widgets/images/add_photo_image_container.dart';
 import 'package:hollybike/event/widgets/images/add_photo_selected_image.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,11 +13,13 @@ class Img {
   final Image image;
   final Map<String, IfdTag> exif;
   final File file;
+  final String? mediumId;
 
   Img({
     required this.image,
     required this.exif,
     required this.file,
+    this.mediumId,
   });
 }
 
@@ -39,6 +42,8 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
   final imagePicker = ImagePicker();
   final _selectedImages = <Img>[];
 
+  bool _loadingImages = true;
+
   @override
   void initState() {
     super.initState();
@@ -55,25 +60,13 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
 
     final list = [
       ..._buildImages(),
-      AddPhotoImageContainer(
+      AddPhotoButtonContainer(
         onTap: _onCameraTap,
-        child: Container(
-          color: Theme.of(context).primaryColor,
-          child: const Center(
-            child: Icon(Icons.camera_alt),
-          ),
-        ),
+        icon: const Icon(Icons.camera_alt),
       ),
-      AddPhotoImageContainer(
+      AddPhotoButtonContainer(
         onTap: _onGalleryTap,
-        child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: Theme.of(context).primaryColor,
-          child: const Center(
-            child: Icon(Icons.photo),
-          ),
-        ),
+        icon: const Icon(Icons.photo),
       ),
     ];
 
@@ -109,9 +102,7 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
                     onPressed: widget.onClose,
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      widget.onSubmit();
-                    },
+                    onPressed: _selectedImages.isNotEmpty ? _onSubmit : null,
                     child: const Text("Ajouter"),
                   )
                 ],
@@ -140,6 +131,11 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
                             aspectRatio: 1,
                             child: AddPhotoSelectedImage(
                               child: _selectedImages[index].image,
+                              onDelete: () {
+                                setState(() {
+                                  _selectedImages.removeAt(index);
+                                });
+                              },
                             ),
                           );
                         },
@@ -151,21 +147,33 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
                   ],
                 );
               }),
-              SizedBox(
-                height: 100,
-                child: ListView.separated(
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(width: 8);
-                  },
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: list.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return AspectRatio(
-                      aspectRatio: 1,
-                      child: list[index],
-                    );
-                  },
+              AnimatedCrossFade(
+                crossFadeState: _loadingImages
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                duration: const Duration(milliseconds: 200),
+                firstChild: const SizedBox(
+                  height: 100,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                secondChild: SizedBox(
+                  height: 100,
+                  child: ListView.separated(
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(width: 8);
+                    },
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return AspectRatio(
+                        aspectRatio: 1,
+                        child: list[index],
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
@@ -175,9 +183,15 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
     );
   }
 
+  void _onSubmit() {
+    widget.onSubmit();
+  }
+
   List<Widget> _buildImages() {
     return mediumIdList.map((mediumId) {
       return AddPhotoImageContainer(
+        isSelected:
+            _selectedImages.any((element) => element.mediumId == mediumId),
         child: Image(
           height: double.infinity,
           width: double.infinity,
@@ -191,7 +205,17 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
           ),
         ),
         onTap: () {
-          _onImageSelected(mediumId);
+          final selected =
+              _selectedImages.any((element) => element.mediumId == mediumId);
+
+          if (selected) {
+            setState(() {
+              _selectedImages
+                  .removeWhere((element) => element.mediumId == mediumId);
+            });
+          } else {
+            _onImageSelected(mediumId);
+          }
         },
       );
     }).toList();
@@ -277,7 +301,11 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
           mediumIdList.addAll(mediaPage.items.map((e) => e.id));
         });
       }
-    });
+    }).whenComplete(
+      () => setState(() {
+        _loadingImages = false;
+      }),
+    );
   }
 
   void _onImageSelected(String mediumId) async {
@@ -288,12 +316,32 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
     });
   }
 
+  Widget _buildImageAnimation(
+      Widget child, int? frame, bool wasSynchronouslyLoaded) {
+    if (wasSynchronouslyLoaded) {
+      return child;
+    }
+
+    return AnimatedOpacity(
+      opacity: frame == null ? 0 : 1,
+      duration: const Duration(milliseconds: 300),
+      child: child,
+    );
+  }
+
   Future<Img> fileToImg(File file) async {
     final image = Image(
       height: double.infinity,
       width: double.infinity,
       fit: BoxFit.cover,
       image: FileImage(file),
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        return _buildImageAnimation(
+          child,
+          frame,
+          wasSynchronouslyLoaded,
+        );
+      },
     );
 
     final exif = await _getExifData(file);
@@ -319,6 +367,13 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
         height: 512,
         highQuality: true,
       ),
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        return _buildImageAnimation(
+          child,
+          frame,
+          wasSynchronouslyLoaded,
+        );
+      },
     );
 
     final exif = await _getExifData(file);
@@ -327,6 +382,7 @@ class _AddPhotosModalState extends State<AddPhotosModal> {
       image: image,
       exif: exif,
       file: file,
+      mediumId: mediumId,
     );
   }
 }
