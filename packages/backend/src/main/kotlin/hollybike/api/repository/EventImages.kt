@@ -14,6 +14,10 @@ class EventImage(id: EntityID<Int>) : IntEntity(id) {
 	var path by EventImages.path
 	var size by EventImages.size
 	var uploadDateTime by EventImages.uploadDateTime
+	var takenDateTime by EventImages.takenDateTime
+	var latitude by EventImages.latitude
+	var longitude by EventImages.longitude
+	var altitude by EventImages.altitude
 
 	companion object : IntEntityClass<EventImage>(EventImages)
 }
@@ -24,6 +28,10 @@ object EventImages: IntIdTable("event_images", "id_event_image") {
 	val path = varchar("path", 2_048)
 	val size = integer("size")
 	val uploadDateTime = timestamp("upload_date_time").clientDefault { Clock.System.now() }
+	val takenDateTime = timestamp("taken_date_time").nullable()
+	val latitude = double("latitude").nullable()
+	val longitude = double("longitude").nullable()
+	val altitude = double("altitude").nullable()
 }
 
 val eventImagesMapper: Mapper = mapOf(

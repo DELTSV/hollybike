@@ -86,16 +86,15 @@ class EventImageService(
 			val newImages = images.map { image ->
 				val uuid = UUID.randomUUID().toString()
 
-				println(image.metadata.takenDateTime)
-				println(image.metadata.position?.latitude)
-				println(image.metadata.position?.longitude)
-				println(image.metadata.position?.altitude)
-
 				EventImage.new {
 					owner = caller
 					event = foundEvent
 					path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
 					size = image.data.size
+					takenDateTime = image.metadata.takenDateTime
+					latitude = image.metadata.position?.latitude
+					longitude = image.metadata.position?.longitude
+					altitude = image.metadata.position?.altitude?.toDouble()
 				} to image
 			}
 

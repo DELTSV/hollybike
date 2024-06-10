@@ -260,3 +260,17 @@ ALTER TABLE users_participate_events
 
 ALTER TABLE users_participate_events
     RENAME TO event_participations;
+
+-- changeset loic:6
+
+ALTER TABLE event_images
+    ADD COLUMN IF NOT EXISTS taken_date_time TIMESTAMP;
+
+ALTER TABLE event_images
+    ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION;
+
+ALTER TABLE event_images
+    ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
+
+ALTER TABLE event_images
+    ADD COLUMN IF NOT EXISTS altitude DOUBLE PRECISION;
