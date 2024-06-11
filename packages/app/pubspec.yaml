@@ -60,7 +60,6 @@ dependencies:
   image_picker: ^1.1.2
   permission_handler: ^11.3.1
   photo_gallery: ^2.2.1
-  exif: ^3.3.0
   mime: ^1.0.5
   flutter_image_compress: ^2.3.0
 

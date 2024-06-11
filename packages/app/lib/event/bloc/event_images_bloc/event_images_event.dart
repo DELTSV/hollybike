@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
-import 'package:hollybike/images/types/file_with_metadata.dart';
 
 import '../../../auth/types/auth_session.dart';
 
@@ -29,7 +30,7 @@ class RefreshEventImages extends EventImagesEvent {
 class UploadEventImages extends EventImagesEvent {
   final int eventId;
   final AuthSession session;
-  final List<ImageWithMetadata> images;
+  final List<File> images;
 
   UploadEventImages({
     required this.session,

@@ -7,6 +7,8 @@ import hollybike.api.routing.controller.*
 import hollybike.api.services.*
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
+import hollybike.api.services.image.EventImageService
+import hollybike.api.services.image.ImageMetadataService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.services.storage.StorageServiceFactory
 import hollybike.api.services.storage.signature.StorageSignatureMode
@@ -46,7 +48,8 @@ fun Application.api() {
 	val authService = AuthService(db, conf.security, invitationService, userService)
 	val eventService = EventService(db, storageService)
 	val eventParticipationService = EventParticipationService(db, eventService)
-	val eventImageService = EventImageService(db, eventService, storageService)
+	val imageMetadataService = ImageMetadataService()
+	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}

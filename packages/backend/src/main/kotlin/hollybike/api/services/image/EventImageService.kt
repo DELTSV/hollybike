@@ -1,10 +1,10 @@
-package hollybike.api.services
+package hollybike.api.services.image
 
 import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.repository.*
+import hollybike.api.services.EventService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.event.image.TImageDataWithMetadata
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
@@ -19,7 +19,8 @@ import java.util.*
 class EventImageService(
 	private val db: Database,
 	private val eventService: EventService,
-	private val storageService: StorageService
+	private val storageService: StorageService,
+	private val imageMetadataService: ImageMetadataService
 ) {
 	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) =
 		eventService.handleEventExceptions(exception, call)
@@ -76,31 +77,35 @@ class EventImageService(
 	suspend fun uploadImages(
 		caller: User,
 		eventId: Int,
-		images: List<TImageDataWithMetadata>
+		images: List<Pair<ByteArray, String>>
 	): Result<List<EventImage>> {
 		val foundEvent =
 			eventService.getEvent(caller, eventId)
 				?: return Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val createdImages = transaction(db) {
-			val newImages = images.map { image ->
+			val newImages = images.map { (data, contentType) ->
 				val uuid = UUID.randomUUID().toString()
+
+				val imageMetadata = imageMetadataService.getImageMetadata(data)
+				val imageWithoutExif = imageMetadataService.removeExifData(data)
 
 				EventImage.new {
 					owner = caller
 					event = foundEvent
 					path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
-					size = image.data.size
-					takenDateTime = image.metadata.takenDateTime
-					latitude = image.metadata.position?.latitude
-					longitude = image.metadata.position?.longitude
-					altitude = image.metadata.position?.altitude?.toDouble()
-				} to image
+					size = imageWithoutExif.size
+					takenDateTime = imageMetadata.takenDateTime
+					latitude = imageMetadata.position?.latitude
+					longitude = imageMetadata.position?.longitude
+					altitude = imageMetadata.position?.altitude
+				} to (imageWithoutExif to contentType)
 			}
 
 			runBlocking {
 				newImages.forEach { (image, file) ->
-					storageService.store(file.data, image.path, file.contentType)
+					val (data, contentType) = file
+					storageService.store(data, image.path, contentType)
 				}
 			}
 
