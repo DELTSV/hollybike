@@ -1,10 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/fragments/future_events.dart';
-import 'package:hollybike/event/widgets/add_event_floating_button.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
+
+import '../widgets/add_event_floating_button.dart';
 
 @RoutePage()
 class EventsScreen extends StatelessWidget {

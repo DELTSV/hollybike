@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
-class AddPhotoSelectedImage extends StatefulWidget {
+class ImagePickerSelectedImage extends StatefulWidget {
   final Widget child;
   final void Function()? onDelete;
 
-  const AddPhotoSelectedImage({
+  const ImagePickerSelectedImage({
     super.key,
     required this.child,
     this.onDelete,
   });
 
   @override
-  State<AddPhotoSelectedImage> createState() => _AddPhotoSelectedImageState();
+  State<ImagePickerSelectedImage> createState() =>
+      _ImagePickerSelectedImageState();
 }
 
-class _AddPhotoSelectedImageState extends State<AddPhotoSelectedImage> {
+class _ImagePickerSelectedImageState extends State<ImagePickerSelectedImage> {
   bool initial = true;
 
   @override
@@ -54,19 +55,24 @@ class _AddPhotoSelectedImageState extends State<AddPhotoSelectedImage> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.redAccent,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 4,
-                  ),
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(3),
-                  child: Icon(
-                    Icons.delete_outline,
-                    color: Colors.white,
-                    size: 16,
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.redAccent,
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(3),
+                      child: Icon(
+                        Icons.delete_outline,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -75,7 +81,7 @@ class _AddPhotoSelectedImageState extends State<AddPhotoSelectedImage> {
                   color: Colors.transparent,
                   child: InkWell(
                     customBorder: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                     onTap: widget.onDelete,
                   ),

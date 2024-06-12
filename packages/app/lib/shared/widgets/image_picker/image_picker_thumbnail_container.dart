@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AddPhotoImageContainer extends StatefulWidget {
+class ImagePickerThumbnailContainer extends StatefulWidget {
   final Widget child;
   final void Function()? onTap;
   final bool isSelected;
 
-  const AddPhotoImageContainer({
+  const ImagePickerThumbnailContainer({
     super.key,
     required this.child,
     this.onTap,
@@ -13,10 +13,12 @@ class AddPhotoImageContainer extends StatefulWidget {
   });
 
   @override
-  State<AddPhotoImageContainer> createState() => _AddPhotoImageContainerState();
+  State<ImagePickerThumbnailContainer> createState() =>
+      _ImagePickerThumbnailContainerState();
 }
 
-class _AddPhotoImageContainerState extends State<AddPhotoImageContainer> {
+class _ImagePickerThumbnailContainerState
+    extends State<ImagePickerThumbnailContainer> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
@@ -42,7 +44,6 @@ class _AddPhotoImageContainerState extends State<AddPhotoImageContainer> {
           ),
         ),
       ),
-
       Positioned(
         right: 0,
         child: AnimatedScale(
@@ -51,19 +52,24 @@ class _AddPhotoImageContainerState extends State<AddPhotoImageContainer> {
           curve: Curves.easeInOut,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.blueAccent,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.primary,
-                width: 4,
-              ),
+              color: Theme.of(context).colorScheme.primary,
+              shape: BoxShape.circle,
             ),
-            child: const Padding(
-              padding: EdgeInsets.all(2),
-              child: Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blueAccent,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(2),
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 10,
+                  ),
+                ),
               ),
             ),
           ),

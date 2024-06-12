@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class AddPhotoButtonContainer extends StatelessWidget {
+class ImagePickerButtonContainer extends StatelessWidget {
   final Icon icon;
   final void Function()? onTap;
 
-  const AddPhotoButtonContainer({
+  const ImagePickerButtonContainer({
     super.key,
     required this.icon,
     this.onTap,
