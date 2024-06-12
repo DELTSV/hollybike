@@ -19,10 +19,9 @@ import 'package:hollybike/event/screens/event_participations_screen.dart'
     as _i4;
 import 'package:hollybike/event/screens/events_screen.dart' as _i5;
 import 'package:hollybike/event/screens/my_events_screen.dart' as _i9;
-import 'package:hollybike/event/types/event_details.dart' as _i17;
-import 'package:hollybike/event/types/event_participation.dart' as _i18;
+import 'package:hollybike/event/types/event_details.dart' as _i16;
+import 'package:hollybike/event/types/event_participation.dart' as _i17;
 import 'package:hollybike/event/widgets/event_image.dart' as _i15;
-import 'package:hollybike/images/types/event_image.dart' as _i16;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i10;
 import 'package:hollybike/profile/screens/me_screen.dart' as _i8;
 import 'package:hollybike/profile/screens/profile_screen.dart' as _i11;
@@ -63,7 +62,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
         child: _i3.EventImageViewScreen(
           key: args.key,
           imageIndex: args.imageIndex,
-          images: args.images,
+          onLoadNextPage: args.onLoadNextPage,
         ),
       );
     },
@@ -244,14 +243,14 @@ class EventImageViewRoute extends _i13.PageRouteInfo<EventImageViewRouteArgs> {
   EventImageViewRoute({
     _i14.Key? key,
     required int imageIndex,
-    required List<_i16.EventImage> images,
+    required void Function() onLoadNextPage,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           EventImageViewRoute.name,
           args: EventImageViewRouteArgs(
             key: key,
             imageIndex: imageIndex,
-            images: images,
+            onLoadNextPage: onLoadNextPage,
           ),
           initialChildren: children,
         );
@@ -266,18 +265,18 @@ class EventImageViewRouteArgs {
   const EventImageViewRouteArgs({
     this.key,
     required this.imageIndex,
-    required this.images,
+    required this.onLoadNextPage,
   });
 
   final _i14.Key? key;
 
   final int imageIndex;
 
-  final List<_i16.EventImage> images;
+  final void Function() onLoadNextPage;
 
   @override
   String toString() {
-    return 'EventImageViewRouteArgs{key: $key, imageIndex: $imageIndex, images: $images}';
+    return 'EventImageViewRouteArgs{key: $key, imageIndex: $imageIndex, onLoadNextPage: $onLoadNextPage}';
   }
 }
 
@@ -287,8 +286,8 @@ class EventParticipationsRoute
     extends _i13.PageRouteInfo<EventParticipationsRouteArgs> {
   EventParticipationsRoute({
     _i14.Key? key,
-    required _i17.EventDetails eventDetails,
-    required List<_i18.EventParticipation> participationPreview,
+    required _i16.EventDetails eventDetails,
+    required List<_i17.EventParticipation> participationPreview,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
@@ -315,9 +314,9 @@ class EventParticipationsRouteArgs {
 
   final _i14.Key? key;
 
-  final _i17.EventDetails eventDetails;
+  final _i16.EventDetails eventDetails;
 
-  final List<_i18.EventParticipation> participationPreview;
+  final List<_i17.EventParticipation> participationPreview;
 
   @override
   String toString() {
