@@ -8,32 +8,34 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i12;
-import 'package:flutter/material.dart' as _i13;
-import 'package:hollybike/auth/screens/login_screen.dart' as _i6;
-import 'package:hollybike/auth/screens/signup_screen.dart' as _i11;
+import 'package:auto_route/auto_route.dart' as _i13;
+import 'package:flutter/material.dart' as _i14;
+import 'package:hollybike/auth/screens/login_screen.dart' as _i7;
+import 'package:hollybike/auth/screens/signup_screen.dart' as _i12;
 import 'package:hollybike/event/screens/event_candidates_screen.dart' as _i1;
 import 'package:hollybike/event/screens/event_details_screen.dart' as _i2;
+import 'package:hollybike/event/screens/event_image_view_screen.dart' as _i3;
 import 'package:hollybike/event/screens/event_participations_screen.dart'
-    as _i3;
-import 'package:hollybike/event/screens/events_screen.dart' as _i4;
-import 'package:hollybike/event/screens/my_events_screen.dart' as _i8;
-import 'package:hollybike/event/types/event_details.dart' as _i15;
-import 'package:hollybike/event/types/event_participation.dart' as _i16;
-import 'package:hollybike/event/widgets/event_image.dart' as _i14;
-import 'package:hollybike/notification/routes/notification_route.dart' as _i9;
-import 'package:hollybike/profile/screens/me_screen.dart' as _i7;
-import 'package:hollybike/profile/screens/profile_screen.dart' as _i10;
-import 'package:hollybike/shared/routes/loading_route.dart' as _i5;
+    as _i4;
+import 'package:hollybike/event/screens/events_screen.dart' as _i5;
+import 'package:hollybike/event/screens/my_events_screen.dart' as _i9;
+import 'package:hollybike/event/types/event_details.dart' as _i17;
+import 'package:hollybike/event/types/event_participation.dart' as _i18;
+import 'package:hollybike/event/widgets/event_image.dart' as _i15;
+import 'package:hollybike/images/types/event_image.dart' as _i16;
+import 'package:hollybike/notification/routes/notification_route.dart' as _i10;
+import 'package:hollybike/profile/screens/me_screen.dart' as _i8;
+import 'package:hollybike/profile/screens/profile_screen.dart' as _i11;
+import 'package:hollybike/shared/routes/loading_route.dart' as _i6;
 
-abstract class $AppRouter extends _i12.RootStackRouter {
+abstract class $AppRouter extends _i13.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
-  final Map<String, _i12.PageFactory> pagesMap = {
+  final Map<String, _i13.PageFactory> pagesMap = {
     EventCandidatesRoute.name: (routeData) {
       final args = routeData.argsAs<EventCandidatesRouteArgs>();
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i1.EventCandidatesScreen(
           key: args.key,
@@ -43,7 +45,7 @@ abstract class $AppRouter extends _i12.RootStackRouter {
     },
     EventDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<EventDetailsRouteArgs>();
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i2.EventDetailsScreen(
           key: args.key,
@@ -54,11 +56,21 @@ abstract class $AppRouter extends _i12.RootStackRouter {
         ),
       );
     },
+    EventImageViewRoute.name: (routeData) {
+      final args = routeData.argsAs<EventImageViewRouteArgs>();
+      return _i13.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: _i3.EventImageViewScreen(
+          key: args.key,
+          image: args.image,
+        ),
+      );
+    },
     EventParticipationsRoute.name: (routeData) {
       final args = routeData.argsAs<EventParticipationsRouteArgs>();
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i3.EventParticipationsScreen(
+        child: _i4.EventParticipationsScreen(
           key: args.key,
           eventDetails: args.eventDetails,
           participationPreview: args.participationPreview,
@@ -66,22 +78,22 @@ abstract class $AppRouter extends _i12.RootStackRouter {
       );
     },
     EventsRoute.name: (routeData) {
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i4.EventsScreen(),
+        child: const _i5.EventsScreen(),
       );
     },
     LoadingRoute.name: (routeData) {
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i5.LoadingRoute(),
+        child: const _i6.LoadingRoute(),
       );
     },
     LoginRoute.name: (routeData) {
       final args = routeData.argsAs<LoginRouteArgs>();
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i6.LoginScreen(
+        child: _i7.LoginScreen(
           key: args.key,
           onAuthSuccess: args.onAuthSuccess,
           canPop: args.canPop,
@@ -89,30 +101,30 @@ abstract class $AppRouter extends _i12.RootStackRouter {
       );
     },
     MeRoute.name: (routeData) {
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i7.MeScreen(),
+        child: const _i8.MeScreen(),
       );
     },
     MyEventsRoute.name: (routeData) {
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i8.MyEventsScreen(),
+        child: const _i9.MyEventsScreen(),
       );
     },
     NotificationRoute.name: (routeData) {
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i9.NotificationRoute(),
+        child: const _i10.NotificationRoute(),
       );
     },
     ProfileRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<ProfileRouteArgs>(
           orElse: () => ProfileRouteArgs(id: pathParams.optString('id')));
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i10.ProfileScreen(
+        child: _i11.ProfileScreen(
           key: args.key,
           id: args.id,
         ),
@@ -121,9 +133,9 @@ abstract class $AppRouter extends _i12.RootStackRouter {
     SignupRoute.name: (routeData) {
       final args = routeData.argsAs<SignupRouteArgs>(
           orElse: () => const SignupRouteArgs());
-      return _i12.AutoRoutePage<dynamic>(
+      return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i11.SignupScreen(
+        child: _i12.SignupScreen(
           key: args.key,
           onAuthSuccess: args.onAuthSuccess,
           canPop: args.canPop,
@@ -136,11 +148,11 @@ abstract class $AppRouter extends _i12.RootStackRouter {
 /// generated route for
 /// [_i1.EventCandidatesScreen]
 class EventCandidatesRoute
-    extends _i12.PageRouteInfo<EventCandidatesRouteArgs> {
+    extends _i13.PageRouteInfo<EventCandidatesRouteArgs> {
   EventCandidatesRoute({
-    _i13.Key? key,
+    _i14.Key? key,
     required int eventId,
-    List<_i12.PageRouteInfo>? children,
+    List<_i13.PageRouteInfo>? children,
   }) : super(
           EventCandidatesRoute.name,
           args: EventCandidatesRouteArgs(
@@ -152,8 +164,8 @@ class EventCandidatesRoute
 
   static const String name = 'EventCandidatesRoute';
 
-  static const _i12.PageInfo<EventCandidatesRouteArgs> page =
-      _i12.PageInfo<EventCandidatesRouteArgs>(name);
+  static const _i13.PageInfo<EventCandidatesRouteArgs> page =
+      _i13.PageInfo<EventCandidatesRouteArgs>(name);
 }
 
 class EventCandidatesRouteArgs {
@@ -162,7 +174,7 @@ class EventCandidatesRouteArgs {
     required this.eventId,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
   final int eventId;
 
@@ -174,14 +186,14 @@ class EventCandidatesRouteArgs {
 
 /// generated route for
 /// [_i2.EventDetailsScreen]
-class EventDetailsRoute extends _i12.PageRouteInfo<EventDetailsRouteArgs> {
+class EventDetailsRoute extends _i13.PageRouteInfo<EventDetailsRouteArgs> {
   EventDetailsRoute({
-    _i13.Key? key,
+    _i14.Key? key,
     required int eventId,
-    required _i14.EventImage eventImage,
+    required _i15.EventImage eventImage,
     required String eventName,
     bool animate = true,
-    List<_i12.PageRouteInfo>? children,
+    List<_i13.PageRouteInfo>? children,
   }) : super(
           EventDetailsRoute.name,
           args: EventDetailsRouteArgs(
@@ -196,8 +208,8 @@ class EventDetailsRoute extends _i12.PageRouteInfo<EventDetailsRouteArgs> {
 
   static const String name = 'EventDetailsRoute';
 
-  static const _i12.PageInfo<EventDetailsRouteArgs> page =
-      _i12.PageInfo<EventDetailsRouteArgs>(name);
+  static const _i13.PageInfo<EventDetailsRouteArgs> page =
+      _i13.PageInfo<EventDetailsRouteArgs>(name);
 }
 
 class EventDetailsRouteArgs {
@@ -209,11 +221,11 @@ class EventDetailsRouteArgs {
     this.animate = true,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
   final int eventId;
 
-  final _i14.EventImage eventImage;
+  final _i15.EventImage eventImage;
 
   final String eventName;
 
@@ -226,14 +238,52 @@ class EventDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i3.EventParticipationsScreen]
+/// [_i3.EventImageViewScreen]
+class EventImageViewRoute extends _i13.PageRouteInfo<EventImageViewRouteArgs> {
+  EventImageViewRoute({
+    _i14.Key? key,
+    required _i16.EventImage image,
+    List<_i13.PageRouteInfo>? children,
+  }) : super(
+          EventImageViewRoute.name,
+          args: EventImageViewRouteArgs(
+            key: key,
+            image: image,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EventImageViewRoute';
+
+  static const _i13.PageInfo<EventImageViewRouteArgs> page =
+      _i13.PageInfo<EventImageViewRouteArgs>(name);
+}
+
+class EventImageViewRouteArgs {
+  const EventImageViewRouteArgs({
+    this.key,
+    required this.image,
+  });
+
+  final _i14.Key? key;
+
+  final _i16.EventImage image;
+
+  @override
+  String toString() {
+    return 'EventImageViewRouteArgs{key: $key, image: $image}';
+  }
+}
+
+/// generated route for
+/// [_i4.EventParticipationsScreen]
 class EventParticipationsRoute
-    extends _i12.PageRouteInfo<EventParticipationsRouteArgs> {
+    extends _i13.PageRouteInfo<EventParticipationsRouteArgs> {
   EventParticipationsRoute({
-    _i13.Key? key,
-    required _i15.EventDetails eventDetails,
-    required List<_i16.EventParticipation> participationPreview,
-    List<_i12.PageRouteInfo>? children,
+    _i14.Key? key,
+    required _i17.EventDetails eventDetails,
+    required List<_i18.EventParticipation> participationPreview,
+    List<_i13.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
           args: EventParticipationsRouteArgs(
@@ -246,8 +296,8 @@ class EventParticipationsRoute
 
   static const String name = 'EventParticipationsRoute';
 
-  static const _i12.PageInfo<EventParticipationsRouteArgs> page =
-      _i12.PageInfo<EventParticipationsRouteArgs>(name);
+  static const _i13.PageInfo<EventParticipationsRouteArgs> page =
+      _i13.PageInfo<EventParticipationsRouteArgs>(name);
 }
 
 class EventParticipationsRouteArgs {
@@ -257,11 +307,11 @@ class EventParticipationsRouteArgs {
     required this.participationPreview,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
-  final _i15.EventDetails eventDetails;
+  final _i17.EventDetails eventDetails;
 
-  final List<_i16.EventParticipation> participationPreview;
+  final List<_i18.EventParticipation> participationPreview;
 
   @override
   String toString() {
@@ -270,9 +320,9 @@ class EventParticipationsRouteArgs {
 }
 
 /// generated route for
-/// [_i4.EventsScreen]
-class EventsRoute extends _i12.PageRouteInfo<void> {
-  const EventsRoute({List<_i12.PageRouteInfo>? children})
+/// [_i5.EventsScreen]
+class EventsRoute extends _i13.PageRouteInfo<void> {
+  const EventsRoute({List<_i13.PageRouteInfo>? children})
       : super(
           EventsRoute.name,
           initialChildren: children,
@@ -280,13 +330,13 @@ class EventsRoute extends _i12.PageRouteInfo<void> {
 
   static const String name = 'EventsRoute';
 
-  static const _i12.PageInfo<void> page = _i12.PageInfo<void>(name);
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i5.LoadingRoute]
-class LoadingRoute extends _i12.PageRouteInfo<void> {
-  const LoadingRoute({List<_i12.PageRouteInfo>? children})
+/// [_i6.LoadingRoute]
+class LoadingRoute extends _i13.PageRouteInfo<void> {
+  const LoadingRoute({List<_i13.PageRouteInfo>? children})
       : super(
           LoadingRoute.name,
           initialChildren: children,
@@ -294,17 +344,17 @@ class LoadingRoute extends _i12.PageRouteInfo<void> {
 
   static const String name = 'LoadingRoute';
 
-  static const _i12.PageInfo<void> page = _i12.PageInfo<void>(name);
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i6.LoginScreen]
-class LoginRoute extends _i12.PageRouteInfo<LoginRouteArgs> {
+/// [_i7.LoginScreen]
+class LoginRoute extends _i13.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i13.Key? key,
+    _i14.Key? key,
     required dynamic Function() onAuthSuccess,
     bool canPop = false,
-    List<_i12.PageRouteInfo>? children,
+    List<_i13.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
@@ -317,8 +367,8 @@ class LoginRoute extends _i12.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static const _i12.PageInfo<LoginRouteArgs> page =
-      _i12.PageInfo<LoginRouteArgs>(name);
+  static const _i13.PageInfo<LoginRouteArgs> page =
+      _i13.PageInfo<LoginRouteArgs>(name);
 }
 
 class LoginRouteArgs {
@@ -328,7 +378,7 @@ class LoginRouteArgs {
     this.canPop = false,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
   final dynamic Function() onAuthSuccess;
 
@@ -341,9 +391,9 @@ class LoginRouteArgs {
 }
 
 /// generated route for
-/// [_i7.MeScreen]
-class MeRoute extends _i12.PageRouteInfo<void> {
-  const MeRoute({List<_i12.PageRouteInfo>? children})
+/// [_i8.MeScreen]
+class MeRoute extends _i13.PageRouteInfo<void> {
+  const MeRoute({List<_i13.PageRouteInfo>? children})
       : super(
           MeRoute.name,
           initialChildren: children,
@@ -351,13 +401,13 @@ class MeRoute extends _i12.PageRouteInfo<void> {
 
   static const String name = 'MeRoute';
 
-  static const _i12.PageInfo<void> page = _i12.PageInfo<void>(name);
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i8.MyEventsScreen]
-class MyEventsRoute extends _i12.PageRouteInfo<void> {
-  const MyEventsRoute({List<_i12.PageRouteInfo>? children})
+/// [_i9.MyEventsScreen]
+class MyEventsRoute extends _i13.PageRouteInfo<void> {
+  const MyEventsRoute({List<_i13.PageRouteInfo>? children})
       : super(
           MyEventsRoute.name,
           initialChildren: children,
@@ -365,13 +415,13 @@ class MyEventsRoute extends _i12.PageRouteInfo<void> {
 
   static const String name = 'MyEventsRoute';
 
-  static const _i12.PageInfo<void> page = _i12.PageInfo<void>(name);
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i9.NotificationRoute]
-class NotificationRoute extends _i12.PageRouteInfo<void> {
-  const NotificationRoute({List<_i12.PageRouteInfo>? children})
+/// [_i10.NotificationRoute]
+class NotificationRoute extends _i13.PageRouteInfo<void> {
+  const NotificationRoute({List<_i13.PageRouteInfo>? children})
       : super(
           NotificationRoute.name,
           initialChildren: children,
@@ -379,16 +429,16 @@ class NotificationRoute extends _i12.PageRouteInfo<void> {
 
   static const String name = 'NotificationRoute';
 
-  static const _i12.PageInfo<void> page = _i12.PageInfo<void>(name);
+  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i10.ProfileScreen]
-class ProfileRoute extends _i12.PageRouteInfo<ProfileRouteArgs> {
+/// [_i11.ProfileScreen]
+class ProfileRoute extends _i13.PageRouteInfo<ProfileRouteArgs> {
   ProfileRoute({
-    _i13.Key? key,
+    _i14.Key? key,
     String? id,
-    List<_i12.PageRouteInfo>? children,
+    List<_i13.PageRouteInfo>? children,
   }) : super(
           ProfileRoute.name,
           args: ProfileRouteArgs(
@@ -401,8 +451,8 @@ class ProfileRoute extends _i12.PageRouteInfo<ProfileRouteArgs> {
 
   static const String name = 'ProfileRoute';
 
-  static const _i12.PageInfo<ProfileRouteArgs> page =
-      _i12.PageInfo<ProfileRouteArgs>(name);
+  static const _i13.PageInfo<ProfileRouteArgs> page =
+      _i13.PageInfo<ProfileRouteArgs>(name);
 }
 
 class ProfileRouteArgs {
@@ -411,7 +461,7 @@ class ProfileRouteArgs {
     this.id,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
   final String? id;
 
@@ -422,13 +472,13 @@ class ProfileRouteArgs {
 }
 
 /// generated route for
-/// [_i11.SignupScreen]
-class SignupRoute extends _i12.PageRouteInfo<SignupRouteArgs> {
+/// [_i12.SignupScreen]
+class SignupRoute extends _i13.PageRouteInfo<SignupRouteArgs> {
   SignupRoute({
-    _i13.Key? key,
+    _i14.Key? key,
     dynamic Function()? onAuthSuccess,
     bool canPop = false,
-    List<_i12.PageRouteInfo>? children,
+    List<_i13.PageRouteInfo>? children,
   }) : super(
           SignupRoute.name,
           args: SignupRouteArgs(
@@ -441,8 +491,8 @@ class SignupRoute extends _i12.PageRouteInfo<SignupRouteArgs> {
 
   static const String name = 'SignupRoute';
 
-  static const _i12.PageInfo<SignupRouteArgs> page =
-      _i12.PageInfo<SignupRouteArgs>(name);
+  static const _i13.PageInfo<SignupRouteArgs> page =
+      _i13.PageInfo<SignupRouteArgs>(name);
 }
 
 class SignupRouteArgs {
@@ -452,7 +502,7 @@ class SignupRouteArgs {
     this.canPop = false,
   });
 
-  final _i13.Key? key;
+  final _i14.Key? key;
 
   final dynamic Function()? onAuthSuccess;
 

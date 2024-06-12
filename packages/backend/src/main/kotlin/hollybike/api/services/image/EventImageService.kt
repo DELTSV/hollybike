@@ -38,7 +38,7 @@ class EventImageService(
 					)
 		}
 
-	private fun eventImagesRequest(caller: User, searchParam: SearchParam): Query {
+	private fun eventImagesRequest(caller: User, searchParam: SearchParam, withPagination: Boolean = true): Query {
 		val userParticipation = EventParticipations.alias("userParticipation")
 		return EventImages.innerJoin(
 			Users,
@@ -59,7 +59,7 @@ class EventImageService(
 			{ Events.id },
 			{ userParticipation[EventParticipations.user] eq caller.id }
 		).selectAll()
-			.applyParam(searchParam).andWhere {
+			.applyParam(searchParam, withPagination).andWhere {
 				eventImagesCondition(caller, userParticipation)
 			}
 	}
@@ -71,7 +71,7 @@ class EventImageService(
 	}
 
 	fun countImages(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		eventImagesRequest(caller, searchParam).count().toInt()
+		eventImagesRequest(caller, searchParam, withPagination = false).count().toInt()
 	}
 
 	suspend fun uploadImages(
@@ -90,8 +90,6 @@ class EventImageService(
 				val imageMetadata = imageMetadataService.getImageMetadata(data)
 				val imageDimensions = imageMetadataService.getImageDimensions(data)
 				val imageWithoutExif = imageMetadataService.removeExifData(data)
-
-				println(imageDimensions)
 
 				EventImage.new {
 					owner = caller
