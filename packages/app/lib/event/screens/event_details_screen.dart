@@ -1,13 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/fragments/details/event_details_images.dart';
+import 'package:hollybike/event/fragments/details/event_details_infos.dart';
+import 'package:hollybike/event/fragments/details/event_details_map.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
-import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/event/widgets/images/add_photos_floating_button.dart';
-import 'package:hollybike/map/widgets/map_preview.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
@@ -20,8 +21,7 @@ import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
-import '../bloc/event_images_bloc/event_images_bloc.dart';
-import '../bloc/event_images_bloc/event_images_state.dart';
+import '../fragments/details/event_details_my_images.dart';
 import '../widgets/details/event_details_actions_menu.dart';
 
 enum EventDetailsTab { info, photos, myPhotos, map }
@@ -180,34 +180,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                           child: TabBarView(
                             controller: _tabController,
                             children: [
-                              EventDetailsContent(
+                              EventDetailsInfos(
                                 eventDetails: state.eventDetails!,
                               ),
-                              const Center(
-                                child: Text("Images"),
-                              ),
-                              BlocListener<EventImagesBloc, EventImagesState>(
-                                listener: (context, state) {
-                                  if (state is EventImagesUploadFailure) {
-                                    Toast.showErrorToast(
-                                      context,
-                                      state.errorMessage,
-                                    );
-                                  }
-
-                                  if (state is EventImagesUploadSuccess) {
-                                    Toast.showSuccessToast(
-                                      context,
-                                      "Photos ajoutées avec succès",
-                                    );
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                                child: const Center(
-                                  child: Text("My images"),
-                                ),
-                              ),
-                              const MapPreview(),
+                              const EventDetailsImages(),
+                              const EventDetailsMyImages(),
+                              const EventDetailsMap(),
                             ],
                           ),
                         );

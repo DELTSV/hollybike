@@ -3,20 +3,23 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/types/event_details.dart';
-import 'package:hollybike/event/widgets/details/event_join_button.dart';
-import 'package:hollybike/event/widgets/details/event_warning_feed.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
-import 'event_participations_preview.dart';
+import '../../types/event_details.dart';
+import '../../widgets/details/event_join_button.dart';
+import '../../widgets/details/event_participations_preview.dart';
+import '../../widgets/details/event_warning_feed.dart';
 
-class EventDetailsContent extends StatelessWidget {
+class EventDetailsInfos extends StatelessWidget {
   final EventDetails eventDetails;
 
-  const EventDetailsContent({super.key, required this.eventDetails});
+  const EventDetailsInfos({
+    super.key,
+    required this.eventDetails,
+  });
 
   @override
   Widget build(BuildContext context) {

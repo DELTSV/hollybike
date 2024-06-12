@@ -3,17 +3,19 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geojson_vi/geojson_vi.dart';
-import 'package:hollybike/shared/utils/waiter.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-class MapPreview extends StatefulWidget {
-  const MapPreview({super.key});
+import '../../../shared/utils/waiter.dart';
+
+
+class EventDetailsMap extends StatefulWidget {
+  const EventDetailsMap({super.key});
 
   @override
-  State<MapPreview> createState() => _MapPreviewState();
+  State<EventDetailsMap> createState() => _EventDetailsMapState();
 }
 
-class _MapPreviewState extends State<MapPreview> {
+class _EventDetailsMapState extends State<EventDetailsMap> {
   bool _mapLoading = true;
 
   @override
@@ -23,7 +25,7 @@ class _MapPreviewState extends State<MapPreview> {
         MapWidget(
           gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
             Factory<OneSequenceGestureRecognizer>(
-              () => EagerGestureRecognizer(),
+                  () => EagerGestureRecognizer(),
             ),
           },
           key: const ValueKey("mapWidget"),
