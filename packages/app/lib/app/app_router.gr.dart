@@ -62,7 +62,8 @@ abstract class $AppRouter extends _i13.RootStackRouter {
         routeData: routeData,
         child: _i3.EventImageViewScreen(
           key: args.key,
-          image: args.image,
+          imageIndex: args.imageIndex,
+          images: args.images,
         ),
       );
     },
@@ -242,13 +243,15 @@ class EventDetailsRouteArgs {
 class EventImageViewRoute extends _i13.PageRouteInfo<EventImageViewRouteArgs> {
   EventImageViewRoute({
     _i14.Key? key,
-    required _i16.EventImage image,
+    required int imageIndex,
+    required List<_i16.EventImage> images,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           EventImageViewRoute.name,
           args: EventImageViewRouteArgs(
             key: key,
-            image: image,
+            imageIndex: imageIndex,
+            images: images,
           ),
           initialChildren: children,
         );
@@ -262,16 +265,19 @@ class EventImageViewRoute extends _i13.PageRouteInfo<EventImageViewRouteArgs> {
 class EventImageViewRouteArgs {
   const EventImageViewRouteArgs({
     this.key,
-    required this.image,
+    required this.imageIndex,
+    required this.images,
   });
 
   final _i14.Key? key;
 
-  final _i16.EventImage image;
+  final int imageIndex;
+
+  final List<_i16.EventImage> images;
 
   @override
   String toString() {
-    return 'EventImageViewRouteArgs{key: $key, image: $image}';
+    return 'EventImageViewRouteArgs{key: $key, imageIndex: $imageIndex, images: $images}';
   }
 }
 

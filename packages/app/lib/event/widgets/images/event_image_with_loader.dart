@@ -1,18 +1,18 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/app/app_router.gr.dart';
 
 import '../../../images/types/event_image.dart';
 import '../../../shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
 
 class EventImageWithLoader extends StatelessWidget {
   final EventImage image;
+  final void Function()? onTap;
 
   const EventImageWithLoader({
     super.key,
     required this.image,
+    required this.onTap,
   });
 
   @override
@@ -55,11 +55,7 @@ class EventImageWithLoader extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  context.router.push(
-                    EventImageViewRoute(image: image),
-                  );
-                },
+                onTap: onTap,
               ),
             ),
           ),

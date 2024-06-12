@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:hollybike/event/widgets/images/event_image_with_loader.dart';
 
+import '../../../app/app_router.gr.dart';
 import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_images_bloc/event_images_event.dart';
 import '../../bloc/event_images_bloc/event_images_state.dart';
@@ -89,7 +91,14 @@ class _EventDetailsImagesState extends State<EventDetailsImages> {
             itemBuilder: (context, index) {
               final image = state.images[index];
 
-              return EventImageWithLoader(image: image);
+              return EventImageWithLoader(image: image, onTap: () {
+                context.router.push(
+                  EventImageViewRoute(
+                    imageIndex: index,
+                    images: state.images,
+                  ),
+                );
+              });
             },
           ),
         );
