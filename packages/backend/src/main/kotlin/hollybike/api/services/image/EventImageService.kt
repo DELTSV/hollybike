@@ -88,13 +88,18 @@ class EventImageService(
 				val uuid = UUID.randomUUID().toString()
 
 				val imageMetadata = imageMetadataService.getImageMetadata(data)
+				val imageDimensions = imageMetadataService.getImageDimensions(data)
 				val imageWithoutExif = imageMetadataService.removeExifData(data)
+
+				println(imageDimensions)
 
 				EventImage.new {
 					owner = caller
 					event = foundEvent
 					path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
 					size = imageWithoutExif.size
+					width = imageDimensions.first
+					height = imageDimensions.second
 					takenDateTime = imageMetadata.takenDateTime
 					latitude = imageMetadata.position?.latitude
 					longitude = imageMetadata.position?.longitude

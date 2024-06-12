@@ -24,6 +24,8 @@ mixin _$EventImage {
   MinimalUser get owner => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   int get size => throw _privateConstructorUsedError;
+  int get width => throw _privateConstructorUsedError;
+  int get height => throw _privateConstructorUsedError;
   @JsonKey(name: "upload_date_time")
   DateTime get uploadDateTime => throw _privateConstructorUsedError;
 
@@ -44,6 +46,8 @@ abstract class $EventImageCopyWith<$Res> {
       MinimalUser owner,
       String url,
       int size,
+      int width,
+      int height,
       @JsonKey(name: "upload_date_time") DateTime uploadDateTime});
 
   $MinimalUserCopyWith<$Res> get owner;
@@ -66,6 +70,8 @@ class _$EventImageCopyWithImpl<$Res, $Val extends EventImage>
     Object? owner = null,
     Object? url = null,
     Object? size = null,
+    Object? width = null,
+    Object? height = null,
     Object? uploadDateTime = null,
   }) {
     return _then(_value.copyWith(
@@ -84,6 +90,14 @@ class _$EventImageCopyWithImpl<$Res, $Val extends EventImage>
       size: null == size
           ? _value.size
           : size // ignore: cast_nullable_to_non_nullable
+              as int,
+      width: null == width
+          ? _value.width
+          : width // ignore: cast_nullable_to_non_nullable
+              as int,
+      height: null == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
               as int,
       uploadDateTime: null == uploadDateTime
           ? _value.uploadDateTime
@@ -114,6 +128,8 @@ abstract class _$$EventImageImplCopyWith<$Res>
       MinimalUser owner,
       String url,
       int size,
+      int width,
+      int height,
       @JsonKey(name: "upload_date_time") DateTime uploadDateTime});
 
   @override
@@ -135,6 +151,8 @@ class __$$EventImageImplCopyWithImpl<$Res>
     Object? owner = null,
     Object? url = null,
     Object? size = null,
+    Object? width = null,
+    Object? height = null,
     Object? uploadDateTime = null,
   }) {
     return _then(_$EventImageImpl(
@@ -154,6 +172,14 @@ class __$$EventImageImplCopyWithImpl<$Res>
           ? _value.size
           : size // ignore: cast_nullable_to_non_nullable
               as int,
+      width: null == width
+          ? _value.width
+          : width // ignore: cast_nullable_to_non_nullable
+              as int,
+      height: null == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as int,
       uploadDateTime: null == uploadDateTime
           ? _value.uploadDateTime
           : uploadDateTime // ignore: cast_nullable_to_non_nullable
@@ -170,6 +196,8 @@ class _$EventImageImpl implements _EventImage {
       required this.owner,
       required this.url,
       required this.size,
+      required this.width,
+      required this.height,
       @JsonKey(name: "upload_date_time") required this.uploadDateTime});
 
   factory _$EventImageImpl.fromJson(Map<String, dynamic> json) =>
@@ -184,12 +212,16 @@ class _$EventImageImpl implements _EventImage {
   @override
   final int size;
   @override
+  final int width;
+  @override
+  final int height;
+  @override
   @JsonKey(name: "upload_date_time")
   final DateTime uploadDateTime;
 
   @override
   String toString() {
-    return 'EventImage(id: $id, owner: $owner, url: $url, size: $size, uploadDateTime: $uploadDateTime)';
+    return 'EventImage(id: $id, owner: $owner, url: $url, size: $size, width: $width, height: $height, uploadDateTime: $uploadDateTime)';
   }
 
   @override
@@ -201,14 +233,16 @@ class _$EventImageImpl implements _EventImage {
             (identical(other.owner, owner) || other.owner == owner) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.size, size) || other.size == size) &&
+            (identical(other.width, width) || other.width == width) &&
+            (identical(other.height, height) || other.height == height) &&
             (identical(other.uploadDateTime, uploadDateTime) ||
                 other.uploadDateTime == uploadDateTime));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, owner, url, size, uploadDateTime);
+  int get hashCode => Object.hash(
+      runtimeType, id, owner, url, size, width, height, uploadDateTime);
 
   @JsonKey(ignore: true)
   @override
@@ -230,6 +264,8 @@ abstract class _EventImage implements EventImage {
       required final MinimalUser owner,
       required final String url,
       required final int size,
+      required final int width,
+      required final int height,
       @JsonKey(name: "upload_date_time")
       required final DateTime uploadDateTime}) = _$EventImageImpl;
 
@@ -244,6 +280,10 @@ abstract class _EventImage implements EventImage {
   String get url;
   @override
   int get size;
+  @override
+  int get width;
+  @override
+  int get height;
   @override
   @JsonKey(name: "upload_date_time")
   DateTime get uploadDateTime;

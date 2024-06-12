@@ -14,6 +14,8 @@ class EventImage with _$EventImage {
     required MinimalUser owner,
     required String url,
     required int size,
+    required int width,
+    required int height,
     @JsonKey(name: "upload_date_time") required DateTime uploadDateTime,
   }) = _EventImage;
 

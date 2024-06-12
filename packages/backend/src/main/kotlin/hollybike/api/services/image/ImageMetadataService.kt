@@ -125,4 +125,8 @@ class ImageMetadataService {
 			takenDateTime = takenTime,
 		)
 	}
+
+	fun getImageDimensions(data: ByteArray): Pair<Int, Int> {
+		Imaging.getImageSize(data).let { return Pair(it.width, it.height) }
+	}
 }

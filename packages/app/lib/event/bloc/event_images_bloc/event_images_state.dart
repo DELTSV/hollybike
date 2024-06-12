@@ -36,6 +36,7 @@ class EventImagesState {
     int? nextPage,
   }) {
     return EventImagesState(
+      status: status ?? this.status,
       images: images ?? this.images,
       hasMore: hasMore ?? this.hasMore,
       nextPage: nextPage ?? this.nextPage,

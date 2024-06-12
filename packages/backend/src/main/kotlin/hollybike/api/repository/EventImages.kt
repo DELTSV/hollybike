@@ -13,6 +13,8 @@ class EventImage(id: EntityID<Int>) : IntEntity(id) {
 	var event by Event referencedOn EventImages.event
 	var path by EventImages.path
 	var size by EventImages.size
+	var width by EventImages.width
+	var height by EventImages.height
 	var uploadDateTime by EventImages.uploadDateTime
 	var takenDateTime by EventImages.takenDateTime
 	var latitude by EventImages.latitude
@@ -27,6 +29,8 @@ object EventImages: IntIdTable("event_images", "id_event_image") {
 	val event = reference("event", Events)
 	val path = varchar("path", 2_048)
 	val size = integer("size")
+	val width = integer("width")
+	val height = integer("height")
 	val uploadDateTime = timestamp("upload_date_time").clientDefault { Clock.System.now() }
 	val takenDateTime = timestamp("taken_date_time").nullable()
 	val latitude = double("latitude").nullable()

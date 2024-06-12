@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:hollybike/event/fragments/details/event_details_images.dart';
 import 'package:hollybike/event/fragments/details/event_details_infos.dart';
 import 'package:hollybike/event/fragments/details/event_details_map.dart';
@@ -65,6 +66,15 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       setState(() {
         currentTab = EventDetailsTab.values[_tabController.index];
       });
+
+      if (currentTab == EventDetailsTab.map) {
+        final controller = PrimaryScrollController.of(context);
+        controller.animateTo(
+          controller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
     });
 
     setState(() {
@@ -120,23 +130,24 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         floatingActionButton: _getFloatingButton(),
         body: DefaultTabController(
           length: 4,
-          child: CustomScrollView(
-            slivers: [
-              SliverMainAxisGroup(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: EventDetailsHeader(
-                      eventId: widget.eventId,
-                      eventName: eventName,
-                      eventImage: widget.eventImage,
-                      animate: widget.animate,
-                    ),
+          child: NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              // These are the slivers that show up in the "outer" scroll view.
+              return <Widget>[
+                SliverToBoxAdapter(
+                  child: EventDetailsHeader(
+                    eventId: widget.eventId,
+                    eventName: eventName,
+                    eventImage: widget.eventImage,
+                    animate: widget.animate,
                   ),
-                ],
-              ),
-              SliverMainAxisGroup(
-                slivers: [
-                  SliverPersistentHeader(
+                ),
+                SliverOverlapAbsorber(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                    context,
+                  ),
+                  sliver: SliverPersistentHeader(
                     pinned: true,
                     delegate: PinnedHeaderDelegate(
                       height: 50,
@@ -157,44 +168,70 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                       ),
                     ),
                   ),
+                ),
+              ];
+            },
+            body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+              builder: (context, state) {
+                if (state is EventDetailsLoadInProgress) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (state.eventDetails == null ||
+                    state is EventDetailsLoadFailure) {
+                  return const Center(
+                    child: Text(
+                      "Impossible de charger les détails de l'événement",
+                    ),
+                  );
+                }
+
+                final tabs = [
                   SliverToBoxAdapter(
-                    child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-                      builder: (context, state) {
-                        if (state is EventDetailsLoadInProgress) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                    child: EventDetailsInfos(
+                      eventDetails: state.eventDetails!,
+                    ),
+                  ),
+                  EventDetailsImages(
+                    scrollController: PrimaryScrollController.of(context),
+                    eventId: state.eventDetails!.event.id,
+                  ),
+                  const SliverToBoxAdapter(
+                    child: EventDetailsMyImages(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: const EventDetailsMap(),
+                    ),
+                  ),
+                ];
 
-                        if (state.eventDetails == null ||
-                            state is EventDetailsLoadFailure) {
-                          return const Center(
-                            child: Text(
-                              "Impossible de charger les détails de l'événement",
-                            ),
-                          );
-                        }
-
-                        return SizedBox(
-                          height: 500,
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                              EventDetailsInfos(
-                                eventDetails: state.eventDetails!,
-                              ),
-                              const EventDetailsImages(),
-                              const EventDetailsMyImages(),
-                              const EventDetailsMap(),
-                            ],
+                return TabBarView(
+                  controller: _tabController,
+                  children: tabs.map((tab) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return CustomScrollView(
+                          key: PageStorageKey<String>(
+                            tabs.indexOf(tab).toString(),
                           ),
+                          slivers: [
+                            SliverOverlapInjector(
+                              handle: NestedScrollView
+                                  .sliverOverlapAbsorberHandleFor(context),
+                            ),
+                            tab,
+                          ],
                         );
                       },
-                    ),
-                  )
-                ],
-              ),
-            ],
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ),
         ),
       ),

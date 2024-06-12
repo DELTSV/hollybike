@@ -274,3 +274,11 @@ ALTER TABLE event_images
 
 ALTER TABLE event_images
     ADD COLUMN IF NOT EXISTS altitude DOUBLE PRECISION;
+
+-- changeset loic:7
+
+ALTER TABLE event_images
+    ADD COLUMN IF NOT EXISTS width INTEGER NOT NULL;
+
+ALTER TABLE event_images
+    ADD COLUMN IF NOT EXISTS height INTEGER NOT NULL;

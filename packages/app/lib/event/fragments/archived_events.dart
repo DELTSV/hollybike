@@ -82,7 +82,9 @@ class ArchivedEvents extends StatelessWidget {
           return EventList(
             hasMore: state.hasMore,
             events: state.events,
-            onNextPageRequested: _loadNextPage,
+            onNextPageRequested: () {
+              _loadNextPage(context);
+            },
             onEventTap: (event) {
               _navigateToEventDetails(
                 context,
@@ -90,7 +92,9 @@ class ArchivedEvents extends StatelessWidget {
                 true,
               );
             },
-            onRefreshRequested: _refreshEvents,
+            onRefreshRequested: () {
+              _refreshEvents(context);
+            },
           );
         },
       ),

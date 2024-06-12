@@ -17,8 +17,12 @@ class ImageRepository {
     int page,
     int eventsPerPage,
   ) async {
-    final pageResult =
-        await imageApi.getEventImages(session, eventId, page, eventsPerPage);
+    final pageResult = await imageApi.getEventImages(
+      session,
+      eventId,
+      page,
+      eventsPerPage,
+    );
 
     return pageResult;
   }
@@ -28,8 +32,12 @@ class ImageRepository {
     int eventId,
     int eventsPerPage,
   ) async {
-    final pageResult =
-        await imageApi.getEventImages(session, eventId, 0, eventsPerPage);
+    final pageResult = await imageApi.getEventImages(
+      session,
+      eventId,
+      0,
+      eventsPerPage,
+    );
 
     return pageResult;
   }

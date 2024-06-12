@@ -9,7 +9,7 @@ import '../../../images/types/event_image.dart';
 import '../../../shared/types/paginated_list.dart';
 
 class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
-  final int numberOfImagesPerRequest = 15;
+  final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
 
@@ -40,6 +40,7 @@ class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
       );
 
       emit(EventImagesPageLoadSuccess(state.copyWith(
+        images: [...state.images, ...page.items],
         hasMore: page.items.length == numberOfImagesPerRequest,
         nextPage: state.nextPage + 1,
       )));
@@ -67,6 +68,7 @@ class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
       );
 
       emit(EventImagesPageLoadSuccess(state.copyWith(
+        images: page.items,
         hasMore: page.items.length == numberOfImagesPerRequest,
         nextPage: 1,
       )));
