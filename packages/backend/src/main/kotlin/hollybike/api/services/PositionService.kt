@@ -84,8 +84,12 @@ class PositionService(
 	}
 
 	private fun getPositionFromCoordinates(latitude: Double, longitude: Double): Position? = transaction(db) {
+		val tolerance = 0.0001
 		Position.find {
-			Positions.latitude eq latitude and (Positions.longitude eq longitude)
+			(Positions.latitude greaterEq latitude - tolerance) and
+				(Positions.latitude lessEq latitude + tolerance) and
+				(Positions.longitude greaterEq longitude - tolerance) and
+				(Positions.longitude lessEq longitude + tolerance)
 		}.firstOrNull()
 	}
 
