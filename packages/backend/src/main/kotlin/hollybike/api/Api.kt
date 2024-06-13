@@ -44,7 +44,7 @@ fun Application.api() {
 	log.info("Using storage signature mode: ${storageService.signer.mode}")
 	log.info("Storage service in mode ${storageService.mode} initialized in $storageInitTime ms")
 
-	val positionService = PositionService(CoroutineScope(Dispatchers.Default))
+	val positionService = PositionService(db, CoroutineScope(Dispatchers.Default))
 
 	val associationService = AssociationService(db, storageService)
 	val userService = UserService(db, storageService, associationService)

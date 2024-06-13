@@ -6,7 +6,6 @@ import hollybike.api.repository.*
 import hollybike.api.services.EventService
 import hollybike.api.services.PositionService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.position.PositionData
 import hollybike.api.types.position.PositionRequest
 import hollybike.api.types.position.PositionScope
 import hollybike.api.utils.search.SearchParam
@@ -33,15 +32,9 @@ class EventImageService(
 		}
 	}
 
-	private fun handlePositionResponse(imageId: Int, positionData: PositionData) {
-		val image = transaction(db) {
-			EventImage.find {
-				EventImages.id eq imageId
-			}.firstOrNull()
-		} ?: return
-
-		transaction(db) {
-			println("Updating position for image $imageId, ${positionData.city}")
+	private fun handlePositionResponse(imageId: Int, positionData: Position) = transaction(db) {
+		EventImage.findById(imageId)?.let { image ->
+			image.position = positionData
 		}
 	}
 
@@ -122,16 +115,14 @@ class EventImageService(
 					width = imageDimensions.first
 					height = imageDimensions.second
 					takenDateTime = imageMetadata.takenDateTime
-					latitude = imageMetadata.position?.latitude
-					longitude = imageMetadata.position?.longitude
-					altitude = imageMetadata.position?.altitude
 				} to (imageWithoutExif to contentType)
 
 				if (imageMetadata.position != null) {
-					positionService.push(
+					positionService.getPositionOrPush(
 						"images-positions", createdImage.first.id.value, PositionRequest(
 							latitude = imageMetadata.position.latitude,
 							longitude = imageMetadata.position.longitude,
+							altitude = imageMetadata.position.altitude,
 							scope = PositionScope.Amenity
 						)
 					)
