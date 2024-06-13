@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../images/types/event_image.dart';
+import '../../types/image/event_image.dart';
 
 enum EventImagesStatus { loading, success, error, initial }
 

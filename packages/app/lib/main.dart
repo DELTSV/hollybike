@@ -12,8 +12,6 @@ import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
-import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
-import 'package:hollybike/images/services/image_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
@@ -26,8 +24,10 @@ import 'event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'event/bloc/events_bloc/events_event.dart';
 import 'event/services/event/event_api.dart';
 import 'event/services/event/event_repository.dart';
-import 'event/services/event_participations/event_participation_api.dart';
-import 'images/services/image_api.dart';
+import 'event/services/image/image_api.dart';
+import 'event/services/image/image_repository.dart';
+import 'event/services/participation/event_participation_api.dart';
+import 'event/services/participation/event_participation_repository.dart';
 
 void main() {
   NetworkImageCache();

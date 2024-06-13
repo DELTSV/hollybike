@@ -1,8 +1,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../shared/types/json_map.dart';
-import '../../user/types/minimal_user.dart';
+import '../../../shared/types/json_map.dart';
+import '../../../user/types/minimal_user.dart';
 
 part 'event_image.freezed.dart';
 part 'event_image.g.dart';

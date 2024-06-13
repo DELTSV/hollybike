@@ -2,9 +2,9 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../shared/widgets/image_gallery/image_gallery_page_view.dart';
-import '../bloc/event_images_bloc/event_images_bloc.dart';
-import '../bloc/event_images_bloc/event_images_state.dart';
+import '../../../shared/widgets/image_gallery/image_gallery_page_view.dart';
+import '../../bloc/event_images_bloc/event_images_bloc.dart';
+import '../../bloc/event_images_bloc/event_images_state.dart';
 
 @RoutePage()
 class EventImageViewScreen extends StatelessWidget {

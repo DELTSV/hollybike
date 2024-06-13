@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import '../../../images/types/event_image.dart';
+import '../../../event/types/image/event_image.dart';
 import '../../../event/widgets/images/event_image_with_loader.dart';
 
 class ImageGallery extends StatefulWidget {

@@ -6,15 +6,15 @@ import 'package:hollybike/event/bloc/event_participations_bloc/event_participati
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_state.dart';
 import 'package:hollybike/event/types/event_details.dart';
-import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
-import '../../shared/utils/with_current_session.dart';
-import '../../shared/widgets/app_toast.dart';
-import '../../shared/widgets/bar/top_bar.dart';
-import '../../shared/widgets/bar/top_bar_title.dart';
-import '../widgets/participations/event_participation_card.dart';
+import '../../../shared/utils/with_current_session.dart';
+import '../../../shared/widgets/app_toast.dart';
+import '../../../shared/widgets/bar/top_bar.dart';
+import '../../../shared/widgets/bar/top_bar_title.dart';
+import '../../types/participation/event_participation.dart';
+import '../../widgets/participations/event_participation_card.dart';
 
 @RoutePage()
 class EventParticipationsScreen extends StatefulWidget {

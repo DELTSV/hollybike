@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../shared/types/json_map.dart';
+import '../../../shared/types/json_map.dart';
 import 'event_role.dart';
 
 part 'event_caller_participation.freezed.dart';

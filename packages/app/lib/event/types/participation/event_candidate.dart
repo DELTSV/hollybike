@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hollybike/event/types/event_role.dart';
+
+import 'event_role.dart';
 
 part 'event_candidate.freezed.dart';
 part 'event_candidate.g.dart';

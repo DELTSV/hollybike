@@ -12,15 +12,18 @@ import 'package:auto_route/auto_route.dart' as _i13;
 import 'package:flutter/material.dart' as _i14;
 import 'package:hollybike/auth/screens/login_screen.dart' as _i7;
 import 'package:hollybike/auth/screens/signup_screen.dart' as _i12;
-import 'package:hollybike/event/screens/event_candidates_screen.dart' as _i1;
 import 'package:hollybike/event/screens/event_details_screen.dart' as _i2;
-import 'package:hollybike/event/screens/event_image_view_screen.dart' as _i3;
-import 'package:hollybike/event/screens/event_participations_screen.dart'
-    as _i4;
 import 'package:hollybike/event/screens/events_screen.dart' as _i5;
+import 'package:hollybike/event/screens/image/event_image_view_screen.dart'
+    as _i3;
 import 'package:hollybike/event/screens/my_events_screen.dart' as _i9;
+import 'package:hollybike/event/screens/participations/event_candidates_screen.dart'
+    as _i1;
+import 'package:hollybike/event/screens/participations/event_participations_screen.dart'
+    as _i4;
 import 'package:hollybike/event/types/event_details.dart' as _i16;
-import 'package:hollybike/event/types/event_participation.dart' as _i17;
+import 'package:hollybike/event/types/participation/event_participation.dart'
+    as _i17;
 import 'package:hollybike/event/widgets/event_image.dart' as _i15;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i10;
 import 'package:hollybike/profile/screens/me_screen.dart' as _i8;

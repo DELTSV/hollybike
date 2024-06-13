@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../auth/types/auth_session.dart';
-import '../../types/event_participation.dart';
+import '../../types/participation/event_participation.dart';
 
 @immutable
 abstract class EventParticipationsEvent {}

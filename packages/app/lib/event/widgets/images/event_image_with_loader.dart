@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../images/types/event_image.dart';
+import '../../types/image/event_image.dart';
 import '../../../shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
 
 class EventImageWithLoader extends StatelessWidget {

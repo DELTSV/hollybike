@@ -1,9 +1,9 @@
-import 'package:hollybike/event/types/event_candidate.dart';
 
 import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';
-import '../../types/event_participation.dart';
+import '../../types/participation/event_candidate.dart';
+import '../../types/participation/event_participation.dart';
 
 class EventParticipationsApi {
   Future<PaginatedList<EventParticipation>> getParticipations(

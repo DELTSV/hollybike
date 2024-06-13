@@ -1,10 +1,10 @@
-import 'package:hollybike/event/types/event_candidate.dart';
-import 'package:hollybike/event/types/event_participation.dart';
-import 'package:hollybike/event/types/event_role.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../auth/types/auth_session.dart';
 import '../../../shared/types/paginated_list.dart';
+import '../../types/participation/event_candidate.dart';
+import '../../types/participation/event_participation.dart';
+import '../../types/participation/event_role.dart';
 import 'event_participation_api.dart';
 
 class EventParticipationRepository {

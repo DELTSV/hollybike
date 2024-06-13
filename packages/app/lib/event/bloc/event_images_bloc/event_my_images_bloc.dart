@@ -8,12 +8,12 @@ import '../../services/image/image_repository.dart';
 import '../../types/image/event_image.dart';
 import '../../../shared/types/paginated_list.dart';
 
-class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
+class EventMyImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
 
-  EventImagesBloc({
+  EventMyImagesBloc({
     required this.imageRepository,
   }) : super(EventImagesInitial()) {
     on<LoadEventImagesNextPage>(_onLoadEventImagesNextPage);

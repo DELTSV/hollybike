@@ -7,10 +7,10 @@ import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-import '../../auth/types/auth_session.dart';
-import '../../shared/http/dio_client.dart';
-import '../../shared/types/paginated_list.dart';
-import '../types/event_image.dart';
+import '../../../auth/types/auth_session.dart';
+import '../../../shared/http/dio_client.dart';
+import '../../../shared/types/paginated_list.dart';
+import '../../types/image/event_image.dart';
 
 class ImageApi {
   Future<PaginatedList<EventImage>> getEventImages(
