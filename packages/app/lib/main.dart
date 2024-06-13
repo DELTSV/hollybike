@@ -30,7 +30,18 @@ import 'event/services/event_participations/event_participation_api.dart';
 import 'images/services/image_api.dart';
 
 void main() {
+  NetworkImageCache();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
+}
+
+class NetworkImageCache extends WidgetsFlutterBinding {
+  @override
+  ImageCache createImageCache() {
+    ImageCache imageCache = super.createImageCache();
+    imageCache.maximumSizeBytes = 1024 * 1024 * 500;
+    return imageCache;
+  }
 }
 
 class MyApp extends StatelessWidget {
