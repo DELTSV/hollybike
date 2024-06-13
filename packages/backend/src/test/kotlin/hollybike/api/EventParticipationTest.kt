@@ -5,8 +5,8 @@ import hollybike.api.base.auth
 import hollybike.api.base.id
 import hollybike.api.stores.EventStore
 import hollybike.api.stores.UserStore
-import hollybike.api.types.event.EEventRole
-import hollybike.api.types.event.TEventParticipation
+import hollybike.api.types.event.participation.EEventRole
+import hollybike.api.types.event.participation.TEventParticipation
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.*
 import io.ktor.client.request.*

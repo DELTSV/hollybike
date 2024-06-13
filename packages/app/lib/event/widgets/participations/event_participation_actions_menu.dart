@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/event_participation.dart';
 
-import '../../types/event_role.dart';
+import '../../types/participation/event_participation.dart';
+import '../../types/participation/event_role.dart';
 
 enum EventParticipationAction { promote, demote, remove }
 

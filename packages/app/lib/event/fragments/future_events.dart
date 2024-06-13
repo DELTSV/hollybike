@@ -15,12 +15,23 @@ import '../types/minimal_event.dart';
 import '../widgets/event_image.dart';
 import '../widgets/event_list.dart';
 
-class FutureEvents extends StatelessWidget {
+class FutureEvents extends StatefulWidget {
   const FutureEvents({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<FutureEvents> createState() => _FutureEventsState();
+}
+
+class _FutureEventsState extends State<FutureEvents> {
+  @override
+  void initState() {
+    super.initState();
+
     _refreshEvents(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -81,7 +92,9 @@ class FutureEvents extends StatelessWidget {
             return EventList(
               hasMore: state.hasMore,
               events: state.events,
-              onNextPageRequested: _loadNextPage,
+              onNextPageRequested: () {
+                _loadNextPage(context);
+              },
               onEventTap: (event) {
                 _navigateToEventDetails(
                   context,
@@ -89,7 +102,9 @@ class FutureEvents extends StatelessWidget {
                   true,
                 );
               },
-              onRefreshRequested: _refreshEvents,
+              onRefreshRequested: () {
+                _refreshEvents(context);
+              },
             );
           },
         ),

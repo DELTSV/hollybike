@@ -2,6 +2,8 @@ package hollybike.api.types.event
 
 import hollybike.api.repository.Event
 import hollybike.api.repository.EventParticipation
+import hollybike.api.types.event.participation.TEventCallerParticipation
+import hollybike.api.types.event.participation.TEventParticipation
 import kotlinx.serialization.Serializable
 
 @Serializable

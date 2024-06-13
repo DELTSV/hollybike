@@ -84,6 +84,14 @@ dependencies {
 	implementation("io.ktor:ktor-server-resources:$ktorVersion")
 	implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 	implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
+
+	implementation("io.ktor:ktor-client-core:$ktorVersion")
+	implementation("io.ktor:ktor-client-cio:$ktorVersion")
+	implementation("io.ktor:ktor-client-logging:$ktorVersion")
+	implementation("io.ktor:ktor-client-json:$ktorVersion")
+	implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+	implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+
 	implementation("de.nycode:bcrypt:2.2.0")
 	implementation("io.micrometer:micrometer-registry-prometheus:1.6.3")
 	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -95,6 +103,8 @@ dependencies {
 
 	implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
 	implementation("commons-net:commons-net:3.10.0")
+
+	implementation("org.apache.commons:commons-imaging:1.0.0-alpha5")
 
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.liquibase:liquibase-core:4.27.0")

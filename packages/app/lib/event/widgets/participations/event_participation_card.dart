@@ -2,13 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
-import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 import 'package:hollybike/event/widgets/participations/event_participation_actions_menu.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../bloc/event_participations_bloc/event_participations_bloc.dart';
-import '../../types/event_role.dart';
+import '../../types/participation/event_participation.dart';
+import '../../types/participation/event_role.dart';
 
 class EventParticipationCard extends StatelessWidget {
   final int eventId;

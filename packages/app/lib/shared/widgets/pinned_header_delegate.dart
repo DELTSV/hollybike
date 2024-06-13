@@ -31,7 +31,7 @@ class PinnedHeaderDelegate extends SliverPersistentHeaderDelegate {
         crossFadeState: shrinkOffset > 0
             ? CrossFadeState.showSecond
             : CrossFadeState.showFirst,
-        duration: Duration(milliseconds: animationDuration ?? 0),
+        duration: Duration(milliseconds: animationDuration ?? 1),
       ),
     );
   }

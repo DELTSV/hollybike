@@ -38,6 +38,18 @@ class AppRouter extends $AppRouter {
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],
+          page: EventImageViewRoute.page,
+          path: '/event-image-view',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
+          page: EventMyImageViewRoute.page,
+          path: '/event-my-image-view',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
           page: MyEventsRoute.page,
           path: '/my-events',
           transitionsBuilder: TransitionsBuilders.fadeIn,

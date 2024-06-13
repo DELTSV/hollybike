@@ -55,4 +55,10 @@ class _TopBarActionContainerState extends State<TopBarActionContainer>
 
     _controller.forward();
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }

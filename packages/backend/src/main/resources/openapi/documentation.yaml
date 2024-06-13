@@ -1453,7 +1453,7 @@ paths:
                 type: "string"
               examples:
                 Example#1:
-                  value: "Invitation inconnue"
+                  value: "hollybike.api.repository.Invitation inconnue"
         "500":
           description: "Internal Server Error"
           content:

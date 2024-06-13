@@ -1,5 +1,4 @@
 import 'package:hollybike/event/types/event_form_data.dart';
-import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
@@ -7,6 +6,7 @@ import 'package:hollybike/shared/types/paginated_list.dart';
 import '../../../auth/types/auth_session.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
+import '../../types/participation/event_participation.dart';
 
 class EventApi {
   Future<PaginatedList<MinimalEvent>> getEvents(

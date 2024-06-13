@@ -20,6 +20,6 @@ Map<String, dynamic> _$$EventFormDataImplToJson(_$EventFormDataImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
-      'start_date': _toJson(instance.startDate),
-      'end_date': _toJson(instance.endDate),
+      'start_date': dateToJson(instance.startDate),
+      'end_date': dateToJson(instance.endDate),
     };

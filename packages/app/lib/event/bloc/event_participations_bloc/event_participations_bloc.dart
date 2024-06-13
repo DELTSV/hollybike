@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
-import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
-import 'package:hollybike/event/types/event_participation.dart';
 
 import '../../../shared/types/paginated_list.dart';
+import '../../services/participation/event_participation_repository.dart';
+import '../../types/participation/event_participation.dart';
 import 'event_participations_event.dart';
 import 'event_participations_state.dart';
 

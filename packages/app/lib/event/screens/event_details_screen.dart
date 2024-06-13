@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/fragments/details/event_details_images.dart';
+import 'package:hollybike/event/fragments/details/event_details_infos.dart';
+import 'package:hollybike/event/fragments/details/event_details_map.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
-import 'package:hollybike/event/widgets/details/event_details_content.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
 import 'package:hollybike/event/widgets/event_image.dart';
-import 'package:hollybike/map/widgets/map_preview.dart';
+import 'package:hollybike/event/widgets/images/add_photos_floating_button.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
@@ -19,7 +21,11 @@ import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
+import '../fragments/details/event_details_my_images.dart';
+import '../types/event_details.dart';
 import '../widgets/details/event_details_actions_menu.dart';
+
+enum EventDetailsTab { info, photos, myPhotos, map }
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
@@ -40,18 +46,53 @@ class EventDetailsScreen extends StatefulWidget {
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
-class _EventDetailsScreenState extends State<EventDetailsScreen> {
+class _EventDetailsScreenState extends State<EventDetailsScreen>
+    with SingleTickerProviderStateMixin {
   var eventName = "";
+
+  late final TabController _tabController = TabController(
+    length: 4,
+    vsync: this,
+    initialIndex: 0,
+  );
+
+  late final ScrollController _scrollController = ScrollController();
+
+  EventDetailsTab currentTab = EventDetailsTab.info;
 
   @override
   void initState() {
     super.initState();
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        return;
+      }
+
+      setState(() {
+        currentTab = EventDetailsTab.values[_tabController.index];
+      });
+
+      if (currentTab == EventDetailsTab.map) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
 
     setState(() {
       eventName = widget.eventName;
     });
 
     _loadEventDetails();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -91,7 +132,129 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
             );
           },
         ),
-        floatingActionButton: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+        floatingActionButton: _getFloatingButton(),
+        body: DefaultTabController(
+          length: 4,
+          child: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              // These are the slivers that show up in the "outer" scroll view.
+              return <Widget>[
+                SliverToBoxAdapter(
+                  child: EventDetailsHeader(
+                    eventId: widget.eventId,
+                    eventName: eventName,
+                    eventImage: widget.eventImage,
+                    animate: widget.animate,
+                  ),
+                ),
+                SliverOverlapAbsorber(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                    context,
+                  ),
+                  sliver: SliverPersistentHeader(
+                    pinned: true,
+                    delegate: PinnedHeaderDelegate(
+                      height: 50,
+                      child: Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: TabBar(
+                          controller: _tabController,
+                          labelColor: Theme.of(context).colorScheme.secondary,
+                          indicatorColor:
+                              Theme.of(context).colorScheme.secondary,
+                          tabs: const [
+                            Tab(icon: Icon(Icons.info)),
+                            Tab(icon: Icon(Icons.photo_library)),
+                            Tab(icon: Icon(Icons.image)),
+                            Tab(icon: Icon(Icons.map)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+              builder: (context, state) {
+                if (state is EventDetailsLoadInProgress) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (state.eventDetails == null ||
+                    state is EventDetailsLoadFailure) {
+                  return const Center(
+                    child: Text(
+                      "Impossible de charger les détails de l'événement",
+                    ),
+                  );
+                }
+
+                return TabBarView(
+                  controller: _tabController,
+                  children: _getTabs(state.eventDetails!)
+                      .map(
+                        (tab) => Builder(
+                          builder: (BuildContext context) {
+                            return CustomScrollView(
+                              key: PageStorageKey<String>(
+                                'event_details_tab_${_tabController.index}',
+                              ),
+                              slivers: [
+                                SliverOverlapInjector(
+                                  handle: NestedScrollView
+                                      .sliverOverlapAbsorberHandleFor(context),
+                                ),
+                                tab,
+                              ],
+                            );
+                          },
+                        ),
+                      )
+                      .toList(),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _getTabs(
+    EventDetails eventDetails,
+  ) {
+    return [
+      SliverToBoxAdapter(
+        child: EventDetailsInfos(
+          eventDetails: eventDetails,
+        ),
+      ),
+      EventDetailsImages(
+        scrollController: _scrollController,
+        eventId: eventDetails.event.id,
+      ),
+      EventDetailsMyImages(
+        scrollController: _scrollController,
+        eventId: eventDetails.event.id,
+      ),
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: const EventDetailsMap(),
+        ),
+      ),
+    ];
+  }
+
+  Widget? _getFloatingButton() {
+    switch (currentTab) {
+      case EventDetailsTab.info:
+        return BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
             if (state is EventDetailsLoadFailure ||
                 state is EventDetailsLoadInProgress ||
@@ -107,90 +270,28 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
               onEdit: _onEdit,
             );
           },
-        ),
-        body: DefaultTabController(
-          length: 4,
-          child: CustomScrollView(
-            slivers: [
-              SliverMainAxisGroup(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: EventDetailsHeader(
-                      eventId: widget.eventId,
-                      eventName: eventName,
-                      eventImage: widget.eventImage,
-                      animate: widget.animate,
-                    ),
-                  ),
-                ],
-              ),
-              SliverMainAxisGroup(
-                slivers: [
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: PinnedHeaderDelegate(
-                      height: 50,
-                      child: Container(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        child: TabBar(
-                          labelColor: Theme.of(context).colorScheme.secondary,
-                          indicatorColor:
-                              Theme.of(context).colorScheme.secondary,
-                          tabs: const [
-                            Tab(icon: Icon(Icons.info)),
-                            Tab(icon: Icon(Icons.photo_library)),
-                            Tab(icon: Icon(Icons.image)),
-                            Tab(icon: Icon(Icons.map)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-                      builder: (context, state) {
-                        if (state is EventDetailsLoadInProgress) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+        );
+      case EventDetailsTab.photos:
+        return null;
+      case EventDetailsTab.myPhotos:
+        return BlocBuilder<EventDetailsBloc, EventDetailsState>(
+          builder: (context, state) {
+            if (state is EventDetailsLoadFailure ||
+                state is EventDetailsLoadInProgress ||
+                state.eventDetails == null) {
+              return const SizedBox();
+            }
 
-                        if (state.eventDetails == null ||
-                            state is EventDetailsLoadFailure) {
-                          return const Center(
-                            child: Text(
-                              "Impossible de charger les détails de l'événement",
-                            ),
-                          );
-                        }
+            final eventDetails = state.eventDetails!;
 
-                        return SizedBox(
-                          height: 500,
-                          child: TabBarView(
-                            children: [
-                              EventDetailsContent(
-                                eventDetails: state.eventDetails!,
-                              ),
-                              const Center(
-                                child: Text("Images"),
-                              ),
-                              const Center(
-                                child: Text("My images"),
-                              ),
-                              const MapPreview(),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            return AddPhotosFloatingButton(
+              eventId: eventDetails.event.id,
+            );
+          },
+        );
+      case EventDetailsTab.map:
+        return null;
+    }
   }
 
   Widget? _renderActions(EventDetailsState state) {

@@ -1,7 +1,7 @@
 package hollybike.api.types.user
 
 import hollybike.api.repository.User
-import hollybike.api.types.event.EEventRole
+import hollybike.api.types.event.participation.EEventRole
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

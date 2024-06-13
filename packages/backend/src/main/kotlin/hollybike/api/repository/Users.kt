@@ -30,7 +30,8 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 	var lastLogin by Users.lastLogin
 	var profilePicture by Users.profilePicture
 
-	companion object : IntEntityClass<User>(Users) }
+	companion object : IntEntityClass<User>(Users)
+}
 
 val userMapper: Mapper = mapOf(
 	"id_user" to Users.id,

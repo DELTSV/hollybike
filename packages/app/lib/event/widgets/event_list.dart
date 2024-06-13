@@ -14,8 +14,8 @@ class EventSection {
 
 class EventList extends StatefulWidget {
   final List<MinimalEvent> events;
-  final void Function(BuildContext context) onNextPageRequested;
-  final void Function(BuildContext context) onRefreshRequested;
+  final void Function() onNextPageRequested;
+  final void Function() onRefreshRequested;
   final void Function(MinimalEvent event) onEventTap;
   final bool hasMore;
 
@@ -41,7 +41,7 @@ class _EventListState extends State<EventList> {
     return RefreshIndicator(
       triggerMode: RefreshIndicatorTriggerMode.anywhere,
       onRefresh: () async {
-        widget.onRefreshRequested(context);
+        widget.onRefreshRequested();
       },
       child: Padding(
             padding: const EdgeInsets.only(
@@ -143,7 +143,7 @@ class _EventListState extends State<EventList> {
       var nextPageTrigger = 0.8 * _scrollController.position.maxScrollExtent;
 
       if (_scrollController.position.pixels > nextPageTrigger) {
-        widget.onNextPageRequested(context);
+        widget.onNextPageRequested();
       }
     });
   }

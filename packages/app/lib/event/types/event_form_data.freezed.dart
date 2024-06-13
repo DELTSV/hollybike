@@ -22,9 +22,9 @@ EventFormData _$EventFormDataFromJson(Map<String, dynamic> json) {
 mixin _$EventFormData {
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  @JsonKey(toJson: _toJson, name: "start_date")
+  @JsonKey(toJson: dateToJson, name: "start_date")
   DateTime get startDate => throw _privateConstructorUsedError;
-  @JsonKey(toJson: _toJson, name: "end_date")
+  @JsonKey(toJson: dateToJson, name: "end_date")
   DateTime? get endDate => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,8 +42,8 @@ abstract class $EventFormDataCopyWith<$Res> {
   $Res call(
       {String name,
       String? description,
-      @JsonKey(toJson: _toJson, name: "start_date") DateTime startDate,
-      @JsonKey(toJson: _toJson, name: "end_date") DateTime? endDate});
+      @JsonKey(toJson: dateToJson, name: "start_date") DateTime startDate,
+      @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate});
 }
 
 /// @nodoc
@@ -96,8 +96,8 @@ abstract class _$$EventFormDataImplCopyWith<$Res>
   $Res call(
       {String name,
       String? description,
-      @JsonKey(toJson: _toJson, name: "start_date") DateTime startDate,
-      @JsonKey(toJson: _toJson, name: "end_date") DateTime? endDate});
+      @JsonKey(toJson: dateToJson, name: "start_date") DateTime startDate,
+      @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate});
 }
 
 /// @nodoc
@@ -143,8 +143,8 @@ class _$EventFormDataImpl implements _EventFormData {
   const _$EventFormDataImpl(
       {required this.name,
       this.description,
-      @JsonKey(toJson: _toJson, name: "start_date") required this.startDate,
-      @JsonKey(toJson: _toJson, name: "end_date") this.endDate});
+      @JsonKey(toJson: dateToJson, name: "start_date") required this.startDate,
+      @JsonKey(toJson: dateToJson, name: "end_date") this.endDate});
 
   factory _$EventFormDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventFormDataImplFromJson(json);
@@ -154,10 +154,10 @@ class _$EventFormDataImpl implements _EventFormData {
   @override
   final String? description;
   @override
-  @JsonKey(toJson: _toJson, name: "start_date")
+  @JsonKey(toJson: dateToJson, name: "start_date")
   final DateTime startDate;
   @override
-  @JsonKey(toJson: _toJson, name: "end_date")
+  @JsonKey(toJson: dateToJson, name: "end_date")
   final DateTime? endDate;
 
   @override
@@ -201,9 +201,9 @@ abstract class _EventFormData implements EventFormData {
   const factory _EventFormData(
       {required final String name,
       final String? description,
-      @JsonKey(toJson: _toJson, name: "start_date")
+      @JsonKey(toJson: dateToJson, name: "start_date")
       required final DateTime startDate,
-      @JsonKey(toJson: _toJson, name: "end_date")
+      @JsonKey(toJson: dateToJson, name: "end_date")
       final DateTime? endDate}) = _$EventFormDataImpl;
 
   factory _EventFormData.fromJson(Map<String, dynamic> json) =
@@ -214,10 +214,10 @@ abstract class _EventFormData implements EventFormData {
   @override
   String? get description;
   @override
-  @JsonKey(toJson: _toJson, name: "start_date")
+  @JsonKey(toJson: dateToJson, name: "start_date")
   DateTime get startDate;
   @override
-  @JsonKey(toJson: _toJson, name: "end_date")
+  @JsonKey(toJson: dateToJson, name: "end_date")
   DateTime? get endDate;
   @override
   @JsonKey(ignore: true)
