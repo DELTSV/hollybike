@@ -29,17 +29,14 @@ class _ImageGalleryState extends State<ImageGallery> {
   @override
   void initState() {
     super.initState();
-
-    widget.scrollController.addListener(() {
-      var nextPageTrigger =
-          0.8 * widget.scrollController.position.maxScrollExtent;
-
-      if (widget.scrollController.position.pixels > nextPageTrigger) {
-        widget.onLoadNextPage();
-      }
-    });
-
+    widget.scrollController.addListener(_onScroll);
     widget.onRefresh();
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_onScroll);
+    super.dispose();
   }
 
   @override
@@ -71,5 +68,14 @@ class _ImageGalleryState extends State<ImageGallery> {
         },
       ),
     );
+  }
+
+  void _onScroll() {
+    var nextPageTrigger =
+        0.8 * widget.scrollController.position.maxScrollExtent;
+
+    if (widget.scrollController.position.pixels > nextPageTrigger) {
+      widget.onLoadNextPage();
+    }
   }
 }

@@ -22,6 +22,7 @@ import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../fragments/details/event_details_my_images.dart';
+import '../types/event_details.dart';
 import '../widgets/details/event_details_actions_menu.dart';
 
 enum EventDetailsTab { info, photos, myPhotos, map }
@@ -48,14 +49,20 @@ class EventDetailsScreen extends StatefulWidget {
 class _EventDetailsScreenState extends State<EventDetailsScreen>
     with SingleTickerProviderStateMixin {
   var eventName = "";
-  late TabController _tabController;
+
+  late final TabController _tabController = TabController(
+    length: 4,
+    vsync: this,
+    initialIndex: 0,
+  );
+
+  late final ScrollController _scrollController = ScrollController();
+
   EventDetailsTab currentTab = EventDetailsTab.info;
 
   @override
   void initState() {
     super.initState();
-
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -67,9 +74,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       });
 
       if (currentTab == EventDetailsTab.map) {
-        final controller = PrimaryScrollController.of(context);
-        controller.animateTo(
-          controller.position.maxScrollExtent,
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
@@ -130,6 +136,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         body: DefaultTabController(
           length: 4,
           child: NestedScrollView(
+            controller: _scrollController,
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               // These are the slivers that show up in the "outer" scroll view.
@@ -187,50 +194,28 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                   );
                 }
 
-                final controller = PrimaryScrollController.of(context);
-
-                final tabs = [
-                  SliverToBoxAdapter(
-                    child: EventDetailsInfos(
-                      eventDetails: state.eventDetails!,
-                    ),
-                  ),
-                  EventDetailsImages(
-                    scrollController: controller,
-                    eventId: state.eventDetails!.event.id,
-                  ),
-                  EventDetailsMyImages(
-                    scrollController: controller,
-                    eventId: state.eventDetails!.event.id,
-                  ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      child: const EventDetailsMap(),
-                    ),
-                  ),
-                ];
-
                 return TabBarView(
                   controller: _tabController,
-                  children: tabs.map((tab) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return CustomScrollView(
-                          key: PageStorageKey<String>(
-                            tabs.indexOf(tab).toString(),
-                          ),
-                          slivers: [
-                            SliverOverlapInjector(
-                              handle: NestedScrollView
-                                  .sliverOverlapAbsorberHandleFor(context),
-                            ),
-                            tab,
-                          ],
-                        );
-                      },
-                    );
-                  }).toList(),
+                  children: _getTabs(state.eventDetails!)
+                      .map(
+                        (tab) => Builder(
+                          builder: (BuildContext context) {
+                            return CustomScrollView(
+                              key: PageStorageKey<String>(
+                                'event_details_tab_${_tabController.index}',
+                              ),
+                              slivers: [
+                                SliverOverlapInjector(
+                                  handle: NestedScrollView
+                                      .sliverOverlapAbsorberHandleFor(context),
+                                ),
+                                tab,
+                              ],
+                            );
+                          },
+                        ),
+                      )
+                      .toList(),
                 );
               },
             ),
@@ -238,6 +223,32 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         ),
       ),
     );
+  }
+
+  List<Widget> _getTabs(
+    EventDetails eventDetails,
+  ) {
+    return [
+      SliverToBoxAdapter(
+        child: EventDetailsInfos(
+          eventDetails: eventDetails,
+        ),
+      ),
+      EventDetailsImages(
+        scrollController: _scrollController,
+        eventId: eventDetails.event.id,
+      ),
+      EventDetailsMyImages(
+        scrollController: _scrollController,
+        eventId: eventDetails.event.id,
+      ),
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: const EventDetailsMap(),
+        ),
+      ),
+    ];
   }
 
   Widget? _getFloatingButton() {
