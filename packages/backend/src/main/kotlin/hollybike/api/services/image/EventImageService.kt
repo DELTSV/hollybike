@@ -4,7 +4,11 @@ import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.repository.*
 import hollybike.api.services.EventService
+import hollybike.api.services.PositionService
 import hollybike.api.services.storage.StorageService
+import hollybike.api.types.position.PositionData
+import hollybike.api.types.position.PositionRequest
+import hollybike.api.types.position.PositionScope
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
@@ -20,8 +24,27 @@ class EventImageService(
 	private val db: Database,
 	private val eventService: EventService,
 	private val storageService: StorageService,
-	private val imageMetadataService: ImageMetadataService
+	private val imageMetadataService: ImageMetadataService,
+	private val positionService: PositionService
 ) {
+	init {
+		positionService.subscribe("images-positions") { positionResponse ->
+			handlePositionResponse(positionResponse.identifier, positionResponse.content)
+		}
+	}
+
+	private fun handlePositionResponse(imageId: Int, positionData: PositionData) {
+		val image = transaction(db) {
+			EventImage.find {
+				EventImages.id eq imageId
+			}.firstOrNull()
+		} ?: return
+
+		transaction(db) {
+			println("Updating position for image $imageId, ${positionData.city}")
+		}
+	}
+
 	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) =
 		eventService.handleEventExceptions(exception, call)
 
@@ -91,7 +114,7 @@ class EventImageService(
 				val imageDimensions = imageMetadataService.getImageDimensions(data)
 				val imageWithoutExif = imageMetadataService.removeExifData(data)
 
-				EventImage.new {
+				val createdImage = EventImage.new {
 					owner = caller
 					event = foundEvent
 					path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
@@ -103,6 +126,18 @@ class EventImageService(
 					longitude = imageMetadata.position?.longitude
 					altitude = imageMetadata.position?.altitude
 				} to (imageWithoutExif to contentType)
+
+				if (imageMetadata.position != null) {
+					positionService.push(
+						"images-positions", createdImage.first.id.value, PositionRequest(
+							latitude = imageMetadata.position.latitude,
+							longitude = imageMetadata.position.longitude,
+							scope = PositionScope.Amenity
+						)
+					)
+				}
+
+				createdImage
 			}
 
 			runBlocking {
