@@ -20,6 +20,7 @@ import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
+import 'event/bloc/event_images_bloc/event_my_images_bloc.dart';
 import 'event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'event/bloc/events_bloc/events_event.dart';
 import 'event/services/event/event_api.dart';
@@ -156,6 +157,13 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<EventImagesBloc>(
               create: (context) => EventImagesBloc(
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
+            ),
+            BlocProvider<EventMyImagesBloc>(
+              create: (context) => EventMyImagesBloc(
                 imageRepository: RepositoryProvider.of<ImageRepository>(
                   context,
                 ),

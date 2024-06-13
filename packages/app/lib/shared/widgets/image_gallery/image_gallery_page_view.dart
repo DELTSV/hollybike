@@ -24,6 +24,8 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
     initialPage: widget.imageIndex,
   );
 
+  late int currentPage = widget.imageIndex;
+
   bool isZoomed = false;
 
   @override
@@ -42,6 +44,10 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
       },
       child: PageView.builder(
         onPageChanged: (index) {
+          setState(() {
+            currentPage = index;
+          });
+
           if (index == widget.images.length - 1) {
             widget.onLoadNextPage();
           }
@@ -54,7 +60,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
         itemBuilder: (context, index) {
           final image = widget.images[index];
 
-          final hero = index == widget.imageIndex
+          final hero = index == currentPage
               ? PhotoViewHeroAttributes(
                   tag: 'event_image_${image.id}',
                 )
@@ -70,7 +76,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
                 isZoomed = scaleState != PhotoViewScaleState.initial;
               });
             },
-            gestureDetectorBehavior: HitTestBehavior.opaque,
+            gestureDetectorBehavior: HitTestBehavior.translucent,
             loadingBuilder: (context, event) {
               return Center(
                 child: Container(

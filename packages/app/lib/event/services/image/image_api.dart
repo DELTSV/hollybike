@@ -25,11 +25,35 @@ class ImageApi {
         'page': page,
         'per_page': imagesPerPage,
         'id_event': 'eq:$eventId',
+        'sort': 'taken_date_time.desc'
       },
     );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch event images");
+    }
+
+    return PaginatedList.fromJson(response.data, EventImage.fromJson);
+  }
+
+  Future<PaginatedList<EventImage>> getMyEventImages(
+      AuthSession session,
+      int eventId,
+      int page,
+      int imagesPerPage,
+      ) async {
+    final response = await DioClient(session).dio.get(
+      '/events/images/me',
+      queryParameters: {
+        'page': page,
+        'per_page': imagesPerPage,
+        'id_event': 'eq:$eventId',
+        'sort': 'upload_date_time.desc'
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch my event images");
     }
 
     return PaginatedList.fromJson(response.data, EventImage.fromJson);

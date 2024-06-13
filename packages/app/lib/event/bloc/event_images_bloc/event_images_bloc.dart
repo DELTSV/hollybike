@@ -18,7 +18,6 @@ class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
   }) : super(EventImagesInitial()) {
     on<LoadEventImagesNextPage>(_onLoadEventImagesNextPage);
     on<RefreshEventImages>(_onRefreshEventImages);
-    on<UploadEventImages>(_onUploadEventImages);
   }
 
   Future<void> _onLoadEventImagesNextPage(
@@ -75,30 +74,6 @@ class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
     } catch (e) {
       log('Error while refreshing images', error: e);
       emit(EventImagesPageLoadFailure(
-        state,
-        errorMessage: 'Une erreur est survenue.',
-      ));
-      return;
-    }
-  }
-
-  Future<void> _onUploadEventImages(
-    UploadEventImages event,
-    Emitter<EventImagesState> emit,
-  ) async {
-    emit(EventImagesUploadInProgress(state));
-
-    try {
-      await imageRepository.uploadEventImages(
-        event.session,
-        event.eventId,
-        event.images,
-      );
-
-      emit(EventImagesUploadSuccess(state));
-    } catch (e) {
-      log('Error while uploading images', error: e);
-      emit(EventImagesUploadFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));

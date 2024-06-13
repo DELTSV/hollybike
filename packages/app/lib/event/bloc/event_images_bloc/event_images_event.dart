@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 
 import '../../../auth/types/auth_session.dart';
@@ -24,17 +22,5 @@ class RefreshEventImages extends EventImagesEvent {
   RefreshEventImages({
     required this.session,
     required this.eventId,
-  });
-}
-
-class UploadEventImages extends EventImagesEvent {
-  final int eventId;
-  final AuthSession session;
-  final List<File> images;
-
-  UploadEventImages({
-    required this.session,
-    required this.eventId,
-    required this.images,
   });
 }

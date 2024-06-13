@@ -187,6 +187,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                   );
                 }
 
+                final controller = PrimaryScrollController.of(context);
+
                 final tabs = [
                   SliverToBoxAdapter(
                     child: EventDetailsInfos(
@@ -194,11 +196,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                     ),
                   ),
                   EventDetailsImages(
-                    scrollController: PrimaryScrollController.of(context),
+                    scrollController: controller,
                     eventId: state.eventDetails!.event.id,
                   ),
-                  const SliverToBoxAdapter(
-                    child: EventDetailsMyImages(),
+                  EventDetailsMyImages(
+                    scrollController: controller,
+                    eventId: state.eventDetails!.event.id,
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(

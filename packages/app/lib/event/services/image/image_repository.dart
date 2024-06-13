@@ -42,6 +42,37 @@ class ImageRepository {
     return pageResult;
   }
 
+  Future<PaginatedList<EventImage>> fetchMyEventImages(
+    AuthSession session,
+    int eventId,
+    int page,
+    int eventsPerPage,
+  ) async {
+    final pageResult = await imageApi.getMyEventImages(
+      session,
+      eventId,
+      page,
+      eventsPerPage,
+    );
+
+    return pageResult;
+  }
+
+  Future<PaginatedList<EventImage>> refreshMyEventImages(
+    AuthSession session,
+    int eventId,
+    int eventsPerPage,
+  ) async {
+    final pageResult = await imageApi.getMyEventImages(
+      session,
+      eventId,
+      0,
+      eventsPerPage,
+    );
+
+    return pageResult;
+  }
+
   Future<void> uploadEventImages(
     AuthSession session,
     int eventId,

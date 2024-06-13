@@ -38,5 +38,6 @@ val eventImagesMapper: Mapper = mapOf(
 	"id_image" to EventImages.id,
 	"owner_image" to EventImages.owner,
 	"size" to EventImages.size,
+	"taken_date_time" to EventImages.takenDateTime,
 	"upload_date_time" to EventImages.uploadDateTime
 )

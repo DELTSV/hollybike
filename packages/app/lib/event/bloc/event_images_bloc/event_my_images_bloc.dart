@@ -1,14 +1,14 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/bloc/event_images_bloc/event_images_event.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_state.dart';
 
 import '../../services/image/image_repository.dart';
 import '../../types/image/event_image.dart';
 import '../../../shared/types/paginated_list.dart';
+import 'event_my_images_event.dart';
 
-class EventMyImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
+class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
@@ -16,13 +16,13 @@ class EventMyImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
   EventMyImagesBloc({
     required this.imageRepository,
   }) : super(EventImagesInitial()) {
-    on<LoadEventImagesNextPage>(_onLoadEventImagesNextPage);
-    on<RefreshEventImages>(_onRefreshEventImages);
+    on<LoadMyEventImagesNextPage>(_onLoadMyEventImagesNextPage);
+    on<RefreshMyEventImages>(_onRefreshMyEventImages);
     on<UploadEventImages>(_onUploadEventImages);
   }
 
-  Future<void> _onLoadEventImagesNextPage(
-    LoadEventImagesNextPage event,
+  Future<void> _onLoadMyEventImagesNextPage(
+    LoadMyEventImagesNextPage event,
     Emitter<EventImagesState> emit,
   ) async {
     if (state.hasMore == false || state.status == EventImagesStatus.loading) {
@@ -32,7 +32,7 @@ class EventMyImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
     emit(EventImagesPageLoadInProgress(state));
 
     try {
-      PaginatedList<EventImage> page = await imageRepository.fetchEventImages(
+      PaginatedList<EventImage> page = await imageRepository.fetchMyEventImages(
         event.session,
         event.eventId,
         state.nextPage,
@@ -54,14 +54,14 @@ class EventMyImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
     }
   }
 
-  Future<void> _onRefreshEventImages(
-    RefreshEventImages event,
+  Future<void> _onRefreshMyEventImages(
+    RefreshMyEventImages event,
     Emitter<EventImagesState> emit,
   ) async {
     emit(EventImagesPageLoadInProgress(state));
 
     try {
-      PaginatedList<EventImage> page = await imageRepository.refreshEventImages(
+      PaginatedList<EventImage> page = await imageRepository.refreshMyEventImages(
         event.session,
         event.eventId,
         numberOfImagesPerRequest,
