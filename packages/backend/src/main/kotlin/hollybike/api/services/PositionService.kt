@@ -39,8 +39,8 @@ class PositionService(
 		}
 	}
 
-	private val messageChannel = Channel<PositionMessage>()
-	private val subscribers = MutableSharedFlow<PositionResponse>(replay = 0)
+	private val messageChannel = Channel<TPositionMessage>()
+	private val subscribers = MutableSharedFlow<TPositionResponse>(replay = 0)
 
 	init {
 		scope.launch {
@@ -54,26 +54,26 @@ class PositionService(
 		}
 	}
 
-	private fun push(topic: String, identifier: Int, content: PositionRequest) {
-		val message = PositionMessage(topic, identifier, content)
+	private fun push(topic: String, identifier: Int, content: TPositionRequest) {
+		val message = TPositionMessage(topic, identifier, content)
 		scope.launch {
 			messageChannel.send(message)
 		}
 	}
 
-	fun getPositionOrPush(topic: String, identifier: Int, content: PositionRequest) {
+	fun getPositionOrPush(topic: String, identifier: Int, content: TPositionRequest) {
 		val position = getPositionFromCoordinates(content.latitude, content.longitude)
 
 		if (position == null) {
 			push(topic, identifier, content)
 		} else {
 			scope.launch {
-				subscribers.emit(PositionResponse(topic, identifier, position))
+				subscribers.emit(TPositionResponse(topic, identifier, position))
 			}
 		}
 	}
 
-	fun subscribe(topic: String, consumer: (PositionResponse) -> Unit) {
+	fun subscribe(topic: String, consumer: (TPositionResponse) -> Unit) {
 		scope.launch {
 			subscribers
 				.filter { it.topic == topic }
@@ -93,14 +93,14 @@ class PositionService(
 		}.firstOrNull()
 	}
 
-	private fun processMessage(message: PositionMessage) {
+	private fun processMessage(message: TPositionMessage) {
 		scope.launch {
 			val positionData = getPositionData(message.content)
-			subscribers.emit(PositionResponse(message.topic, message.identifier, positionData))
+			subscribers.emit(TPositionResponse(message.topic, message.identifier, positionData))
 		}
 	}
 
-	private suspend fun fetch(positionRequest: PositionRequest): PlaceResponse {
+	private suspend fun fetch(positionRequest: TPositionRequest): TPlaceResponse {
 		val response: HttpResponse = client.get {
 			url {
 				protocol = URLProtocol.HTTPS
@@ -117,7 +117,7 @@ class PositionService(
 		return response.body()
 	}
 
-	private fun getPositionData(positionRequest: PositionRequest): Position {
+	private fun getPositionData(positionRequest: TPositionRequest): Position {
 		getPositionFromCoordinates(
 			positionRequest.latitude,
 			positionRequest.longitude

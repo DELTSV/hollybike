@@ -39,6 +39,7 @@ class EventImageController(
 				getMyImages()
 				uploadImages()
 				deleteImage()
+				getImageDetails()
 				getMetaData()
 			}
 		}
@@ -102,6 +103,20 @@ class EventImageController(
 				call.respond(HttpStatusCode.NoContent)
 			}.onFailure {
 				eventImageService.handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.getImageDetails() {
+		get<Events.Images.ImageId> { data ->
+			val searchParam = call.request.queryParameters.getSearchParam(mapper)
+
+			eventImageService.getImageWithDetails(call.user, data.imageId, searchParam).let { image ->
+				if (image == null) {
+					call.respond(HttpStatusCode.NotFound)
+				} else {
+					call.respond(TEventImageDetails(image, call.user.id == image.owner.id, storageService.signer.sign))
+				}
 			}
 		}
 	}
