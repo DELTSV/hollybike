@@ -80,4 +80,12 @@ class ImageRepository {
   ) async {
     await imageApi.uploadEventImages(session, eventId, images);
   }
+
+  Future<void> updateImagesVisibility(
+    AuthSession session,
+    int eventId,
+    bool isPublic,
+  ) async {
+    await imageApi.updateImagesVisibility(session, eventId, isPublic);
+  }
 }

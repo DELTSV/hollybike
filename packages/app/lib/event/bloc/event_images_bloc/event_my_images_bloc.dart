@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_state.dart';
 
+import '../../services/event/event_repository.dart';
 import '../../services/image/image_repository.dart';
 import '../../types/image/event_image.dart';
 import '../../../shared/types/paginated_list.dart';
@@ -12,13 +13,16 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
+  final EventRepository eventRepository;
 
   EventMyImagesBloc({
     required this.imageRepository,
+    required this.eventRepository,
   }) : super(EventImagesInitial()) {
     on<LoadMyEventImagesNextPage>(_onLoadMyEventImagesNextPage);
     on<RefreshMyEventImages>(_onRefreshMyEventImages);
     on<UploadEventImages>(_onUploadEventImages);
+    on<UpdateImagesVisibility>(_onUpdateImagesVisibility);
   }
 
   Future<void> _onLoadMyEventImagesNextPage(
@@ -61,7 +65,8 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
     emit(EventImagesPageLoadInProgress(state));
 
     try {
-      PaginatedList<EventImage> page = await imageRepository.refreshMyEventImages(
+      PaginatedList<EventImage> page =
+          await imageRepository.refreshMyEventImages(
         event.session,
         event.eventId,
         numberOfImagesPerRequest,
@@ -86,7 +91,7 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
     UploadEventImages event,
     Emitter<EventImagesState> emit,
   ) async {
-    emit(EventImagesUploadInProgress(state));
+    emit(EventImagesOperationInProgress(state));
 
     try {
       await imageRepository.uploadEventImages(
@@ -95,10 +100,40 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
         event.images,
       );
 
-      emit(EventImagesUploadSuccess(state));
+      emit(EventImagesOperationSuccess(
+        state,
+        shouldRefresh: true,
+        successMessage: "Photos ajoutées avec succès",
+      ));
     } catch (e) {
       log('Error while uploading images', error: e);
-      emit(EventImagesUploadFailure(
+      emit(EventImagesOperationFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+      return;
+    }
+  }
+
+  Future<void> _onUpdateImagesVisibility(
+    UpdateImagesVisibility event,
+    Emitter<EventImagesState> emit,
+  ) async {
+    emit(EventImagesOperationInProgress(state));
+
+    try {
+      await imageRepository.updateImagesVisibility(
+        event.session,
+        event.eventId,
+        event.isPublic,
+      );
+
+      eventRepository.onImagesVisibilityUpdated(event.isPublic);
+
+      emit(EventImagesOperationSuccess(state));
+    } catch (e) {
+      log('Error while updating images visibility', error: e);
+      emit(EventImagesOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));

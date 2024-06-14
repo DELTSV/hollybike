@@ -3,13 +3,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geojson_vi/geojson_vi.dart';
+import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import '../../../shared/utils/waiter.dart';
 
-
 class EventDetailsMap extends StatefulWidget {
-  const EventDetailsMap({super.key});
+  final int eventId;
+
+  const EventDetailsMap({super.key, required this.eventId});
 
   @override
   State<EventDetailsMap> createState() => _EventDetailsMapState();
@@ -20,30 +22,36 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        MapWidget(
-          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-            Factory<OneSequenceGestureRecognizer>(
+    return EventDetailsScrollWrapper(
+      scrollViewKey: 'event_details_map_${widget.eventId}',
+      child: SizedBox(
+    height: MediaQuery.of(context).size.height * 0.8,
+        child: Stack(
+          children: <Widget>[
+            MapWidget(
+              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                Factory<OneSequenceGestureRecognizer>(
                   () => EagerGestureRecognizer(),
+                ),
+              },
+              key: const ValueKey("mapWidget"),
+              onMapCreated: _onMapCreated,
             ),
-          },
-          key: const ValueKey("mapWidget"),
-          onMapCreated: _onMapCreated,
-        ),
-        AnimatedOpacity(
-          opacity: _mapLoading ? 1 : 0,
-          duration: const Duration(milliseconds: 500),
-          child: IgnorePointer(
-            child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: const Center(
-                child: CircularProgressIndicator(),
+            AnimatedOpacity(
+              opacity: _mapLoading ? 1 : 0,
+              duration: const Duration(milliseconds: 500),
+              child: IgnorePointer(
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -184,8 +192,7 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
           ),
           MapAnimationOptions(
             duration: 600,
-          )
-      );
+          ));
     });
   }
 }

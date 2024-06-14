@@ -38,3 +38,15 @@ class UploadEventImages extends EventMyImagesEvent {
     required this.images,
   });
 }
+
+class UpdateImagesVisibility extends EventMyImagesEvent {
+  final int eventId;
+  final AuthSession session;
+  final bool isPublic;
+
+  UpdateImagesVisibility({
+    required this.session,
+    required this.eventId,
+    required this.isPublic,
+  });
+}

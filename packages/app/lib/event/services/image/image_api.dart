@@ -103,4 +103,21 @@ class ImageApi {
       throw Exception("Failed to upload event images");
     }
   }
+
+  Future<void> updateImagesVisibility(
+    AuthSession session,
+    int eventId,
+    bool isPublic,
+  ) async {
+    final response = await DioClient(session).dio.patch(
+      '/events/$eventId/participations/images-visibility',
+      data: {
+        'is_images_public': isPublic,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to update images visibility");
+    }
+  }
 }

@@ -209,6 +209,22 @@ class EventRepository {
     );
   }
 
+  void onImagesVisibilityUpdated(bool isPublic) {
+    final details = _eventStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventStreamController.add(
+      details.copyWith(
+        callerParticipation: details.callerParticipation?.copyWith(
+          isImagesPublic: isPublic,
+        ),
+      ),
+    );
+  }
+
   Future<void> close() async {
     _eventStreamController.close();
     _eventsStreamController.close();

@@ -9,6 +9,7 @@ import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
 import '../../types/event_details.dart';
+import '../../widgets/details/event_details_scroll_wrapper.dart';
 import '../../widgets/details/event_join_button.dart';
 import '../../widgets/details/event_participations_preview.dart';
 import '../../widgets/details/event_warning_feed.dart';
@@ -27,38 +28,41 @@ class EventDetailsInfos extends StatelessWidget {
     final previewParticipants = eventDetails.previewParticipants;
     final previewParticipantsCount = eventDetails.previewParticipantsCount;
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          EventWarningFeed(event: event),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              EventParticipationsPreview(
-                event: event,
-                previewParticipants: previewParticipants,
-                previewParticipantsCount: previewParticipantsCount,
-                onTap: () {
-                  Timer(const Duration(milliseconds: 100), () {
-                    context.router.push(
-                      EventParticipationsRoute(
-                        eventDetails: eventDetails,
-                        participationPreview: previewParticipants,
-                      ),
-                    );
-                  });
-                },
-              ),
-              EventJoinButton(
-                isJoined: eventDetails.isParticipating,
-                canJoin: eventDetails.canJoin,
-                onJoin: _onJoin,
-              ),
-            ],
-          ),
-        ],
+    return EventDetailsScrollWrapper(
+      scrollViewKey: 'event_details_infos_${event.id}',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            EventWarningFeed(event: event),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                EventParticipationsPreview(
+                  event: event,
+                  previewParticipants: previewParticipants,
+                  previewParticipantsCount: previewParticipantsCount,
+                  onTap: () {
+                    Timer(const Duration(milliseconds: 100), () {
+                      context.router.push(
+                        EventParticipationsRoute(
+                          eventDetails: eventDetails,
+                          participationPreview: previewParticipants,
+                        ),
+                      );
+                    });
+                  },
+                ),
+                EventJoinButton(
+                  isJoined: eventDetails.isParticipating,
+                  canJoin: eventDetails.canJoin,
+                  onJoin: _onJoin,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

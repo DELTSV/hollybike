@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/widgets/event_form/event_date_input.dart';
 import 'package:hollybike/event/widgets/event_form/event_form_description_field.dart';
+import 'package:hollybike/shared/widgets/switch_with_text.dart';
 
 import '../../../shared/utils/dates.dart';
 import 'event_date_range_input.dart';
 import 'event_date_warning_dialog.dart';
 import 'event_form_name_field.dart';
-import 'event_select_end_date_switch.dart';
 import 'event_time_input.dart';
 
 class EventForm extends StatefulWidget {
@@ -340,8 +340,9 @@ class _EventFormState extends State<EventForm> {
                       descriptionController: _descriptionController,
                     ),
                     const SizedBox(height: 10),
-                    EventSelectEndDateSwitch(
+                    SwitchWithText(
                       value: _selectEndDate,
+                      text: "Définir une durée",
                       onChange: () {
                         _onSelectEndDateSwitchChanged(!_selectEndDate);
                       },
