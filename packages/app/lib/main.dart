@@ -126,7 +126,7 @@ class MyApp extends StatelessWidget {
             BlocProvider<ArchivedEventsBloc>(
               create: (context) => ArchivedEventsBloc(
                 eventRepository:
-                RepositoryProvider.of<EventRepository>(context),
+                    RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvents()),
             ),
             BlocProvider<EventDetailsBloc>(
@@ -165,6 +165,9 @@ class MyApp extends StatelessWidget {
             BlocProvider<EventMyImagesBloc>(
               create: (context) => EventMyImagesBloc(
                 imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+                eventRepository: RepositoryProvider.of<EventRepository>(
                   context,
                 ),
               ),

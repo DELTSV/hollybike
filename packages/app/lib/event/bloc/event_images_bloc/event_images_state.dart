@@ -64,20 +64,23 @@ class EventImagesPageLoadFailure extends EventImagesState {
       : super.state(state.copyWith(status: EventImagesStatus.error));
 }
 
-class EventImagesUploadInProgress extends EventImagesState {
-  EventImagesUploadInProgress(EventImagesState state)
+class EventImagesOperationInProgress extends EventImagesState {
+  EventImagesOperationInProgress(EventImagesState state)
       : super.state(state.copyWith(status: EventImagesStatus.loading));
 }
 
-class EventImagesUploadSuccess extends EventImagesState {
-  EventImagesUploadSuccess(EventImagesState state)
+class EventImagesOperationSuccess extends EventImagesState {
+  final bool shouldRefresh;
+  final String? successMessage;
+
+  EventImagesOperationSuccess(EventImagesState state, {this.shouldRefresh = false, this.successMessage})
       : super.state(state.copyWith(status: EventImagesStatus.success));
 }
 
-class EventImagesUploadFailure extends EventImagesState {
+class EventImagesOperationFailure extends EventImagesState {
   final String errorMessage;
 
-  EventImagesUploadFailure(EventImagesState state,
+  EventImagesOperationFailure(EventImagesState state,
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventImagesStatus.error));
 }

@@ -196,26 +196,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
                 return TabBarView(
                   controller: _tabController,
-                  children: _getTabs(state.eventDetails!)
-                      .map(
-                        (tab) => Builder(
-                          builder: (BuildContext context) {
-                            return CustomScrollView(
-                              key: PageStorageKey<String>(
-                                'event_details_tab_${_tabController.index}',
-                              ),
-                              slivers: [
-                                SliverOverlapInjector(
-                                  handle: NestedScrollView
-                                      .sliverOverlapAbsorberHandleFor(context),
-                                ),
-                                tab,
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                      .toList(),
+                  children: _getTabs(state.eventDetails!),
                 );
               },
             ),
@@ -229,10 +210,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     EventDetails eventDetails,
   ) {
     return [
-      SliverToBoxAdapter(
-        child: EventDetailsInfos(
-          eventDetails: eventDetails,
-        ),
+      EventDetailsInfos(
+        eventDetails: eventDetails,
       ),
       EventDetailsImages(
         scrollController: _scrollController,
@@ -240,13 +219,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       ),
       EventDetailsMyImages(
         scrollController: _scrollController,
+        isImagesPublic:
+            eventDetails.callerParticipation?.isImagesPublic ?? false,
         eventId: eventDetails.event.id,
       ),
-      SliverToBoxAdapter(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
-          child: const EventDetailsMap(),
-        ),
+      EventDetailsMap(
+        eventId: eventDetails.event.id,
       ),
     ];
   }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-class EventSelectEndDateSwitch extends StatelessWidget {
+class SwitchWithText extends StatelessWidget {
   final void Function() onChange;
+  final String text;
   final bool value;
 
-  const EventSelectEndDateSwitch({
+  const SwitchWithText({
     super.key,
     required this.onChange,
+    required this.text,
     required this.value,
   });
 
@@ -32,7 +34,7 @@ class EventSelectEndDateSwitch extends StatelessWidget {
             },
           ),
           const SizedBox(width: 10),
-          const Text("Définir une durée"),
+          Text(text),
         ],
       ),
     );

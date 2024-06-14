@@ -8,6 +8,7 @@ import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/image_gallery/image_gallery.dart';
 import '../../bloc/event_images_bloc/event_images_event.dart';
 import '../../bloc/event_images_bloc/event_images_state.dart';
+import '../../widgets/details/event_details_scroll_wrapper.dart';
 
 class EventDetailsImages extends StatelessWidget {
   final int eventId;
@@ -23,20 +24,24 @@ class EventDetailsImages extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<EventImagesBloc, EventImagesState>(
       builder: (context, state) {
-        return ImageGallery(
-          scrollController: scrollController,
-          onRefresh: () => _refreshImages(context),
-          onLoadNextPage: () => _loadNextPage(context),
-          images: state.images,
-          loading: state is EventImagesPageLoadInProgress,
-          onImageTap: (image) {
-            context.router.push(
-              EventImageViewRoute(
-                imageIndex: state.images.indexOf(image),
-                onLoadNextPage: () => _loadNextPage(context),
-              ),
-            );
-          },
+        return EventDetailsScrollWrapper(
+          sliverChild: true,
+          scrollViewKey: 'event_details_images_$eventId',
+          child: ImageGallery(
+            scrollController: scrollController,
+            onRefresh: () => _refreshImages(context),
+            onLoadNextPage: () => _loadNextPage(context),
+            images: state.images,
+            loading: state is EventImagesPageLoadInProgress,
+            onImageTap: (image) {
+              context.router.push(
+                EventImageViewRoute(
+                  imageIndex: state.images.indexOf(image),
+                  onLoadNextPage: () => _loadNextPage(context),
+                ),
+              );
+            },
+          ),
         );
       },
     );
