@@ -35,6 +35,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
   bool isZoomed = false;
 
   get modalOpened => _bottomContainerHeight == _bottomContainerMaxHeight;
+  get modalOpening => _bottomContainerHeight > 0;
 
   @override
   void initState() {
@@ -174,9 +175,9 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
                     _onModaleClosed();
                   }
                 },
-                child: ImageGalleryBottomModal(
+                child: modalOpening ? ImageGalleryBottomModal(
                   image: widget.images[currentPage],
-                ),
+                ) : const SizedBox.shrink(),
               ),
             ),
           ],
