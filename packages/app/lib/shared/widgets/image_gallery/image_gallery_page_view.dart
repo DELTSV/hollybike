@@ -27,7 +27,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
   );
 
   double _bottomContainerHeight = 0;
-  final double _bottomContainerMaxHeight = 200;
+  final double _bottomContainerMaxHeight = 300;
   bool _animate = false;
 
   late int currentPage = widget.imageIndex;
@@ -56,117 +56,138 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
 
   void _onModaleClosed() {
     setState(() {
-      _bottomContainerHeight = 0;
+      _bottomContainerHeight = 1;
     });
+  }
+
+  void _onVerticalDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      final delta = _bottomContainerHeight - details.delta.dy;
+      _bottomContainerHeight = delta.clamp(0, _bottomContainerMaxHeight);
+    });
+  }
+
+  void _onVerticalDragEnd(DragEndDetails details) {
+    if (details.primaryVelocity! > 10) {
+      _onModaleClosed();
+    } else if (details.primaryVelocity! < -10) {
+      _onModaleOpened();
+    } else if (_bottomContainerHeight > _bottomContainerMaxHeight / 2) {
+      _onModaleOpened();
+    } else {
+      _onModaleClosed();
+    }
+
+    setState(() {
+      _animate = true;
+    });
+  }
+
+  void _onVerticalDragStart(DragStartDetails details) {
+    setState(() {
+      _animate = false;
+    });
+  }
+
+  void _onTapImage() {
+    _onModaleClosed();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onVerticalDragUpdate: (details) {
-        setState(() {
-          final delta = _bottomContainerHeight - details.delta.dy;
-          _bottomContainerHeight = delta.clamp(0, _bottomContainerMaxHeight);
-        });
-      },
-      onVerticalDragEnd: (details) {
-        if (details.primaryVelocity! > 10) {
-          _onModaleClosed();
-        } else if (details.primaryVelocity! < -10) {
-          _onModaleOpened();
-        } else if (_bottomContainerHeight > _bottomContainerMaxHeight / 2) {
-          _onModaleOpened();
-        } else {
-          _onModaleClosed();
-        }
-
-        setState(() {
-          _animate = true;
-        });
-      },
-      onVerticalDragStart: (details) {
-        setState(() {
-          _animate = false;
-        });
-      },
+      onVerticalDragUpdate: isZoomed ? null : _onVerticalDragUpdate,
+      onVerticalDragEnd: isZoomed ? null : _onVerticalDragEnd,
+      onVerticalDragStart: isZoomed ? null : _onVerticalDragStart,
       child: Container(
         color: Colors.black,
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: [
             Flexible(
-              child: PageView.builder(
-                dragStartBehavior: DragStartBehavior.down,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentPage = index;
-                  });
+              child: GestureDetector(
+                onTap: modalOpened ? _onTapImage : null,
+                child: PageView.builder(
+                  dragStartBehavior: DragStartBehavior.down,
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentPage = index;
+                    });
 
-                  if (index == widget.images.length - 1) {
-                    widget.onLoadNextPage();
-                  }
-                },
-                controller: controller,
-                physics: isZoomed || modalOpened
-                    ? const NeverScrollableScrollPhysics()
-                    : const AlwaysScrollableScrollPhysics(),
-                itemCount: widget.images.length,
-                itemBuilder: (context, index) {
-                  final image = widget.images[index];
+                    if (index == widget.images.length - 1) {
+                      widget.onLoadNextPage();
+                    }
+                  },
+                  controller: controller,
+                  physics: isZoomed || modalOpened
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
+                  itemCount: widget.images.length,
+                  itemBuilder: (context, index) {
+                    final image = widget.images[index];
 
-                  final hero = index == currentPage
-                      ? PhotoViewHeroAttributes(
-                          tag: 'event_image_${image.id}',
-                        )
-                      : null;
+                    final hero = index == currentPage
+                        ? PhotoViewHeroAttributes(
+                            tag: 'event_image_${image.id}',
+                          )
+                        : null;
 
-                  return PhotoView(
-                    initialScale: PhotoViewComputedScale.contained,
-                    disableGestures: modalOpened,
-                    imageProvider: CachedNetworkImageProvider(
-                      image.url,
-                      cacheKey: 'image_${image.id}',
-                    ),
-                    gestureDetectorBehavior: HitTestBehavior.translucent,
-                    scaleStateChangedCallback: (scaleState) {
-                      setState(() {
-                        isZoomed = scaleState != PhotoViewScaleState.initial;
-                      });
-                    },
-                    loadingBuilder: (context, event) {
-                      return Center(
-                        child: Container(
-                          color: Colors.black,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.black,
-                        child: const Center(
-                          child: Text(
-                            'Une erreur est survenue lors du chargement de l\'image',
-                            style: TextStyle(
-                              color: Colors.white,
+                    return PhotoView(
+                      initialScale: PhotoViewComputedScale.contained,
+                      disableGestures: modalOpened,
+                      imageProvider: CachedNetworkImageProvider(
+                        image.url,
+                        cacheKey: 'image_${image.id}',
+                      ),
+                      gestureDetectorBehavior: HitTestBehavior.translucent,
+                      scaleStateChangedCallback: (scaleState) {
+                        setState(() {
+                          isZoomed = scaleState != PhotoViewScaleState.initial;
+                        });
+                      },
+                      loadingBuilder: (context, event) {
+                        return Center(
+                          child: Container(
+                            color: Colors.black,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    maxScale: PhotoViewComputedScale.covered * 2.0,
-                    minScale: PhotoViewComputedScale.contained,
-                    heroAttributes: hero,
-                  );
-                },
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.black,
+                          child: const Center(
+                            child: Text(
+                              'Une erreur est survenue lors du chargement de l\'image',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      maxScale: PhotoViewComputedScale.covered * 2.0,
+                      minScale: PhotoViewComputedScale.contained,
+                      heroAttributes: hero,
+                    );
+                  },
+                ),
               ),
             ),
             AnimatedContainer(
               duration:
-                  _animate ? const Duration(milliseconds: 100) : Duration.zero,
+                  _animate ? const Duration(milliseconds: 150) : Duration.zero,
+              curve: Curves.fastOutSlowIn,
               height: _bottomContainerHeight,
+              onEnd: () {
+                if (_bottomContainerHeight == 1.0) {
+                  setState(() {
+                    _bottomContainerHeight = 0;
+                  });
+                }
+              },
               width: double.infinity,
               child: PopScope(
                 canPop: !modalOpened,

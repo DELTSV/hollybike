@@ -8,6 +8,7 @@ import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_state
 import 'package:hollybike/event/types/image/event_image_details.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
+import 'package:hollybike/shared/widgets/image_gallery/image_gallery_details.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -57,59 +58,58 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
           ),
         ),
         child: SizedBox(
-            height: 200,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          TextButton.icon(
-                            onPressed: _onShareImage,
-                            icon: const Icon(Icons.share),
-                            label: const Text("Partager"),
-                          ),
-                          TextButton.icon(
-                            onPressed: _onDownloadImage,
-                            icon: const Icon(Icons.download),
-                            label: const Text("Télécharger"),
-                          ),
-                          TextButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.delete),
-                            label: const Text("Supprimer"),
-                          ),
-                        ],
-                      ),
+          height: 200,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: [
+                        TextButton.icon(
+                          onPressed: _onShareImage,
+                          icon: const Icon(Icons.share),
+                          label: const Text("Partager"),
+                        ),
+                        TextButton.icon(
+                          onPressed: _onDownloadImage,
+                          icon: const Icon(Icons.download),
+                          label: const Text("Télécharger"),
+                        ),
+                        TextButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.delete),
+                          label: const Text("Supprimer"),
+                        ),
+                      ],
                     ),
-                    Divider(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                    BlocBuilder<EventImageDetailsBloc, EventImageDetailsState>(
-                      builder: (context, state) {
-                        if (state is EventImageDetailsLoadInProgress) {
-                          return const CircularProgressIndicator();
-                        }
+                  ),
+                  Divider(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  BlocBuilder<EventImageDetailsBloc, EventImageDetailsState>(
+                    builder: (context, state) {
+                      if (state is EventImageDetailsLoadInProgress) {
+                        return const CircularProgressIndicator();
+                      }
 
-                        if (state.imageDetails == null) {
-                          return const Text("Image non trouvée");
-                        }
+                      if (state.imageDetails == null) {
+                        return const Text("Image non trouvée");
+                      }
 
-                        final details = state.imageDetails as EventImageDetails;
-
-                        return Text(
-                          "Image ${details.takenDateTime}",
-                        );
-                      },
-                    )
-                  ],
-                ),
+                      return ImageGalleryDetails(
+                        imageDetails: state.imageDetails as EventImageDetails,
+                      );
+                    },
+                  )
+                ],
               ),
-            )),
+            ),
+          ),
+        ),
       ),
     );
   }
