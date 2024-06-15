@@ -9,14 +9,21 @@ import io.ktor.util.*
 import kotlinx.serialization.json.Json
 
 import generated.Constants
+import hollybike.api.database.configureDatabase
+import hollybike.api.services.storage.StorageInitException
+import hollybike.api.services.storage.StorageService
+import hollybike.api.services.storage.StorageServiceFactory
+import hollybike.api.services.storage.signature.StorageSignatureMode
+import hollybike.api.services.storage.signature.StorageSignatureService
 import hollybike.api.utils.configureRestart
+import kotlin.system.measureTimeMillis
 
-var engine: ApplicationEngine? = null
+lateinit var signatureService: StorageSignatureService
 
 fun main() {
 	while (true) {
 		println("Start API")
-		engine = run()
+		run()
 		println("Stopping API")
 	}
 }
@@ -38,19 +45,17 @@ fun run(isTestEnv: Boolean = false): ApplicationEngine {
 fun Application.module() {
 	checkEnvironment()
 	checkOnPremise()
-	if(loadConfig()) {
-		configureSerialization()
-		api()
-		frontend()
-		configureRestart(false)
-	} else if(isOnPremise) {
-		println("Starting in conf mode")
-		configureSerialization()
-		confMode()
-		configureRestart(true)
-	} else {
-		println("Cannot start API")
+	if(!loadConfig()) {
+		return setupFailover()
 	}
+	val storageService = loadStorage() ?: return setupFailover()
+
+	val db = configureDatabase() ?: return setupFailover()
+
+	configureSerialization()
+	api(storageService, db)
+	frontend()
+	configureRestart(false)
 
 	log.info("Running hollyBike API in ${if (Constants.IS_ON_PREMISE) "on-premise" else "cloud"} mode")
 }
@@ -89,6 +94,39 @@ fun Application.loadConfig(): Boolean {
 	}
 	this.attributes.put(confKey, conf)
 	return true
+}
+
+fun Application.loadStorage(): StorageService? {
+	return try {
+		val storageService: StorageService
+		val storageInitTime = measureTimeMillis {
+			storageService = StorageServiceFactory.getService(attributes.conf, isOnPremise)
+		}
+		log.info("Using storage signature mode: ${storageService.signer.mode}")
+		log.info("Storage service in mode ${storageService.mode} initialized in $storageInitTime ms")
+
+		signatureService = storageService.signer
+
+		if (!isOnPremise && storageService.signer.mode == StorageSignatureMode.JWT) {
+			log.warn("JWT signature is not secure in a non-on-premise environment. Please use a secure signature mode.")
+		}
+
+		storageService
+	}catch (e: StorageInitException) {
+		log.error(e.message)
+		null
+	}
+}
+
+fun Application.setupFailover() {
+	if(isOnPremise) {
+		println("Starting in conf mode")
+		configureSerialization()
+		confMode()
+		configureRestart(true)
+	} else {
+		println("Cannot start API")
+	}
 }
 
 fun Application.loadCustomConfig(customConfig: Conf) {

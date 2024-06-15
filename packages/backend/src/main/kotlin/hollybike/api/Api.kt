@@ -20,34 +20,19 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.Database
 import org.slf4j.event.Level
 import kotlin.system.measureTimeMillis
 
-lateinit var signatureService: StorageSignatureService
-
-fun Application.api() {
+fun Application.api(storageService: StorageService, db: Database) {
 	val conf = attributes.conf
 
-	val db = configureDatabase()
 	configureHTTP()
 	configureSecurity(db)
 	install(Resources)
 	install(CallLogging) {
 		this.level = Level.INFO
 	}
-
-	val storageService: StorageService
-	val storageInitTime = measureTimeMillis {
-		storageService = StorageServiceFactory.getService(conf, isOnPremise)
-	}
-	signatureService = storageService.signer
-
-	if (!isOnPremise && storageService.signer.mode == StorageSignatureMode.JWT) {
-		log.warn("JWT signature is not secure in a non-on-premise environment. Please use a secure signature mode.")
-	}
-
-	log.info("Using storage signature mode: ${storageService.signer.mode}")
-	log.info("Storage service in mode ${storageService.mode} initialized in $storageInitTime ms")
 
 	val positionService = PositionService(db, CoroutineScope(Dispatchers.Default))
 

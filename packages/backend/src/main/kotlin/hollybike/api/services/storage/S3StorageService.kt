@@ -36,9 +36,9 @@ class S3StorageService(
 		runBlocking {
 			if (!client.bucketExists(bucketName)) {
 				if(url != null) {
-					throw Exception("Cannot reach bucket `$bucketName` in region `$bucketRegion` on url `$url`, check parameters")
+					throw StorageInitException("Cannot reach bucket `$bucketName` in region `$bucketRegion` on url `$url`, check parameters")
 				} else {
-					throw Exception("Cannot reach bucket `$bucketName` in region `$bucketRegion`, check parameters")
+					throw StorageInitException("Cannot reach bucket `$bucketName` in region `$bucketRegion`, check parameters")
 				}
 			}
 		}

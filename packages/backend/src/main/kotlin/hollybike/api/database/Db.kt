@@ -13,22 +13,28 @@ import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
+import org.postgresql.util.PSQLException
 import java.sql.Connection
 
-fun Application.configureDatabase(): Database {
+fun Application.configureDatabase(): Database? {
 	log.info("Configuring Database")
-	val conf = attributes.conf
-
-	return Database.connect(
-		url = conf.db.url,
-		user = conf.db.username,
-		password = conf.db.password,
-		driver = "org.postgresql.Driver",
-		databaseConfig = DatabaseConfig {
-			keepLoadedReferencesOutOfTransaction = true
+	with(attributes.conf.db) {
+		return try {
+			Database.connect(
+				url = url,
+				user = username,
+				password = password,
+				driver = "org.postgresql.Driver",
+				databaseConfig = DatabaseConfig {
+					keepLoadedReferencesOutOfTransaction = true
+				}
+			).apply {
+				runMigration(developmentMode, isCloud, isTestEnv, this.connector().connection as Connection)
+			}
+		}catch (e: PSQLException) {
+			log.error(e.message)
+			null
 		}
-	).apply {
-		runMigration(developmentMode, isCloud, isTestEnv, this.connector().connection as Connection)
 	}
 }
 
