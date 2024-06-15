@@ -184,7 +184,6 @@ graalvmNative {
 
 			buildArgs.add("--initialize-at-run-time=de.nycode.bcrypt.BCryptKt")
 
-			buildArgs.add("--trace-class-initialization=sun.java2d.Disposer,sun.font.StrikeCache")
 			buildArgs.add("--initialize-at-run-time=sun.font.SunFontManager")
 			buildArgs.add("--initialize-at-run-time=sun.java2d.Disposer")
 			buildArgs.add("--initialize-at-run-time=sun.font.StrikeCache")
