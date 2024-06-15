@@ -49,3 +49,20 @@ class EventImageDetailsLoadFailure extends EventImageDetailsState {
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventImageDetailsStatus.error));
 }
+
+class DeleteImageInProgress extends EventImageDetailsState {
+  DeleteImageInProgress(EventImageDetailsState state)
+      : super.state(state.copyWith(status: EventImageDetailsStatus.loading));
+}
+
+class DeleteImageSuccess extends EventImageDetailsState {
+  DeleteImageSuccess(EventImageDetailsState state)
+      : super.state(state.copyWith(status: EventImageDetailsStatus.success));
+}
+
+class DeleteImageFailure extends EventImageDetailsState {
+  final String errorMessage;
+
+  DeleteImageFailure(EventImageDetailsState state, {required this.errorMessage})
+      : super.state(state.copyWith(status: EventImageDetailsStatus.error));
+}

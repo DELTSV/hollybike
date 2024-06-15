@@ -38,6 +38,7 @@ class EventDetailsImages extends StatelessWidget {
                 EventImageViewRoute(
                   imageIndex: state.images.indexOf(image),
                   onLoadNextPage: () => _loadNextPage(context),
+                  onRefresh: () => _refreshImages(context),
                 ),
               );
             },

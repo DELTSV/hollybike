@@ -14,3 +14,13 @@ class GetEventImageDetails extends EventImageDetailsEvent {
     required this.imageId,
   });
 }
+
+class DeleteImage extends EventImageDetailsEvent {
+  final AuthSession session;
+  final int imageId;
+
+  DeleteImage({
+    required this.session,
+    required this.imageId,
+  });
+}

@@ -136,4 +136,17 @@ class ImageApi {
 
     return EventImageDetails.fromJson(response.data);
   }
+
+  Future<void> deleteImage(
+    AuthSession session,
+    int imageId,
+  ) async {
+    final response = await DioClient(session).dio.delete(
+      '/events/images/$imageId',
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception("Failed to delete event image");
+    }
+  }
 }

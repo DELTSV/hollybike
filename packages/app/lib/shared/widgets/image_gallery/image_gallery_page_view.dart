@@ -1,22 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/image/event_image.dart';
+import 'package:hollybike/shared/utils/safe_set_state.dart';
 import 'package:hollybike/shared/widgets/image_gallery/image_gallery_bottom_modal.dart';
 import 'package:photo_view/photo_view.dart';
 
+import '../../../event/bloc/event_images_bloc/event_image_details_bloc.dart';
+import '../../../event/bloc/event_images_bloc/event_image_details_state.dart';
 import '../modal/content_shrink_bottom_modal.dart';
 
 class ImageGalleryPageView extends StatefulWidget {
   final int imageIndex;
   final List<EventImage> images;
   final void Function() onLoadNextPage;
+  final void Function() onImageDeleted;
 
   const ImageGalleryPageView({
     super.key,
     required this.imageIndex,
     required this.onLoadNextPage,
     required this.images,
+    required this.onImageDeleted,
   });
 
   @override
@@ -33,6 +39,14 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
   bool isZoomed = false;
   bool modalOpened = false;
 
+  get currentImage {
+    try {
+      return widget.images[currentPage];
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,84 +60,119 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return ContentShrinkBottomModal(
-      onStatusChanged: (opened) {
-        setState(() {
-          modalOpened = opened;
-        });
+    final currentImage = this.currentImage;
+
+    if (currentImage == null) {
+      return Container(
+        color: Colors.black,
+      );
+    }
+
+    return BlocListener<EventImageDetailsBloc, EventImageDetailsState>(
+      listener: (context, state) {
+        if (state is DeleteImageSuccess) {
+          _onImageDeleted();
+        }
       },
-      maxModalHeight: 460,
-      enableDrag: !isZoomed,
-      modalContent: ImageGalleryBottomModal(
-        image: widget.images[currentPage],
-      ),
-      child: PageView.builder(
-        dragStartBehavior: DragStartBehavior.down,
-        onPageChanged: (index) {
-          setState(() {
-            currentPage = index;
+      child: ContentShrinkBottomModal(
+        modalOpened: modalOpened,
+        onStatusChanged: (opened) {
+          safeSetState(() {
+            modalOpened = opened;
           });
-
-          if (index == widget.images.length - 1) {
-            widget.onLoadNextPage();
-          }
         },
-        controller: controller,
-        physics: isZoomed || modalOpened
-            ? const NeverScrollableScrollPhysics()
-            : const AlwaysScrollableScrollPhysics(),
-        itemCount: widget.images.length,
-        itemBuilder: (context, index) {
-          final image = widget.images[index];
+        maxModalHeight: 460,
+        enableDrag: !isZoomed,
+        modalContent: ImageGalleryBottomModal(
+          image: widget.images[currentPage],
+          onImageDeleted: () {
+            setState(() {
+              modalOpened = false;
+            });
+          },
+        ),
+        child: PageView.builder(
+          dragStartBehavior: DragStartBehavior.down,
+          onPageChanged: (index) {
+            setState(() {
+              currentPage = index;
+            });
 
-          final hero = index == currentPage
-              ? PhotoViewHeroAttributes(
-            tag: 'event_image_${image.id}',
-          )
-              : null;
+            if (index == widget.images.length - 1) {
+              widget.onLoadNextPage();
+            }
+          },
+          controller: controller,
+          physics: isZoomed || modalOpened
+              ? const NeverScrollableScrollPhysics()
+              : const AlwaysScrollableScrollPhysics(),
+          itemCount: widget.images.length,
+          itemBuilder: (context, index) {
+            final image = widget.images[index];
 
-          return PhotoView(
-            initialScale: PhotoViewComputedScale.contained,
-            disableGestures: modalOpened,
-            imageProvider: CachedNetworkImageProvider(
-              image.url,
-              cacheKey: 'image_${image.id}',
-            ),
-            gestureDetectorBehavior: HitTestBehavior.translucent,
-            scaleStateChangedCallback: (scaleState) {
-              setState(() {
-                isZoomed = scaleState != PhotoViewScaleState.initial;
-              });
-            },
-            loadingBuilder: (context, event) {
-              return Center(
-                child: Container(
-                  color: Colors.black,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                color: Colors.black,
-                child: const Center(
-                  child: Text(
-                    'Une erreur est survenue lors du chargement de l\'image',
-                    style: TextStyle(
-                      color: Colors.white,
+            final hero = index == currentPage
+                ? PhotoViewHeroAttributes(
+                    tag: 'event_image_${image.id}',
+                  )
+                : null;
+
+            return PhotoView(
+              initialScale: PhotoViewComputedScale.contained,
+              disableGestures: modalOpened,
+              imageProvider: CachedNetworkImageProvider(
+                image.url,
+                cacheKey: 'image_${image.id}',
+              ),
+              gestureDetectorBehavior: HitTestBehavior.translucent,
+              scaleStateChangedCallback: (scaleState) {
+                setState(() {
+                  isZoomed = scaleState != PhotoViewScaleState.initial;
+                });
+              },
+              loadingBuilder: (context, event) {
+                return Center(
+                  child: Container(
+                    color: Colors.black,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
                   ),
-                ),
-              );
-            },
-            maxScale: PhotoViewComputedScale.covered * 2.0,
-            minScale: PhotoViewComputedScale.contained,
-            heroAttributes: hero,
-          );
-        },
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.black,
+                  child: const Center(
+                    child: Text(
+                      'Une erreur est survenue lors du chargement de l\'image',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              maxScale: PhotoViewComputedScale.covered * 2.0,
+              minScale: PhotoViewComputedScale.contained,
+              heroAttributes: hero,
+            );
+          },
+        ),
       ),
     );
+  }
+
+  void _onImageDeleted() {
+    if (currentPage < widget.images.length - 1) {
+      controller.animateToPage(
+        currentPage,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+
+    widget.onImageDeleted();
   }
 }

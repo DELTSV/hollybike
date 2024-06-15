@@ -22,10 +22,12 @@ import 'package:path/path.dart' as path;
 
 class ImageGalleryBottomModal extends StatefulWidget {
   final EventImage image;
+  final void Function() onImageDeleted;
 
   const ImageGalleryBottomModal({
     super.key,
     required this.image,
+    required this.onImageDeleted,
   });
 
   @override
@@ -34,6 +36,8 @@ class ImageGalleryBottomModal extends StatefulWidget {
 }
 
 class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
+  bool _isImageOwner = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,70 +54,100 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(31),
-            topRight: Radius.circular(31),
-          ),
+    return BlocListener<EventImageDetailsBloc, EventImageDetailsState>(
+      listener: (context, state) {
+        if (state is DeleteImageSuccess) {
+          widget.onImageDeleted();
+        }
+
+        if (state is EventImageDetailsLoadSuccess) {
+          setState(() {
+            _isImageOwner = state.imageDetails?.isOwner ?? false;
+          });
+        }
+
+        if (state is EventImageDetailsLoadFailure) {
+          Toast.showErrorToast(context, state.errorMessage);
+        }
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    children: [
-                      TextButton.icon(
-                        onPressed: _onShareImage,
-                        icon: const Icon(Icons.share),
-                        label: const Text("Partager"),
-                      ),
-                      TextButton.icon(
-                        onPressed: _onDownloadImage,
-                        icon: const Icon(Icons.download),
-                        label: const Text("Télécharger"),
-                      ),
-                      TextButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.delete),
-                        label: const Text("Supprimer"),
-                      ),
-                    ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(31),
+              topRight: Radius.circular(31),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: _buildActions(),
+                    ),
                   ),
-                ),
-                Divider(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                BlocBuilder<EventImageDetailsBloc, EventImageDetailsState>(
-                  builder: (context, state) {
-                    if (state is EventImageDetailsLoadInProgress) {
-                      return const CircularProgressIndicator();
-                    }
+                  Divider(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  BlocBuilder<EventImageDetailsBloc, EventImageDetailsState>(
+                    builder: (context, state) {
+                      if (state is EventImageDetailsLoadInProgress) {
+                        return const CircularProgressIndicator();
+                      }
 
-                    if (state.imageDetails == null) {
-                      return const Text("Image non trouvée");
-                    }
+                      if (state.imageDetails == null) {
+                        return const Text("Image non trouvée");
+                      }
 
-                    return ImageGalleryDetails(
-                      imageDetails: state.imageDetails as EventImageDetails,
-                    );
-                  },
-                )
-              ],
+                      return ImageGalleryDetails(
+                        imageDetails: state.imageDetails as EventImageDetails,
+                      );
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildActions() {
+    final actions = <Widget>[
+      TextButton.icon(
+        onPressed: _onShareImage,
+        icon: const Icon(Icons.share),
+        label: const Text("Partager"),
+      ),
+      TextButton.icon(
+        onPressed: _onDownloadImage,
+        icon: const Icon(Icons.download),
+        label: const Text("Télécharger"),
+      ),
+    ];
+
+    if (_isImageOwner) {
+      actions.add(
+        TextButton.icon(
+          onPressed: _onDeleteImage,
+          icon: const Icon(Icons.delete),
+          label: const Text("Supprimer"),
+        ),
+      );
+    }
+
+    return actions;
   }
 
   Future<String> _downloadImageToPath(String imagePath) async {
@@ -151,5 +185,41 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
             context, "Erreur lors du téléchargement de l'image");
       }
     }
+  }
+
+  void _onDeleteImage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Suppression de l'image"),
+          content:
+              const Text("Êtes-vous sûr de vouloir supprimer cette image ?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Annuler"),
+            ),
+            TextButton(
+              onPressed: () {
+                withCurrentSession(context, (session) {
+                  context.read<EventImageDetailsBloc>().add(
+                        DeleteImage(
+                          session: session,
+                          imageId: widget.image.id,
+                        ),
+                      );
+                });
+
+                Navigator.of(context).pop();
+              },
+              child: const Text("Confirmer"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

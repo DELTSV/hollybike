@@ -101,4 +101,14 @@ class ImageRepository {
 
     return imageDetails;
   }
+
+  Future<void> deleteImage(
+    AuthSession session,
+    int imageId,
+  ) async {
+    await imageApi.deleteImage(
+      session,
+      imageId,
+    );
+  }
 }

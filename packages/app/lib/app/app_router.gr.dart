@@ -66,6 +66,7 @@ abstract class $AppRouter extends _i14.RootStackRouter {
           key: args.key,
           imageIndex: args.imageIndex,
           onLoadNextPage: args.onLoadNextPage,
+          onRefresh: args.onRefresh,
         ),
       );
     },
@@ -77,6 +78,7 @@ abstract class $AppRouter extends _i14.RootStackRouter {
           key: args.key,
           imageIndex: args.imageIndex,
           onLoadNextPage: args.onLoadNextPage,
+          onRefresh: args.onRefresh,
         ),
       );
     },
@@ -248,6 +250,7 @@ class EventImageViewRoute extends _i14.PageRouteInfo<EventImageViewRouteArgs> {
     _i15.Key? key,
     required int imageIndex,
     required void Function() onLoadNextPage,
+    required void Function() onRefresh,
     List<_i14.PageRouteInfo>? children,
   }) : super(
           EventImageViewRoute.name,
@@ -255,6 +258,7 @@ class EventImageViewRoute extends _i14.PageRouteInfo<EventImageViewRouteArgs> {
             key: key,
             imageIndex: imageIndex,
             onLoadNextPage: onLoadNextPage,
+            onRefresh: onRefresh,
           ),
           initialChildren: children,
         );
@@ -270,6 +274,7 @@ class EventImageViewRouteArgs {
     this.key,
     required this.imageIndex,
     required this.onLoadNextPage,
+    required this.onRefresh,
   });
 
   final _i15.Key? key;
@@ -278,9 +283,11 @@ class EventImageViewRouteArgs {
 
   final void Function() onLoadNextPage;
 
+  final void Function() onRefresh;
+
   @override
   String toString() {
-    return 'EventImageViewRouteArgs{key: $key, imageIndex: $imageIndex, onLoadNextPage: $onLoadNextPage}';
+    return 'EventImageViewRouteArgs{key: $key, imageIndex: $imageIndex, onLoadNextPage: $onLoadNextPage, onRefresh: $onRefresh}';
   }
 }
 
@@ -292,6 +299,7 @@ class EventMyImageViewRoute
     _i15.Key? key,
     required int imageIndex,
     required void Function() onLoadNextPage,
+    required void Function() onRefresh,
     List<_i14.PageRouteInfo>? children,
   }) : super(
           EventMyImageViewRoute.name,
@@ -299,6 +307,7 @@ class EventMyImageViewRoute
             key: key,
             imageIndex: imageIndex,
             onLoadNextPage: onLoadNextPage,
+            onRefresh: onRefresh,
           ),
           initialChildren: children,
         );
@@ -314,6 +323,7 @@ class EventMyImageViewRouteArgs {
     this.key,
     required this.imageIndex,
     required this.onLoadNextPage,
+    required this.onRefresh,
   });
 
   final _i15.Key? key;
@@ -322,9 +332,11 @@ class EventMyImageViewRouteArgs {
 
   final void Function() onLoadNextPage;
 
+  final void Function() onRefresh;
+
   @override
   String toString() {
-    return 'EventMyImageViewRouteArgs{key: $key, imageIndex: $imageIndex, onLoadNextPage: $onLoadNextPage}';
+    return 'EventMyImageViewRouteArgs{key: $key, imageIndex: $imageIndex, onLoadNextPage: $onLoadNextPage, onRefresh: $onRefresh}';
   }
 }
 
