@@ -2,9 +2,13 @@ import { Button } from "../components/Button/Button.tsx";
 import {
 	Link, useParams,
 } from "react-router-dom";
-import { useEffect } from "preact/hooks";
+import {
+	useEffect, useState,
+} from "preact/hooks";
 import { useSideBar } from "../sidebar/useSideBar.tsx";
-import { api } from "../utils/useApi.ts";
+import {
+	api, apiRaw,
+} from "../utils/useApi.ts";
 import { TAssociation } from "../types/TAssociation.ts";
 import { List } from "../components/List/List.tsx";
 import { Cell } from "../components/List/Cell.tsx";
@@ -12,10 +16,13 @@ import { timeToFrenchString } from "../components/Calendar/InputCalendar.tsx";
 import { TJourney } from "../types/TJourney.ts";
 import { Download } from "../icons/Download.tsx";
 import {
+	CloudUploadOutlined,
 	DeleteOutlined, VisibilityOutlined,
 } from "@material-ui/icons";
 import { toast } from "react-toastify";
 import { useReload } from "../utils/useReload.ts";
+import { FileInput } from "../components/Input/FileInput.tsx";
+import { Modal } from "../components/Modal/Modal.tsx";
 
 export function ListJourneys() {
 	const { id } = useParams();
@@ -40,6 +47,10 @@ export function ListJourneys() {
 		setAssociation,
 		association,
 	]);
+
+	const [modal, setModal] = useState(false);
+	const [uploadFile, setUploadFile] = useState<File | null>(null);
+	const [journeyId, setJourneyId] = useState(-1);
 
 	return (
 		<div className={"w-full flex flex-col gap-2 mx-2"}>
@@ -66,6 +77,11 @@ export function ListJourneys() {
 					{
 						name: "Association",
 						id: "name",
+					},
+					{
+						name: "Importer un fichier",
+						id: "",
+						width: "160px",
 					},
 					{
 						name: "Télécharger",
@@ -100,6 +116,15 @@ export function ListJourneys() {
 							{ j.association.name }
 						</Link>
 					</Cell>,
+					<Cell>
+						<CloudUploadOutlined
+							className={"cursor-pointer"}
+							onClick={() => {
+								setModal(true);
+								setJourneyId(j.id);
+							}}
+						/>
+					</Cell>,
 					<Cell className={"flex justify-center"}>
 						{ j.file &&
 							<a href={j.file} target={"_blank"}>
@@ -132,6 +157,36 @@ export function ListJourneys() {
 				]}
 				baseUrl={"/journeys"}
 			/>
+			<Modal visible={modal} setVisible={setModal} title={"Importer un fichier GPX ou GeoJSON"}>
+				<div className={"gap-2 items-center"}>
+					<p>Fichier</p>
+					<FileInput id={"upload"} value={uploadFile} setValue={setUploadFile} accept={".geojson,.gpx"}/>
+					<Button
+						disabled={uploadFile === null || journeyId === -1}
+						onClick={() => {
+							if (uploadFile) {
+								const fd = new FormData();
+								fd.append("file", uploadFile);
+								apiRaw(`/journeys/${journeyId}/file`, undefined, {
+									method: "POST",
+									body: fd,
+								}).then((res) => {
+									if (res.status === 200) {
+										toast("Fichier importer", { type: "success" });
+										setModal(false);
+										setJourneyId(-1);
+										setUploadFile(null);
+									} else {
+										toast(res.message, { type: "error" });
+									}
+								});
+							}
+						}}
+					>
+						Importer
+					</Button>
+				</div>
+			</Modal>
 		</div>
 	);
 }

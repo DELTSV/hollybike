@@ -63,9 +63,9 @@ export function JourneyView() {
 	}, [data, mapRef]);
 
 	const [viewState, setViewState] = useState({
-		longitude: -100,
-		latitude: 40,
-		zoom: 0,
+		longitude: 1.2084545,
+		latitude: 44.3392763,
+		zoom: 4,
 	});
 
 	const onLoad = useCallback(() => {
