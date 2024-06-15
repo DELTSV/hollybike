@@ -48,7 +48,17 @@ class PositionService(
 				delay(1200L)
 				val message = messageChannel.tryReceive().getOrNull()
 				if (message != null) {
-					processMessage(message)
+					try {
+						subscribers.emit(
+							TPositionResponse(
+								message.topic,
+								message.identifier,
+								getPositionData(message.content)
+							)
+						)
+					} catch (e: Exception) {
+						println("Error processing message for identifier ${message.identifier}: $e")
+					}
 				}
 			}
 		}
@@ -91,13 +101,6 @@ class PositionService(
 				(Positions.longitude greaterEq longitude - tolerance) and
 				(Positions.longitude lessEq longitude + tolerance)
 		}.firstOrNull()
-	}
-
-	private fun processMessage(message: TPositionMessage) {
-		scope.launch {
-			val positionData = getPositionData(message.content)
-			subscribers.emit(TPositionResponse(message.topic, message.identifier, positionData))
-		}
 	}
 
 	private suspend fun fetch(positionRequest: TPositionRequest): TPlaceResponse {

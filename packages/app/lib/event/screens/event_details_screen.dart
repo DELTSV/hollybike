@@ -5,9 +5,9 @@ import 'package:hollybike/event/fragments/details/event_details_images.dart';
 import 'package:hollybike/event/fragments/details/event_details_infos.dart';
 import 'package:hollybike/event/fragments/details/event_details_map.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
-import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/event/widgets/images/add_photos_floating_button.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
@@ -29,16 +29,12 @@ enum EventDetailsTab { info, photos, myPhotos, map }
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget {
-  final int eventId;
-  final EventImage eventImage;
-  final String eventName;
+  final MinimalEvent event;
   final bool animate;
 
   const EventDetailsScreen({
     super.key,
-    required this.eventId,
-    required this.eventImage,
-    required this.eventName,
+    required this.event,
     this.animate = true,
   });
 
@@ -83,7 +79,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     });
 
     setState(() {
-      eventName = widget.eventName;
+      eventName = widget.event.name;
     });
 
     _loadEventDetails();
@@ -116,7 +112,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         }
 
         setState(() {
-          eventName = state.eventDetails?.event.name ?? widget.eventName;
+          eventName = state.eventDetails?.event.name ?? widget.event.name;
         });
       },
       child: Hud(
@@ -143,9 +139,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
               return <Widget>[
                 SliverToBoxAdapter(
                   child: EventDetailsHeader(
-                    eventId: widget.eventId,
-                    eventName: eventName,
-                    eventImage: widget.eventImage,
+                    event: widget.event,
                     animate: widget.animate,
                   ),
                 ),
@@ -298,7 +292,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       (session) {
         context.read<EventDetailsBloc>().add(
               LoadEventDetails(
-                eventId: widget.eventId,
+                eventId: widget.event.id,
                 session: session,
               ),
             );
@@ -311,7 +305,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       context.read<EventDetailsBloc>().add(
             EditEvent(
               session: session,
-              eventId: widget.eventId,
+              eventId: widget.event.id,
               formData: formData,
             ),
           );

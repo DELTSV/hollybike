@@ -52,6 +52,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
           modalOpened = opened;
         });
       },
+      maxModalHeight: 460,
       enableDrag: !isZoomed,
       modalContent: ImageGalleryBottomModal(
         image: widget.images[currentPage],

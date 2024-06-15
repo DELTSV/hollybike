@@ -4,7 +4,7 @@ class ContentShrinkBottomModal extends StatefulWidget {
   final Widget modalContent;
   final Widget child;
   final bool enableDrag;
-  final int maxModalHeight = 300;
+  final int maxModalHeight;
   final void Function(bool opened)? onStatusChanged;
 
   const ContentShrinkBottomModal({
@@ -13,6 +13,7 @@ class ContentShrinkBottomModal extends StatefulWidget {
     required this.child,
     this.onStatusChanged,
     this.enableDrag = true,
+    this.maxModalHeight = 300,
   });
 
   @override

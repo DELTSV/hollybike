@@ -207,7 +207,7 @@ class __$$PositionImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PositionImpl implements _Position {
+class _$PositionImpl extends _Position {
   const _$PositionImpl(
       {required this.latitude,
       required this.longitude,
@@ -217,7 +217,8 @@ class _$PositionImpl implements _Position {
       @JsonKey(name: "city_name") required this.cityName,
       @JsonKey(name: "country_name") required this.countryName,
       @JsonKey(name: "county_name") required this.countyName,
-      @JsonKey(name: "state_name") required this.stateName});
+      @JsonKey(name: "state_name") required this.stateName})
+      : super._();
 
   factory _$PositionImpl.fromJson(Map<String, dynamic> json) =>
       _$$PositionImplFromJson(json);
@@ -296,7 +297,7 @@ class _$PositionImpl implements _Position {
   }
 }
 
-abstract class _Position implements Position {
+abstract class _Position extends Position {
   const factory _Position(
           {required final double latitude,
           required final double longitude,
@@ -308,6 +309,7 @@ abstract class _Position implements Position {
           @JsonKey(name: "county_name") required final String? countyName,
           @JsonKey(name: "state_name") required final String? stateName}) =
       _$PositionImpl;
+  const _Position._() : super._();
 
   factory _Position.fromJson(Map<String, dynamic> json) =
       _$PositionImpl.fromJson;
