@@ -60,10 +60,7 @@ class TopBar extends StatelessWidget {
                     transitionOnUserGestures: true,
                     child: BarContainer(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: noPadding ? 1.5 : 16,
-                          horizontal: 16,
-                        ),
+                        padding: EdgeInsets.all(noPadding ? 1.5 : 16),
                         child: title,
                       ),
                     ),

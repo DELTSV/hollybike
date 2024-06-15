@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TabDropdownEntry {
@@ -33,12 +34,16 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
         initialSelection: 0,
         textStyle: Theme.of(context).textTheme.titleMedium,
         inputDecorationTheme: const InputDecorationTheme(
+          contentPadding: EdgeInsets.only(left: 16),
           border: InputBorder.none,
-          isCollapsed: true,
-          isDense: true,
         ),
         menuStyle: MenuStyle(
           padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
           backgroundColor:
               WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
         ),
