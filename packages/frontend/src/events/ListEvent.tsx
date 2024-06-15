@@ -1,7 +1,6 @@
 import { List } from "../components/List/List.tsx";
 import {
-	Link,
-	useNavigate, useParams,
+	Link, useNavigate, useParams,
 } from "react-router-dom";
 import { Cell } from "../components/List/Cell.tsx";
 import { TEvent } from "../types/TEvent.ts";
@@ -14,6 +13,8 @@ import {
 import { useSideBar } from "../sidebar/useSideBar.tsx";
 import { api } from "../utils/useApi.ts";
 import { TAssociation } from "../types/TAssociation.ts";
+import { useUser } from "../user/useUser.tsx";
+import { EUserScope } from "../types/EUserScope.ts";
 
 export function ListEvent() {
 	const { id } = useParams();
@@ -21,6 +22,7 @@ export function ListEvent() {
 		association, setAssociation,
 	} = useSideBar();
 	const navigate = useNavigate();
+	const { user } = useUser();
 
 	useEffect(() => {
 		if (id && !association) {
@@ -80,7 +82,7 @@ export function ListEvent() {
 					{
 						name: "Association",
 						id: "association",
-						visible: id === undefined,
+						visible: user?.scope === EUserScope.Root,
 					},
 					{
 						name: "",
@@ -111,11 +113,14 @@ export function ListEvent() {
 					<Cell>
 						{ dateTimeToFrenchString(e.create_date_time, false) }
 					</Cell>,
-					<Cell>
-						<Link to={`/associations/${e.association.id}`}>
-							{ e.association.name }
-						</Link>
-					</Cell>,
+					<>
+						{ user?.scope === EUserScope.Root &&
+							<Cell>
+								<Link to={`/associations/${e.association.id}`}>
+									{ e.association.name }
+								</Link>
+							</Cell> }
+					</>,
 					<Cell className={"cursor-pointer"} onClick={() => navigate(`/events/${e.id}`)}>
 						<OpenInNew/>
 					</Cell>,

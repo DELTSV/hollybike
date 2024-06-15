@@ -4,12 +4,10 @@ import { List } from "../components/List/List.tsx";
 import { Cell } from "../components/List/Cell.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import {
-	Link,
-	useNavigate, useParams,
+	Link, useNavigate, useParams,
 } from "react-router-dom";
 import {
-	CheckCircleOutlineRounded,
-	LinkOff, MailOutlineRounded,
+	CheckCircleOutlineRounded, LinkOff, MailOutlineRounded,
 } from "@material-ui/icons";
 import {
 	api, useApi,
@@ -29,11 +27,15 @@ import { Modal } from "../components/Modal/Modal.tsx";
 import { QRCodeSVG } from "qrcode.react";
 import { useRef } from "react";
 import { Input } from "../components/Input/Input.tsx";
+import { useUser } from "../user/useUser.tsx";
+import { EUserScope } from "../types/EUserScope.ts";
 
 export function ListInvitations() {
 	const {
 		association, setAssociation,
 	} = useSideBar();
+
+	const { user } = useUser();
 
 	const { id } = useParams();
 
@@ -67,10 +69,6 @@ export function ListInvitations() {
 
 	const [modalMail, setModalMail] = useState(false);
 
-	const input = useRef<HTMLInputElement>(null);
-
-	const [copied, setCopied] = useState(false);
-
 	const [mail, setMail] = useState("");
 	const [invitation, setInvitation] = useState(-1);
 
@@ -103,7 +101,7 @@ export function ListInvitations() {
 					{
 						name: "Association",
 						id: "association",
-						visible: id === undefined,
+						visible: user?.scope === EUserScope.Root,
 					},
 					{
 						name: "Lien",
@@ -130,11 +128,14 @@ export function ListInvitations() {
 						{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
 							`${ timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
 					</Cell>,
-					<Cell>
-						<Link to={`/associations/${ i.association.id}`}>
-							{ i.association.name }
-						</Link>
-					</Cell>,
+					<>
+						{ user?.scope === EUserScope.Root &&
+						<Cell>
+							<Link to={`/associations/${i.association.id}`}>
+								{ i.association.name }
+							</Link>
+						</Cell> }
+					</>,
 					<Cell className={"flex"}>
 						{ i.link !== undefined &&
 							<div className={"flex gap-2"}>
@@ -145,25 +146,7 @@ export function ListInvitations() {
 										setQrCode(i.link!);
 									}}
 								/>
-								{ copied ?
-									<CheckCircleOutlineRounded className={"cursor-pointer text-green"}/>:
-									<ContentCopy
-										className={"cursor-pointer"}
-										onClick={() => {
-											if (input.current) {
-												input.current.select();
-												input.current.setSelectionRange(0, 999999);
-												navigator.clipboard.writeText(input.current.value).then(() => {
-													toast("Lien copié", { type: "success" });
-													setCopied(true);
-													setTimeout(() => {
-														setCopied(false);
-													}, 1500);
-												});
-											}
-										}}
-									/> }
-								<input className={"hidden"} value={i.link} ref={input}/>
+								<LinkCell link={i.link}/>
 								{ smtp.status === 200 && <MailOutlineRounded
 									className={"cursor-pointer"} onClick={() => {
 										setModalMail(true);
@@ -213,6 +196,7 @@ export function ListInvitations() {
 									setModalMail(false);
 								} else {
 									toast(`Erreur: ${res.message}`, { type: "error" });
+									doReload();
 								}
 							});
 						}}
@@ -222,5 +206,34 @@ export function ListInvitations() {
 				</form>
 			</Modal>
 		</div>
+	);
+}
+
+function LinkCell(props: {link: string}) {
+	const input = useRef<HTMLInputElement>(null);
+
+	const [copied, setCopied] = useState(false);
+	return (
+		<>
+			{ copied ?
+				<CheckCircleOutlineRounded className={"cursor-pointer text-green"}/>:
+				<ContentCopy
+					className={"cursor-pointer"}
+					onClick={() => {
+						if (input.current) {
+							input.current.select();
+							input.current.setSelectionRange(0, 999999);
+							navigator.clipboard.writeText(input.current.value).then(() => {
+								toast("Lien copié", { type: "success" });
+								setCopied(true);
+								setTimeout(() => {
+									setCopied(false);
+								}, 1500);
+							});
+						}
+					}}
+				/> }
+			<input className={"hidden"} value={props.link} ref={input}/>
+		</>
 	);
 }
