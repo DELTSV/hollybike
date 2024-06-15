@@ -29,6 +29,6 @@ class Journey(id: EntityID<Int>) : IntEntity(id) {
 }
 
 val journeysMapper: Mapper = mapOf(
-	"name" to Journeys.name,
+	"journey_name" to Journeys.name,
 	"created_at" to Journeys.createdAt
 )

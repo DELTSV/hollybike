@@ -12,6 +12,7 @@ import hollybike.api.services.journey.toGeoJson
 import hollybike.api.types.journey.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.utils.GeoJson
+import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -92,7 +93,7 @@ class JourneyController(
 
 	private fun Route.metaData() {
 		get<Journeys.MetaData> {
-			call.respond(journeysMapper + userMapper + associationMapper)
+			call.respond((journeysMapper + userMapper + associationMapper).getMapperData())
 		}
 	}
 
@@ -124,6 +125,12 @@ class JourneyController(
 				}
 			} ?: run {
 				return@post call.respond(HttpStatusCode.BadRequest, "Le fichier n'est n'y un GPX ni un GeoJSON")
+			}
+
+			println(geoJson)
+
+			geoJson.apply {
+				bbox = getBoundingBox()
 			}
 
 			val contentType = ContentType.Application.GeoJson

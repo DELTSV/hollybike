@@ -76,7 +76,7 @@ class JourneyService(
 	}
 
 	fun getById(caller: User, id: Int): Journey? = transaction(db) {
-		Journey.findById(id)?.load(Journey::creator, Journey::creator) getIfAllowed caller
+		Journey.findById(id)?.load(Journey::creator, Journey::association) getIfAllowed caller
 	}
 
 	fun createJourney(caller: User, new: TNewJourney): Result<Journey> {
