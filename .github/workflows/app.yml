@@ -26,6 +26,12 @@ on:
       PRODUCTION_CREDENTIAL_FILE:
         required: true
         description: 'Production credential file'
+      MAPBOX_DOWNLOADS_TOKEN:
+        required: true
+        description: 'Mapbox downloads token'
+      MAPBOX_PUBLIC_ACCESS_TOKEN:
+        required: true
+        description: 'Mapbox public access token'
   pull_request:
     branches:
       - main
