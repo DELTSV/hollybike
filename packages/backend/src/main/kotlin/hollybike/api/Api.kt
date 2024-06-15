@@ -1,6 +1,5 @@
 package hollybike.api
 
-import hollybike.api.database.configureDatabase
 import hollybike.api.plugins.configureHTTP
 import hollybike.api.plugins.configureSecurity
 import hollybike.api.routing.controller.*
@@ -11,9 +10,6 @@ import hollybike.api.services.journey.JourneyService
 import hollybike.api.services.image.EventImageService
 import hollybike.api.services.image.ImageMetadataService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.services.storage.StorageServiceFactory
-import hollybike.api.services.storage.signature.StorageSignatureMode
-import hollybike.api.services.storage.signature.StorageSignatureService
 import hollybike.api.utils.MailSender
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
@@ -22,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.slf4j.event.Level
-import kotlin.system.measureTimeMillis
 
 fun Application.api(storageService: StorageService, db: Database) {
 	val conf = attributes.conf
