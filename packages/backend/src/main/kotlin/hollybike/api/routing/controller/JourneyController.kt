@@ -127,8 +127,6 @@ class JourneyController(
 				return@post call.respond(HttpStatusCode.BadRequest, "Le fichier n'est n'y un GPX ni un GeoJSON")
 			}
 
-			println(geoJson)
-
 			geoJson.apply {
 				bbox = getBoundingBox()
 			}

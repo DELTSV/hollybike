@@ -92,7 +92,6 @@ fun GeoJson.getBoundingBox(): List<Double> {
 	val list = if(isElevated) {
 		val bbox = listOf(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
 		getCoordinateDump().fold(bbox) { a, b ->
-//			println(b)
 			listOf(
 				min(b[0], a[0]),
 				min(b[1], a[1]),
@@ -105,7 +104,6 @@ fun GeoJson.getBoundingBox(): List<Double> {
 	} else {
 		val bbox = listOf(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
 		getCoordinateDump().fold(bbox) { a, b ->
-//			println(b)
 			listOf(
 				min(b[0], a.myGet(0)),
 				min(b[1], a.myGet(1)),
@@ -114,7 +112,6 @@ fun GeoJson.getBoundingBox(): List<Double> {
 			)
 		}
 	}
-	println(list)
 	return if(list.any { it.isInfinite() }) {
 		if(list.size == 6) {
 			list.take(3) + list.take(3)
