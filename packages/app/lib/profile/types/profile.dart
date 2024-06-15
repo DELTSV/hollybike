@@ -23,8 +23,8 @@ class Profile {
     this.profilePicture,
   });
 
-  static Profile fromResponseJson(String response) {
-    final object = jsonDecode(response);
+  static Profile fromResponseJson(List<int> response) {
+    final object = jsonDecode(utf8.decode(response));
     verifyObjectAttributeNotNull(String attribute) {
       if (object[attribute] == null) {
         throw FormatException("Missing $attribute inside server response");

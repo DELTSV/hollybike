@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-
-import '../event_image.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
 
 class EventDetailsHeader extends StatelessWidget {
-  final int eventId;
-  final EventImage eventImage;
-  final String eventName;
+  final MinimalEvent event;
   final bool animate;
 
   const EventDetailsHeader({
     super.key,
-    required this.eventId,
-    required this.eventImage,
-    required this.eventName,
     required this.animate,
+    required this.event,
   });
 
   @override
@@ -26,7 +21,7 @@ class EventDetailsHeader extends StatelessWidget {
           HeroMode(
             enabled: animate,
             child: Hero(
-              tag: "event-image-$eventId",
+              tag: "event-image-${event.id}",
               child: Container(
                 width: double.infinity,
                 foregroundDecoration: BoxDecoration(
@@ -39,7 +34,10 @@ class EventDetailsHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-                child: eventImage,
+                child: Image(
+                  image: event.imageProvider,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
@@ -54,11 +52,11 @@ class EventDetailsHeader extends StatelessWidget {
                     HeroMode(
                       enabled: animate,
                       child: Hero(
-                        tag: "event-name-$eventId",
+                        tag: "event-name-${event.id}",
                         child: SizedBox(
                           width: constraints.maxWidth - 20,
                           child: Text(
-                            eventName,
+                            event.name,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.titleLarge,

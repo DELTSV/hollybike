@@ -4,13 +4,13 @@ import 'package:hollybike/shared/widgets/bar/bar_container.dart';
 class TopBar extends StatelessWidget {
   final Widget? prefix;
   final Widget? suffix;
-  final Widget title;
+  final Widget? title;
 
   const TopBar({
     super.key,
     this.prefix,
     this.suffix,
-    required this.title,
+    this.title,
   });
 
   @override
@@ -22,39 +22,17 @@ class TopBar extends StatelessWidget {
           right: suffix == null ? 0 : 16,
         ),
         child: Stack(
-          children: [
-            AnimatedPadding(
-              duration: const Duration(milliseconds: 200),
-              padding: EdgeInsets.only(
-                left: prefix == null ? 0 : 48,
-                right: suffix == null ? 0 : 48,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Hero(
-                      tag: "top_bar_title",
-                      transitionOnUserGestures: true,
-                      child: BarContainer(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: title,
-                        ),
-                      ),
-                    ),
+          children: _renderTitle() +
+              [
+                Container(
+                  constraints: BoxConstraints.tight(const Size.fromHeight(90)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: _renderFix(prefix) + _renderFix(suffix),
                   ),
-                ],
-              ),
-            ),
-            Container(
-              constraints: BoxConstraints.tight(const Size.fromHeight(90)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: _renderFix(prefix) + _renderFix(suffix),
-              ),
-            ),
-          ],
+                ),
+              ],
         ),
       ),
     );
@@ -62,4 +40,32 @@ class TopBar extends StatelessWidget {
 
   List<Widget> _renderFix(Widget? fix) =>
       fix == null ? [const SizedBox()] : [fix];
+
+  List<Widget> _renderTitle() => title == null
+      ? <Widget>[]
+      : <Widget>[
+          AnimatedPadding(
+            duration: const Duration(milliseconds: 200),
+            padding: EdgeInsets.only(
+              left: prefix == null ? 0 : 48,
+              right: suffix == null ? 0 : 48,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: "top_bar_title",
+                    transitionOnUserGestures: true,
+                    child: BarContainer(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: title,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ];
 }

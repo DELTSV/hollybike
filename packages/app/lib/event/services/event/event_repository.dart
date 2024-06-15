@@ -2,13 +2,13 @@ import 'package:hollybike/auth/types/auth_session.dart';
 
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
-import 'package:hollybike/event/types/event_participation.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
+import '../../types/participation/event_participation.dart';
 import 'event_api.dart';
 
 class EventRepository {
@@ -26,10 +26,16 @@ class EventRepository {
 
   Future<PaginatedList<MinimalEvent>> fetchEvents(
     AuthSession session,
+    String requestType,
     int page,
     int eventsPerPage,
   ) async {
-    final pageResult = await eventApi.getEvents(session, page, eventsPerPage);
+    final pageResult = await eventApi.getEvents(
+      session,
+      requestType,
+      page,
+      eventsPerPage,
+    );
 
     _eventsStreamController.add(
       _eventsStreamController.value + pageResult.items,
@@ -40,9 +46,15 @@ class EventRepository {
 
   Future<PaginatedList<MinimalEvent>> refreshEvents(
     AuthSession session,
+    String requestType,
     int eventsPerPage,
   ) async {
-    final pageResult = await eventApi.getEvents(session, 0, eventsPerPage);
+    final pageResult = await eventApi.getEvents(
+      session,
+      requestType,
+      0,
+      eventsPerPage,
+    );
 
     _eventsStreamController.add(
       pageResult.items,
@@ -193,6 +205,22 @@ class EventRepository {
         callerParticipation: firstAsCaller
             ? participants.first.toEventCallerParticipation()
             : details.callerParticipation,
+      ),
+    );
+  }
+
+  void onImagesVisibilityUpdated(bool isPublic) {
+    final details = _eventStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventStreamController.add(
+      details.copyWith(
+        callerParticipation: details.callerParticipation?.copyWith(
+          isImagesPublic: isPublic,
+        ),
       ),
     );
   }

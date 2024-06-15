@@ -8,30 +8,42 @@ import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
+import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
-import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
-import 'package:hollybike/event/services/event_participations/event_participation_repository.dart';
+import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
-
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
+import 'event/bloc/event_images_bloc/event_image_details_bloc.dart';
+import 'event/bloc/event_images_bloc/event_my_images_bloc.dart';
 import 'event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'event/bloc/events_bloc/events_event.dart';
 import 'event/services/event/event_api.dart';
 import 'event/services/event/event_repository.dart';
-import 'event/services/event_participations/event_participation_api.dart';
+import 'event/services/image/image_api.dart';
+import 'event/services/image/image_repository.dart';
+import 'event/services/participation/event_participation_api.dart';
+import 'event/services/participation/event_participation_repository.dart';
 
 void main() {
-  initializeDateFormatting("fr_FR")
-      .then((value) => Intl.defaultLocale = "fr_FR");
+  NetworkImageCache();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
+}
+
+class NetworkImageCache extends WidgetsFlutterBinding {
+  @override
+  ImageCache createImageCache() {
+    ImageCache imageCache = super.createImageCache();
+    imageCache.maximumSizeBytes = 1024 * 1024 * 500;
+    return imageCache;
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -68,9 +80,16 @@ class MyApp extends StatelessWidget {
           RepositoryProvider(
             create: (context) => AuthSessionRepository(),
           ),
-          RepositoryProvider(create: (context) => ProfileRepository(
-            profileApi: ProfileApi(),
-          )),
+          RepositoryProvider(
+            create: (context) => ProfileRepository(
+              profileApi: ProfileApi(),
+            ),
+          ),
+          RepositoryProvider(
+            create: (context) => ImageRepository(
+              imageApi: ImageApi(),
+            ),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -90,7 +109,8 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<ProfileBloc>(
               create: (context) => ProfileBloc(
-                authSessionRepository: RepositoryProvider.of<AuthSessionRepository>(
+                authSessionRepository:
+                    RepositoryProvider.of<AuthSessionRepository>(
                   context,
                 ),
                 profileRepository: RepositoryProvider.of<ProfileRepository>(
@@ -98,8 +118,14 @@ class MyApp extends StatelessWidget {
                 ),
               )..add(SubscribeToCurrentSessionChange()),
             ),
-            BlocProvider<EventsBloc>(
-              create: (context) => EventsBloc(
+            BlocProvider<FutureEventsBloc>(
+              create: (context) => FutureEventsBloc(
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
+              )..add(SubscribeToEvents()),
+            ),
+            BlocProvider<ArchivedEventsBloc>(
+              create: (context) => ArchivedEventsBloc(
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvents()),
@@ -129,6 +155,30 @@ class MyApp extends StatelessWidget {
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEventCandidates()),
+            ),
+            BlocProvider<EventImagesBloc>(
+              create: (context) => EventImagesBloc(
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
+            ),
+            BlocProvider<EventMyImagesBloc>(
+              create: (context) => EventMyImagesBloc(
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+                eventRepository: RepositoryProvider.of<EventRepository>(
+                  context,
+                ),
+              ),
+            ),
+            BlocProvider<EventImageDetailsBloc>(
+              create: (context) => EventImageDetailsBloc(
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
             ),
           ],
           child: const App(),

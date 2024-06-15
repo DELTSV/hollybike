@@ -6,9 +6,9 @@ import hollybike.api.repository.Users
 import hollybike.api.repository.eventImagesMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.routing.resources.Events
-import hollybike.api.services.EventImageService
+import hollybike.api.services.image.EventImageService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.event.TEventImage
+import hollybike.api.types.event.image.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.checkContentType
@@ -38,6 +38,7 @@ class EventImageController(
 				getMyImages()
 				uploadImages()
 				deleteImage()
+				getImageDetails()
 				getMetaData()
 			}
 		}
@@ -77,17 +78,14 @@ class EventImageController(
 	private fun Route.uploadImages() {
 		post<Events.Id.Images> { data ->
 			val multipart = call.receiveMultipart()
+			val allParts = multipart.readAllParts()
 
-			val images = multipart.readAllParts().mapNotNull { item ->
-				if (item is PartData.FileItem) {
-					val contentType = checkContentType(item).getOrElse {
-						return@post call.respond(HttpStatusCode.BadRequest, it.message!!)
-					}
-
-					item.streamProvider().readBytes() to contentType.toString()
-				} else {
-					null
+			val images = allParts.filterIsInstance<PartData.FileItem>().map { item ->
+				val contentType = checkContentType(item).getOrElse {
+					return@post call.respond(HttpStatusCode.BadRequest, it.message!!)
 				}
+
+				item.streamProvider().readBytes() to contentType.toString()
 			}
 
 			eventImageService.uploadImages(call.user, data.event.id, images).onSuccess {
@@ -104,6 +102,20 @@ class EventImageController(
 				call.respond(HttpStatusCode.NoContent)
 			}.onFailure {
 				eventImageService.handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.getImageDetails() {
+		get<Events.Images.ImageId> { data ->
+			val searchParam = call.request.queryParameters.getSearchParam(mapper)
+
+			eventImageService.getImageWithDetails(call.user, data.imageId, searchParam).let { image ->
+				if (image == null) {
+					call.respond(HttpStatusCode.NotFound)
+				} else {
+					call.respond(TEventImageDetails(image, call.user.id == image.owner.id, storageService.signer.sign))
+				}
 			}
 		}
 	}

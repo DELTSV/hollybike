@@ -13,4 +13,8 @@ class ProfileRepository {
   Future<Profile> getSessionProfile(AuthSession session) async {
     return profileApi.getSessionProfile(session);
   }
+
+  Future<Profile> getIdProfile(AuthSession currentSession, int id) async {
+    return profileApi.getIdProfile(currentSession, id);
+  }
 }

@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 
@@ -6,6 +8,7 @@ import '../../user/types/minimal_user.dart';
 import 'event_status_state.dart';
 
 part 'event.freezed.dart';
+
 part 'event.g.dart';
 
 @freezed
@@ -27,7 +30,10 @@ class Event with _$Event {
 
   factory Event.fromJson(JsonMap json) => _$EventFromJson(json);
 
-  String get placeholderImage => placeholderImageFromDateTime(startDate);
+  ImageProvider get imageProvider => imageProviderFromDateTimeAndImage(
+        startDate,
+        image: image,
+      );
 
   MinimalEvent toMinimalEvent() {
     return MinimalEvent(
@@ -53,5 +59,14 @@ class Event with _$Event {
     } else {
       return "assets/images/placeholder_event_image_winter.jpg";
     }
+  }
+
+  static ImageProvider imageProviderFromDateTimeAndImage(DateTime startDate,
+      {String? image}) {
+    if (image != null) {
+      return CachedNetworkImageProvider(image);
+    }
+
+    return AssetImage(placeholderImageFromDateTime(startDate));
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/event_candidate.dart';
 
-import '../../types/event_role.dart';
+import '../../types/participation/event_candidate.dart';
+import '../../types/participation/event_role.dart';
 import '../event_loading_profile_picture.dart';
 
 class EventCandidateCard extends StatelessWidget {

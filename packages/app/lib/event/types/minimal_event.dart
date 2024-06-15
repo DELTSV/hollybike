@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/event/types/event.dart';
 
@@ -28,5 +29,8 @@ class MinimalEvent with _$MinimalEvent {
 
   factory MinimalEvent.fromJson(JsonMap json) => _$MinimalEventFromJson(json);
 
-  String get placeholderImage => Event.placeholderImageFromDateTime(startDate);
+  ImageProvider get imageProvider => Event.imageProviderFromDateTimeAndImage(
+        startDate,
+        image: image,
+      );
 }

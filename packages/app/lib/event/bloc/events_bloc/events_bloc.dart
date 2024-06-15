@@ -8,15 +8,18 @@ import '../../services/event/event_repository.dart';
 import 'events_event.dart';
 import 'events_state.dart';
 
-class EventsBloc extends Bloc<EventsEvent, EventsState> {
+abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
   final EventRepository eventRepository;
   final int numberOfEventsPerRequest = 10;
+  final String requestType;
 
-  EventsBloc({required this.eventRepository}) : super(EventInitial()) {
+  EventsBloc({
+    required this.eventRepository,
+    required this.requestType,
+  }) : super(EventInitial()) {
     on<SubscribeToEvents>(_onSubscribeToEvents);
     on<LoadEventsNextPage>(_onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
-    on<CreateEvent>(_onCreateEvent);
   }
 
   @override
@@ -50,6 +53,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
         event.session,
+        requestType,
         state.nextPage,
         numberOfEventsPerRequest,
       );
@@ -77,6 +81,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
         event.session,
+        requestType,
         numberOfEventsPerRequest,
       );
 
@@ -87,29 +92,6 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     } catch (e) {
       log('Error while refreshing events', error: e);
       emit(EventPageLoadFailure(
-        state,
-        errorMessage: 'Une erreur est survenue.',
-      ));
-      return;
-    }
-  }
-
-  Future<void> _onCreateEvent(
-    CreateEvent event,
-    Emitter<EventsState> emit,
-  ) async {
-    emit(EventCreationInProgress(state));
-
-    try {
-      final createdEvent = await eventRepository.createEvent(
-        event.session,
-        event.formData,
-      );
-
-      emit(EventCreationSuccess(state, createdEvent: createdEvent));
-    } catch (e) {
-      log('Error while creating event', error: e);
-      emit(EventCreationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));

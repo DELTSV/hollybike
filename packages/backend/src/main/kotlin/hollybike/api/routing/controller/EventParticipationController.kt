@@ -7,9 +7,9 @@ import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.event.TCreateParticipations
-import hollybike.api.types.event.TEventParticipation
-import hollybike.api.types.event.TUpdateImagesVisibility
+import hollybike.api.types.event.participation.TCreateParticipations
+import hollybike.api.types.event.participation.TEventParticipation
+import hollybike.api.types.event.image.TUpdateImagesVisibility
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.TUserPartial
 import hollybike.api.utils.search.getSearchParam

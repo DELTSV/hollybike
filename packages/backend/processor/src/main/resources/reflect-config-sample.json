@@ -3105,5 +3105,42 @@
 	},
 	{
 		"name": "org.simplejavamail.internal.smimesupport.SMIMESupport"
+	},
+	{
+		"name": "hollybike.api.repository.EventImage",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.jetbrains.exposed.dao.id.EntityID"
+				]
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.image.TEventImage",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.image.TEventImage$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.participation.EEventRole"
+	},
+	{
+		"name": "kotlin.coroutines.jvm.internal.BaseContinuationImpl"
+	},
+	{
+		"name": "kotlinx.coroutines.internal.StackTraceRecoveryKt"
 	}
 ]

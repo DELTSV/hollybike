@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
-import 'package:hollybike/event/widgets/event_image.dart';
 import 'package:hollybike/event/widgets/event_status.dart';
 
 import 'event_form/event_date.dart';
@@ -58,8 +57,9 @@ class EventPreviewCard extends StatelessWidget {
                                   borderRadius: const BorderRadius.horizontal(
                                     left: Radius.circular(10),
                                   ),
-                                  child: EventImage(
-                                    event: event,
+                                  child: Image(
+                                    image: event.imageProvider,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),

@@ -31,7 +31,8 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 	var lastLogin by Users.lastLogin
 	var profilePicture by Users.profilePicture.transform({ it }, { it?.let { signatureService.sign(it) } })
 
-	companion object : IntEntityClass<User>(Users) }
+	companion object : IntEntityClass<User>(Users)
+}
 
 val userMapper: Mapper = mapOf(
 	"id_user" to Users.id,

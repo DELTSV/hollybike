@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hollybike/event/types/event_details.dart';
 
-import '../../types/event_participation.dart';
+import '../../types/participation/event_participation.dart';
+
 
 enum EventDetailsStatus { loading, success, error, initial }
 

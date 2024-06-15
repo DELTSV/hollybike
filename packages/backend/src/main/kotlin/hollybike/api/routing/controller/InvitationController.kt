@@ -146,7 +146,7 @@ class InvitationController(
 			}.onFailure {  e ->
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Invitation inconnue")
+					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "hollybike.api.repository.Invitation inconnue")
 					else -> {
 						e.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)

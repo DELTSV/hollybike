@@ -16,6 +16,19 @@ class ProfileApi {
 
     if (response.statusCode == 401) throw ExpiredTokenException();
 
-    return Profile.fromResponseJson(response.body);
+    return Profile.fromResponseJson(response.bodyBytes);
+  }
+
+  Future<Profile> getIdProfile(AuthSession currentSession, int id) async {
+    final uri = Uri.parse("${currentSession.host}/api/users/$id");
+
+    final response = await get(
+      uri,
+      headers: {'Authorization': "Bearer ${currentSession.token}"},
+    );
+
+    if (response.statusCode == 401) throw ExpiredTokenException();
+
+    return Profile.fromResponseJson(response.bodyBytes);
   }
 }
