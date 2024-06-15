@@ -2,7 +2,9 @@ import Map, {
 	Layer, LineLayer, MapGeoJSONFeature, MapRef, Source,
 } from "react-map-gl";
 import { useApi } from "../utils/useApi.ts";
-import { useParams } from "react-router-dom";
+import {
+	useNavigate, useParams,
+} from "react-router-dom";
 
 import { TJourney } from "../types/TJourney.ts";
 import {
@@ -10,21 +12,28 @@ import {
 	useEffect, useState,
 } from "preact/hooks";
 import { useRef } from "react";
+import { ArrowBack } from "@material-ui/icons";
 
 const accessToken = import.meta.env.VITE_MAPBOX_KEY;
 
 const layerStyle: LineLayer = {
 	id: "point",
 	type: "line",
+	layout: {
+		"line-join": "round",
+		"line-cap": "round",
+	},
 	paint: {
-		"line-color": "#FF0000",
-		"line-width": 8,
+		"line-color": "#3457D5",
+		"line-width": 5,
+		"line-opacity": 1,
 	},
 };
 export function JourneyView() {
 	const { id } = useParams();
 	const journey = useApi<TJourney>(`/journeys/${id}`);
 	const [data, setData] = useState<MapGeoJSONFeature>();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (journey.data && journey.data.file) {
@@ -39,9 +48,8 @@ export function JourneyView() {
 
 	useEffect(() => {
 		if (data && data.bbox && mapRef.current) {
-			console.log(data.bbox);
 			if (data.bbox.length == 4) {
-				mapRef.current.fitBounds(data.bbox);
+				mapRef.current.fitBounds(data.bbox, { padding: 40 });
 			} else if (data.bbox.length === 6) {
 				const bounds: [number, number, number, number] = [
 					data.bbox[0],
@@ -49,14 +57,7 @@ export function JourneyView() {
 					data.bbox[3],
 					data.bbox[4],
 				];
-				mapRef.current.fitBounds(bounds, {
-					padding: {
-						top: 10,
-						bottom: 10,
-						left: 10,
-						right: 10,
-					},
-				});
+				mapRef.current.fitBounds(bounds, { padding: 40 });
 			}
 		}
 	}, [data, mapRef]);
@@ -76,21 +77,26 @@ export function JourneyView() {
 	}, [mapRef, mapRef.current]);
 
 	return (
-		<div className={"w-full h-full"}>
-			<Map
-				{...viewState}
-				style={{ height: "100%" }}
-				mapLib={import("mapbox-gl")}
-				mapStyle={"mapbox://styles/mapbox/navigation-night-v1"}
-				mapboxAccessToken={accessToken}
-				onMove={evt => setViewState(evt.viewState)}
-				ref={mapRef}
-				onLoad={onLoad}
-			>
-				<Source id="my-data" type="geojson" data={journey.data?.file}>
-					<Layer {...layerStyle}/>
-				</Source>
-			</Map>
+		<div className={"grow flex flex-col gap-2 p-2 overflow-hidden h-full"}>
+			<div>
+				<ArrowBack className={"cursor-pointer"} onClick={() => navigate(-1)}/>
+			</div>
+			<div className={"grow rounded overflow-hidden"}>
+				<Map
+					{...viewState}
+					style={{ height: "calc(100% - 24px - 8px - 16px" }}
+					mapLib={import("mapbox-gl")}
+					mapStyle={"mapbox://styles/mapbox/navigation-night-v1"}
+					mapboxAccessToken={accessToken}
+					onMove={evt => setViewState(evt.viewState)}
+					ref={mapRef}
+					onLoad={onLoad}
+				>
+					<Source id="tracks" type="geojson" data={journey.data?.file}>
+						<Layer {...layerStyle}/>
+					</Source>
+				</Map>
+			</div>
 		</div>
 	);
 }
