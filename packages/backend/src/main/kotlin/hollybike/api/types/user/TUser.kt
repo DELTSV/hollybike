@@ -27,6 +27,6 @@ data class TUser(
 		status = entity.status,
 		lastLogin = entity.lastLogin,
 		association = TAssociation(entity.association),
-		profilePicture = entity.profilePicture
+		profilePicture = entity.signedProfilePicture
 	)
 }

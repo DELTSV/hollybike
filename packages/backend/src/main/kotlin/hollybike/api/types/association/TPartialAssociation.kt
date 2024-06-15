@@ -12,6 +12,6 @@ data class TPartialAssociation(
 	constructor(entity: Association) : this(
 		entity.id.value,
 		entity.name,
-		entity.picture
+		entity.signedPicture
 	)
 }

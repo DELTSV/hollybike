@@ -23,7 +23,7 @@ data class TUserPartial(
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
-		profilePicture = entity.profilePicture
+		profilePicture = entity.signedProfilePicture
 	)
 
 	constructor(entity: User, isOwner: Boolean, eventRole: EEventRole?) : this(
@@ -31,7 +31,7 @@ data class TUserPartial(
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
-		profilePicture = entity.profilePicture,
+		profilePicture = entity.signedProfilePicture,
 		eventRole = eventRole,
 		isOwner = isOwner
 	)

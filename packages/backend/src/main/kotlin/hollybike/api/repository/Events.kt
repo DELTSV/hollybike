@@ -28,7 +28,8 @@ class Event(id: EntityID<Int>) : IntEntity(id) {
 	var name by Events.name
 	var description by Events.description
 	var association by Association referencedOn Events.association
-	var image by Events.image.transform({ it }, { it?.let { signatureService.sign(it) } })
+	var image by Events.image
+	val signedImage by Events.image.transform({ it }, { it?.let { signatureService.sign(it) } })
 	val participants by EventParticipation referrersOn EventParticipations.event
 	var status by Events.status.transform({ it.value }, { EEventStatus[it] })
 	var owner by User referencedOn Events.owner

@@ -1,6 +1,5 @@
 package hollybike.api.repository
 
-import hollybike.api.repository.User.Companion.transform
 import hollybike.api.signatureService
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
@@ -13,6 +12,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 class EventImage(id: EntityID<Int>) : IntEntity(id) {
 	var owner by User referencedOn EventImages.owner
 	var event by Event referencedOn EventImages.event
+	val signedPath by EventImages.path.transform({ it }, { signatureService.sign(it) })
 	var path by EventImages.path
 	var size by EventImages.size
 	var width by EventImages.width
@@ -34,16 +34,6 @@ object EventImages: IntIdTable("event_images", "id_event_image") {
 	val uploadDateTime = timestamp("upload_date_time").clientDefault { Clock.System.now() }
 	val takenDateTime = timestamp("taken_date_time").nullable()
 	val position = reference("position", Positions).nullable()
-}
-
-class EventImage(id: EntityID<Int>) : IntEntity(id) {
-	var owner by User referencedOn EventImages.owner
-	var event by Event referencedOn EventImages.event
-	var path by EventImages.path.transform({ it }, { signatureService.sign(it) })
-	var size by EventImages.size
-	var uploadDateTime by EventImages.uploadDateTime
-
-	companion object : IntEntityClass<EventImage>(EventImages)
 }
 
 val eventImagesMapper: Mapper = mapOf(

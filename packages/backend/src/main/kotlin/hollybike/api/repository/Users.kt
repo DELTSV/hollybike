@@ -29,7 +29,8 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 	var scope by Users.scope.transform({ it.value }, { EUserScope[it] })
 	var association by Association referencedOn Users.association
 	var lastLogin by Users.lastLogin
-	var profilePicture by Users.profilePicture.transform({ it }, { it?.let { signatureService.sign(it) } })
+	var profilePicture by Users.profilePicture
+	var signedProfilePicture by Users.profilePicture.transform({ it }, { it?.let { signatureService.sign(it) } })
 
 	companion object : IntEntityClass<User>(Users)
 }

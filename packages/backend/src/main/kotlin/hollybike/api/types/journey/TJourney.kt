@@ -20,7 +20,7 @@ data class TJourney(
 	constructor(journey: Journey) : this(
 		journey.id.value,
 		journey.name,
-		journey.file,
+		journey.signedFile,
 		journey.createdAt,
 		TUserPartial(journey.creator),
 		TPartialAssociation(journey.association)

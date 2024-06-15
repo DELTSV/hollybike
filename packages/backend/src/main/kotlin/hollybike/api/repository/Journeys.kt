@@ -1,6 +1,5 @@
 package hollybike.api.repository
 
-import hollybike.api.database.now
 import hollybike.api.signatureService
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
@@ -19,7 +18,8 @@ object Journeys: IntIdTable("journeys", "id_journey") {
 }
 
 class Journey(id: EntityID<Int>) : IntEntity(id) {
-	var file by Journeys.file.transform( { it}, { it?.let { signatureService.sign(it) }})
+	var file by Journeys.file
+	val signedFile by Journeys.file.transform( { it }, { it?.let { signatureService.sign(it) }})
 	var name by Journeys.name
 	var createdAt by Journeys.createdAt
 	var creator by User referencedOn Journeys.creator

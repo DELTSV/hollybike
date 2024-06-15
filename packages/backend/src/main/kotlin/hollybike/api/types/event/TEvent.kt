@@ -31,7 +31,7 @@ data class TEvent(
 		id = entity.id.value,
 		name = entity.name,
 		description = entity.description,
-		image = entity.image,
+		image = entity.signedImage,
 		status = EEventStatus.fromEvent(entity),
 		owner = TUserPartial(entity.owner),
 		startDateTime = entity.startDateTime,

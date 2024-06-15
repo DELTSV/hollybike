@@ -114,7 +114,7 @@ class EventImageController(
 				if (image == null) {
 					call.respond(HttpStatusCode.NotFound)
 				} else {
-					call.respond(TEventImageDetails(image, call.user.id == image.owner.id, storageService.signer.sign))
+					call.respond(TEventImageDetails(image, call.user.id == image.owner.id))
 				}
 			}
 		}

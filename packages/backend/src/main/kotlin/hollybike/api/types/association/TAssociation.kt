@@ -14,6 +14,6 @@ data class TAssociation(
 		entity.id.value,
 		entity.name,
 		entity.status,
-		entity.picture
+		entity.signedPicture
 	)
 }

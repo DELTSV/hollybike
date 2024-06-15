@@ -11,9 +11,9 @@ data class TEventImage(
 	val width: Int,
 	val height: Int,
 ) {
-	constructor(entity: EventImage, signer: (String) -> String) : this(
+	constructor(entity: EventImage) : this(
 		id = entity.id.value,
-		url = signer(entity.path),
+		url = entity.signedPath,
 		size = entity.size,
 		width = entity.width,
 		height = entity.height,
