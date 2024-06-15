@@ -5,13 +5,16 @@ import { AuthContextProvider } from "./auth/context.tsx";
 import { ThemeContextProvider } from "./theme/context.tsx";
 import { UserProvider } from "./user/useUser.tsx";
 import { SideBarProvider } from "./sidebar/useSideBar.tsx";
+import { ConfModeProvider } from "./utils/useConfMode.tsx";
 
 render(
 	<UserProvider>
 		<AuthContextProvider>
 			<ThemeContextProvider>
 				<SideBarProvider>
-					<App/>
+					<ConfModeProvider>
+						<App/>
+					</ConfModeProvider>
 				</SideBarProvider>
 			</ThemeContextProvider>
 		</AuthContextProvider>

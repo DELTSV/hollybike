@@ -14,8 +14,6 @@ import { useSystemDarkMode } from "./utils/systemDarkMode.ts";
 import { ListAssociations } from "./associations/listAssociations/ListAssociations.tsx";
 import { Association } from "./associations/Association.tsx";
 import { ListUser } from "./user/listUser/ListUser.tsx";
-import { useApi } from "./utils/useApi.ts";
-import { TConfDone } from "./types/GConfDone.ts";
 import { Conf } from "./conf/Conf.tsx";
 import { UserDetail } from "./user/userDetail/UserDetail.tsx";
 import { ListInvitations } from "./invitations/ListInvitations.tsx";
@@ -29,6 +27,7 @@ import { EventDetail } from "./events/EventDetail.tsx";
 import { ListJourneys } from "./journey/ListJourneys.tsx";
 import { JourneyView } from "./journey/JourneyView.tsx";
 import { NewJourney } from "./journey/NewJourney.tsx";
+import { useConfMode } from "./utils/useConfMode.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -132,7 +131,7 @@ export function App() {
 		},
 	]);
 
-	const confMode = useApi<TConfDone>("/conf-done");
+	const { confMode } = useConfMode();
 
 	useEffect(() => {
 		if (!auth.loading) {
@@ -142,13 +141,19 @@ export function App() {
 
 	useEffect(() => {
 		if (loaded) {
-			if (confMode.data?.conf_done === false) {
+			if (confMode === false) {
 				router.navigate("/conf-mode");
 			} else if (!auth.isLoggedIn) {
 				router.navigate("/login");
+			} else {
+				router.navigate("/");
 			}
 		}
-	}, [confMode, auth.isLoggedIn]);
+	}, [
+		confMode,
+		auth.isLoggedIn,
+		loaded,
+	]);
 
 	const themeDark = useMemo(() => theme.theme === "dark" || theme.theme === "os" && systemDark, [theme.theme]);
 

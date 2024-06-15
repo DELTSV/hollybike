@@ -15,6 +15,8 @@ import { ConfLocal } from "./ConfLocal.tsx";
 import { toast } from "react-toastify";
 import { TOnPremise } from "../types/TOnPremise.ts";
 import { useNavigate } from "react-router-dom";
+import { useConfMode } from "../utils/useConfMode.tsx";
+import { useReload } from "../utils/useReload.ts";
 
 export interface ConfProps {
 	conf?: TConf
@@ -23,11 +25,15 @@ export interface ConfProps {
 }
 
 export function Conf() {
-	const [reload, setReload] = useState(false);
+	const {
+		reload, doReload,
+	} = useReload();
 	const [conf, setConf] = useState<TConf>();
 	const onPremise = useApi<TOnPremise>("/on-premise");
 	const confAPI = useApi<TConf>("/conf", [reload]);
 	const navigate = useNavigate();
+	const { reloadConfMode } = useConfMode();
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		if (onPremise.data?.is_on_premise === false) {
@@ -52,6 +58,7 @@ export function Conf() {
 				<ConfLocal conf={conf} setConf={setConf} baseConf={confAPI.data}/>
 			</div>
 			<Button
+				loading={loading}
 				onClick={() => {
 					api<TConf>(
 						"/conf",
@@ -61,10 +68,17 @@ export function Conf() {
 						},
 					).then((res) => {
 						if (res.status === 200) {
-							setReload(prev => !prev);
-							api("/restart", { method: "DELETE" });
+							doReload();
+							toast("Configuration sauvegardée. Redémarrage du serveur", { type: "success" });
+							api("/restart", { method: "DELETE" }).then(() => {
+								setTimeout(() => {
+									reloadConfMode();
+									setLoading(false);
+								}, 2000);
+							});
 						} else {
 							toast(`Erreur: ${res.message}`, { type: "error" });
+							setLoading(false);
 						}
 					});
 				}}
