@@ -36,6 +36,8 @@ class ImageGalleryBottomModal extends StatefulWidget {
 }
 
 class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
+  bool _isImageOwner = false;
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +60,12 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
           widget.onImageDeleted();
         }
 
+        if (state is EventImageDetailsLoadSuccess) {
+          setState(() {
+            _isImageOwner = state.imageDetails?.isOwner ?? false;
+          });
+        }
+
         if (state is EventImageDetailsLoadFailure) {
           Toast.showErrorToast(context, state.errorMessage);
         }
@@ -78,28 +86,14 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
             padding: const EdgeInsets.symmetric(vertical: 14),
             child: SingleChildScrollView(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
-                      children: [
-                        TextButton.icon(
-                          onPressed: _onShareImage,
-                          icon: const Icon(Icons.share),
-                          label: const Text("Partager"),
-                        ),
-                        TextButton.icon(
-                          onPressed: _onDownloadImage,
-                          icon: const Icon(Icons.download),
-                          label: const Text("Télécharger"),
-                        ),
-                        TextButton.icon(
-                          onPressed: _onDeleteImage,
-                          icon: const Icon(Icons.delete),
-                          label: const Text("Supprimer"),
-                        ),
-                      ],
+                      children: _buildActions(),
                     ),
                   ),
                   Divider(
@@ -127,6 +121,33 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildActions() {
+    final actions = <Widget>[
+      TextButton.icon(
+        onPressed: _onShareImage,
+        icon: const Icon(Icons.share),
+        label: const Text("Partager"),
+      ),
+      TextButton.icon(
+        onPressed: _onDownloadImage,
+        icon: const Icon(Icons.download),
+        label: const Text("Télécharger"),
+      ),
+    ];
+
+    if (_isImageOwner) {
+      actions.add(
+        TextButton.icon(
+          onPressed: _onDeleteImage,
+          icon: const Icon(Icons.delete),
+          label: const Text("Supprimer"),
+        ),
+      );
+    }
+
+    return actions;
   }
 
   Future<String> _downloadImageToPath(String imagePath) async {
