@@ -8,6 +8,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object Events : IntIdTable("events", "id_event") {
@@ -49,5 +50,6 @@ val eventMapper: Mapper = mapOf(
 	"start_date_time" to Events.startDateTime,
 	"end_date_time" to Events.endDateTime,
 	"create_date_time_event" to Events.createDateTime,
-	"update_date_time_event" to Events.updateDateTime
+	"update_date_time_event" to Events.updateDateTime,
+	"participant_id" to Users.alias("participant")[Users.id],
 )
