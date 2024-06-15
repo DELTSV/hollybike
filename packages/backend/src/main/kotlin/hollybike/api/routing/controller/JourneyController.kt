@@ -43,6 +43,7 @@ class JourneyController(
 				createJourney()
 				getJourney()
 				addFile()
+				deleteJourney()
 			}
 		}
 	}
@@ -150,6 +151,19 @@ class JourneyController(
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
+			}
+		}
+	}
+
+	private fun Route.deleteJourney() {
+		delete<Journeys.Id> {
+			val journey = journeyService.getById(call.user, it.id) ?: run {
+				return@delete call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
+			}
+			if(journeyService.deleteJourney(call.user, journey)) {
+				call.respond(HttpStatusCode.NoContent)
+			} else {
+				call.respond(HttpStatusCode.Forbidden)
 			}
 		}
 	}

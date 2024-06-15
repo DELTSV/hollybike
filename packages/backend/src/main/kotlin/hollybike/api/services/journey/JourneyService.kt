@@ -45,6 +45,12 @@ class JourneyService(
 		EUserScope.User -> caller.id == target.creator.id
 	}
 
+	private fun authorizeDelete(caller: User, target: Journey): Boolean = when(caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == target.association.id
+		EUserScope.User -> caller.id == target.creator.id
+	}
+
 	fun getAll(caller: User, searchParam: SearchParam): List<Journey> {
 		val param = searchParam.copy(filter = searchParam.filter.toMutableList())
 		if(caller.scope not EUserScope.Root) {
@@ -116,5 +122,14 @@ class JourneyService(
 		storageService.store(file, path, fileContentType)
 		transaction(db) { journey.file = path }
 		return Result.success(path)
+	}
+
+	suspend fun deleteJourney(caller: User, target: Journey): Boolean {
+		if(!authorizeDelete(caller, target)) {
+			return false
+		}
+		target.file?.let { storageService.delete(it) }
+		transaction(db) { target.delete() }
+		return true
 	}
 }
