@@ -11,10 +11,17 @@ import { Cell } from "../components/List/Cell.tsx";
 import { timeToFrenchString } from "../components/Calendar/InputCalendar.tsx";
 import { TJourney } from "../types/TJourney.ts";
 import { Download } from "../icons/Download.tsx";
-import { VisibilityOutlined } from "@material-ui/icons";
+import {
+	DeleteOutlined, VisibilityOutlined,
+} from "@material-ui/icons";
+import { toast } from "react-toastify";
+import { useReload } from "../utils/useReload.ts";
 
 export function ListJourneys() {
 	const { id } = useParams();
+	const {
+		reload, doReload,
+	} = useReload();
 
 	const {
 		association, setAssociation,
@@ -36,12 +43,13 @@ export function ListJourneys() {
 
 	return (
 		<div className={"w-full flex flex-col gap-2 mx-2"}>
-			<Link to={"/journey/new"}>
+			<Link to={"/journeys/new"}>
 				<Button className={"self-start"} onClick={() => {}}>
 					Importer un trajet
 				</Button>
 			</Link>
 			<List
+				reload={reload}
 				columns={[
 					{
 						name: "Nom",
@@ -66,6 +74,11 @@ export function ListJourneys() {
 					},
 					{
 						name: "Voir",
+						id: "",
+						width: "24px",
+					},
+					{
+						name: "Suppr.",
 						id: "",
 						width: "24px",
 					},
@@ -98,6 +111,23 @@ export function ListJourneys() {
 							<Link to={`/journeys/view/${ j.id}`}>
 								<VisibilityOutlined/>
 							</Link> }
+					</Cell>,
+					<Cell>
+						<DeleteOutlined
+							className={"cursor-pointer"} onClick={() => {
+								api(`/journeys/${j.id}`, { method: "DELETE" }).then((res) => {
+									if (res.status === 204) {
+										toast("Trajet supprimé", { type: "success" });
+										doReload();
+									} else if (res.status === 404) {
+										toast(res.message, { type: "warning" });
+										doReload();
+									} else {
+										toast(res.message, { type: "error" });
+									}
+								});
+							}}
+						/>
 					</Cell>,
 				]}
 				baseUrl={"/journeys"}

@@ -28,6 +28,7 @@ import { CreateEvent } from "./events/CreateEvent.tsx";
 import { EventDetail } from "./events/EventDetail.tsx";
 import { ListJourneys } from "./journey/ListJourneys.tsx";
 import { JourneyView } from "./journey/JourneyView.tsx";
+import { NewJourney } from "./journey/NewJourney.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -106,6 +107,10 @@ export function App() {
 				{
 					path: "journeys/view/:id",
 					element: <JourneyView/>,
+				},
+				{
+					path: "journeys/new",
+					element: <NewJourney/>,
 				},
 				{
 					path: "conf",
