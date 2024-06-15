@@ -8,6 +8,7 @@ import hollybike.api.services.PositionService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.position.TPositionRequest
 import hollybike.api.types.position.EPositionScope
+import hollybike.api.types.position.TImageForProcessing
 import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
 import hollybike.api.utils.search.SearchParam
@@ -118,7 +119,7 @@ class EventImageService(
 			eventService.getEvent(caller, eventId)
 				?: return Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
-		val createdImages = transaction(db) {
+		val createdImages: List<TImageForProcessing> = transaction(db) {
 			val newImages = images.map { (data, contentType) ->
 				val uuid = UUID.randomUUID().toString()
 
@@ -126,41 +127,46 @@ class EventImageService(
 				val imageDimensions = imageMetadataService.getImageDimensions(data)
 				val imageWithoutExif = imageMetadataService.removeExifData(data)
 
-				val createdImage = EventImage.new {
-					owner = caller
-					event = foundEvent
-					path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
-					size = imageWithoutExif.size
-					width = imageDimensions.first
-					height = imageDimensions.second
-					takenDateTime = imageMetadata.takenDateTime
-				} to (imageWithoutExif to contentType)
-
-				if (imageMetadata.position != null) {
-					positionService.getPositionOrPush(
-						"images-positions", createdImage.first.id.value, TPositionRequest(
-							latitude = imageMetadata.position.latitude,
-							longitude = imageMetadata.position.longitude,
-							altitude = imageMetadata.position.altitude,
-							scope = EPositionScope.Amenity
-						)
-					)
+				val createdImage = transaction(db) {
+					EventImage.new {
+						owner = caller
+						event = foundEvent
+						path = "e/${event.id.value}/u/${owner.id.value}/$uuid"
+						size = imageWithoutExif.size
+						width = imageDimensions.first
+						height = imageDimensions.second
+						takenDateTime = imageMetadata.takenDateTime
+					}
 				}
 
-				createdImage
+				TImageForProcessing(createdImage, contentType, imageWithoutExif, imageMetadata.position)
 			}
 
 			runBlocking {
-				newImages.forEach { (image, file) ->
-					val (data, contentType) = file
-					storageService.store(data, image.path, contentType)
+				newImages.forEach { image ->
+					storageService.store(image.data, image.entity.path, image.contentType)
 				}
 			}
 
 			newImages
 		}
 
-		return Result.success(createdImages.map { it.first })
+		createdImages.forEach { image ->
+			if (image.position != null) {
+				positionService.getPositionOrPush(
+					"images-positions", image.entity.id.value, TPositionRequest(
+						latitude = image.position.latitude,
+						longitude = image.position.longitude,
+						altitude = image.position.altitude,
+						scope = EPositionScope.Amenity
+					)
+				)
+			} else {
+				println("No position found for image ${image.entity.id}")
+			}
+		}
+
+		return Result.success(createdImages.map { it.entity })
 	}
 
 	fun deleteImage(caller: User, imageId: Int): Result<Unit> {
