@@ -24,9 +24,9 @@ import 'package:hollybike/event/screens/participations/event_candidates_screen.d
 import 'package:hollybike/event/screens/participations/event_participations_screen.dart'
     as _i5;
 import 'package:hollybike/event/types/event_details.dart' as _i17;
+import 'package:hollybike/event/types/minimal_event.dart' as _i16;
 import 'package:hollybike/event/types/participation/event_participation.dart'
     as _i18;
-import 'package:hollybike/event/widgets/event_image.dart' as _i16;
 import 'package:hollybike/notification/routes/notification_route.dart' as _i11;
 import 'package:hollybike/profile/screens/me_screen.dart' as _i9;
 import 'package:hollybike/profile/screens/profile_screen.dart' as _i12;
@@ -53,9 +53,7 @@ abstract class $AppRouter extends _i14.RootStackRouter {
         routeData: routeData,
         child: _i2.EventDetailsScreen(
           key: args.key,
-          eventId: args.eventId,
-          eventImage: args.eventImage,
-          eventName: args.eventName,
+          event: args.event,
           animate: args.animate,
         ),
       );
@@ -205,18 +203,14 @@ class EventCandidatesRouteArgs {
 class EventDetailsRoute extends _i14.PageRouteInfo<EventDetailsRouteArgs> {
   EventDetailsRoute({
     _i15.Key? key,
-    required int eventId,
-    required _i16.EventImage eventImage,
-    required String eventName,
+    required _i16.MinimalEvent event,
     bool animate = true,
     List<_i14.PageRouteInfo>? children,
   }) : super(
           EventDetailsRoute.name,
           args: EventDetailsRouteArgs(
             key: key,
-            eventId: eventId,
-            eventImage: eventImage,
-            eventName: eventName,
+            event: event,
             animate: animate,
           ),
           initialChildren: children,
@@ -231,25 +225,19 @@ class EventDetailsRoute extends _i14.PageRouteInfo<EventDetailsRouteArgs> {
 class EventDetailsRouteArgs {
   const EventDetailsRouteArgs({
     this.key,
-    required this.eventId,
-    required this.eventImage,
-    required this.eventName,
+    required this.event,
     this.animate = true,
   });
 
   final _i15.Key? key;
 
-  final int eventId;
-
-  final _i16.EventImage eventImage;
-
-  final String eventName;
+  final _i16.MinimalEvent event;
 
   final bool animate;
 
   @override
   String toString() {
-    return 'EventDetailsRouteArgs{key: $key, eventId: $eventId, eventImage: $eventImage, eventName: $eventName, animate: $animate}';
+    return 'EventDetailsRouteArgs{key: $key, event: $event, animate: $animate}';
   }
 }
 

@@ -6,12 +6,15 @@ import hollybike.api.repository.*
 import hollybike.api.services.EventService
 import hollybike.api.services.PositionService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.position.PositionRequest
-import hollybike.api.types.position.PositionScope
+import hollybike.api.types.position.TPositionRequest
+import hollybike.api.types.position.EPositionScope
+import hollybike.api.utils.search.Filter
+import hollybike.api.utils.search.FilterMode
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.server.application.*
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -83,7 +86,23 @@ class EventImageService(
 	fun getImages(caller: User, searchParam: SearchParam): List<EventImage> = transaction(db) {
 		EventImage.wrapRows(
 			eventImagesRequest(caller, searchParam)
-		).with(EventImage::owner).toList()
+		).toList()
+	}
+
+	fun getImageWithDetails(caller: User, imageId: Int, searchParam: SearchParam): EventImage? = transaction(db) {
+		searchParam.filter.add(Filter(EventImages.id, imageId.toString(), FilterMode.EQUAL))
+
+		eventImagesRequest(caller, searchParam, withPagination = false).firstOrNull().let { image ->
+			image?.let {
+				EventImage.wrapRow(it).load(
+					EventImage::owner,
+					EventImage::event,
+					EventImage::position,
+					Event::owner,
+					Event::association
+				)
+			}
+		}
 	}
 
 	fun countImages(caller: User, searchParam: SearchParam): Int = transaction(db) {
@@ -119,11 +138,11 @@ class EventImageService(
 
 				if (imageMetadata.position != null) {
 					positionService.getPositionOrPush(
-						"images-positions", createdImage.first.id.value, PositionRequest(
+						"images-positions", createdImage.first.id.value, TPositionRequest(
 							latitude = imageMetadata.position.latitude,
 							longitude = imageMetadata.position.longitude,
 							altitude = imageMetadata.position.altitude,
-							scope = PositionScope.Amenity
+							scope = EPositionScope.Amenity
 						)
 					)
 				}

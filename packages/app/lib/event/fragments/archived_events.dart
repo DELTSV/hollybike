@@ -13,7 +13,6 @@ import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
-import '../widgets/event_image.dart';
 import '../widgets/event_list.dart';
 
 class ArchivedEvents extends StatelessWidget {
@@ -123,9 +122,7 @@ class ArchivedEvents extends StatelessWidget {
     // delay 200 ms to allow the animation to finish
     Future.delayed(const Duration(milliseconds: 200), () {
       context.router.push(EventDetailsRoute(
-        eventId: event.id,
-        eventImage: EventImage(event: event),
-        eventName: event.name,
+        event: event,
         animate: animate,
       ));
     });

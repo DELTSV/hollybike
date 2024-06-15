@@ -11,6 +11,7 @@ import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';
 import '../../types/image/event_image.dart';
+import '../../types/image/event_image_details.dart';
 
 class ImageApi {
   Future<PaginatedList<EventImage>> getEventImages(
@@ -119,5 +120,20 @@ class ImageApi {
     if (response.statusCode != 200) {
       throw Exception("Failed to update images visibility");
     }
+  }
+
+  Future<EventImageDetails> getImageDetails(
+    AuthSession session,
+    int imageId,
+  ) async {
+    final response = await DioClient(session).dio.get(
+      '/events/images/$imageId',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch event image details");
+    }
+
+    return EventImageDetails.fromJson(response.data);
   }
 }

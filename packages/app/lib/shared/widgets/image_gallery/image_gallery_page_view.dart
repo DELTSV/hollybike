@@ -1,7 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/image/event_image.dart';
+import 'package:hollybike/shared/widgets/image_gallery/image_gallery_bottom_modal.dart';
 import 'package:photo_view/photo_view.dart';
+
+import '../modal/content_shrink_bottom_modal.dart';
 
 class ImageGalleryPageView extends StatefulWidget {
   final int imageIndex;
@@ -27,6 +31,12 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
   late int currentPage = widget.imageIndex;
 
   bool isZoomed = false;
+  bool modalOpened = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -36,13 +46,19 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onScaleStart: (_) {
+    return ContentShrinkBottomModal(
+      onStatusChanged: (opened) {
         setState(() {
-          isZoomed = true;
+          modalOpened = opened;
         });
       },
+      maxModalHeight: 460,
+      enableDrag: !isZoomed,
+      modalContent: ImageGalleryBottomModal(
+        image: widget.images[currentPage],
+      ),
       child: PageView.builder(
+        dragStartBehavior: DragStartBehavior.down,
         onPageChanged: (index) {
           setState(() {
             currentPage = index;
@@ -53,7 +69,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
           }
         },
         controller: controller,
-        physics: isZoomed
+        physics: isZoomed || modalOpened
             ? const NeverScrollableScrollPhysics()
             : const AlwaysScrollableScrollPhysics(),
         itemCount: widget.images.length,
@@ -62,21 +78,23 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
 
           final hero = index == currentPage
               ? PhotoViewHeroAttributes(
-                  tag: 'event_image_${image.id}',
-                )
+            tag: 'event_image_${image.id}',
+          )
               : null;
 
           return PhotoView(
+            initialScale: PhotoViewComputedScale.contained,
+            disableGestures: modalOpened,
             imageProvider: CachedNetworkImageProvider(
               image.url,
               cacheKey: 'image_${image.id}',
             ),
+            gestureDetectorBehavior: HitTestBehavior.translucent,
             scaleStateChangedCallback: (scaleState) {
               setState(() {
                 isZoomed = scaleState != PhotoViewScaleState.initial;
               });
             },
-            gestureDetectorBehavior: HitTestBehavior.translucent,
             loadingBuilder: (context, event) {
               return Center(
                 child: Container(

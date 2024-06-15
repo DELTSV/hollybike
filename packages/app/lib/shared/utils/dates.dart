@@ -1,16 +1,22 @@
 import 'package:hollybike/shared/utils/strings.dart';
 import 'package:intl/intl.dart';
 
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
+}
+
 String formatReadableDate(DateTime date) {
   final now = DateTime.now();
 
   if (date.year == now.year) {
     if (date.month == now.month && date.day == now.day) {
-      return "Aujourd'hui à ${DateFormat.Hm().format(date)}";
+      return "aujourd'hui à ${DateFormat.Hm().format(date)}";
     } else if (date.month == now.month && date.day == now.day + 1) {
-      return "Demain à ${DateFormat.Hm().format(date)}";
+      return "demain à ${DateFormat.Hm().format(date)}";
     } else if (date.month == now.month && date.day == now.day - 1) {
-      return "Hier à ${DateFormat.Hm().format(date)}";
+      return "hier à ${DateFormat.Hm().format(date)}";
     } else {
       return "le ${DateFormat.MMMMd().format(date)} à ${DateFormat.Hm().format(date)}";
     }

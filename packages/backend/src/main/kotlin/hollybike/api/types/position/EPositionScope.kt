@@ -1,6 +1,6 @@
 package hollybike.api.types.position
 
-enum class PositionScope {
+enum class EPositionScope {
 	Amenity,
 	City,
 	Region,

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PlaceResponse(
+data class TPlaceResponse(
 	val category: String,
 	val type: String,
 	@SerialName("addresstype") val addressType: String,
