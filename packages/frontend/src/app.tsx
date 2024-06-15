@@ -26,6 +26,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { ListEvent } from "./events/ListEvent.tsx";
 import { CreateEvent } from "./events/CreateEvent.tsx";
 import { EventDetail } from "./events/EventDetail.tsx";
+import { ListJourneys } from "./journey/ListJourneys.tsx";
+import { JourneyView } from "./journey/JourneyView.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -74,6 +76,10 @@ export function App() {
 					element: <ListEvent/>,
 				},
 				{
+					path: "associations/:id/journeys",
+					element: <ListJourneys/>,
+				},
+				{
 					path: "invitations",
 					element: <ListInvitations/>,
 				},
@@ -92,6 +98,14 @@ export function App() {
 				{
 					path: "events/:id",
 					element: <EventDetail/>,
+				},
+				{
+					path: "journeys",
+					element: <ListJourneys/>,
+				},
+				{
+					path: "journeys/view/:id",
+					element: <JourneyView/>,
 				},
 				{
 					path: "conf",

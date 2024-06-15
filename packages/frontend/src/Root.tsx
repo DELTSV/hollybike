@@ -9,7 +9,7 @@ export function Root() {
 	return (
 		<div className={"flex flex-col h-full overflow-hidden"}>
 			<Header setTheme={theme.set}/>
-			<div className={"flex grrunow"}>
+			<div className={"flex grow"}>
 				<SideBar/>
 				<Outlet/>
 			</div>
