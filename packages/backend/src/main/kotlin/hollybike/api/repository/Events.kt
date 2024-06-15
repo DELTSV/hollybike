@@ -1,6 +1,5 @@
 package hollybike.api.repository
 
-import hollybike.api.repository.User.Companion.transform
 import hollybike.api.signatureService
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.utils.search.Mapper

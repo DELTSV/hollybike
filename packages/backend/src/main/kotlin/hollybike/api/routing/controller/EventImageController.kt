@@ -7,7 +7,6 @@ import hollybike.api.repository.eventImagesMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.image.EventImageService
-import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.image.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
