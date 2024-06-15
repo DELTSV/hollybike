@@ -89,11 +89,17 @@ jobs:
 #        if: inputs.create-executables
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
 
+      - name: Create gradle directory
+        run: mkdir -p ~/.gradle
+
+      - name: Add Mapbox Download Token
+        run: echo "MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> ~/.gradle/gradle.properties
+
       - name: Build APK
 #        if: inputs.create-executables
 #        run: flutter build apk --release --build-name=${{ inputs.version }} --build-number=$(echo ${{ inputs.version }} | tr -d .)
-        run: flutter build apk --release --build-name=1.2.3 --build-number=123
-      
+        run: flutter build apk --release --build-name=1.2.3 --build-number=123 --dart-define=PUBLIC_ACCESS_TOKEN=${{ secrets.MAPBOX_PUBLIC_ACCESS_TOKEN }}
+
 
       #      - name: Create build directory
 #        if: inputs.create-executables
