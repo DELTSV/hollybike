@@ -16,22 +16,59 @@ class ImageGalleryDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sections = <Widget>[
+      ImageGalleryDetailsOwner(owner: imageDetails.owner),
+      ImageGalleryDetailsTime(
+        uploadedAt: imageDetails.uploadDateTime,
+        takenAt: imageDetails.takenDateTime,
+      ),
+      ImageGalleryDetailsEvent(event: imageDetails.event),
+      ImageGalleryDetailsPosition(position: imageDetails.position),
+    ];
+
+    final children = <Widget>[];
+
+    for (var i = 0; i < sections.length; i++) {
+      children.add(_animationWrapper(sections[i], i));
+
+      if (i != sections.length - 1) {
+        children.add(const SizedBox(height: 16));
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
-        children: [
-          ImageGalleryDetailsOwner(owner: imageDetails.owner),
-          const SizedBox(height: 16),
-          ImageGalleryDetailsTime(
-            uploadedAt: imageDetails.uploadDateTime,
-            takenAt: imageDetails.takenDateTime,
-          ),
-          const SizedBox(height: 16),
-          ImageGalleryDetailsEvent(event: imageDetails.event),
-          const SizedBox(height: 16),
-          ImageGalleryDetailsPosition(position: imageDetails.position),
-        ],
+        children: children,
       ),
+    );
+  }
+
+  Widget _animationWrapper(Widget child, int index) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      curve: Curves.ease,
+      duration: Duration(milliseconds: (index * 50)),
+      builder: (BuildContext context, double delayed, _) {
+        if (delayed != 1) {
+          return const SizedBox();
+        }
+
+        return TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.0, end: 1.0),
+          curve: Curves.ease,
+          duration: const Duration(milliseconds: 300),
+          builder: (BuildContext context, double value, _) {
+            return Transform.translate(
+              offset: Offset(16 * (1 - value), 0),
+              child: Opacity(
+                opacity: value,
+                child: child,
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -10,9 +10,14 @@ import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
 import 'package:hollybike/shared/widgets/image_gallery/image_details/image_gallery_details.dart';
 import 'package:http/http.dart';
+
+// ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
+
 import 'package:share_plus/share_plus.dart';
 import '../../../event/types/image/event_image.dart';
+
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
 class ImageGalleryBottomModal extends StatefulWidget {
