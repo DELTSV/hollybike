@@ -1,5 +1,6 @@
 package hollybike.api.repository
 
+import hollybike.api.signatureService
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.utils.search.Mapper
 import org.jetbrains.exposed.dao.IntEntity
@@ -22,6 +23,7 @@ class Association(id: EntityID<Int>) : IntEntity(id) {
 	var name by Associations.name
 	var status by Associations.status.transform({ it.value }, { EAssociationsStatus[it] })
 	var picture by Associations.picture
+	val signedPicture by Associations.picture.transform({ it }, { it?.let { signatureService.sign(it) } })
 	var updateDefaultUser by Associations.updateDefaultUser
 	var updateAssociation by Associations.updateAssociation
 	var createInvitation by Associations.createInvitation

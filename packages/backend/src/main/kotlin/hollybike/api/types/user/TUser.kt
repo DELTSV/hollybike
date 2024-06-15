@@ -19,14 +19,14 @@ data class TUser(
 	@SerialName("profile_picture")
 	val profilePicture: String? = null,
 ) {
-	constructor(entity: User, signer: (String) -> String) : this(
+	constructor(entity: User) : this(
 		id = entity.id.value,
 		email = entity.email,
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
 		lastLogin = entity.lastLogin,
-		association = TAssociation(entity.association, signer),
-		profilePicture = entity.profilePicture?.let { signer(it) },
+		association = TAssociation(entity.association),
+		profilePicture = entity.signedProfilePicture
 	)
 }

@@ -84,6 +84,7 @@ dependencies {
 	implementation("io.ktor:ktor-server-resources:$ktorVersion")
 	implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 	implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
+	implementation("io.ktor:ktor-serialization-kotlinx-xml:$ktorVersion")
 
 	implementation("io.ktor:ktor-client-core:$ktorVersion")
 	implementation("io.ktor:ktor-client-cio:$ktorVersion")

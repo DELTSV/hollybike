@@ -58,7 +58,7 @@ class UserController(
 	private fun Route.getUserAssociation() {
 		get<Users.Id.Association>(EUserScope.Root) { params ->
 			userService.getUserAssociation(call.user, params.id.id)?.let {
-				call.respond(TAssociation(it, storageService.signer.sign))
+				call.respond(TAssociation(it))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -67,14 +67,14 @@ class UserController(
 
 	private fun Route.getMe() {
 		get<Users.Me> {
-			call.respond(TUser(call.user, storageService.signer.sign))
+			call.respond(TUser(call.user))
 		}
 	}
 
 	private fun Route.getUserById() {
 		get<Users.Id>(EUserScope.Admin) {
 			userService.getUser(call.user, it.id)?.let { user ->
-				call.respond(TUser(user, storageService.signer.sign))
+				call.respond(TUser(user))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -84,7 +84,7 @@ class UserController(
 	private fun Route.getByUserName() {
 		get<Users.Username>(EUserScope.Admin) {
 			userService.getUserByUsername(call.user, it.username)?.let { user ->
-				call.respond(TUser(user, storageService.signer.sign))
+				call.respond(TUser(user))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -94,7 +94,7 @@ class UserController(
 	private fun Route.getByEmail() {
 		get<Users.Email>(EUserScope.Admin) {
 			userService.getUserByEmail(call.user, it.email)?.let { user ->
-				call.respond(TUser(user, storageService.signer.sign))
+				call.respond(TUser(user))
 			} ?: run {
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 			}
@@ -109,7 +109,7 @@ class UserController(
 				return@patch
 			}
 			userService.updateUser(call.user, user, update).onSuccess { u ->
-				call.respond(TUser(u, storageService.signer.sign))
+				call.respond(TUser(u))
 			}.onFailure { e ->
 				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
@@ -123,7 +123,7 @@ class UserController(
 		this.patch<Users.Me> {
 			val update = call.receive<TUserUpdateSelf>()
 			userService.updateMe(call.user, update).onSuccess {
-				call.respond(TUser(it, storageService.signer.sign))
+				call.respond(TUser(it))
 			}.onFailure {
 				when (it) {
 					is BadRequestException -> call.respond(
@@ -199,7 +199,7 @@ class UserController(
 	private fun Route.getAll() {
 		get<Users>(EUserScope.Admin) {
 			val param = call.request.queryParameters.getSearchParam(userMapper + associationMapper)
-			val list = userService.getAll(call.user, param)?.map { TUser(it, storageService.signer.sign) }
+			val list = userService.getAll(call.user, param)?.map { TUser(it) }
 			val count = userService.getAllCount(call.user, param)
 			if (list != null && count != null) {
 				call.respond(

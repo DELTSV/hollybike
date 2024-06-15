@@ -7,11 +7,13 @@ import hollybike.api.routing.controller.*
 import hollybike.api.services.*
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
+import hollybike.api.services.journey.JourneyService
 import hollybike.api.services.image.EventImageService
 import hollybike.api.services.image.ImageMetadataService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.services.storage.StorageServiceFactory
 import hollybike.api.services.storage.signature.StorageSignatureMode
+import hollybike.api.services.storage.signature.StorageSignatureService
 import hollybike.api.utils.MailSender
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
@@ -20,6 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.slf4j.event.Level
 import kotlin.system.measureTimeMillis
+
+lateinit var signatureService: StorageSignatureService
 
 fun Application.api() {
 	val conf = attributes.conf
@@ -36,6 +40,7 @@ fun Application.api() {
 	val storageInitTime = measureTimeMillis {
 		storageService = StorageServiceFactory.getService(conf, isOnPremise)
 	}
+	signatureService = storageService.signer
 
 	if (!isOnPremise && storageService.signer.mode == StorageSignatureMode.JWT) {
 		log.warn("JWT signature is not secure in a non-on-premise environment. Please use a secure signature mode.")
@@ -54,6 +59,7 @@ fun Application.api() {
 	val eventParticipationService = EventParticipationService(db, eventService)
 	val imageMetadataService = ImageMetadataService()
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
+	val journeyService = JourneyService(db, associationService, storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
@@ -69,11 +75,12 @@ fun Application.api() {
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
 	UserController(this, userService, storageService)
-	AssociationController(this, associationService, invitationService, authService, storageService)
-	InvitationController(this, authService, invitationService, storageService, mailSender)
-	EventController(this, eventService, eventParticipationService, storageService, associationService)
-	EventParticipationController(this, eventParticipationService, storageService)
-	EventImageController(this, eventImageService, storageService)
+	AssociationController(this, associationService, invitationService, authService)
+	InvitationController(this, authService, invitationService, mailSender)
+	EventController(this, eventService, eventParticipationService, associationService)
+	EventParticipationController(this, eventParticipationService)
+	EventImageController(this, eventImageService)
+	JourneyController(this, journeyService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

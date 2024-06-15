@@ -35,7 +35,6 @@ class EventController(
 	application: Application,
 	private val eventService: EventService,
 	private val eventParticipationService: EventParticipationService,
-	private val storageService: StorageService,
 	private val associationService: AssociationService
 ) {
 	private val mapper = eventMapper + associationMapper + userMapper
@@ -63,7 +62,7 @@ class EventController(
 
 	private fun getEventsPagination(events: List<Event>, total: Int, searchParam: SearchParam): TLists<TEventPartial> {
 		return TLists(
-			data = events.map { TEventPartial(it, storageService.signer.sign) },
+			data = events.map { TEventPartial(it) },
 			page = searchParam.page,
 			perPage = searchParam.perPage,
 			totalPage = ceil(total.toDouble() / searchParam.perPage).toInt(),
@@ -116,8 +115,7 @@ class EventController(
 							event,
 							callerParticipation,
 							participants,
-							participantsCount,
-							storageService.signer.sign
+							participantsCount
 						)
 					)
 				}.onFailure {
@@ -131,7 +129,7 @@ class EventController(
 			val event = eventService.getEvent(call.user, id.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
 
-			call.respond(TEvent(event, storageService.signer.sign))
+			call.respond(TEvent(event))
 		}
 	}
 
@@ -151,7 +149,7 @@ class EventController(
 				newEvent.endDate,
 				association
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it, storageService.signer.sign))
+				call.respond(HttpStatusCode.Created, TEvent(it))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}
@@ -170,7 +168,7 @@ class EventController(
 				updateEvent.startDate,
 				updateEvent.endDate
 			).onSuccess {
-				call.respond(HttpStatusCode.OK, TEvent(it, storageService.signer.sign))
+				call.respond(HttpStatusCode.OK, TEvent(it))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}
@@ -233,7 +231,7 @@ class EventController(
 				image.streamProvider().readBytes(),
 				contentType.toString()
 			).onSuccess {
-				call.respond(TEvent(it, storageService.signer.sign))
+				call.respond(TEvent(it))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}

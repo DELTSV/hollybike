@@ -18,10 +18,10 @@ data class TEventImageDetails(
 	@SerialName("taken_date_time") val takenDateTime: Instant? = null,
 	@SerialName("uploaded_date_time") val uploadedDateTime: Instant,
 ) {
-	constructor(entity: EventImage, isOwner: Boolean, signer: (String) -> String) : this(
+	constructor(entity: EventImage, isOwner: Boolean) : this(
 		id = entity.id.value,
-		owner = TUserPartial(entity.owner, signer),
-		event = TEventPartial(entity.event, signer),
+		owner = TUserPartial(entity.owner),
+		event = TEventPartial(entity.event),
 		isOwner = isOwner,
 		position = entity.position?.let { TPosition(it) },
 		takenDateTime = entity.takenDateTime,

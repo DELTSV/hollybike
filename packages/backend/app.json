@@ -6,7 +6,7 @@
 	},
 	"security": {
 		"audience": "hollybike.fr",
-		"domain": "http://0.0.0.0:8080",
+		"domain": "http://localhost:8080",
 		"realm": "realm",
 		"secret": "test-secret"
 	},
@@ -16,5 +16,12 @@
 		"s3Region": "eu-west-3",
 		"s3Username": "minio-root-user",
 		"s3Password": "minio-root-password"
+	},
+	"smtp": {
+		"url": "smtp-relay.brevo.com",
+		"port": "587",
+		"sender": "test@hollybike.fr",
+		"username": "l.vandenbossche.jouvet@gmail.com",
+		"password": "2KrtG1CMwz4O7mdc"
 	}
 }

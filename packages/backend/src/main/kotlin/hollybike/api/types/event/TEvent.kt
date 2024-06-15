@@ -26,19 +26,18 @@ data class TEvent(
 	val association: TPartialAssociation
 ) {
 	constructor(
-		entity: Event,
-		signer: (String) -> String,
+		entity: Event
 	) : this(
 		id = entity.id.value,
 		name = entity.name,
 		description = entity.description,
-		image = entity.image?.let { signer(it) },
+		image = entity.signedImage,
 		status = EEventStatus.fromEvent(entity),
-		owner = TUserPartial(entity.owner, signer),
+		owner = TUserPartial(entity.owner),
 		startDateTime = entity.startDateTime,
 		endDateTime = entity.endDateTime,
 		createDateTime = entity.createDateTime,
 		updateDateTime = entity.updateDateTime,
-		association = TPartialAssociation(entity.association, signer)
+		association = TPartialAssociation(entity.association)
 	)
 }

@@ -7,7 +7,6 @@ import hollybike.api.repository.eventImagesMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.image.EventImageService
-import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.image.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
@@ -27,8 +26,7 @@ import kotlin.math.ceil
 
 class EventImageController(
 	application: Application,
-	private val eventImageService: EventImageService,
-	private val storageService: StorageService
+	private val eventImageService: EventImageService
 ) {
 	private val mapper = eventImagesMapper + eventMapper
 
@@ -50,7 +48,7 @@ class EventImageController(
 		val imageCount = eventImageService.countImages(user, searchParam)
 
 		return TLists(
-			data = images.map { image -> TEventImage(image, storageService.signer.sign) },
+			data = images.map { image -> TEventImage(image) },
 			page = searchParam.page,
 			perPage = searchParam.perPage,
 			totalPage = ceil(imageCount.toDouble() / searchParam.perPage).toInt(),
@@ -90,7 +88,7 @@ class EventImageController(
 			}
 
 			eventImageService.uploadImages(call.user, data.event.id, images).onSuccess {
-				call.respond(HttpStatusCode.Created, it.map { image -> TEventImage(image, storageService.signer.sign) })
+				call.respond(HttpStatusCode.Created, it.map { image -> TEventImage(image) })
 			}.onFailure {
 				eventImageService.handleEventExceptions(it, call)
 			}
@@ -115,7 +113,7 @@ class EventImageController(
 				if (image == null) {
 					call.respond(HttpStatusCode.NotFound)
 				} else {
-					call.respond(TEventImageDetails(image, call.user.id == image.owner.id, storageService.signer.sign))
+					call.respond(TEventImageDetails(image, call.user.id == image.owner.id))
 				}
 			}
 		}

@@ -68,11 +68,13 @@ export async function api<T>(url: string, options?: ApiOptions): Promise<APIResp
 	});
 }
 
-export async function apiRaw<T>(url: string, type: string, options?: ApiRawOptions): Promise<APIResponse<T>> {
+export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOptions): Promise<APIResponse<T>> {
 	const headers = new Headers(options?.headers);
 	const token = localStorage.getItem("token") ?? "";
 	headers.append("Authorization", `Bearer ${token}`);
-	headers.append("Content-Type", type);
+	if (type !== undefined) {
+		headers.append("Content-Type", type);
+	}
 	const init: RequestInit = {
 		method: options?.method ?? "GET",
 		mode: "cors",

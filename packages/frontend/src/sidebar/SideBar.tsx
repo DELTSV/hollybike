@@ -43,6 +43,9 @@ function adminMenu(association: TAssociation | undefined, root: boolean, onPremi
 		<SideBarMenu to={`/associations/${association?.id}/events`}>
 			{ root ? `Événements de ${association?.name}` : "Mes événements" }
 		</SideBarMenu>,
+		<SideBarMenu to={`/associations/${association?.id}/journeys`}>
+			{ root ? `Bibliothèque de ${association?.name}` : "Mes trajets" }
+		</SideBarMenu>,
 	];
 	if (onPremise) {
 		menus.push(<SideBarMenu to={"/conf"}>Configuration</SideBarMenu>);
@@ -63,6 +66,9 @@ function rootMenu(association: TAssociation | undefined, onPremise: boolean) {
 		</SideBarMenu>,
 		<SideBarMenu to={"/events"}>
 			Événements
+		</SideBarMenu>,
+		<SideBarMenu to={"/journeys"}>
+			Bibliothèque de trajet
 		</SideBarMenu>,
 	];
 	if (association !== undefined) {

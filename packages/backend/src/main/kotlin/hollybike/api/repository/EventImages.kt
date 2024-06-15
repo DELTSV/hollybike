@@ -1,5 +1,6 @@
 package hollybike.api.repository
 
+import hollybike.api.signatureService
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
@@ -11,6 +12,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 class EventImage(id: EntityID<Int>) : IntEntity(id) {
 	var owner by User referencedOn EventImages.owner
 	var event by Event referencedOn EventImages.event
+	val signedPath by EventImages.path.transform({ it }, { signatureService.sign(it) })
 	var path by EventImages.path
 	var size by EventImages.size
 	var width by EventImages.width

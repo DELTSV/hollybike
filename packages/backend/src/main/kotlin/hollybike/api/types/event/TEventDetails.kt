@@ -17,12 +17,11 @@ data class TEventDetails(
 		event: Event,
 		callerParticipation: EventParticipation?,
 		participants: List<EventParticipation>,
-		participantsCount: Int,
-		signer: (String) -> String,
+		participantsCount: Int
 	) : this(
-		event = TEvent(event, signer),
+		event = TEvent(event),
 		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it) },
-		previewParticipants = participants.map { TEventParticipation(it, signer) },
+		previewParticipants = participants.map { TEventParticipation(it) },
 		previewParticipantsCount = participantsCount
 	)
 }

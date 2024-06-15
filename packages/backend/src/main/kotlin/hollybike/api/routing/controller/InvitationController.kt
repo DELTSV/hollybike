@@ -35,7 +35,6 @@ class InvitationController(
 	application: Application,
 	private val authService: AuthService,
 	private val invitationService: InvitationService,
-	private val storageService: StorageService,
 	private val mailSender: MailSender?
 ) {
 	init {
@@ -61,13 +60,12 @@ class InvitationController(
 				call.respond(HttpStatusCode.Forbidden)
 				return@get
 			}
-			println(count)
 			invitationService.getAll(call.user, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
 					if(i.status == EInvitationStatus.Enabled) {
-						TInvitation(i, storageService.signer.sign, authService.generateLink(call.user, host, i))
+						TInvitation(i, authService.generateLink(call.user, host, i))
 					} else {
-						TInvitation(i, storageService.signer.sign)
+						TInvitation(i)
 					}
 				}
 				call.respond(
@@ -106,7 +104,7 @@ class InvitationController(
 				invitationCreation.maxUses,
 				invitationCreation.expiration
 			).onSuccess {
-				call.respond(TInvitation(it, storageService.signer.sign, authService.generateLink(call.user, host, it)))
+				call.respond(TInvitation(it, authService.generateLink(call.user, host, it)))
 			}.onFailure {
 				when(it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
@@ -144,7 +142,7 @@ class InvitationController(
 	private fun Route.disableInvitation() {
 		patch<Invitation.Id.Disable>(EUserScope.Admin) {
 			invitationService.disableInvitation(call.user, it.id.id).onSuccess {  i ->
-				call.respond(TInvitation(i, storageService.signer.sign))
+				call.respond(TInvitation(i))
 			}.onFailure {  e ->
 				when(e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
