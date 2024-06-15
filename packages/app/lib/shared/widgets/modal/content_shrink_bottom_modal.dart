@@ -5,12 +5,14 @@ class ContentShrinkBottomModal extends StatefulWidget {
   final Widget child;
   final bool enableDrag;
   final int maxModalHeight;
+  final bool modalOpened;
   final void Function(bool opened)? onStatusChanged;
 
   const ContentShrinkBottomModal({
     super.key,
     required this.modalContent,
     required this.child,
+    required this.modalOpened,
     this.onStatusChanged,
     this.enableDrag = true,
     this.maxModalHeight = 300,
@@ -32,6 +34,19 @@ class _ContentShrinkBottomModalState extends State<ContentShrinkBottomModal> {
   get modalOpened => _bottomContainerHeight == _bottomContainerMaxHeight;
 
   get modalOpening => _bottomContainerHeight > 0;
+
+  @override
+  void didUpdateWidget(covariant ContentShrinkBottomModal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (modalOpened != widget.modalOpened) {
+      if (widget.modalOpened) {
+        _onOpened();
+      } else {
+        _onClosed();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +75,7 @@ class _ContentShrinkBottomModalState extends State<ContentShrinkBottomModal> {
               ),
               AnimatedContainer(
                 duration: _animate
-                    ? const Duration(milliseconds: 150)
+                    ? const Duration(milliseconds: 250)
                     : Duration.zero,
                 curve: Curves.fastOutSlowIn,
                 height: _bottomContainerHeight,

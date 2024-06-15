@@ -10,11 +10,13 @@ import '../../bloc/event_images_bloc/event_images_state.dart';
 class EventImageViewScreen extends StatelessWidget {
   final int imageIndex;
   final void Function() onLoadNextPage;
+  final void Function() onRefresh;
 
   const EventImageViewScreen({
     super.key,
     required this.imageIndex,
     required this.onLoadNextPage,
+    required this.onRefresh,
   });
 
   @override
@@ -24,6 +26,7 @@ class EventImageViewScreen extends StatelessWidget {
         imageIndex: imageIndex,
         images: state.images,
         onLoadNextPage: onLoadNextPage,
+        onImageDeleted: onRefresh,
       ),
     );
   }

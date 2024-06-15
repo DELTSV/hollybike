@@ -14,6 +14,7 @@ class EventImageDetailsBloc
     required this.imageRepository,
   }) : super(EventImageDetailsInitial()) {
     on<GetEventImageDetails>(_onGetEventImageDetails);
+    on<DeleteImage>(_onDeleteImage);
   }
 
   Future<void> _onGetEventImageDetails(
@@ -33,6 +34,29 @@ class EventImageDetailsBloc
       ));
     } catch (e) {
       log('Error while loading image details: $e');
+      emit(EventImageDetailsLoadFailure(
+        state,
+        errorMessage: 'Une erreur est survenue',
+      ));
+      return;
+    }
+  }
+
+  Future<void> _onDeleteImage(
+    DeleteImage event,
+    Emitter<EventImageDetailsState> emit,
+  ) async {
+    emit(DeleteImageInProgress(state));
+
+    try {
+      await imageRepository.deleteImage(
+        event.session,
+        event.imageId,
+      );
+
+      emit(DeleteImageSuccess(state));
+    } catch (e) {
+      log('Error while deleting image: $e');
       emit(EventImageDetailsLoadFailure(
         state,
         errorMessage: 'Une erreur est survenue',
