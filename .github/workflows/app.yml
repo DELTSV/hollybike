@@ -57,6 +57,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
         with:
