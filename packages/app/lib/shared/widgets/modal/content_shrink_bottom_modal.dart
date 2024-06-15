@@ -22,51 +22,78 @@ class ContentShrinkBottomModal extends StatefulWidget {
 }
 
 class _ContentShrinkBottomModalState extends State<ContentShrinkBottomModal> {
-  late final double _bottomContainerMaxHeight = widget.maxModalHeight.toDouble();
+  late final double _bottomContainerMaxHeight =
+      widget.maxModalHeight.toDouble();
   double _bottomContainerHeight = 0;
 
   bool _animate = false;
   bool _modalOpened = false;
 
   get modalOpened => _bottomContainerHeight == _bottomContainerMaxHeight;
+
   get modalOpening => _bottomContainerHeight > 0;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragUpdate: widget.enableDrag ? _onVerticalDragUpdate : null,
-      onVerticalDragEnd: widget.enableDrag ? _onVerticalDragEnd : null,
-      onVerticalDragStart: widget.enableDrag ? _onVerticalDragStart : null,
-      child: Container(
-        color: Colors.black,
-        height: MediaQuery.of(context).size.height,
-        child: Column(
-          children: [
-            Flexible(
-              child: GestureDetector(
-                onTap: modalOpened ? _onTapImage : null,
-                child: widget.child,
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: _buildActions(),
+      ),
+      body: GestureDetector(
+        onVerticalDragUpdate: widget.enableDrag ? _onVerticalDragUpdate : null,
+        onVerticalDragEnd: widget.enableDrag ? _onVerticalDragEnd : null,
+        onVerticalDragStart: widget.enableDrag ? _onVerticalDragStart : null,
+        child: Container(
+          color: Colors.black,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              Flexible(
+                child: GestureDetector(
+                  onTap: modalOpened ? _onTapImage : null,
+                  child: widget.child,
+                ),
               ),
-            ),
-            AnimatedContainer(
-              duration:
-                  _animate ? const Duration(milliseconds: 150) : Duration.zero,
-              curve: Curves.fastOutSlowIn,
-              height: _bottomContainerHeight,
-              onEnd: _onAnimateEnd,
-              width: double.infinity,
-              child: PopScope(
-                canPop: !modalOpened,
-                onPopInvoked: _onPopInvoked,
-                child: modalOpening
-                    ? widget.modalContent
-                    : const SizedBox.shrink(),
+              AnimatedContainer(
+                duration: _animate
+                    ? const Duration(milliseconds: 150)
+                    : Duration.zero,
+                curve: Curves.fastOutSlowIn,
+                height: _bottomContainerHeight,
+                onEnd: _onAnimateEnd,
+                width: double.infinity,
+                child: PopScope(
+                  canPop: !modalOpened,
+                  onPopInvoked: _onPopInvoked,
+                  child: modalOpening
+                      ? widget.modalContent
+                      : const SizedBox.shrink(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  List<Widget>? _buildActions() {
+    if (_modalOpened || !widget.enableDrag) {
+      return null;
+    }
+
+    return [
+      IconButton(
+        onPressed: () {
+          _onOpened();
+        },
+        icon: const Icon(Icons.more_vert_rounded),
+      ),
+    ];
   }
 
   void _onOpened() {
