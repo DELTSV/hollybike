@@ -6,11 +6,11 @@ val awsSdkKotlinVersion: String by project
 
 plugins {
 	application
-	kotlin("jvm") version "1.9.23"
+	kotlin("jvm") version "2.0.0"
 	id("io.ktor.plugin") version "2.3.9"
-	id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
+	id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
 	id("org.graalvm.buildtools.native") version "0.9.19"
-	id("com.google.devtools.ksp") version "1.9.23-1.0.20"
+	id("com.google.devtools.ksp") version "2.0.0-1.0.22"
 	id("org.liquibase.gradle") version "2.1.1"
 }
 
