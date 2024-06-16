@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/widgets/journey/journey_library.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_event.dart';
+import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_state.dart';
+import 'package:hollybike/journey/widgets/journey_library.dart';
+import 'package:hollybike/shared/utils/with_current_session.dart';
 
-class JourneyLibraryModal extends StatelessWidget {
+import '../bloc/journeys_library_bloc/journeys_library_bloc.dart';
+
+class JourneyLibraryModal extends StatefulWidget {
   const JourneyLibraryModal({super.key});
+
+  @override
+  State<JourneyLibraryModal> createState() => _JourneyLibraryModalState();
+}
+
+class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
+  @override
+  void initState() {
+    super.initState();
+
+    withCurrentSession(context, (session) {
+      BlocProvider.of<JourneysLibraryBloc>(context).add(
+        RefreshJourneysLibrary(session: session),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +76,23 @@ class JourneyLibraryModal extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const Flexible(
-                      child: JourneyLibrary(),
+                    Flexible(
+                      child: SizedBox(
+                        height: 200,
+                        child: BlocBuilder<JourneysLibraryBloc, JourneysLibraryState>(
+                          builder: (context, state) {
+                            if (state is JourneysLibraryPageLoadInProgress) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            return JourneyLibrary(
+                              journeys: state.journeys,
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),

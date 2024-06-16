@@ -12,6 +12,9 @@ import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
+import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_bloc.dart';
+import 'package:hollybike/journey/service/journey_api.dart';
+import 'package:hollybike/journey/service/journey_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
@@ -88,6 +91,11 @@ class MyApp extends StatelessWidget {
           RepositoryProvider(
             create: (context) => ImageRepository(
               imageApi: ImageApi(),
+            ),
+          ),
+          RepositoryProvider(
+            create: (context) => JourneyRepository(
+              journeyApi: JourneyApi(),
             ),
           ),
         ],
@@ -176,6 +184,13 @@ class MyApp extends StatelessWidget {
             BlocProvider<EventImageDetailsBloc>(
               create: (context) => EventImageDetailsBloc(
                 imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
+            ),
+            BlocProvider<JourneysLibraryBloc>(
+              create: (context) => JourneysLibraryBloc(
+                journeyRepository: RepositoryProvider.of<JourneyRepository>(
                   context,
                 ),
               ),

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/widgets/journey/journey_library_modal.dart';
+import 'package:hollybike/journey/widgets/journey_library_modal.dart';
 import 'package:lottie/lottie.dart';
 
 enum NewJourneyType {

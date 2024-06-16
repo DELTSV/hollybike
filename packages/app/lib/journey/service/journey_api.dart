@@ -15,7 +15,7 @@ class JourneyApi {
       queryParameters: {
         'page': page,
         'per_page': journeysPerPage,
-        'sort': 'taken_date_time.desc'
+        'sort': 'created_at.desc'
       },
     );
 
