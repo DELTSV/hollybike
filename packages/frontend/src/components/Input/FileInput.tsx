@@ -46,7 +46,7 @@ export function FileInput(props: FileInputProps) {
 			{ text }
 			<input
 				value={v}
-				className={" text-gray-600"}
+				className={"hidden text-gray-600"}
 				id={id} type={"file"}
 				placeholder={props.placeholder}
 				accept={props.accept}

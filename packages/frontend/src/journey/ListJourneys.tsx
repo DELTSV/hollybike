@@ -160,7 +160,12 @@ export function ListJourneys() {
 			<Modal visible={modal} setVisible={setModal} title={"Importer un fichier GPX ou GeoJSON"}>
 				<div className={"gap-2 items-center"}>
 					<p>Fichier</p>
-					<FileInput id={"upload"} value={uploadFile} setValue={setUploadFile} accept={".geojson,.gpx"}/>
+					<FileInput
+						placeholder={"Fichier"}
+						value={uploadFile}
+						setValue={setUploadFile}
+						accept={".geojson,.gpx"}
+					/>
 					<Button
 						disabled={uploadFile === null || journeyId === -1}
 						onClick={() => {
