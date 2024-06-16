@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/widgets/journey/empty_journey_preview_card.dart';
+import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../shared/utils/with_current_session.dart';
@@ -61,6 +63,8 @@ class EventDetailsInfos extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            const JourneyPreviewCard(journey: null),
           ],
         ),
       ),
