@@ -1,14 +1,10 @@
 package hollybike.api.types.journey
 
-import aws.smithy.kotlin.runtime.util.type
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
-import kotlin.coroutines.coroutineContext
-import kotlin.math.max
-import kotlin.math.min
 
 @OptIn(ExperimentalSerializationApi::class)
 @JsonClassDiscriminator("type")

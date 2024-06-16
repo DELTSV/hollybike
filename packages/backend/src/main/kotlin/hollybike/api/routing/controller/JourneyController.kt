@@ -149,10 +149,10 @@ class JourneyController(
 
 			val geoJson = try {
 				xml.decodeFromString<Gpx>(text).toGeoJson()
-			} catch (e: Exception) {
+			} catch (_: Exception) {
 				try {
 					json.decodeFromString<GeoJson>(text)
-				} catch (e: Exception) {
+				} catch (_: Exception) {
 					null
 				}
 			} ?: run {

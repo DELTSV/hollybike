@@ -4,11 +4,8 @@ import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.*
 import hollybike.api.services.AssociationService
-import hollybike.api.services.PositionService
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.journey.TJourneyPositions
 import hollybike.api.types.journey.TNewJourney
-import hollybike.api.types.position.TPositionResponse
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
