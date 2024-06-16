@@ -120,4 +120,21 @@ class EventApi {
       throw Exception("Failed to cancel event");
     }
   }
+
+  Future<void> addJourneyToEvent(
+    AuthSession session,
+    int eventId,
+    int journeyId,
+  ) async {
+    final response = await DioClient(session).dio.post(
+      '/events/$eventId/journey',
+      data: {
+        'journey_id': journeyId,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to add journey to event");
+    }
+  }
 }

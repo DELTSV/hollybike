@@ -9,6 +9,7 @@ import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
+import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
@@ -184,6 +185,16 @@ class MyApp extends StatelessWidget {
             BlocProvider<EventImageDetailsBloc>(
               create: (context) => EventImageDetailsBloc(
                 imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
+            ),
+            BlocProvider<EventJourneyBloc>(
+              create: (context) => EventJourneyBloc(
+                journeyRepository: RepositoryProvider.of<JourneyRepository>(
+                  context,
+                ),
+                eventRepository: RepositoryProvider.of<EventRepository>(
                   context,
                 ),
               ),

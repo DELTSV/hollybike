@@ -4,7 +4,6 @@ import '../../types/image/event_image.dart';
 
 enum EventImagesStatus { loading, success, error, initial }
 
-
 @immutable
 class EventImagesState {
   final List<EventImage> images;
