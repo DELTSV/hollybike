@@ -67,6 +67,7 @@ class PositionService(
 	private fun push(topic: String, identifier: Int, content: TPositionRequest) {
 		val message = TPositionMessage(topic, identifier, content)
 		scope.launch {
+			delay(5000)
 			messageChannel.send(message)
 		}
 	}

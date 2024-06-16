@@ -1,7 +1,5 @@
-package hollybike.api.services.journey
+ package hollybike.api.types.journey
 
-import hollybike.api.types.journey.*
-import kotlinx.datetime.Instant
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -75,9 +73,6 @@ private fun Rte.getRoute(): Feature? {
 	cmt?.let { properties["cmt"] = JsonPrimitive(it) }
 	desc?.let { properties["desc"] = JsonPrimitive(it) }
 	type?.let { properties["type"] = JsonPrimitive(it) }
-//	if(times.isNotEmpty()) {
-//		properties["coordTimes"] = JsonArray(times)
-//	}
 	return Feature(
 		properties = JsonObject(properties),
 		geometry = LineString(line)

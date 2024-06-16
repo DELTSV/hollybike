@@ -60,7 +60,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventController(this, eventService, eventParticipationService, associationService)
 	EventParticipationController(this, eventParticipationService)
 	EventImageController(this, eventImageService)
-	JourneyController(this, journeyService)
+	JourneyController(this, journeyService, positionService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

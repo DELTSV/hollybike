@@ -309,4 +309,9 @@ CREATE TABLE IF NOT EXISTS journeys (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     creator INTEGER NOT NULL REFERENCES users(id_user),
     association INTEGER NOT NULL REFERENCES associations(id_association)
-)
+);
+
+--changeset denis:9
+ALTER TABLE journeys
+    ADD COLUMN start INTEGER REFERENCES positions(id_position) DEFAULT NULL,
+    ADD COLUMN "end" INTEGER REFERENCES positions(id_position) DEFAULT NULL;

@@ -11,5 +11,8 @@ class Journeys(val api: API = API()) {
 	class Id(val journeys: Journeys = Journeys(), val id: Int) {
 		@Resource("/file")
 		class File(val id: Id)
+
+		@Resource("/positions")
+		class Positions(val id: Id)
 	}
 }

@@ -15,6 +15,8 @@ object Journeys: IntIdTable("journeys", "id_journey") {
 	val createdAt = timestamp("created_at").default(Clock.System.now())
 	val creator = reference("creator", Users)
 	val association = reference("association", Associations)
+	val start = reference("start", Positions).nullable().default(null)
+	val end = reference("end", Positions).nullable().default(null)
 }
 
 class Journey(id: EntityID<Int>) : IntEntity(id) {
@@ -24,6 +26,8 @@ class Journey(id: EntityID<Int>) : IntEntity(id) {
 	var createdAt by Journeys.createdAt
 	var creator by User referencedOn Journeys.creator
 	var association by Association referencedOn Journeys.association
+	var start by Position optionalReferencedOn Journeys.start
+	var end by Position optionalReferencedOn Journeys.end
 
 	companion object: IntEntityClass<Journey>(Journeys)
 }

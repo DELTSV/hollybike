@@ -4,8 +4,11 @@ import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.*
 import hollybike.api.services.AssociationService
+import hollybike.api.services.PositionService
 import hollybike.api.services.storage.StorageService
+import hollybike.api.types.journey.TJourneyPositions
 import hollybike.api.types.journey.TNewJourney
+import hollybike.api.types.position.TPositionResponse
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
@@ -39,13 +42,7 @@ class JourneyService(
 		EUserScope.User -> new.association == null || caller.association.id.value == new.association
 	}
 
-	private fun authorizeUpload(caller: User, target: Journey): Boolean = when(caller.scope) {
-		EUserScope.Root -> true
-		EUserScope.Admin -> caller.association.id == target.association.id
-		EUserScope.User -> caller.id == target.creator.id
-	}
-
-	private fun authorizeDelete(caller: User, target: Journey): Boolean = when(caller.scope) {
+	private fun authorizeEdit(caller: User, target: Journey): Boolean = when(caller.scope) {
 		EUserScope.Root -> true
 		EUserScope.Admin -> caller.association.id == target.association.id
 		EUserScope.User -> caller.id == target.creator.id
@@ -62,7 +59,7 @@ class JourneyService(
 				.innerJoin(Users, { Journeys.creator }, { Users.id })
 				.selectAll()
 				.applyParam(param)
-			).with(Journey::association, Journey::creator).toList()
+			).with(Journey::association, Journey::creator, Journey::start, Journey::end).toList()
 		}
 	}
 
@@ -82,7 +79,7 @@ class JourneyService(
 	}
 
 	fun getById(caller: User, id: Int): Journey? = transaction(db) {
-		Journey.findById(id)?.load(Journey::creator, Journey::association) getIfAllowed caller
+		Journey.findById(id)?.load(Journey::creator, Journey::association, Journey::start, Journey::end) getIfAllowed caller
 	}
 
 	fun createJourney(caller: User, new: TNewJourney): Result<Journey> {
@@ -113,7 +110,7 @@ class JourneyService(
 		file: ByteArray,
 		fileContentType: String,
 	): Result<String> {
-		if(!authorizeUpload(caller, journey)) {
+		if(!authorizeEdit(caller, journey)) {
 			return Result.failure(NotAllowedException())
 		}
 
@@ -125,11 +122,25 @@ class JourneyService(
 	}
 
 	suspend fun deleteJourney(caller: User, target: Journey): Boolean {
-		if(!authorizeDelete(caller, target)) {
+		if(!authorizeEdit(caller, target)) {
 			return false
 		}
 		target.file?.let { storageService.delete(it) }
 		transaction(db) { target.delete() }
 		return true
+	}
+
+	fun setJourneyStartPosition(journey: Journey, start: Position): Journey? {
+		transaction(db) {
+			journey.start = start
+		}
+		return journey
+	}
+
+	fun setJourneyEndPosition(journey: Journey, end: Position): Journey? {
+		transaction(db) {
+			journey.end = end
+		}
+		return journey
 	}
 }

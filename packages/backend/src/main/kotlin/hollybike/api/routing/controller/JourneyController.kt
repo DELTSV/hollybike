@@ -7,10 +7,13 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.journeysMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Journeys
+import hollybike.api.services.PositionService
 import hollybike.api.services.journey.JourneyService
-import hollybike.api.services.journey.toGeoJson
+import hollybike.api.types.journey.toGeoJson
 import hollybike.api.types.journey.*
 import hollybike.api.types.lists.TLists
+import hollybike.api.types.position.EPositionScope
+import hollybike.api.types.position.TPositionRequest
 import hollybike.api.utils.GeoJson
 import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
@@ -23,19 +26,46 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.delay
+import kotlinx.datetime.Clock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.adaptivity.xmlutil.*
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
+import java.util.Timer
+import kotlin.concurrent.schedule
 import kotlin.math.ceil
+import kotlin.time.Duration.Companion.hours
 
 class JourneyController(
 	application: Application,
-	private val journeyService: JourneyService
+	private val journeyService: JourneyService,
+	private val positionService: PositionService
 ) {
+	private val journeyPositions = mutableMapOf<Int, TJourneyPositions>()
+
+	private val timer = Timer()
+
 	init {
+		positionService.subscribe("journey-start-position") { response ->
+			journeyPositions[response.identifier]?.let { journeyPosition ->
+				journeyService.setJourneyStartPosition(journeyPosition.journey, response.content)
+				journeyPosition.start = response
+			}
+		}
+		positionService.subscribe("journey-end-position") { response ->
+			journeyPositions[response.identifier]?.let { journeyPosition ->
+				journeyService.setJourneyEndPosition(journeyPosition.journey, response.content)
+				journeyPosition.end = response
+			}
+		}
+		timer.schedule(0L, 3600_000L) {
+			journeyPositions.filterValues { (it.askedAt + 1.hours) < Clock.System.now() }.map { it.key }.forEach {
+				journeyPositions.remove(it)
+			}
+		}
 		application.routing {
 			authenticate {
 				getAll()
@@ -44,6 +74,7 @@ class JourneyController(
 				getJourney()
 				addFile()
 				deleteJourney()
+				getJourneyPositions()
 			}
 		}
 	}
@@ -145,6 +176,29 @@ class JourneyController(
 				json.encodeToString(geoJson).toByteArray(),
 				contentType.toString()
 			).onSuccess {
+				geoJson.start?.let { start ->
+					geoJson.end?.let { end ->
+						journeyPositions[journey.id.value] = TJourneyPositions(
+							journey,
+							true
+						)
+						positionService.getPositionOrPush(
+							"journey-end-position",
+							journey.id.value,
+							TPositionRequest(end[1], end[0], end.getOrNull(2), EPositionScope.Country)
+						)
+					} ?: run {
+						journeyPositions[journey.id.value] = TJourneyPositions(
+							journey,
+							false
+						)
+					}
+					positionService.getPositionOrPush(
+						"journey-start-position",
+						journey.id.value,
+						TPositionRequest(start[1], start[0], start.getOrNull(2), EPositionScope.Country)
+					)
+				}
 				call.respond(HttpStatusCode.OK, TJourney(journey))
 			}.onFailure { err ->
 				when(err) {
@@ -164,6 +218,34 @@ class JourneyController(
 				call.respond(HttpStatusCode.NoContent)
 			} else {
 				call.respond(HttpStatusCode.Forbidden)
+			}
+		}
+	}
+
+	private fun Route.getJourneyPositions() {
+		get<Journeys.Id.Positions> {
+			val journey = journeyService.getById(call.user, it.id.id) ?: run {
+				return@get call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
+			}
+			println(journeyPositions)
+			journeyPositions[journey.id.value]?.let { journeyPosition ->
+				repeat(60){
+					if(journeyPosition.haveEnd) {
+						if(journeyPosition.start != null && journeyPosition.end != null) {
+							journeyPositions.remove(journey.id.value)
+							return@get call.respond(TJourney(journey))
+						}
+					} else {
+						if(journeyPosition.start != null) {
+							journeyPositions.remove(journey.id.value)
+							return@get call.respond(TJourney(journey))
+						}
+					}
+					delay(5_000)
+				}
+				call.respond(HttpStatusCode.TooEarly, "Les positions n'ont pas encore été récupérées")
+			} ?: run {
+				return@get call.respond(HttpStatusCode.Gone, "Les positions ont déjà été récupérées")
 			}
 		}
 	}
