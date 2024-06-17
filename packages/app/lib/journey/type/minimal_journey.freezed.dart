@@ -23,6 +23,8 @@ mixin _$MinimalJourney {
   String? get file => throw _privateConstructorUsedError;
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
+  @JsonKey(name: 'preview_image')
+  String? get previewImage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +38,11 @@ abstract class $MinimalJourneyCopyWith<$Res> {
           MinimalJourney value, $Res Function(MinimalJourney) then) =
       _$MinimalJourneyCopyWithImpl<$Res, MinimalJourney>;
   @useResult
-  $Res call({String? file, Position? start, Position? end});
+  $Res call(
+      {String? file,
+      Position? start,
+      Position? end,
+      @JsonKey(name: 'preview_image') String? previewImage});
 
   $PositionCopyWith<$Res>? get start;
   $PositionCopyWith<$Res>? get end;
@@ -58,6 +64,7 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
     Object? file = freezed,
     Object? start = freezed,
     Object? end = freezed,
+    Object? previewImage = freezed,
   }) {
     return _then(_value.copyWith(
       file: freezed == file
@@ -72,6 +79,10 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
           ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
               as Position?,
+      previewImage: freezed == previewImage
+          ? _value.previewImage
+          : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -108,7 +119,11 @@ abstract class _$$MinimalJourneyImplCopyWith<$Res>
       __$$MinimalJourneyImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? file, Position? start, Position? end});
+  $Res call(
+      {String? file,
+      Position? start,
+      Position? end,
+      @JsonKey(name: 'preview_image') String? previewImage});
 
   @override
   $PositionCopyWith<$Res>? get start;
@@ -130,6 +145,7 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
     Object? file = freezed,
     Object? start = freezed,
     Object? end = freezed,
+    Object? previewImage = freezed,
   }) {
     return _then(_$MinimalJourneyImpl(
       file: freezed == file
@@ -144,6 +160,10 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
           ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
               as Position?,
+      previewImage: freezed == previewImage
+          ? _value.previewImage
+          : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -152,7 +172,10 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MinimalJourneyImpl implements _MinimalJourney {
   const _$MinimalJourneyImpl(
-      {required this.file, required this.start, required this.end});
+      {required this.file,
+      required this.start,
+      required this.end,
+      @JsonKey(name: 'preview_image') this.previewImage});
 
   factory _$MinimalJourneyImpl.fromJson(Map<String, dynamic> json) =>
       _$$MinimalJourneyImplFromJson(json);
@@ -163,10 +186,13 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
   final Position? start;
   @override
   final Position? end;
+  @override
+  @JsonKey(name: 'preview_image')
+  final String? previewImage;
 
   @override
   String toString() {
-    return 'MinimalJourney(file: $file, start: $start, end: $end)';
+    return 'MinimalJourney(file: $file, start: $start, end: $end, previewImage: $previewImage)';
   }
 
   @override
@@ -176,12 +202,14 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
             other is _$MinimalJourneyImpl &&
             (identical(other.file, file) || other.file == file) &&
             (identical(other.start, start) || other.start == start) &&
-            (identical(other.end, end) || other.end == end));
+            (identical(other.end, end) || other.end == end) &&
+            (identical(other.previewImage, previewImage) ||
+                other.previewImage == previewImage));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, file, start, end);
+  int get hashCode => Object.hash(runtimeType, file, start, end, previewImage);
 
   @JsonKey(ignore: true)
   @override
@@ -200,9 +228,11 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
 
 abstract class _MinimalJourney implements MinimalJourney {
   const factory _MinimalJourney(
-      {required final String? file,
-      required final Position? start,
-      required final Position? end}) = _$MinimalJourneyImpl;
+          {required final String? file,
+          required final Position? start,
+          required final Position? end,
+          @JsonKey(name: 'preview_image') final String? previewImage}) =
+      _$MinimalJourneyImpl;
 
   factory _MinimalJourney.fromJson(Map<String, dynamic> json) =
       _$MinimalJourneyImpl.fromJson;
@@ -213,6 +243,9 @@ abstract class _MinimalJourney implements MinimalJourney {
   Position? get start;
   @override
   Position? get end;
+  @override
+  @JsonKey(name: 'preview_image')
+  String? get previewImage;
   @override
   @JsonKey(ignore: true)
   _$$MinimalJourneyImplCopyWith<_$MinimalJourneyImpl> get copyWith =>

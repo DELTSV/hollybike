@@ -15,6 +15,7 @@ _$MinimalJourneyImpl _$$MinimalJourneyImplFromJson(Map<String, dynamic> json) =>
       end: json['end'] == null
           ? null
           : Position.fromJson(json['end'] as Map<String, dynamic>),
+      previewImage: json['preview_image'] as String?,
     );
 
 Map<String, dynamic> _$$MinimalJourneyImplToJson(
@@ -23,4 +24,5 @@ Map<String, dynamic> _$$MinimalJourneyImplToJson(
       'file': instance.file,
       'start': instance.start,
       'end': instance.end,
+      'preview_image': instance.previewImage,
     };

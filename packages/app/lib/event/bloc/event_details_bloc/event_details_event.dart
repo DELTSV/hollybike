@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hollybike/journey/type/journey.dart';
 
 import '../../../auth/types/auth_session.dart';
 import '../../types/event_form_data.dart';
@@ -71,5 +72,17 @@ class EditEvent extends EventDetailsEvent {
     required this.session,
     required this.eventId,
     required this.formData,
+  });
+}
+
+class AttachJourneyToEvent extends EventDetailsEvent {
+  final AuthSession session;
+  final int eventId;
+  final Journey journey;
+
+  AttachJourneyToEvent({
+    required this.session,
+    required this.eventId,
+    required this.journey,
   });
 }

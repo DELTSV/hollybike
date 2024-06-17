@@ -12,6 +12,7 @@ class MinimalJourney with _$MinimalJourney {
     required String? file,
     required Position? start,
     required Position? end,
+    @JsonKey(name: 'preview_image') String? previewImage,
   }) = _MinimalJourney;
 
   factory MinimalJourney.fromJson(JsonMap json) => _$MinimalJourneyFromJson(json);

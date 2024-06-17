@@ -25,6 +25,8 @@ mixin _$Journey {
   String? get file => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'preview_image')
+  String? get previewImage => throw _privateConstructorUsedError;
   MinimalUser get creator => throw _privateConstructorUsedError;
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
@@ -44,6 +46,7 @@ abstract class $JourneyCopyWith<$Res> {
       String name,
       String? file,
       @JsonKey(name: 'created_at') DateTime createdAt,
+      @JsonKey(name: 'preview_image') String? previewImage,
       MinimalUser creator,
       Position? start,
       Position? end});
@@ -70,6 +73,7 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
     Object? name = null,
     Object? file = freezed,
     Object? createdAt = null,
+    Object? previewImage = freezed,
     Object? creator = null,
     Object? start = freezed,
     Object? end = freezed,
@@ -91,6 +95,10 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      previewImage: freezed == previewImage
+          ? _value.previewImage
+          : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
       creator: null == creator
           ? _value.creator
           : creator // ignore: cast_nullable_to_non_nullable
@@ -151,6 +159,7 @@ abstract class _$$JourneyImplCopyWith<$Res> implements $JourneyCopyWith<$Res> {
       String name,
       String? file,
       @JsonKey(name: 'created_at') DateTime createdAt,
+      @JsonKey(name: 'preview_image') String? previewImage,
       MinimalUser creator,
       Position? start,
       Position? end});
@@ -178,6 +187,7 @@ class __$$JourneyImplCopyWithImpl<$Res>
     Object? name = null,
     Object? file = freezed,
     Object? createdAt = null,
+    Object? previewImage = freezed,
     Object? creator = null,
     Object? start = freezed,
     Object? end = freezed,
@@ -199,6 +209,10 @@ class __$$JourneyImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      previewImage: freezed == previewImage
+          ? _value.previewImage
+          : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
       creator: null == creator
           ? _value.creator
           : creator // ignore: cast_nullable_to_non_nullable
@@ -223,6 +237,7 @@ class _$JourneyImpl extends _Journey {
       required this.name,
       required this.file,
       @JsonKey(name: 'created_at') required this.createdAt,
+      @JsonKey(name: 'preview_image') this.previewImage,
       required this.creator,
       required this.start,
       required this.end})
@@ -241,6 +256,9 @@ class _$JourneyImpl extends _Journey {
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
   @override
+  @JsonKey(name: 'preview_image')
+  final String? previewImage;
+  @override
   final MinimalUser creator;
   @override
   final Position? start;
@@ -249,7 +267,7 @@ class _$JourneyImpl extends _Journey {
 
   @override
   String toString() {
-    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, creator: $creator, start: $start, end: $end)';
+    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, creator: $creator, start: $start, end: $end)';
   }
 
   @override
@@ -262,6 +280,8 @@ class _$JourneyImpl extends _Journey {
             (identical(other.file, file) || other.file == file) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.previewImage, previewImage) ||
+                other.previewImage == previewImage) &&
             (identical(other.creator, creator) || other.creator == creator) &&
             (identical(other.start, start) || other.start == start) &&
             (identical(other.end, end) || other.end == end));
@@ -269,8 +289,8 @@ class _$JourneyImpl extends _Journey {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, file, createdAt, creator, start, end);
+  int get hashCode => Object.hash(runtimeType, id, name, file, createdAt,
+      previewImage, creator, start, end);
 
   @JsonKey(ignore: true)
   @override
@@ -292,6 +312,7 @@ abstract class _Journey extends Journey {
       required final String name,
       required final String? file,
       @JsonKey(name: 'created_at') required final DateTime createdAt,
+      @JsonKey(name: 'preview_image') final String? previewImage,
       required final MinimalUser creator,
       required final Position? start,
       required final Position? end}) = _$JourneyImpl;
@@ -308,6 +329,9 @@ abstract class _Journey extends Journey {
   @override
   @JsonKey(name: 'created_at')
   DateTime get createdAt;
+  @override
+  @JsonKey(name: 'preview_image')
+  String? get previewImage;
   @override
   MinimalUser get creator;
   @override

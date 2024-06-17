@@ -22,6 +22,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<EditEvent>(_onEditEvent);
     on<DeleteEvent>(_onDeleteEvent);
     on<CancelEvent>(_onCancelEvent);
+    on<AttachJourneyToEvent>(_onAttachJourneyToEvent);
   }
 
   @override
@@ -206,6 +207,32 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
       emit(EventOperationFailure(
         state,
         errorMessage: 'Impossible d\'annuler l\'évènement',
+      ));
+    }
+  }
+
+  Future<void> _onAttachJourneyToEvent(
+    AttachJourneyToEvent event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    emit(EventOperationInProgress(state));
+
+    try {
+      await _eventRepository.addJourneyToEvent(
+        event.session,
+        event.eventId,
+        event.journey,
+      );
+
+      emit(EventOperationSuccess(
+        state,
+        successMessage: 'Parcours ajouté à l\'évènement',
+      ));
+    } catch (e) {
+      log('Error while attaching journey to event', error: e);
+      emit(EventOperationFailure(
+        state,
+        errorMessage: 'Impossible d\'ajouter le parcours à l\'évènement',
       ));
     }
   }

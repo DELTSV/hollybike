@@ -12,6 +12,7 @@ _$JourneyImpl _$$JourneyImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       file: json['file'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      previewImage: json['preview_image'] as String?,
       creator: MinimalUser.fromJson(json['creator'] as Map<String, dynamic>),
       start: json['start'] == null
           ? null
@@ -27,6 +28,7 @@ Map<String, dynamic> _$$JourneyImplToJson(_$JourneyImpl instance) =>
       'name': instance.name,
       'file': instance.file,
       'created_at': instance.createdAt.toIso8601String(),
+      'preview_image': instance.previewImage,
       'creator': instance.creator,
       'start': instance.start,
       'end': instance.end,
