@@ -13,6 +13,8 @@ data class TJourney(
 	val id: Int,
 	val name: String,
 	val file: String? = null,
+	@SerialName("preview_image")
+	val previewImage: String? = null,
 	@SerialName("created_at")
 	val createdAt: Instant,
 	val creator: TUserPartial,
@@ -24,6 +26,7 @@ data class TJourney(
 		journey.id.value,
 		journey.name,
 		journey.signedFile,
+		journey.signedPreviewImage,
 		journey.createdAt,
 		TUserPartial(journey.creator),
 		TPartialAssociation(journey.association),

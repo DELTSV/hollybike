@@ -320,3 +320,8 @@ ALTER TABLE journeys
 
 ALTER TABLE events
     ADD COLUMN IF NOT EXISTS journey INTEGER REFERENCES journeys(id_journey) DEFAULT NULL;
+
+-- changeset loic:9
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS preview_image VARCHAR(2048) DEFAULT NULL;
