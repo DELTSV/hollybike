@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/journey/empty_journey_preview_card.dart';
 
+import '../../../journey/type/minimal_journey.dart';
+
 class JourneyPreviewCard extends StatelessWidget {
   final Event event;
-  final String? journey;
+  final MinimalJourney? journey;
 
   const JourneyPreviewCard({
     super.key,

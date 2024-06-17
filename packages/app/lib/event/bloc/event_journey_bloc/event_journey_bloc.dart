@@ -49,11 +49,13 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
     emit(EventJourneyUploadInProgress(state));
 
     try {
-      await journeyRepository.uploadJourneyFile(
+      final journeyWithFile = await journeyRepository.uploadJourneyFile(
         event.session,
         journey.id,
         event.file,
       );
+
+      eventRepository.onEventJourneyUpdated(journeyWithFile);
 
       emit(EventJourneyUploadSuccess(state));
     } catch (e) {

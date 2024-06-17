@@ -65,7 +65,7 @@ class EventDetailsInfos extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             JourneyPreviewCard(
-              journey: null,
+              journey: eventDetails.journey,
               event: event,
             ),
           ],

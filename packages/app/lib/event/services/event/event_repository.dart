@@ -236,6 +236,22 @@ class EventRepository {
     int eventId,
     Journey journey,
   ) async {
-    return eventApi.addJourneyToEvent(session, eventId, journey.id);
+    await eventApi.addJourneyToEvent(session, eventId, journey.id);
+
+    onEventJourneyUpdated(journey);
+  }
+
+  void onEventJourneyUpdated(Journey journey) {
+    final details = _eventStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventStreamController.add(
+      details.copyWith(
+        journey: journey.toMinimalJourney(),
+      ),
+    );
   }
 }
