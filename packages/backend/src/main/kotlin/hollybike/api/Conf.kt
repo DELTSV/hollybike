@@ -15,7 +15,8 @@ data class Conf(
 	val db: ConfDB,
 	val security: ConfSecurity,
 	val smtp: ConfSMTP? = null,
-	val storage: ConfStorage = ConfStorage()
+	val storage: ConfStorage = ConfStorage(),
+	val mapBox: ConfMapBox = ConfMapBox(),
 )
 
 @Serializable
@@ -56,6 +57,11 @@ data class ConfStorage(
 	val ftpUsername: String? = null,
 	val ftpPassword: String? = null,
 	val ftpDirectory: String? = null
+)
+
+@Serializable
+data class ConfMapBox(
+	val publicAccessTokenSecret: String? = null,
 )
 
 fun parseConf(): Conf? {
@@ -110,6 +116,9 @@ private fun parseEnvConf() = Conf(
 		System.getenv("STORAGE_FTP_PASSWORD"),
 		System.getenv("STORAGE_FTP_DIRECTORY"),
 	),
+	ConfMapBox(
+		System.getenv("MAPBOX_PUBLIC_ACCESS_TOKEN_SECRET")
+	)
 )
 
 private fun parseEnvSMTPConv(): ConfSMTP? = try {

@@ -42,6 +42,9 @@ class Events(val api: API = API()) {
 		@Resource("details")
 		class Details(val details: Id)
 
+		@Resource("journey")
+		class Journey(val journey: Id)
+
 		@Resource("participations")
 		class Participations(val eventId: Id) {
 			@Resource("images-visibility")

@@ -315,3 +315,13 @@ CREATE TABLE IF NOT EXISTS journeys (
 ALTER TABLE journeys
     ADD COLUMN start INTEGER REFERENCES positions(id_position) DEFAULT NULL,
     ADD COLUMN "end" INTEGER REFERENCES positions(id_position) DEFAULT NULL;
+
+-- changeset loic:8
+
+ALTER TABLE events
+    ADD COLUMN IF NOT EXISTS journey INTEGER REFERENCES journeys(id_journey) DEFAULT NULL;
+
+-- changeset loic:9
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS preview_image VARCHAR(2048) DEFAULT NULL;

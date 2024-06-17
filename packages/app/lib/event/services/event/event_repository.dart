@@ -3,6 +3,7 @@ import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/journey/type/journey.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -228,5 +229,29 @@ class EventRepository {
   Future<void> close() async {
     _eventStreamController.close();
     _eventsStreamController.close();
+  }
+
+  Future<void> addJourneyToEvent(
+    AuthSession session,
+    int eventId,
+    Journey journey,
+  ) async {
+    await eventApi.addJourneyToEvent(session, eventId, journey.id);
+
+    onEventJourneyUpdated(journey);
+  }
+
+  void onEventJourneyUpdated(Journey journey) {
+    final details = _eventStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventStreamController.add(
+      details.copyWith(
+        journey: journey.toMinimalJourney(),
+      ),
+    );
   }
 }

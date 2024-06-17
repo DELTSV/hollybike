@@ -21,6 +21,7 @@ EventDetails _$EventDetailsFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$EventDetails {
   Event get event => throw _privateConstructorUsedError;
+  MinimalJourney? get journey => throw _privateConstructorUsedError;
   EventCallerParticipation? get callerParticipation =>
       throw _privateConstructorUsedError;
   List<EventParticipation> get previewParticipants =>
@@ -41,11 +42,13 @@ abstract class $EventDetailsCopyWith<$Res> {
   @useResult
   $Res call(
       {Event event,
+      MinimalJourney? journey,
       EventCallerParticipation? callerParticipation,
       List<EventParticipation> previewParticipants,
       int previewParticipantsCount});
 
   $EventCopyWith<$Res> get event;
+  $MinimalJourneyCopyWith<$Res>? get journey;
   $EventCallerParticipationCopyWith<$Res>? get callerParticipation;
 }
 
@@ -63,6 +66,7 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
   @override
   $Res call({
     Object? event = null,
+    Object? journey = freezed,
     Object? callerParticipation = freezed,
     Object? previewParticipants = null,
     Object? previewParticipantsCount = null,
@@ -72,6 +76,10 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
           ? _value.event
           : event // ignore: cast_nullable_to_non_nullable
               as Event,
+      journey: freezed == journey
+          ? _value.journey
+          : journey // ignore: cast_nullable_to_non_nullable
+              as MinimalJourney?,
       callerParticipation: freezed == callerParticipation
           ? _value.callerParticipation
           : callerParticipation // ignore: cast_nullable_to_non_nullable
@@ -92,6 +100,18 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
   $EventCopyWith<$Res> get event {
     return $EventCopyWith<$Res>(_value.event, (value) {
       return _then(_value.copyWith(event: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $MinimalJourneyCopyWith<$Res>? get journey {
+    if (_value.journey == null) {
+      return null;
+    }
+
+    return $MinimalJourneyCopyWith<$Res>(_value.journey!, (value) {
+      return _then(_value.copyWith(journey: value) as $Val);
     });
   }
 
@@ -119,12 +139,15 @@ abstract class _$$EventDetailsImplCopyWith<$Res>
   @useResult
   $Res call(
       {Event event,
+      MinimalJourney? journey,
       EventCallerParticipation? callerParticipation,
       List<EventParticipation> previewParticipants,
       int previewParticipantsCount});
 
   @override
   $EventCopyWith<$Res> get event;
+  @override
+  $MinimalJourneyCopyWith<$Res>? get journey;
   @override
   $EventCallerParticipationCopyWith<$Res>? get callerParticipation;
 }
@@ -141,6 +164,7 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? event = null,
+    Object? journey = freezed,
     Object? callerParticipation = freezed,
     Object? previewParticipants = null,
     Object? previewParticipantsCount = null,
@@ -150,6 +174,10 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
           ? _value.event
           : event // ignore: cast_nullable_to_non_nullable
               as Event,
+      journey: freezed == journey
+          ? _value.journey
+          : journey // ignore: cast_nullable_to_non_nullable
+              as MinimalJourney?,
       callerParticipation: freezed == callerParticipation
           ? _value.callerParticipation
           : callerParticipation // ignore: cast_nullable_to_non_nullable
@@ -171,6 +199,7 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
 class _$EventDetailsImpl extends _EventDetails {
   const _$EventDetailsImpl(
       {required this.event,
+      required this.journey,
       required this.callerParticipation,
       required final List<EventParticipation> previewParticipants,
       required this.previewParticipantsCount})
@@ -182,6 +211,8 @@ class _$EventDetailsImpl extends _EventDetails {
 
   @override
   final Event event;
+  @override
+  final MinimalJourney? journey;
   @override
   final EventCallerParticipation? callerParticipation;
   final List<EventParticipation> _previewParticipants;
@@ -198,7 +229,7 @@ class _$EventDetailsImpl extends _EventDetails {
 
   @override
   String toString() {
-    return 'EventDetails(event: $event, callerParticipation: $callerParticipation, previewParticipants: $previewParticipants, previewParticipantsCount: $previewParticipantsCount)';
+    return 'EventDetails(event: $event, journey: $journey, callerParticipation: $callerParticipation, previewParticipants: $previewParticipants, previewParticipantsCount: $previewParticipantsCount)';
   }
 
   @override
@@ -207,6 +238,7 @@ class _$EventDetailsImpl extends _EventDetails {
         (other.runtimeType == runtimeType &&
             other is _$EventDetailsImpl &&
             (identical(other.event, event) || other.event == event) &&
+            (identical(other.journey, journey) || other.journey == journey) &&
             (identical(other.callerParticipation, callerParticipation) ||
                 other.callerParticipation == callerParticipation) &&
             const DeepCollectionEquality()
@@ -221,6 +253,7 @@ class _$EventDetailsImpl extends _EventDetails {
   int get hashCode => Object.hash(
       runtimeType,
       event,
+      journey,
       callerParticipation,
       const DeepCollectionEquality().hash(_previewParticipants),
       previewParticipantsCount);
@@ -242,6 +275,7 @@ class _$EventDetailsImpl extends _EventDetails {
 abstract class _EventDetails extends EventDetails {
   const factory _EventDetails(
       {required final Event event,
+      required final MinimalJourney? journey,
       required final EventCallerParticipation? callerParticipation,
       required final List<EventParticipation> previewParticipants,
       required final int previewParticipantsCount}) = _$EventDetailsImpl;
@@ -252,6 +286,8 @@ abstract class _EventDetails extends EventDetails {
 
   @override
   Event get event;
+  @override
+  MinimalJourney? get journey;
   @override
   EventCallerParticipation? get callerParticipation;
   @override

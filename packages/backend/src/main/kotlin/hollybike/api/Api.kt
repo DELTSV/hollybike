@@ -39,18 +39,10 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val eventParticipationService = EventParticipationService(db, eventService)
 	val imageMetadataService = ImageMetadataService()
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
-	val journeyService = JourneyService(db, associationService, storageService)
+	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
-
-//	positionService.subscribe("DummyCity") { positionData ->
-//		println("Received position data in DummyCity: ${positionData.positionRequest.latitude}, ${positionData.positionRequest.longitude}, ${positionData.city}")
-//	}
-//
-//	for (i in 0..10) {
-//		positionService.push("DummyCity", i, Position(i.toDouble(), i.toDouble()))
-//	}
 
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
