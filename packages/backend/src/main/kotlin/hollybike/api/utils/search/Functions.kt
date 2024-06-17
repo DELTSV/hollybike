@@ -156,7 +156,7 @@ private infix fun Column<out Any?>.equal(value: String): Op<Boolean>? =
 		}?.let { (this as Column<Instant?>) eq it }
 
 		is EntityIDColumnType<*> -> {
-			if (columnType.sqlType() == "SERIAL") {
+			if (columnType.sqlType() == "INT") {
 				value.toIntOrNull()?.let { (this as Column<Int?>) eq it }
 			} else {
 				null
