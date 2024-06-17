@@ -11,6 +11,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object Journeys: IntIdTable("journeys", "id_journey") {
 	val file = varchar("file", 2_048).nullable().default(null)
+	val previewImage = varchar("preview_image", 2_048).nullable().default(null)
 	val name = varchar("name", 1_000)
 	val createdAt = timestamp("created_at").default(Clock.System.now())
 	val creator = reference("creator", Users)
@@ -22,6 +23,8 @@ object Journeys: IntIdTable("journeys", "id_journey") {
 class Journey(id: EntityID<Int>) : IntEntity(id) {
 	var file by Journeys.file
 	val signedFile by Journeys.file.transform( { it }, { it?.let { signatureService.sign(it) }})
+	var previewImage by Journeys.previewImage
+	var signedPreviewImage by Journeys.previewImage.transform( { it }, { it?.let { signatureService.sign(it) }})
 	var name by Journeys.name
 	var createdAt by Journeys.createdAt
 	var creator by User referencedOn Journeys.creator

@@ -4,6 +4,7 @@ import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/event/types/participation/event_caller_participation.dart';
 import 'package:hollybike/event/types/participation/event_participation.dart';
 import 'package:hollybike/event/types/participation/event_role.dart';
+import 'package:hollybike/journey/type/minimal_journey.dart';
 
 import '../../shared/types/json_map.dart';
 
@@ -17,6 +18,7 @@ class EventDetails with _$EventDetails {
 
   const factory EventDetails({
     required Event event,
+    required MinimalJourney? journey,
     required EventCallerParticipation? callerParticipation,
     required List<EventParticipation> previewParticipants,
     required int previewParticipantsCount,

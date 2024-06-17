@@ -10,7 +10,7 @@ import kotlinx.serialization.json.*
 @JsonClassDiscriminator("type")
 @Serializable
 sealed class GeoJson(
-	var bbox: List<Double>? = null,
+	open var bbox: List<Double>? = null,
 )
 
 @Serializable

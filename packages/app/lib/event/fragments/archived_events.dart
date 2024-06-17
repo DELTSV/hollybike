@@ -13,7 +13,7 @@ import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
-import '../widgets/event_list.dart';
+import '../widgets/events_list/events_list.dart';
 
 class ArchivedEvents extends StatelessWidget {
   const ArchivedEvents({super.key});
@@ -78,7 +78,7 @@ class ArchivedEvents extends StatelessWidget {
             }
           }
 
-          return EventList(
+          return EventsList(
             hasMore: state.hasMore,
             events: state.events,
             onNextPageRequested: () {

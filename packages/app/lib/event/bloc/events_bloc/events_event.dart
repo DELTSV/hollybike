@@ -22,6 +22,16 @@ class RefreshEvents extends EventsEvent {
   RefreshEvents({required this.session});
 }
 
+class RefreshUserEvents extends EventsEvent {
+  final AuthSession session;
+  final int userId;
+
+  RefreshUserEvents({
+    required this.session,
+    required this.userId,
+  });
+}
+
 class CreateEvent extends EventsEvent {
   final AuthSession session;
   final EventFormData formData;

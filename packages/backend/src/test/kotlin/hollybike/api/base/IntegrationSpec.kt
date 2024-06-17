@@ -1,6 +1,7 @@
 package hollybike.api.base
 
 import hollybike.api.*
+import hollybike.api.database.configureDatabase
 import hollybike.api.services.storage.StorageMode
 import hollybike.api.stores.TokenStore
 import hollybike.api.types.invitation.TInvitation
@@ -203,7 +204,9 @@ abstract class IntegrationSpec(body: FunSpec.() -> Unit = {}) : FunSpec({
 				checkEnvironment()
 				configureSerialization()
 				forceMode(isOnPremise = baseConfig.isOnPremise)
-				api()
+				val storageService = loadStorage()
+				val db = configureDatabase()
+				api(storageService!!, db!!)
 				frontend()
 			}
 

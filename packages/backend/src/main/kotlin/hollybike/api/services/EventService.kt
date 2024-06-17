@@ -72,7 +72,7 @@ class EventService(
 		return Result.success(Unit)
 	}
 
-	private fun foundEventIfOrganizer(eventId: Int, user: User): Result<Event> {
+	private fun findEventIfOrganizer(eventId: Int, user: User): Result<Event> {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(user)
 		}.with(Event::owner, Event::participants, EventParticipation::user, Event::association).firstOrNull()
@@ -178,6 +178,11 @@ class EventService(
 				exception.message ?: "Vous ne participez pas à l'évènements"
 			)
 
+			is JourneyNotFoundException -> call.respond(
+				HttpStatusCode.NotFound,
+				exception.message ?: "Trajet introuvable"
+			)
+
 			else -> {
 				exception.printStackTrace()
 				call.respond(HttpStatusCode.InternalServerError, "Internal server error")
@@ -241,7 +246,13 @@ class EventService(
 			Events.id eq id and eventUserCondition(caller)
 		}.firstOrNull() ?: return@transaction null
 
-		Event.wrapRow(eventRow).load(Event::owner, Event::association) to try {
+		Event.wrapRow(eventRow).load(
+			Event::owner,
+			Event::association,
+			Event::journey,
+			Journey::start,
+			Journey::end
+		) to try {
 			EventParticipation.wrapRow(eventRow).load(EventParticipation::user)
 		} catch (e: Throwable) {
 			null
@@ -289,6 +300,20 @@ class EventService(
 		}
 	}
 
+	fun addJourneyToEvent(caller: User, eventId: Int, journeyId: Int): Result<Unit> = transaction(db) {
+		findEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
+			val journey = Journey.find { Journeys.id eq journeyId }.firstOrNull() ?: return@transaction Result.failure(
+				JourneyNotFoundException("Trajet $journeyId introuvable")
+			)
+
+			it.journey = journey
+
+			return@transaction Result.success(Unit)
+		}
+
+		Result.success(Unit)
+	}
+
 	fun updateEvent(
 		caller: User,
 		eventId: Int,
@@ -301,7 +326,7 @@ class EventService(
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
 
 		return transaction(db) {
-			foundEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }
+			findEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }
 				.onSuccess { event ->
 					event.apply {
 						this.name = name
@@ -363,7 +388,7 @@ class EventService(
 
 	fun uploadEventImage(caller: User, eventId: Int, image: ByteArray, imageContentType: String): Result<Event> =
 		transaction(db) {
-			foundEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
+			findEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
 				val path = "e/$eventId/i"
 
 				runBlocking {

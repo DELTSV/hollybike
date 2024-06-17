@@ -18,7 +18,7 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     required this.requestType,
   }) : super(EventInitial()) {
     on<SubscribeToEvents>(_onSubscribeToEvents);
-    on<LoadEventsNextPage>(_onLoadEventsNextPage);
+    on<LoadEventsNextPage>(onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
   }
 
@@ -40,7 +40,7 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     );
   }
 
-  Future<void> _onLoadEventsNextPage(
+  Future<void> onLoadEventsNextPage(
     LoadEventsNextPage event,
     Emitter<EventsState> emit,
   ) async {
@@ -58,17 +58,16 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
         numberOfEventsPerRequest,
       );
 
-      emit(EventPageLoadSuccess(state.copyWith(
-        hasMore: page.items.length == numberOfEventsPerRequest,
-        nextPage: state.nextPage + 1,
-      )));
+      emit(
+        EventPageLoadSuccess(
+          state.copyWith(
+            hasMore: page.items.length == numberOfEventsPerRequest,
+            nextPage: state.nextPage + 1,
+          ),
+        ),
+      );
     } catch (e) {
-      log('Error while loading next page of events', error: e);
-      emit(EventPageLoadFailure(
-        state,
-        errorMessage: 'Une erreur est survenue.',
-      ));
-      return;
+      emit(handleError(e, 'Error while loading next page of events'));
     }
   }
 
@@ -85,17 +84,24 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
         numberOfEventsPerRequest,
       );
 
-      emit(EventPageLoadSuccess(state.copyWith(
-        hasMore: page.items.length == numberOfEventsPerRequest,
-        nextPage: 1,
-      )));
+      emit(
+        EventPageLoadSuccess(
+          state.copyWith(
+            hasMore: page.items.length == numberOfEventsPerRequest,
+            nextPage: 1,
+          ),
+        ),
+      );
     } catch (e) {
-      log('Error while refreshing events', error: e);
-      emit(EventPageLoadFailure(
-        state,
-        errorMessage: 'Une erreur est survenue.',
-      ));
-      return;
+      emit(handleError(e, 'Error while refreshing events'));
     }
+  }
+
+  EventsState handleError(Object e, String logMessage) {
+    log(logMessage, error: e);
+    return EventPageLoadFailure(
+      state,
+      errorMessage: 'Une erreur est survenue.',
+    );
   }
 }

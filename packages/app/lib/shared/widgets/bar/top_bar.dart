@@ -5,12 +5,14 @@ class TopBar extends StatelessWidget {
   final Widget? prefix;
   final Widget? suffix;
   final Widget? title;
+  final bool noPadding;
 
   const TopBar({
     super.key,
     this.prefix,
     this.suffix,
     this.title,
+    this.noPadding = false,
   });
 
   @override
@@ -58,7 +60,7 @@ class TopBar extends StatelessWidget {
                     transitionOnUserGestures: true,
                     child: BarContainer(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(noPadding ? 1.5 : 16),
                         child: title,
                       ),
                     ),

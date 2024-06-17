@@ -48,6 +48,7 @@ class EventController(
 				getEventDetails()
 				getEvent()
 				createEvent()
+				addJourneyToEvent()
 				updateEvent()
 				uploadEventImage()
 				deleteEvent()
@@ -150,6 +151,22 @@ class EventController(
 				association
 			).onSuccess {
 				call.respond(HttpStatusCode.Created, TEvent(it))
+			}.onFailure {
+				eventService.handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.addJourneyToEvent() {
+		post<Events.Id.Journey> { data ->
+			val journeyId = call.receive<TAddJourneyToEvent>().journeyId
+
+			eventService.addJourneyToEvent(
+				call.user,
+				data.journey.id,
+				journeyId
+			).onSuccess {
+				call.respond(HttpStatusCode.OK)
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}

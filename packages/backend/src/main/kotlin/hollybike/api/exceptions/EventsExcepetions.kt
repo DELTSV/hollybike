@@ -11,3 +11,5 @@ class NotParticipatingToEventException(message: String? = null) : RuntimeExcepti
 class InvalidEventNameException(message: String? = null) : RuntimeException(message)
 
 class InvalidEventDescriptionException(message: String? = null) : RuntimeException(message)
+
+class JourneyNotFoundException(message: String? = null) : RuntimeException(message)
