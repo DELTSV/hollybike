@@ -19,7 +19,7 @@ class MeScreen extends StatelessWidget {
       displayNavBar: true,
       appBar: TopBar(
         prefix: TopBarActionIcon(
-          icon: Icons.swap_horiz,
+          icon: Icons.settings,
           onPressed: () => _handlePrefixClick(context),
         ),
       ),
