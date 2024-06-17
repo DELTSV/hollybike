@@ -68,14 +68,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       setState(() {
         currentTab = EventDetailsTab.values[_tabController.index];
       });
-
-      if (currentTab == EventDetailsTab.map) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
     });
 
     setState(() {
@@ -219,6 +211,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       ),
       EventDetailsMap(
         eventId: eventDetails.event.id,
+        journey: eventDetails.journey,
+        onMapLoaded: () {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
       ),
     ];
   }
