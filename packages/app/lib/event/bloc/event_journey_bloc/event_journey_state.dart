@@ -26,13 +26,15 @@ class EventJourneyState {
 
 class EventJourneyInitial extends EventJourneyState {}
 
-class EventJourneyCreationInProgress extends EventJourneyState {
-  EventJourneyCreationInProgress(EventJourneyState state)
+class EventJourneyOperationInProgress extends EventJourneyState {
+  EventJourneyOperationInProgress(EventJourneyState state)
       : super.state(state.copyWith(status: EventJourneyStatus.loading));
 }
 
-class EventJourneyCreationSuccess extends EventJourneyState {
-  EventJourneyCreationSuccess(EventJourneyState state)
+class EventJourneyOperationSuccess extends EventJourneyState {
+  final String successMessage;
+
+  EventJourneyOperationSuccess(EventJourneyState state, {required this.successMessage})
       : super.state(state.copyWith(status: EventJourneyStatus.success));
 }
 
@@ -46,10 +48,10 @@ class EventJourneyUploadSuccess extends EventJourneyState {
       : super.state(state.copyWith(status: EventJourneyStatus.success));
 }
 
-class EventJourneyFailure extends EventJourneyState {
+class EventJourneyOperationFailure extends EventJourneyState {
   final String errorMessage;
 
-  EventJourneyFailure(EventJourneyState state,
+  EventJourneyOperationFailure(EventJourneyState state,
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventJourneyStatus.error));
 }

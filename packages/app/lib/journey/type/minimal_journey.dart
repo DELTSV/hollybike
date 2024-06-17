@@ -9,6 +9,7 @@ part 'minimal_journey.g.dart';
 @freezed
 class MinimalJourney with _$MinimalJourney {
   const factory MinimalJourney({
+    required int id,
     required String? file,
     required Position? start,
     required Position? end,

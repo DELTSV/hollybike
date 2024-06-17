@@ -35,7 +35,7 @@ class JourneyLibrary extends StatelessWidget {
 
     return ListView.separated(
       itemCount: journeys.length,
-      separatorBuilder: (context, index) => const Divider(),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final journey = journeys[index];
 

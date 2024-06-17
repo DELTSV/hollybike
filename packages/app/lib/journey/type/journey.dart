@@ -24,7 +24,9 @@ class Journey with _$Journey {
   }) = _Journey;
 
   MinimalJourney toMinimalJourney() => MinimalJourney(
+    id: id,
     file: file,
+    previewImage: previewImage,
     start: start,
     end: end,
   );
