@@ -13,9 +13,6 @@ import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_bloc.dart'
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
-import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_bloc.dart';
-import 'package:hollybike/journey/service/journey_api.dart';
-import 'package:hollybike/journey/service/journey_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
@@ -28,12 +25,16 @@ import 'event/bloc/event_images_bloc/event_image_details_bloc.dart';
 import 'event/bloc/event_images_bloc/event_my_images_bloc.dart';
 import 'event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'event/bloc/events_bloc/events_event.dart';
+import 'event/bloc/events_bloc/user_events_bloc.dart';
 import 'event/services/event/event_api.dart';
 import 'event/services/event/event_repository.dart';
 import 'event/services/image/image_api.dart';
 import 'event/services/image/image_repository.dart';
 import 'event/services/participation/event_participation_api.dart';
 import 'event/services/participation/event_participation_repository.dart';
+import 'journey/bloc/journeys_library_bloc/journeys_library_bloc.dart';
+import 'journey/service/journey_api.dart';
+import 'journey/service/journey_repository.dart';
 
 void main() {
   NetworkImageCache();
@@ -135,6 +136,12 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<ArchivedEventsBloc>(
               create: (context) => ArchivedEventsBloc(
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
+              )..add(SubscribeToEvents()),
+            ),
+            BlocProvider<UserEventsBloc>(
+              create: (context) => UserEventsBloc(
                 eventRepository:
                     RepositoryProvider.of<EventRepository>(context),
               )..add(SubscribeToEvents()),

@@ -13,16 +13,17 @@ class EventApi {
     AuthSession session,
     String requestType,
     int page,
-    int eventsPerPage,
-  ) async {
+    int eventsPerPage, {
+    int? userId,
+  }) async {
     final response = await DioClient(session).dio.get(
-      '/events/$requestType',
-      queryParameters: {
-        'page': page,
-        'per_page': eventsPerPage,
-        'sort': 'start_date_time.asc',
-      },
-    );
+          '/events/$requestType',
+          queryParameters: {
+            'page': page,
+            'per_page': eventsPerPage,
+            'sort': 'start_date_time.asc',
+          }..addAll(userId == null ? {} : {"participant_id": "eq:$userId"}),
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch events");

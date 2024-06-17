@@ -1,7 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/fragments/future_events.dart';
+import 'package:hollybike/event/fragments/user_events.dart';
+import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
+import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
 import '../../shared/types/tab_description.dart';
@@ -19,47 +22,56 @@ class EventsScreen extends StatefulWidget {
 
 class _EventsScreenState extends State<EventsScreen>
     with SingleTickerProviderStateMixin {
-  late final List<TabDescription> _tabs;
   late final TabController _controller;
 
   @override
   Widget build(BuildContext context) {
-    return Hud(
-      appBar: TopBar(
-        noPadding: true,
-        title: TopBarTabDropdown(
-          controller: _controller,
-          entries: _tabs
-              .map((tab) => TabDropdownEntry(title: tab.title, icon: tab.icon))
-              .toList(),
-        ),
-      ),
-      floatingActionButton: const AddEventFloatingButton(),
-      body: TabBarView(
-        controller: _controller,
-        children: _tabs.map((tab) => tab.fragment).toList(),
-      ),
-      displayNavBar: true,
+    return BlocProvidedBuilder<ProfileBloc, ProfileState>(
+      builder: (context, bloc, state) {
+        final tabs = [
+          const TabDescription(
+            title: "Évènements",
+            icon: Icons.event,
+            fragment: FutureEvents(),
+          ),
+          TabDescription(
+            title: "Vos évènements",
+            icon: Icons.event_available,
+            fragment: UserEvents(userId: bloc.currentProfile?.id),
+          ),
+          const TabDescription(
+            title: "Archives",
+            icon: Icons.archive_outlined,
+            fragment: ArchivedEvents(),
+          ),
+        ];
+
+        return Hud(
+          appBar: TopBar(
+            noPadding: true,
+            title: TopBarTabDropdown(
+              controller: _controller,
+              entries: tabs
+                  .map((tab) =>
+                      TabDropdownEntry(title: tab.title, icon: tab.icon))
+                  .toList(),
+            ),
+          ),
+          floatingActionButton: const AddEventFloatingButton(),
+          body: TabBarView(
+            controller: _controller,
+            children: tabs.map((tab) => tab.fragment).toList(),
+          ),
+          displayNavBar: true,
+        );
+      },
     );
   }
 
   @override
   void initState() {
     super.initState();
-    _tabs = [
-      const TabDescription(
-        title: "Évènements",
-        icon: Icons.event,
-        fragment: FutureEvents(),
-      ),
-      const TabDescription(
-        title: "Archives",
-        icon: Icons.archive_outlined,
-        fragment: ArchivedEvents(),
-      ),
-    ];
-
-    _controller = TabController(length: _tabs.length, vsync: this);
+    _controller = TabController(length: 3, vsync: this);
   }
 
   @override

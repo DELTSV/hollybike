@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TabDropdownEntry {
@@ -26,12 +25,15 @@ class TopBarTabDropdown extends StatefulWidget {
 }
 
 class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
+  late final TextEditingController controller;
+
   @override
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
       child: DropdownMenu(
         initialSelection: 0,
+        controller: controller,
         textStyle: Theme.of(context).textTheme.titleMedium,
         inputDecorationTheme: const InputDecorationTheme(
           contentPadding: EdgeInsets.only(left: 16),
@@ -51,6 +53,24 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
         dropdownMenuEntries: _renderMenuEntries(),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      controller.value = TextEditingValue(
+        text: widget.entries[widget.controller.index].title,
+      );
+    });
+
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   List<DropdownMenuEntry<int>> _renderMenuEntries() {

@@ -50,12 +50,6 @@ class AppRouter extends $AppRouter {
         ),
         CustomRoute(
           guards: [AuthGuard(context: context)],
-          page: MyEventsRoute.page,
-          path: '/my-events',
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-        ),
-        CustomRoute(
-          guards: [AuthGuard(context: context)],
           page: MeRoute.page,
           path: '/me',
           transitionsBuilder: TransitionsBuilders.fadeIn,
