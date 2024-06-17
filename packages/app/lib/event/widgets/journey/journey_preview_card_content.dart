@@ -16,50 +16,46 @@ class JourneyPreviewCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 1,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "349km",
-                      style: Theme.of(context).textTheme.titleMedium,
-                      softWrap: true,
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                ),
-                const Spacer(),
-                _getJourneyLocation(context),
-              ],
-            ),
-          ),
-          const SizedBox(
-            width: 12,
-          ),
-          Expanded(
-            flex: 1,
-            child: Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: JourneyImage(
-                  loadingData: loadingData,
-                  journeyId: journey.id,
-                  imageUrl: journey.previewImage,
-                ),
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          flex: 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "349km",
+                    style: Theme.of(context).textTheme.titleMedium,
+                    softWrap: true,
+                  ),
+                  const SizedBox(width: 8),
+                ],
               ),
+              const Spacer(),
+              _getJourneyLocation(context),
+            ],
+          ),
+        ),
+        const SizedBox(
+          width: 12,
+        ),
+        Expanded(
+          flex: 1,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: JourneyImage(
+              loadingData: loadingData,
+              journeyId: journey.id,
+              imageUrl: journey.previewImage,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

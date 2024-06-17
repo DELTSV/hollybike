@@ -19,9 +19,7 @@ class JourneyImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrl == null) {
       if (loadingData) {
-        return const Expanded(
-          child: GradientLoadingPlaceholder(),
-        );
+        return const GradientLoadingPlaceholder();
       }
 
       return const Center(
