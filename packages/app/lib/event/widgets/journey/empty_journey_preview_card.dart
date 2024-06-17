@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_state.dart';
 import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/journey/utils/get_journey_file_and_upload_to_event.dart';
 import 'package:hollybike/journey/widgets/journey_library_modal.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:lottie/lottie.dart';
@@ -99,59 +100,14 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
         showModalBottomSheet<void>(
           context: context,
           builder: (BuildContext context) {
-            return const JourneyLibraryModal();
+            return JourneyLibraryModal(
+              event: event,
+            );
           },
         );
         break;
       case NewJourneyType.file:
-        final FilePickerResult? result = await FilePicker.platform.pickFiles(
-          type: FileType.any,
-        );
-
-        if (result == null) {
-          return;
-        }
-
-        final extension = result.files.single.extension;
-
-        if (!context.mounted) return;
-
-        if (extension != 'gpx' && extension != 'geojson') {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("Fichier invalide"),
-                content: const Text(
-                  "Le fichier doit être au format GPX ou GEOJSON",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text("Ok"),
-                  ),
-                ],
-              );
-            },
-          );
-
-          return;
-        }
-
-        File file = File(result.files.single.path!);
-
-        withCurrentSession(context, (session) async {
-          BlocProvider.of<EventJourneyBloc>(context).add(
-            UploadJourneyFileToEvent(
-              session: session,
-              eventId: event.id,
-              name: event.name,
-              file: file,
-            ),
-          );
-        });
+        getJourneyFileAndUploadToEvent(context, event);
     }
   }
 }

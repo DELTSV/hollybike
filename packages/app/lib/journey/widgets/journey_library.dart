@@ -3,10 +3,12 @@ import 'package:hollybike/journey/type/journey.dart';
 
 class JourneyLibrary extends StatelessWidget {
   final List<Journey> journeys;
+  final void Function() onAddJourney;
 
   const JourneyLibrary({
     super.key,
     required this.journeys,
+    required this.onAddJourney,
   });
 
   @override
@@ -19,7 +21,7 @@ class JourneyLibrary extends StatelessWidget {
             const Text('Aucun parcours disponible.'),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onAddJourney,
               child: const Text('Ajouter un fichier GPX/GEOJSON'),
             ),
           ],
