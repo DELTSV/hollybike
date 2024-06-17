@@ -30,13 +30,9 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<EventJourneyBloc, EventJourneyState>(
       listener: (context, state) {
-        if (state is EventJourneyCreationSuccess) {
-          print('EventJourneyCreationSuccess');
-        }
+        if (state is EventJourneyCreationSuccess) {}
 
-        if (state is EventJourneyUploadSuccess) {
-          print('EventJourneyUploadSuccess');
-        }
+        if (state is EventJourneyUploadSuccess) {}
       },
       child: DottedBorder(
         strokeWidth: 2,
@@ -118,14 +114,17 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
 
         final extension = result.files.single.extension;
 
+        if (!context.mounted) return;
+
         if (extension != 'gpx' && extension != 'geojson') {
           showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
                 title: const Text("Fichier invalide"),
-                content:
-                    const Text("Le fichier doit être au format GPX ou GEOJSON"),
+                content: const Text(
+                  "Le fichier doit être au format GPX ou GEOJSON",
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -153,8 +152,6 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
             ),
           );
         });
-
-        print('Importer un fichier GPX/GEOJSON');
     }
   }
 }

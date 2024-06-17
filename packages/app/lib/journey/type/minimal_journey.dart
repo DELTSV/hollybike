@@ -1,7 +1,5 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/shared/types/position.dart';
-import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../shared/types/json_map.dart';
 
