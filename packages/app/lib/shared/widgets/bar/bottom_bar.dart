@@ -31,10 +31,6 @@ class _BottomBarState extends State<BottomBar> {
       route: EventsRoute(),
     ),
     const NavRoute(
-      routeName: MyEventsRoute.name,
-      route: MyEventsRoute(),
-    ),
-    const NavRoute(
       routeName: MeRoute.name,
       route: MeRoute(),
     ),
@@ -66,10 +62,6 @@ class _BottomBarState extends State<BottomBar> {
             BottomBarIconButton(
               icon: Icons.event,
               label: 'Événements',
-            ),
-            BottomBarIconButton(
-              icon: Icons.event_available,
-              label: 'Mes événements',
             ),
             ProfileBottomBarButton(),
           ],

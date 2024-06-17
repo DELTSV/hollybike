@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
@@ -15,18 +15,34 @@ import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
 import '../widgets/events_list/events_list.dart';
 
-class ArchivedEvents extends StatelessWidget {
-  const ArchivedEvents({super.key});
+class UserEvents extends StatefulWidget {
+  final int? userId;
+
+  const UserEvents({
+    super.key,
+    required this.userId,
+  });
+
+  @override
+  State<UserEvents> createState() => _UserEventsState();
+}
+
+class _UserEventsState extends State<UserEvents> {
+  @override
+  void initState() {
+    super.initState();
+
+    _refreshEvents(context, widget.userId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    _refreshEvents(context);
     return MultiBlocListener(
       listeners: [
         BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSessionSwitched) {
-              _refreshEvents(context);
+              _refreshEvents(context, widget.userId);
             }
           },
         ),
@@ -39,7 +55,7 @@ class ArchivedEvents extends StatelessWidget {
                   context, state.createdEvent.toMinimalEvent(), false);
 
               Future.delayed(const Duration(milliseconds: 200), () {
-                _refreshEvents(context);
+                _refreshEvents(context, widget.userId);
               });
             });
           }
@@ -52,14 +68,20 @@ class ArchivedEvents extends StatelessWidget {
           listener: (context, state) {
             if (state is DeleteEventSuccess) {
               Toast.showSuccessToast(context, "Événement supprimé");
-              _refreshEvents(context);
+              _refreshEvents(context, widget.userId);
             }
           },
         ),
       ],
-      child: BlocBuilder<ArchivedEventsBloc, EventsState>(
+      child: BlocBuilder<UserEventsBloc, EventsState>(
         builder: (context, state) {
-          if (state.events.isEmpty) {
+          if (widget.userId == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          else if (state.events.isEmpty) {
             switch (state.status) {
               case EventStatus.initial:
                 return const SizedBox();
@@ -92,7 +114,7 @@ class ArchivedEvents extends StatelessWidget {
               );
             },
             onRefreshRequested: () {
-              _refreshEvents(context);
+              _refreshEvents(context, widget.userId);
             },
           );
         },
@@ -102,15 +124,20 @@ class ArchivedEvents extends StatelessWidget {
 
   void _loadNextPage(BuildContext context) {
     withCurrentSession(context, (session) {
-      context
-          .read<ArchivedEventsBloc>()
-          .add(LoadEventsNextPage(session: session));
+      context.read<UserEventsBloc>().add(LoadEventsNextPage(session: session));
     });
   }
 
-  void _refreshEvents(BuildContext context) {
+  void _refreshEvents(BuildContext context, int? userId) {
+    if (userId == null) return;
+
     withCurrentSession(context, (session) {
-      context.read<ArchivedEventsBloc>().add(RefreshEvents(session: session));
+      context.read<UserEventsBloc>().add(
+            RefreshUserEvents(
+              session: session,
+              userId: userId,
+            ),
+          );
     });
   }
 

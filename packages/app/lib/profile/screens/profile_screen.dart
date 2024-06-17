@@ -1,13 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
-import 'package:hollybike/profile/widgets/profile_page/profile_page.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../shared/widgets/bar/top_bar.dart';
 import '../../shared/widgets/hud/hud.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/profile_page/profile_page.dart';
 
 @RoutePage()
 class ProfileScreen extends StatelessWidget {
@@ -26,11 +25,10 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) {
-          if (id == null) return const PlaceholderProfilePage();
-
-          return ProfilePage(profile: bloc.getProfileById(int.parse(id as String)));
-        },
+        builder: (context, bloc, state) => ProfilePage(
+          profile:
+              id == null ? null : bloc.getProfileById(int.parse(id as String)),
+        ),
       ),
     );
   }

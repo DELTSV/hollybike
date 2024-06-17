@@ -29,8 +29,9 @@ class EventRepository {
     AuthSession session,
     String requestType,
     int page,
-    int eventsPerPage,
-  ) async {
+    int eventsPerPage, {
+    int? userId,
+  }) async {
     final pageResult = await eventApi.getEvents(
       session,
       requestType,
@@ -48,13 +49,15 @@ class EventRepository {
   Future<PaginatedList<MinimalEvent>> refreshEvents(
     AuthSession session,
     String requestType,
-    int eventsPerPage,
-  ) async {
+    int eventsPerPage, {
+    int? userId,
+  }) async {
     final pageResult = await eventApi.getEvents(
       session,
       requestType,
       0,
       eventsPerPage,
+      userId: userId,
     );
 
     _eventsStreamController.add(
