@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/journey/type/journey.dart';
 
+import 'journey_library_card.dart';
+
 class JourneyLibrary extends StatelessWidget {
   final List<Journey> journeys;
+  final void Function() onAddJourney;
+  final void Function(Journey) onSelected;
 
   const JourneyLibrary({
     super.key,
     required this.journeys,
+    required this.onAddJourney,
+    required this.onSelected,
   });
 
   @override
@@ -19,7 +25,7 @@ class JourneyLibrary extends StatelessWidget {
             const Text('Aucun parcours disponible.'),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onAddJourney,
               child: const Text('Ajouter un fichier GPX/GEOJSON'),
             ),
           ],
@@ -27,10 +33,17 @@ class JourneyLibrary extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      child: Center(
-        child: Text('Journey Library ${journeys.length}'),
-      ),
+    return ListView.separated(
+      itemCount: journeys.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final journey = journeys[index];
+
+        return JourneyLibraryCard(
+          journey: journey,
+          onSelected: onSelected,
+        );
+      },
     );
   }
 }

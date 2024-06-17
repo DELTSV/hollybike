@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/journey/service/journey_repository.dart';
 
@@ -15,13 +17,14 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
     required this.eventRepository,
   }) : super(EventJourneyInitial()) {
     on<UploadJourneyFileToEvent>(_onUploadJourneyFileToEvent);
+    on<AttachJourneyToEvent>(_onAttachJourneyToEvent);
   }
 
   _onUploadJourneyFileToEvent(
     UploadJourneyFileToEvent event,
     Emitter<EventJourneyState> emit,
   ) async {
-    emit(EventJourneyCreationInProgress(state));
+    emit(EventJourneyOperationInProgress(state));
 
     Journey journey;
 
@@ -37,9 +40,9 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
         journey,
       );
 
-      emit(EventJourneyCreationSuccess(state));
+      emit(EventJourneyOperationSuccess(state, successMessage: 'Parcours créé'));
     } catch (e) {
-      emit(EventJourneyFailure(
+      emit(EventJourneyOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -59,11 +62,37 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
       emit(EventJourneyUploadSuccess(state));
     } catch (e) {
-      emit(EventJourneyFailure(
+      emit(EventJourneyOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
       return;
+    }
+  }
+
+  Future<void> _onAttachJourneyToEvent(
+      AttachJourneyToEvent event,
+      Emitter<EventJourneyState> emit,
+      ) async {
+    emit(EventJourneyOperationInProgress(state));
+
+    try {
+      await eventRepository.addJourneyToEvent(
+        event.session,
+        event.eventId,
+        event.journey,
+      );
+
+      emit(EventJourneyOperationSuccess(
+        state,
+        successMessage: 'Parcours ajouté à l\'évènement',
+      ));
+    } catch (e) {
+      log('Error while attaching journey to event', error: e);
+      emit(EventJourneyOperationFailure(
+        state,
+        errorMessage: 'Impossible d\'ajouter le parcours à l\'évènement',
+      ));
     }
   }
 }

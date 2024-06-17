@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../auth/types/auth_session.dart';
 import '../../types/event_form_data.dart';
 

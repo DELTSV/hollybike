@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_bloc.dart';
+import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_state.dart';
 import 'package:hollybike/journey/widgets/journey_library.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
+import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../bloc/journeys_library_bloc/journeys_library_bloc.dart';
+import '../type/journey.dart';
+import '../utils/get_journey_file_and_upload_to_event.dart';
 
 class JourneyLibraryModal extends StatefulWidget {
-  const JourneyLibraryModal({super.key});
+  final Event event;
+
+  const JourneyLibraryModal({super.key, required this.event});
 
   @override
   State<JourneyLibraryModal> createState() => _JourneyLibraryModalState();
@@ -78,8 +85,9 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
                     const SizedBox(height: 16),
                     Flexible(
                       child: SizedBox(
-                        height: 200,
-                        child: BlocBuilder<JourneysLibraryBloc, JourneysLibraryState>(
+                        height: 250,
+                        child: BlocBuilder<JourneysLibraryBloc,
+                            JourneysLibraryState>(
                           builder: (context, state) {
                             if (state is JourneysLibraryPageLoadInProgress) {
                               return const Center(
@@ -88,6 +96,8 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
                             }
 
                             return JourneyLibrary(
+                              onAddJourney: _onAddJourney,
+                              onSelected: _onSelectedJourney,
                               journeys: state.journeys,
                             );
                           },
@@ -102,5 +112,25 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
         ),
       ],
     );
+  }
+
+  void _onAddJourney() async {
+    final file = await getJourneyFileAndUploadToEvent(context, widget.event);
+
+    if (file != null && mounted) Navigator.of(context).pop();
+  }
+
+  void _onSelectedJourney(Journey journey) {
+    withCurrentSession(context, (session) {
+      BlocProvider.of<EventJourneyBloc>(context).add(
+        AttachJourneyToEvent(
+          session: session,
+          journey: journey,
+          eventId: widget.event.id,
+        ),
+      );
+    });
+
+    Navigator.of(context).pop();
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/shared/types/position.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
@@ -18,13 +17,16 @@ class Journey with _$Journey {
     required String name,
     required String? file,
     @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'preview_image') String? previewImage,
     required MinimalUser creator,
     required Position? start,
     required Position? end,
   }) = _Journey;
 
   MinimalJourney toMinimalJourney() => MinimalJourney(
+    id: id,
     file: file,
+    previewImage: previewImage,
     start: start,
     end: end,
   );

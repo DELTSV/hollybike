@@ -8,6 +8,7 @@ part of 'minimal_journey.dart';
 
 _$MinimalJourneyImpl _$$MinimalJourneyImplFromJson(Map<String, dynamic> json) =>
     _$MinimalJourneyImpl(
+      id: (json['id'] as num).toInt(),
       file: json['file'] as String?,
       start: json['start'] == null
           ? null
@@ -15,12 +16,15 @@ _$MinimalJourneyImpl _$$MinimalJourneyImplFromJson(Map<String, dynamic> json) =>
       end: json['end'] == null
           ? null
           : Position.fromJson(json['end'] as Map<String, dynamic>),
+      previewImage: json['preview_image'] as String?,
     );
 
 Map<String, dynamic> _$$MinimalJourneyImplToJson(
         _$MinimalJourneyImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'file': instance.file,
       'start': instance.start,
       'end': instance.end,
+      'preview_image': instance.previewImage,
     };
