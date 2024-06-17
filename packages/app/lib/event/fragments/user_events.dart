@@ -13,7 +13,7 @@ import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
-import '../widgets/event_list.dart';
+import '../widgets/events_list/events_list.dart';
 
 class UserEvents extends StatefulWidget {
   final int? userId;
@@ -100,7 +100,7 @@ class _UserEventsState extends State<UserEvents> {
             }
           }
 
-          return EventList(
+          return EventsList(
             hasMore: state.hasMore,
             events: state.events,
             onNextPageRequested: () {

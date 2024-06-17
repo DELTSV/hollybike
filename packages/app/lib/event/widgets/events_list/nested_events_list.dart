@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/event_preview_card.dart';
 
-import '../../../event/types/minimal_event.dart';
-import '../../../event/widgets/event_list.dart';
+import '../../types/minimal_event.dart';
+import 'events_sections_list.dart';
 import '../../../shared/utils/dates.dart';
 import '../../../shared/widgets/pinned_header_delegate.dart';
 
-class ProfileEventsList extends StatelessWidget {
+class NestedEventsList extends StatelessWidget {
   final List<MinimalEvent> events;
   final void Function(MinimalEvent) onEventTap;
 
-  const ProfileEventsList({
+  const NestedEventsList({
     super.key,
     required this.events,
     required this.onEventTap,

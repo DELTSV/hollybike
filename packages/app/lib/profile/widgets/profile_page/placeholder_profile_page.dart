@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/widgets/profile_banner/placeholder_profile_banner.dart';
 import 'package:hollybike/profile/widgets/profile_description/placeholder_profile_description.dart';
-import 'package:hollybike/shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
 import 'package:hollybike/shared/widgets/loading_placeholders/tabs_loading_placeholder.dart';
-import 'package:hollybike/shared/widgets/profile_pictures/loading_profile_picture.dart';
 
 class PlaceholderProfilePage extends StatefulWidget {
   const PlaceholderProfilePage({

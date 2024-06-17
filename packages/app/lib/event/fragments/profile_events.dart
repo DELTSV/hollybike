@@ -1,75 +1,66 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
+import 'package:hollybike/event/widgets/events_list/events_sections_list.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
-import '../../shared/utils/with_current_session.dart';
-import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
-import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
-import '../widgets/events_list/events_list.dart';
+import '../../shared/utils/with_current_session.dart';
+import '../../shared/widgets/app_toast.dart';
 
-class FutureEvents extends StatefulWidget {
-  const FutureEvents({super.key});
+class ProfileEvents extends StatefulWidget {
+  final int? userId;
+  final GlobalKey<NestedScrollViewState> scrollView;
+
+  const ProfileEvents({
+    super.key,
+    required this.userId,
+    required this.scrollView,
+  });
 
   @override
-  State<FutureEvents> createState() => _FutureEventsState();
+  State<ProfileEvents> createState() => _ProfileEventsState();
 }
 
-class _FutureEventsState extends State<FutureEvents> {
-  @override
-  void initState() {
-    super.initState();
-
-    _refreshEvents(context);
-  }
-
+class _ProfileEventsState extends State<ProfileEvents> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
+    return RefreshIndicator(
+      triggerMode: RefreshIndicatorTriggerMode.anywhere,
+      onRefresh: () async {
+        _refreshEvents(context, widget.userId);
+      },
+      child: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthSessionSwitched) {
-                _refreshEvents(context);
+                _refreshEvents(context, widget.userId);
               }
             },
           ),
-          BlocListener<FutureEventsBloc, EventsState>(listener: (context, state) {
-            if (state is EventCreationSuccess) {
-              Toast.showSuccessToast(context, "Événement créé");
-
-              Future.delayed(const Duration(milliseconds: 50), () {
-                _navigateToEventDetails(
-                    context, state.createdEvent.toMinimalEvent(), false);
-
-                Future.delayed(const Duration(milliseconds: 200), () {
-                  _refreshEvents(context);
-                });
-              });
-            }
-
-            if (state is EventCreationFailure) {
-              Toast.showErrorToast(context, state.errorMessage);
-            }
-          }),
           BlocListener<EventDetailsBloc, EventDetailsState>(
             listener: (context, state) {
               if (state is DeleteEventSuccess) {
                 Toast.showSuccessToast(context, "Événement supprimé");
-                _refreshEvents(context);
+                _refreshEvents(context, widget.userId);
               }
             },
           ),
         ],
-        child: BlocBuilder<FutureEventsBloc, EventsState>(
+        child: BlocBuilder<UserEventsBloc, EventsState>(
           builder: (context, state) {
-            if (state.events.isEmpty) {
+            if (widget.userId == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state.events.isEmpty) {
               switch (state.status) {
                 case EventStatus.initial:
                   return const SizedBox();
@@ -88,12 +79,8 @@ class _FutureEventsState extends State<FutureEvents> {
               }
             }
 
-            return EventsList(
-              hasMore: state.hasMore,
+            return EventsSectionsList(
               events: state.events,
-              onNextPageRequested: () {
-                _loadNextPage(context);
-              },
               onEventTap: (event) {
                 _navigateToEventDetails(
                   context,
@@ -101,30 +88,54 @@ class _FutureEventsState extends State<FutureEvents> {
                   true,
                 );
               },
-              onRefreshRequested: () {
-                _refreshEvents(context);
-              },
+              hasMore: state.hasMore,
             );
           },
         ),
-      );
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshEvents(context, widget.userId);
+
+    final scrollController = widget.scrollView.currentState!.innerController;
+    scrollController.addListener(() {
+      var nextPageTrigger =
+          0.8 * scrollController.position.maxScrollExtent;
+
+      if (scrollController.position.pixels > nextPageTrigger) {
+        _loadNextPage(context);
+      }
+    });
   }
 
   void _loadNextPage(BuildContext context) {
     withCurrentSession(context, (session) {
-      context.read<FutureEventsBloc>().add(LoadEventsNextPage(session: session));
+      context.read<UserEventsBloc>().add(LoadEventsNextPage(session: session));
     });
   }
 
-  void _refreshEvents(BuildContext context) {
+  void _refreshEvents(BuildContext context, int? userId) {
+    if (userId == null) return;
+
     withCurrentSession(context, (session) {
-      context.read<FutureEventsBloc>().add(RefreshEvents(session: session));
+      context.read<UserEventsBloc>().add(
+            RefreshUserEvents(
+              session: session,
+              userId: userId,
+            ),
+          );
     });
   }
 
-  void _navigateToEventDetails(BuildContext context,
-      MinimalEvent event,
-      bool animate,) {
+  void _navigateToEventDetails(
+    BuildContext context,
+    MinimalEvent event,
+    bool animate,
+  ) {
     // delay 200 ms to allow the animation to finish
     Future.delayed(const Duration(milliseconds: 200), () {
       context.router.push(EventDetailsRoute(
