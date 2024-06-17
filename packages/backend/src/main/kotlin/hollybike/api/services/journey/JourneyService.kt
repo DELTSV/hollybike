@@ -95,7 +95,7 @@ class JourneyService(
 				this.name = new.name
 				this.association = association
 				this.creator = caller
-			}
+			}.load(Journey::creator, Journey::association, Journey::start, Journey::end)
 		}
 
 		return Result.success(journey)
