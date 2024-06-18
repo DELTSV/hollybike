@@ -53,7 +53,15 @@ class AuthService(
 		role: EUserScope,
 		association: Int,
 		invitation: Int
-	): Boolean = getLinkSignature(host, role, association, invitation) == signature
+	): Boolean {
+		val sign = getLinkSignature(host, role, association, invitation)
+
+		println("signature: $signature")
+		println("sign: $sign")
+		println("host: $host, role: $role, association: $association, invitation: $invitation")
+		println("same: ${sign == signature}")
+		return sign == signature
+	}
 
 	@OptIn(ExperimentalEncodingApi::class)
 	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
