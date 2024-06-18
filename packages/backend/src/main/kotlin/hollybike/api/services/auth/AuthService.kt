@@ -36,6 +36,7 @@ class AuthService(
 	private val mac = Mac.getInstance("HmacSHA256").apply {
 		init(key)
 	}
+
 	@OptIn(ExperimentalEncodingApi::class)
 	private val encoder = Base64.UrlSafe
 
@@ -53,15 +54,7 @@ class AuthService(
 		role: EUserScope,
 		association: Int,
 		invitation: Int
-	): Boolean {
-		val sign = getLinkSignature(host, role, association, invitation)
-
-		println("signature: $signature")
-		println("sign: $sign")
-		println("host: $host, role: $role, association: $association, invitation: $invitation")
-		println("same: ${sign == signature}")
-		return sign == signature
-	}
+	): Boolean = getLinkSignature(host, role, association, invitation) == signature
 
 	@OptIn(ExperimentalEncodingApi::class)
 	private fun getLinkSignature(host: String, role: EUserScope, association: Int, invitation: Int): String {
@@ -69,9 +62,9 @@ class AuthService(
 		return encoder.encode(mac.doFinal(value.toByteArray()))
 	}
 
-	fun generateLink(caller: User, host: String, invitation: Invitation): String {
+	fun generateLink(host: String, invitation: Invitation): String {
 		val sign = getLinkSignature(host, invitation.role, invitation.association.id.value, invitation.id.value)
-		return "https://hollybike.fr/invite?host=$host&role=${invitation.role}&association=${caller.association.id}&invitation=${invitation.id.value}&verify=$sign"
+		return "https://hollybike.fr/invite?host=$host&role=${invitation.role}&association=${invitation.association.id}&invitation=${invitation.id.value}&verify=$sign"
 	}
 
 	fun login(login: TLogin): Result<String> {

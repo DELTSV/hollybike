@@ -162,7 +162,7 @@ class InvitationTest : IntegrationSpec({
 					auth(UserStore.admin1)
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "hollybike.api.repository.Invitation inconnue"
+					bodyAsText() shouldBe "Invitation inconnue"
 				}
 			}
 		}

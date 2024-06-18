@@ -31,7 +31,7 @@ class AuthenticationController(
 			authService.login(login).onSuccess {
 				call.respond(TAuthInfo(it))
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais mot de passe")
 					is UserDisabled -> call.respond(HttpStatusCode.Forbidden)
@@ -47,7 +47,7 @@ class AuthenticationController(
 			authService.signup(host, signup).onSuccess {
 				call.respond(TAuthInfo(it))
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalide")
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Aucune invitation valide")

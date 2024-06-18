@@ -44,7 +44,7 @@ class InvitationController(
 				getMetaData()
 				createInvitation()
 				disableInvitation()
-				if(mailSender != null) {
+				if (mailSender != null) {
 					sendMail()
 				}
 			}
@@ -62,23 +62,23 @@ class InvitationController(
 			}
 			invitationService.getAll(call.user, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
-					if(i.status == EInvitationStatus.Enabled) {
-						TInvitation(i, authService.generateLink(call.user, host, i))
+					if (i.status == EInvitationStatus.Enabled) {
+						TInvitation(i, authService.generateLink(host, i))
 					} else {
 						TInvitation(i)
 					}
 				}
 				call.respond(
 					TLists(
-					dto,
-					searchParam.page,
-					ceil(count.toDouble() / searchParam.perPage).toInt(),
-					searchParam.perPage,
-					count.toInt()
-				)
+						dto,
+						searchParam.page,
+						ceil(count.toDouble() / searchParam.perPage).toInt(),
+						searchParam.perPage,
+						count.toInt()
+					)
 				)
 			}.onFailure { e ->
-				when(e) {
+				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
@@ -104,12 +104,16 @@ class InvitationController(
 				invitationCreation.maxUses,
 				invitationCreation.expiration
 			).onSuccess {
-				call.respond(TInvitation(it, authService.generateLink(call.user, host, it)))
+				call.respond(TInvitation(it, authService.generateLink(host, it)))
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
-					is InvitationAlreadyExist -> call.respond(HttpStatusCode.Conflict, "Une invitation avec ces paramètres existe déjà")
+					is InvitationAlreadyExist -> call.respond(
+						HttpStatusCode.Conflict,
+						"Une invitation avec ces paramètres existe déjà"
+					)
+
 					else -> {
 						it.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)
@@ -126,7 +130,7 @@ class InvitationController(
 			val dest = call.receive<TMailDest>()
 
 			invitationService.getValidInvitation(it.id.id)?.let { invitation ->
-				val link = authService.generateLink(call.user, host, invitation)
+				val link = authService.generateLink(host, invitation)
 				try {
 					mailSender?.linkMail(link, dest.dest, invitation.association.name)?.join()
 					call.respond("Mail envoyé")
@@ -141,12 +145,16 @@ class InvitationController(
 
 	private fun Route.disableInvitation() {
 		patch<Invitation.Id.Disable>(EUserScope.Admin) {
-			invitationService.disableInvitation(call.user, it.id.id).onSuccess {  i ->
+			invitationService.disableInvitation(call.user, it.id.id).onSuccess { i ->
 				call.respond(TInvitation(i))
-			}.onFailure {  e ->
-				when(e) {
+			}.onFailure { e ->
+				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "hollybike.api.repository.Invitation inconnue")
+					is InvitationNotFoundException -> call.respond(
+						HttpStatusCode.NotFound,
+						"Invitation inconnue"
+					)
+
 					else -> {
 						e.printStackTrace()
 						call.respond(HttpStatusCode.InternalServerError)
