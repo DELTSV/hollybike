@@ -129,6 +129,7 @@ class EventService(
 			participant,
 			{ participant[Users.id] },
 			{ participation[EventParticipations.user] },
+			{ participation[EventParticipations.isJoined] eq true }
 		).select(Events.columns + Users.columns + Associations.columns)
 			.applyParam(searchParam, pagination).withDistinct()
 

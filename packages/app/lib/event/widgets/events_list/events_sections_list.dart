@@ -32,6 +32,9 @@ class EventsSectionsList extends StatelessWidget {
 
     return CustomScrollView(
       controller: controller,
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       slivers: sections
           .map(
             (section) => SliverMainAxisGroup(
