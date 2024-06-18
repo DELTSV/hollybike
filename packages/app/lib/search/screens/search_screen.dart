@@ -13,7 +13,7 @@ class SearchScreen extends StatelessWidget {
     return Hud(
       appBar: TopBar(
         title: TopBarSearchInput(
-          onSearchRequested: (text) => print(text),
+          onSearchRequested: (_) {},
         ),
         noPadding: true,
       ),
