@@ -32,7 +32,7 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
     return Material(
       type: MaterialType.transparency,
       child: DropdownMenu(
-        initialSelection: 0,
+        initialSelection: widget.controller.index,
         controller: controller,
         textStyle: Theme.of(context).textTheme.titleMedium,
         inputDecorationTheme: const InputDecorationTheme(
@@ -58,19 +58,21 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(() {
-      controller.value = TextEditingValue(
-        text: widget.entries[widget.controller.index].title,
-      );
-    });
-
     controller = TextEditingController();
+    widget.controller.addListener(_updateTitle);
   }
 
   @override
   void dispose() {
     controller.dispose();
+    widget.controller.removeListener(_updateTitle);
     super.dispose();
+  }
+
+  void _updateTitle() {
+    controller.value = TextEditingValue(
+      text: widget.entries[widget.controller.index].title,
+    );
   }
 
   List<DropdownMenuEntry<int>> _renderMenuEntries() {

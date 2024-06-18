@@ -18,7 +18,6 @@ import 'package:hollybike/event/screens/image/event_image_view_screen.dart'
     as _i3;
 import 'package:hollybike/event/screens/image/event_my_image_view_screen.dart'
     as _i4;
-import 'package:hollybike/event/screens/my_events_screen.dart' as _i10;
 import 'package:hollybike/event/screens/participations/event_candidates_screen.dart'
     as _i1;
 import 'package:hollybike/event/screens/participations/event_participations_screen.dart'
@@ -27,9 +26,10 @@ import 'package:hollybike/event/types/event_details.dart' as _i17;
 import 'package:hollybike/event/types/minimal_event.dart' as _i16;
 import 'package:hollybike/event/types/participation/event_participation.dart'
     as _i18;
-import 'package:hollybike/notification/routes/notification_route.dart' as _i11;
+import 'package:hollybike/notification/routes/notification_route.dart' as _i10;
 import 'package:hollybike/profile/screens/me_screen.dart' as _i9;
-import 'package:hollybike/profile/screens/profile_screen.dart' as _i12;
+import 'package:hollybike/profile/screens/profile_screen.dart' as _i11;
+import 'package:hollybike/search/screens/search_screen.dart' as _i12;
 import 'package:hollybike/shared/routes/loading_route.dart' as _i7;
 
 abstract class $AppRouter extends _i14.RootStackRouter {
@@ -122,16 +122,10 @@ abstract class $AppRouter extends _i14.RootStackRouter {
         child: const _i9.MeScreen(),
       );
     },
-    MyEventsRoute.name: (routeData) {
-      return _i14.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i10.MyEventsScreen(),
-      );
-    },
     NotificationRoute.name: (routeData) {
       return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i11.NotificationRoute(),
+        child: const _i10.NotificationRoute(),
       );
     },
     ProfileRoute.name: (routeData) {
@@ -140,10 +134,16 @@ abstract class $AppRouter extends _i14.RootStackRouter {
           orElse: () => ProfileRouteArgs(id: pathParams.optString('id')));
       return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i12.ProfileScreen(
+        child: _i11.ProfileScreen(
           key: args.key,
           id: args.id,
         ),
+      );
+    },
+    SearchRoute.name: (routeData) {
+      return _i14.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i12.SearchScreen(),
       );
     },
     SignupRoute.name: (routeData) {
@@ -470,21 +470,7 @@ class MeRoute extends _i14.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i10.MyEventsScreen]
-class MyEventsRoute extends _i14.PageRouteInfo<void> {
-  const MyEventsRoute({List<_i14.PageRouteInfo>? children})
-      : super(
-          MyEventsRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'MyEventsRoute';
-
-  static const _i14.PageInfo<void> page = _i14.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i11.NotificationRoute]
+/// [_i10.NotificationRoute]
 class NotificationRoute extends _i14.PageRouteInfo<void> {
   const NotificationRoute({List<_i14.PageRouteInfo>? children})
       : super(
@@ -498,7 +484,7 @@ class NotificationRoute extends _i14.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i12.ProfileScreen]
+/// [_i11.ProfileScreen]
 class ProfileRoute extends _i14.PageRouteInfo<ProfileRouteArgs> {
   ProfileRoute({
     _i15.Key? key,
@@ -534,6 +520,20 @@ class ProfileRouteArgs {
   String toString() {
     return 'ProfileRouteArgs{key: $key, id: $id}';
   }
+}
+
+/// generated route for
+/// [_i12.SearchScreen]
+class SearchRoute extends _i14.PageRouteInfo<void> {
+  const SearchRoute({List<_i14.PageRouteInfo>? children})
+      : super(
+          SearchRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SearchRoute';
+
+  static const _i14.PageInfo<void> page = _i14.PageInfo<void>(name);
 }
 
 /// generated route for
