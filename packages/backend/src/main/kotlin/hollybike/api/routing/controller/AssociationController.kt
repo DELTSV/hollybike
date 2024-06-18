@@ -262,8 +262,16 @@ class AssociationController(
 			}.onFailure {
 				when (it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
-					is AssociationOnboardingUserNotEditedException -> call.respond(HttpStatusCode.BadRequest, "Vous devez éditer le user avant ça")
-					is AssociationsOnboardingAssociationNotEditedException -> call.respond(HttpStatusCode.BadRequest, "Vous devez éditer votre association avant ça")
+					is AssociationOnboardingUserNotEditedException -> call.respond(
+						HttpStatusCode.BadRequest,
+						"Vous devez éditer le user avant ça"
+					)
+
+					is AssociationsOnboardingAssociationNotEditedException -> call.respond(
+						HttpStatusCode.BadRequest,
+						"Vous devez éditer votre association avant ça"
+					)
+
 					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
 			}
@@ -295,21 +303,23 @@ class AssociationController(
 			}
 			invitationService.getAllByAssociation(call.user, association, searchParam).onSuccess { invitations ->
 				val dto = invitations.map { i ->
-					if(i.status == EInvitationStatus.Enabled) {
-						TInvitation(i, authService.generateLink(call.user, host, i))
+					if (i.status == EInvitationStatus.Enabled) {
+						TInvitation(i, authService.generateLink(host, i))
 					} else {
 						TInvitation(i)
 					}
 				}
-				call.respond(TLists(
-					dto,
-					searchParam.page,
-					ceil(count.toDouble() / searchParam.perPage).toInt(),
-					searchParam.perPage,
-					count.toInt()
-				))
+				call.respond(
+					TLists(
+						dto,
+						searchParam.page,
+						ceil(count.toDouble() / searchParam.perPage).toInt(),
+						searchParam.perPage,
+						count.toInt()
+					)
+				)
 			}.onFailure { e ->
-				when(e) {
+				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 				}
 			}

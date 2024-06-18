@@ -49,9 +49,9 @@ class InvitationService(
 	fun getValidInvitation(id: Int) = transaction(db) {
 		Invitation.find {
 			(Invitations.id eq id) and
-					(Invitations.status eq EInvitationStatus.Enabled.value) and
-					(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
-					(Invitations.expiration.isNull() or (Invitations.expiration greater Clock.System.now()))
+				(Invitations.status eq EInvitationStatus.Enabled.value) and
+				(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
+				(Invitations.expiration.isNull() or (Invitations.expiration greater Clock.System.now()))
 		}.singleOrNull()?.load(Invitation::association) ?: run {
 			Invitation.findById(id)?.status = EInvitationStatus.Disabled
 			return@transaction null
@@ -107,7 +107,7 @@ class InvitationService(
 	}
 
 	fun getAll(caller: User, searchParam: SearchParam): Result<List<Invitation>> {
-		if(caller.scope != EUserScope.Root) {
+		if (caller.scope != EUserScope.Root) {
 			return Result.failure(NotAllowedException())
 		}
 		val invitations = transaction(db) {
@@ -123,10 +123,10 @@ class InvitationService(
 	}
 
 	fun getAllCount(caller: User, searchParam: SearchParam): Long? {
-		if(caller.scope != EUserScope.Root) {
+		if (caller.scope != EUserScope.Root) {
 			return null
 		}
-		return transaction(db){
+		return transaction(db) {
 			Invitations
 				.innerJoin(Associations, { this.association }, { Associations.id })
 				.innerJoin(Users, { creator }, { Users.id })
@@ -137,8 +137,11 @@ class InvitationService(
 	}
 
 
-
-	fun getAllByAssociation(caller: User, association: Association, searchParam: SearchParam): Result<List<Invitation>> {
+	fun getAllByAssociation(
+		caller: User,
+		association: Association,
+		searchParam: SearchParam
+	): Result<List<Invitation>> {
 		if ((caller.scope == EUserScope.Admin && association.id != caller.association.id)) {
 			return Result.failure(NotAllowedException())
 		}
@@ -162,7 +165,7 @@ class InvitationService(
 		if ((caller.scope == EUserScope.Admin && association.id != caller.association.id)) {
 			return null
 		}
-		return transaction(db){
+		return transaction(db) {
 			Invitations
 				.innerJoin(Associations, { this.association }, { Associations.id })
 				.innerJoin(Users, { creator }, { Users.id })
