@@ -26,13 +26,13 @@ class TopBarTabDropdown extends StatefulWidget {
 
 class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   late final TextEditingController controller;
+  int _currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
       child: DropdownMenu(
-        initialSelection: widget.controller.index,
         controller: controller,
         textStyle: Theme.of(context).textTheme.titleMedium,
         inputDecorationTheme: const InputDecorationTheme(
@@ -58,24 +58,33 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
+    controller = TextEditingController(
+      text: widget.entries[widget.controller.index].title,
+    );
+
+    _currentTab = widget.controller.index;
+
     widget.controller.animation?.addListener(_updateTitle);
   }
 
   @override
   void dispose() {
     controller.dispose();
-    widget.controller.removeListener(_updateTitle);
+    widget.controller.animation?.removeListener(_updateTitle);
     super.dispose();
   }
 
   void _updateTitle() {
     final newTab = widget.controller.animation!.value.round();
 
-    if (widget.controller.index != newTab) {
-      controller.value = TextEditingValue(
+    if (_currentTab != newTab) {
+      controller.value = controller.value.copyWith(
         text: widget.entries[newTab].title,
       );
+
+      setState(() {
+        _currentTab = newTab;
+      });
     }
   }
 
@@ -97,7 +106,7 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   Widget _animate(Widget child, int index) {
     return TweenAnimationBuilder(
       tween: Tween<double>(begin: 0, end: 1),
-      duration: Duration(milliseconds: 120 * index),
+      duration: Duration(milliseconds: 100 * index),
       curve: Curves.ease,
       builder: (context, double value, _) {
         if (value != 1) {
@@ -106,14 +115,14 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
 
         return TweenAnimationBuilder(
           tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 200),
           curve: Curves.ease,
           builder: (context, double value, _) {
             return Transform.translate(
               offset: Offset(30 * (1 - value), 0),
               child: Opacity(
                 opacity: value,
-                child: Expanded(child: child),
+                child: child,
               ),
             );
           },

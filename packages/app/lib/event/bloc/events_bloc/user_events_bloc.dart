@@ -14,6 +14,19 @@ class UserEventsBloc extends EventsBloc {
     on<RefreshUserEvents>(_onRefreshUserEvents);
   }
 
+  @override
+  Future<void> onSubscribeToEvents(
+      SubscribeToEvents event,
+      Emitter<EventsState> emit,
+      ) async {
+    await emit.forEach<List<MinimalEvent>>(
+      eventRepository.userEventsStream,
+      onData: (events) => state.copyWith(
+        events: events,
+      ),
+    );
+  }
+
   Future<void> _onRefreshUserEvents(
     RefreshUserEvents event,
     Emitter<EventsState> emit,

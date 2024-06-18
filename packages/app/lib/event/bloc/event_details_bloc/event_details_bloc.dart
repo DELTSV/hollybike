@@ -154,6 +154,8 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
         state,
         successMessage: 'Vous avez quitté l\'évènement',
       ));
+
+      emit(LeaveEventSuccess(state));
     } catch (e) {
       log('Error while leaving event', error: e);
       emit(EventOperationFailure(

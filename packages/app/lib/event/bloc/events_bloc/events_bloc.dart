@@ -17,7 +17,7 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     required this.eventRepository,
     required this.requestType,
   }) : super(EventInitial()) {
-    on<SubscribeToEvents>(_onSubscribeToEvents);
+    on<SubscribeToEvents>(onSubscribeToEvents);
     on<LoadEventsNextPage>(onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
   }
@@ -28,12 +28,20 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     return super.close();
   }
 
-  Future<void> _onSubscribeToEvents(
+  Stream<List<MinimalEvent>> _getStream() {
+    if (requestType == "future") {
+      return eventRepository.futureStream;
+    } else {
+      return eventRepository.archivedEventsStream;
+    }
+  }
+
+  Future<void> onSubscribeToEvents(
     SubscribeToEvents event,
     Emitter<EventsState> emit,
   ) async {
     await emit.forEach<List<MinimalEvent>>(
-      eventRepository.eventsStream,
+      _getStream(),
       onData: (events) => state.copyWith(
         events: events,
       ),
