@@ -61,6 +61,8 @@ class JourneyPosition extends StatelessWidget {
     }
 
     return RichText(
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
       softWrap: true,
       text: TextSpan(
         children: texts,

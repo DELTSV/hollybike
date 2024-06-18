@@ -24,45 +24,40 @@ class JourneyLibraryCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           padding: const EdgeInsets.all(16),
-          child: Expanded(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        journey.name,
-                        style: Theme.of(context).textTheme.titleMedium,
-                        softWrap: true,
-                      ),
-                      const Spacer(),
-                      JourneyLocation(journey: journey.toMinimalJourney())
-                    ],
-                  ),
-                ),
-                if (journey.previewImage != null)
-                  const SizedBox(
-                    width: 12,
-                  ),
-                Expanded(
-                  flex: 2,
-                  child: Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: JourneyImage(
-                        journeyId: journey.id,
-                        imageUrl: journey.previewImage,
-                      ),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      journey.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      softWrap: true,
                     ),
+                    const Spacer(),
+                    JourneyLocation(journey: journey.toMinimalJourney())
+                  ],
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                flex: 2,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: JourneyImage(
+                    journeyId: journey.id,
+                    imageUrl: journey.previewImage,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         Positioned.fill(

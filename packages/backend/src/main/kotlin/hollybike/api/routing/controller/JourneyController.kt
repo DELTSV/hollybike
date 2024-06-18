@@ -97,13 +97,15 @@ class JourneyController(
 			val param = call.request.queryParameters.getSearchParam(journeysMapper + userMapper + associationMapper)
 			val list = journeyService.getAll(call.user, param).map { TJourney(it) }
 			val count = journeyService.getAllCount(call.user, param)
-			call.respond(TLists(
-				list,
-				param.page,
-				ceil(count.toDouble() / param.perPage).toInt(),
-				param.perPage,
-				count.toInt()
-			))
+			call.respond(
+				TLists(
+					list,
+					param.page,
+					ceil(count.toDouble() / param.perPage).toInt(),
+					param.perPage,
+					count.toInt()
+				)
+			)
 		}
 	}
 
@@ -113,7 +115,7 @@ class JourneyController(
 			journeyService.createJourney(call.user, newJourney).onSuccess {
 				call.respond(HttpStatusCode.Created, TJourney(it))
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is AssociationNotFound -> call.respond(HttpStatusCode.NotFound, "Association inconnue")
 					else -> call.respond(HttpStatusCode.InternalServerError)
@@ -158,7 +160,9 @@ class JourneyController(
 				return@post call.respond(HttpStatusCode.BadRequest, "Le fichier n'est n'y un GPX ni un GeoJSON")
 			}
 
-			geoJson.apply {
+			val cleanedGeoJson = geoJson.clean()
+
+			cleanedGeoJson.apply {
 				bbox = getBoundingBox()
 			}
 
@@ -172,11 +176,11 @@ class JourneyController(
 			journeyService.uploadFile(
 				call.user,
 				journey,
-				geoJson,
+				cleanedGeoJson,
 				contentType.toString()
 			).onSuccess {
-				geoJson.start?.let { start ->
-					geoJson.end?.let { end ->
+				cleanedGeoJson.start?.let { start ->
+					cleanedGeoJson.end?.let { end ->
 						journeyPositions[journey.id.value] = TJourneyPositions(
 							journey,
 							true
@@ -200,7 +204,7 @@ class JourneyController(
 				}
 				call.respond(HttpStatusCode.OK, TJourney(journey))
 			}.onFailure { err ->
-				when(err) {
+				when (err) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
@@ -213,7 +217,7 @@ class JourneyController(
 			val journey = journeyService.getById(call.user, it.id) ?: run {
 				return@delete call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
 			}
-			if(journeyService.deleteJourney(call.user, journey)) {
+			if (journeyService.deleteJourney(call.user, journey)) {
 				call.respond(HttpStatusCode.NoContent)
 			} else {
 				call.respond(HttpStatusCode.Forbidden)
@@ -226,16 +230,15 @@ class JourneyController(
 			val journey = journeyService.getById(call.user, it.id.id) ?: run {
 				return@get call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
 			}
-			println(journeyPositions)
 			journeyPositions[journey.id.value]?.let { journeyPosition ->
-				repeat(60){
-					if(journeyPosition.haveEnd) {
-						if(journeyPosition.start != null && journeyPosition.end != null) {
+				repeat(60) {
+					if (journeyPosition.haveEnd) {
+						if (journeyPosition.start != null && journeyPosition.end != null) {
 							journeyPositions.remove(journey.id.value)
 							return@get call.respond(TJourney(journey))
 						}
 					} else {
-						if(journeyPosition.start != null) {
+						if (journeyPosition.start != null) {
 							journeyPositions.remove(journey.id.value)
 							return@get call.respond(TJourney(journey))
 						}

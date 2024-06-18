@@ -74,8 +74,6 @@ fun Query.applyParam(searchParam: SearchParam, pagination: Boolean = true): Quer
 		q = q.limit(searchParam.perPage, searchParam.page * searchParam.perPage.toLong())
 	}
 	val filter = searchParamFilter(searchParam.filter)
-	println(filter)
-	println(searchParam.filter)
 	val query = if ((searchParam.query?.split(" ")?.size ?: 0) == 2) {
 		val values = searchParam.query!!.split(" ")
 		val val1 = q.searchParamQuery(values.joinToString("%") { it.replace("%", "\\%") }, searchParam.mapper)

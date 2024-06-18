@@ -241,7 +241,6 @@ class InvitationTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 					body<TLists<TInvitation>>().let { body ->
-						println(body)
 						body.totalData shouldBe 1
 						body.data.size shouldBe 1
 
