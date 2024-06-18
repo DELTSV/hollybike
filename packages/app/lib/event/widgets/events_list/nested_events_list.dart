@@ -18,56 +18,53 @@ class NestedEventsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SafeArea(
-        top: false,
-        bottom: false,
-        child: CustomScrollView(
-          slivers: getEventSections(events)
-              .map(
-                (section) => SliverMainAxisGroup(
-                  slivers: [
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: PinnedHeaderDelegate(
-                        height: 50,
-                        animationDuration: 300,
-                        child: Container(
-                          width: double.infinity,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                            ),
-                            child: Text(
-                              section.title,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: CustomScrollView(
+        slivers: getEventSections(events)
+            .map(
+              (section) => SliverMainAxisGroup(
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: PinnedHeaderDelegate(
+                      height: 50,
+                      animationDuration: 300,
+                      child: Container(
+                        width: double.infinity,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          child: Text(
+                            section.title,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
                       ),
                     ),
-                    SliverPadding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      sliver: SliverList(
-                        delegate: SliverChildListDelegate(
-                          section.events
-                              .map(
-                                (event) => EventPreviewCard(
-                                  event: event,
-                                  onTap: () => onEventTap(event),
-                                ),
-                              )
-                              .toList(),
-                        ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate(
+                        section.events
+                            .map(
+                              (event) => EventPreviewCard(
+                                event: event,
+                                onTap: () => onEventTap(event),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ),
-                  ],
-                ),
-              )
-              .toList(),
-        ),
+                  ),
+                ],
+              ),
+            )
+            .toList(),
       ),
     );
   }

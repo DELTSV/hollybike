@@ -31,6 +31,10 @@ class _BottomBarState extends State<BottomBar> {
       route: EventsRoute(),
     ),
     const NavRoute(
+      routeName: SearchRoute.name,
+      route: SearchRoute(),
+    ),
+    const NavRoute(
       routeName: MeRoute.name,
       route: MeRoute(),
     ),
@@ -58,10 +62,15 @@ class _BottomBarState extends State<BottomBar> {
               context.router.push(_routes[index].route);
             }
           },
+          height: 60,
           destinations: const [
             BottomBarIconButton(
               icon: Icons.event,
               label: 'Événements',
+            ),
+            BottomBarIconButton(
+              icon: Icons.search,
+              label: 'Recherche',
             ),
             ProfileBottomBarButton(),
           ],

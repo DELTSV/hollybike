@@ -60,6 +60,12 @@ class AppRouter extends $AppRouter {
           path: '/profile/:id',
           transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
+        CustomRoute(
+          guards: [AuthGuard(context: context)],
+          page: SearchRoute.page,
+          path: '/search',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
         AutoRoute(
           page: LoginRoute.page,
           path: '/login',

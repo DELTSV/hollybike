@@ -27,7 +27,7 @@ class TopBar extends StatelessWidget {
           children: _renderTitle() +
               [
                 Container(
-                  constraints: BoxConstraints.tight(const Size.fromHeight(90)),
+                  constraints: BoxConstraints.tight(const Size.fromHeight(60)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
