@@ -195,9 +195,9 @@ class JourneyService(
 
 	private suspend fun generateUrlFromGeoJson(geoJson: GeoJson): Result<ByteArray> {
 		fun encodeBoundingBox(bbox: List<Double>): String {
-			require(bbox.size == 4) { "Bounding box must contain exactly 4 elements: [minX, minY, maxX, maxY]" }
+			require(bbox.size >= 4) { "Bounding box must contain at least 4 elements: [minX, minY, maxX, maxY]" }
 
-			val encodedBbox = bbox.joinToString(",") { it.toString() }
+			val encodedBbox = bbox.take(4).joinToString(",")
 			return "[$encodedBbox]"
 		}
 
@@ -205,7 +205,13 @@ class JourneyService(
 			return Result.failure(Exception("Mapbox public access token not found"))
 		}
 
-		val simplifiedGeoJson = geoJson.simplifyToUrlSafe().updateGeoJsonProperties("stroke", JsonPrimitive("#3457d5"))
+		val simplifiedGeoJson = geoJson
+			.simplifyToUrlSafe()
+			.updateGeoJsonProperties(
+				"stroke",
+				JsonPrimitive("#3457d5")
+			)
+
 		val bboxURL = encodeBoundingBox(simplifiedGeoJson.getBoundingBox())
 
 		return Result.success(
