@@ -60,14 +60,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
   void initState() {
     super.initState();
 
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        return;
-      }
+    _tabController.animation?.addListener(() {
+      final newTab = EventDetailsTab.values[_tabController.animation!.value.round()];
 
-      setState(() {
-        currentTab = EventDetailsTab.values[_tabController.index];
-      });
+      if (currentTab != newTab) {
+        setState(() {
+          currentTab = newTab;
+        });
+      }
     });
 
     setState(() {

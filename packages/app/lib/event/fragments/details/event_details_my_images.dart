@@ -52,7 +52,7 @@ class EventDetailsMyImages extends StatelessWidget {
           },
           child: BlocBuilder<EventMyImagesBloc, EventImagesState>(
             builder: (context, state) {
-              return EventDetailsScrollWrapper(
+              return EventDetailsTabScrollWrapper(
                 sliverChild: true,
                 scrollViewKey: 'event_details_my_images_$eventId',
                 child: ImageGallery(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class EventDetailsScrollWrapper extends StatelessWidget {
+class EventDetailsTabScrollWrapper extends StatelessWidget {
   final String scrollViewKey;
   final Widget child;
   final bool sliverChild;
 
-  const EventDetailsScrollWrapper({
+  const EventDetailsTabScrollWrapper({
     super.key,
     required this.child,
     required this.scrollViewKey,

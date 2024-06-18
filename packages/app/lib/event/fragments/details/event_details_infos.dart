@@ -29,7 +29,7 @@ class EventDetailsInfos extends StatelessWidget {
     final previewParticipants = eventDetails.previewParticipants;
     final previewParticipantsCount = eventDetails.previewParticipantsCount;
 
-    return EventDetailsScrollWrapper(
+    return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_infos_${event.id}',
       child: Padding(
         padding: const EdgeInsets.all(8.0),
