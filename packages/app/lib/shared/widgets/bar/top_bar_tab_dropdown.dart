@@ -81,12 +81,41 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
       entries.add(
         DropdownMenuEntry(
           value: i,
+          labelWidget: _animate(Text(widget.entries[i].title), i),
+          trailingIcon: _animate(Icon(widget.entries[i].icon), i),
           label: widget.entries[i].title,
-          trailingIcon: Icon(widget.entries[i].icon),
         ),
       );
     }
     return entries;
+  }
+
+  Widget _animate(Widget child, int index) {
+    return TweenAnimationBuilder(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: Duration(milliseconds: 120 * index),
+      curve: Curves.ease,
+      builder: (context, double value, _) {
+        if (value != 1) {
+          return const SizedBox();
+        }
+
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.ease,
+          builder: (context, double value, _) {
+            return Transform.translate(
+              offset: Offset(30 * (1 - value), 0),
+              child: Opacity(
+                opacity: value,
+                child: Expanded(child: child),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _handleSelectedValueChange(int? value) {
