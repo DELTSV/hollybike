@@ -62,6 +62,7 @@ class _BottomBarState extends State<BottomBar> {
               context.router.push(_routes[index].route);
             }
           },
+          height: 60,
           destinations: const [
             BottomBarIconButton(
               icon: Icons.event,

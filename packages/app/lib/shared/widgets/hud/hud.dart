@@ -22,7 +22,7 @@ class Hud extends StatelessWidget {
       appBar: appBar == null
           ? null
           : PreferredSize(
-              preferredSize: const Size.fromHeight(100),
+              preferredSize: const Size.fromHeight(60),
               child: appBar as Widget,
             ),
       floatingActionButton: floatingActionButton,
@@ -30,7 +30,7 @@ class Hud extends StatelessWidget {
         children: [
           Column(children: <Widget>[
             const SizedBox.square(
-              dimension: 105,
+              dimension: 110,
             ),
             Expanded(
               child: SafeArea(

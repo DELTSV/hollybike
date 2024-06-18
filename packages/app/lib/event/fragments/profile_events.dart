@@ -79,16 +79,19 @@ class _ProfileEventsState extends State<ProfileEvents> {
               }
             }
 
-            return EventsSectionsList(
-              events: state.events,
-              onEventTap: (event) {
-                _navigateToEventDetails(
-                  context,
-                  event,
-                  true,
-                );
-              },
-              hasMore: state.hasMore,
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: EventsSectionsList(
+                events: state.events,
+                onEventTap: (event) {
+                  _navigateToEventDetails(
+                    context,
+                    event,
+                    true,
+                  );
+                },
+                hasMore: state.hasMore,
+              ),
             );
           },
         ),
