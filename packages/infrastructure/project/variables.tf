@@ -73,3 +73,30 @@ variable "ghcr_image_tag" {
   default     = "latest"
   description = "The tag of the image in the GitHub Container Registry"
 }
+
+variable "backend_smtp_url" {
+  type        = string
+  default     = "smtp-relay.brevo.com"
+  description = "The url of the SMTP server"
+}
+
+variable "backend_smtp_port" {
+  type        = string
+  default     = "587"
+  description = "The port of the SMTP server"
+}
+
+variable "backend_smtp_username" {
+  type        = string
+  description = "The username of the SMTP server"
+}
+
+variable "backend_smtp_password" {
+  type        = string
+  description = "The password of the SMTP server"
+}
+
+variable "backend_mapbox_public_token" {
+  type        = string
+  description = "The public token for Mapbox"
+}

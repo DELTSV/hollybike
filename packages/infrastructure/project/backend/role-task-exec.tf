@@ -13,7 +13,7 @@ resource "aws_iam_role_policy" "ecs_backend_task_execution_ssm_role_policy" {
   role = aws_iam_role.ecs_task_execution_role.id
 
   policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         "Effect" : "Allow",
@@ -33,6 +33,12 @@ resource "aws_iam_role_policy" "ecs_backend_task_execution_ssm_role_policy" {
           aws_ssm_parameter.backend_security_cf_key_pair_id.arn,
           aws_ssm_parameter.backend_storage_bucket_name.arn,
           aws_ssm_parameter.backend_storage_bucket_region.arn,
+          aws_ssm_parameter.backend_mapbox_public_token.arn,
+          aws_ssm_parameter.backend_smtp_url.arn,
+          aws_ssm_parameter.backend_smtp_port.arn,
+          aws_ssm_parameter.backend_smtp_sender.arn,
+          aws_ssm_parameter.backend_smtp_username.arn,
+          aws_ssm_parameter.backend_smtp_password.arn,
           var.cf_ssm_parameter_arn
         ]
       },

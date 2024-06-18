@@ -57,6 +57,30 @@ resource "aws_ecs_task_definition" "default" {
         {
           name : "STORAGE_S3_REGION",
           valueFrom : aws_ssm_parameter.backend_storage_bucket_region.arn
+        },
+        {
+          name : "MAPBOX_PUBLIC_ACCESS_TOKEN_SECRET",
+          valueFrom : aws_ssm_parameter.backend_mapbox_public_token.arn
+        },
+        {
+          name : "SMTP_URL",
+          valueFrom : aws_ssm_parameter.backend_smtp_url.arn
+        },
+        {
+          name : "SMTP_PORT",
+          valueFrom : aws_ssm_parameter.backend_smtp_port.arn
+        },
+        {
+          name : "SMTP_SENDER",
+          valueFrom : aws_ssm_parameter.backend_smtp_sender.arn
+        },
+        {
+          name : "SMTP_USERNAME",
+          valueFrom : aws_ssm_parameter.backend_smtp_username.arn
+        },
+        {
+          name : "SMTP_PASSWORD",
+          valueFrom : aws_ssm_parameter.backend_smtp_password.arn
         }
       ]
       portMappings = [

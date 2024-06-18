@@ -59,7 +59,7 @@ variable "ghcr_image_tag" {
 }
 
 variable "public_subnet_list" {
-  type        = list(string)
+  type = list(string)
   description = "List of public subnet IDs"
 }
 
@@ -91,4 +91,34 @@ variable "cf_ssm_parameter_arn" {
 variable "cf_key_pair_id" {
   type        = string
   description = "The ID of the CloudFront key pair"
+}
+
+variable "smtp_url" {
+  type        = string
+  description = "The url of the SMTP server"
+}
+
+variable "smtp_sender" {
+  type        = string
+  description = "The sender of the SMTP server"
+}
+
+variable "smtp_port" {
+  type        = string
+  description = "The port of the SMTP server"
+}
+
+variable "smtp_username" {
+  type        = string
+  description = "The username of the SMTP server"
+}
+
+variable "smtp_password" {
+  type        = string
+  description = "The password of the SMTP server"
+}
+
+variable "mapbox_public_token" {
+  type        = string
+  description = "The public token for Mapbox"
 }

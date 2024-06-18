@@ -19,6 +19,9 @@ env:
   TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
   TF_VAR_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_VAR_region: ${{ vars.AWS_REGION }}
+  TF_VAR_backend_smtp_username: ${{ vars.SMTP_USERNAME }}
+  TF_VAR_backend_smtp_password: ${{ secrets.SMTP_PASSWORD }}
+  TF_VAR_backend_mapbox_public_token: ${{ secrets.MAPBOX_PUBLIC_TOKEN }}
   TF_VAR_ghcr_password: ${{ secrets.GH_TOKEN }}
   TF_VAR_ghcr_username: ${{ github.actor }}
   TF_VAR_ghcr_image_name: ${{ github.repository }}

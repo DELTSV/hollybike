@@ -43,6 +43,12 @@ module "backend" {
   storage_bucket_arn     = module.storage.application_storage_bucket_arn
   cf_ssm_parameter_arn   = module.cf_key.parameter_arn
   cf_key_pair_id         = module.frontend.cf_key_pair_id
+  smtp_url               = var.backend_smtp_url
+  smtp_port              = var.backend_smtp_port
+  smtp_sender            = "noreply@${var.domain_name}"
+  smtp_username          = var.backend_smtp_username
+  smtp_password          = var.backend_smtp_password
+  mapbox_public_token    = var.backend_mapbox_public_token
 }
 
 module "domain" {
