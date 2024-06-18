@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:mime/mime.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
@@ -38,11 +37,11 @@ class ImageApi {
   }
 
   Future<PaginatedList<EventImage>> getMyEventImages(
-      AuthSession session,
-      int eventId,
-      int page,
-      int imagesPerPage,
-      ) async {
+    AuthSession session,
+    int eventId,
+    int page,
+    int imagesPerPage,
+  ) async {
     final response = await DioClient(session).dio.get(
       '/events/images/me',
       queryParameters: {
@@ -58,16 +57,6 @@ class ImageApi {
     }
 
     return PaginatedList.fromJson(response.data, EventImage.fromJson);
-  }
-
-  MediaType? _getMediaTypeFormFile(File file) {
-    final mimeType = lookupMimeType(file.path);
-
-    if (mimeType == null) {
-      return null;
-    }
-
-    return MediaType.parse(mimeType);
   }
 
   Future<void> uploadEventImages(
@@ -89,7 +78,7 @@ class ImageApi {
       return MultipartFile.fromBytes(
         compressedImage,
         filename: image.path.split('/').last,
-        contentType: _getMediaTypeFormFile(image),
+        contentType: MediaType.parse('image/jpeg'),
       );
     }).toList());
 
@@ -127,8 +116,8 @@ class ImageApi {
     int imageId,
   ) async {
     final response = await DioClient(session).dio.get(
-      '/events/images/$imageId',
-    );
+          '/events/images/$imageId',
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch event image details");
@@ -142,8 +131,8 @@ class ImageApi {
     int imageId,
   ) async {
     final response = await DioClient(session).dio.delete(
-      '/events/images/$imageId',
-    );
+          '/events/images/$imageId',
+        );
 
     if (response.statusCode != 204) {
       throw Exception("Failed to delete event image");

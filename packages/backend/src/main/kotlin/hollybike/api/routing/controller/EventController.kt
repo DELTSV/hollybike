@@ -9,7 +9,6 @@ import hollybike.api.routing.resources.Events
 import hollybike.api.services.AssociationService
 import hollybike.api.services.EventParticipationService
 import hollybike.api.services.EventService
-import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
