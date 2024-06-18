@@ -18,7 +18,7 @@ class EventDetailsMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EventDetailsScrollWrapper(
+    return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_map_$eventId',
       child: _buildContent(),
     );
