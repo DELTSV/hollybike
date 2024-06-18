@@ -1,7 +1,6 @@
 package hollybike.api.services.journey
 
 import hollybike.api.ConfMapBox
-import hollybike.api.ConfSecurity
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.*
@@ -20,8 +19,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
@@ -36,10 +33,6 @@ class JourneyService(
 	private val storageService: StorageService,
 	private val conf: ConfMapBox,
 ) {
-	private val json = Json {
-		ignoreUnknownKeys = true
-	}
-
 	var client: HttpClient = HttpClient(CIO) {
 		install(Logging) {
 			level = LogLevel.INFO
@@ -138,7 +131,7 @@ class JourneyService(
 
 		val path = "j/${journey.id}/f"
 
-		storageService.store(json.encodeToString(geoJson).toByteArray(), path, fileContentType)
+		storageService.store(geoJson.toJson().toByteArray(), path, fileContentType)
 		transaction(db) { journey.file = path }
 
 		addPreviewImage(geoJson, journey).onFailure {
@@ -195,9 +188,9 @@ class JourneyService(
 
 	private suspend fun generateUrlFromGeoJson(geoJson: GeoJson): Result<ByteArray> {
 		fun encodeBoundingBox(bbox: List<Double>): String {
-			require(bbox.size >= 4) { "Bounding box must contain at least 4 elements: [minX, minY, maxX, maxY]" }
+			require(bbox.size == 4) { "Bounding box must contain 4 elements: [minX, minY, maxX, maxY]" }
 
-			val encodedBbox = bbox.take(4).joinToString(",")
+			val encodedBbox = bbox.joinToString(",")
 			return "[$encodedBbox]"
 		}
 
@@ -207,34 +200,39 @@ class JourneyService(
 
 		val simplifiedGeoJson = geoJson
 			.simplifyToUrlSafe()
+			.keepLargestCoordinateElement()
 			.updateGeoJsonProperties(
 				"stroke",
 				JsonPrimitive("#3457d5")
 			)
 
-		val bboxURL = encodeBoundingBox(simplifiedGeoJson.getBoundingBox())
+		val bboxURL = encodeBoundingBox(simplifiedGeoJson.getBoundingBox(withoutElevation = true))
 
-		return Result.success(
-			client.get {
-				url {
-					protocol = URLProtocol.HTTPS
-					host = "api.mapbox.com"
-					path(
-						"styles",
-						"v1",
-						"mapbox",
-						"dark-v11",
-						"static",
-						"geojson(${simplifiedGeoJson.toJson()})",
-						bboxURL,
-						"500x300"
-					)
+		val response = client.get {
+			url {
+				protocol = URLProtocol.HTTPS
+				host = "api.mapbox.com"
+				path(
+					"styles",
+					"v1",
+					"mapbox",
+					"dark-v11",
+					"static",
+					"geojson(${simplifiedGeoJson.toJson()})",
+					bboxURL,
+					"500x300"
+				)
 
-					parameters.append("padding", "50,50,50,50")
-					parameters.append("access_token", token)
-				}
-			}.readBytes()
-		)
+				parameters.append("padding", "50,50,50,50")
+				parameters.append("access_token", token)
+			}
+		}
+
+		if (response.status != HttpStatusCode.OK) {
+			return Result.failure(Exception("Failed to generate image from GeoJson"))
+		}
+
+		return Result.success(response.readBytes())
 	}
 }
 

@@ -3,32 +3,47 @@ package hollybike.api.types.journey
 import kotlin.math.max
 import kotlin.math.min
 
-fun GeoJson.getBoundingBox(): List<Double> {
-	val list = if(isElevated) {
-		val bbox = listOf(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
+fun GeoJson.getBoundingBox(withoutElevation: Boolean = false): List<Double> {
+	val list = if (isElevated && !withoutElevation) {
+		val bbox = listOf(
+			Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
+			Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY
+		)
 		getCoordinateDump().fold(bbox) { a, b ->
-			listOf(
-				min(b[0], a[0]),
-				min(b[1], a[1]),
-				min(b[2], a[2]),
-				max(b[0], a[3]),
-				max(b[1], a[4]),
-				max(b[2], a[5])
-			)
+			if (b.size >= 3) {
+				listOf(
+					min(b[0], a[0]),
+					min(b[1], a[1]),
+					min(b[2], a[2]),
+					max(b[0], a[3]),
+					max(b[1], a[4]),
+					max(b[2], a[5])
+				)
+			} else {
+				a
+			}
 		}
 	} else {
-		val bbox = listOf(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY)
+		val bbox = listOf(
+			Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
+			Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY
+		)
 		getCoordinateDump().fold(bbox) { a, b ->
-			listOf(
-				min(b[0], a[0]),
-				min(b[1], a[1]),
-				max(b[0], a[2]),
-				max(b[1], a[3]),
-			)
+			if (b.size >= 2) {
+				listOf(
+					min(b[0], a[0]),
+					min(b[1], a[1]),
+					max(b[0], a[2]),
+					max(b[1], a[3])
+				)
+			} else {
+				a
+			}
 		}
 	}
-	return if(list.any { it.isInfinite() }) {
-		if(list.size == 6) {
+
+	return if (list.any { it.isInfinite() }) {
+		if (list.size == 6) {
 			list.take(3) + list.take(3)
 		} else {
 			list.take(2) + list.take(2)
@@ -49,6 +64,32 @@ private fun GeoJson.getCoordinateDump(): List<GeoJsonCoordinates> {
 		is Feature -> geometry?.getCoordinateDump() ?: listOf()
 		is GeometryCollection -> geometries.fold(listOf()) { a, b -> a + b.getCoordinateDump() }
 		is FeatureCollection -> features.fold(listOf()) { a, b -> a + b.getCoordinateDump() }
+	}
+}
+
+private fun GeoJson.countCoordinates(): Int {
+	return getCoordinateDump().size
+}
+
+fun GeoJson.keepLargestCoordinateElement(): GeoJson {
+	return when (this) {
+		is FeatureCollection -> {
+			val largestFeature = features.maxByOrNull { it.countCoordinates() }
+			if (largestFeature != null) {
+				this.copy(features = listOf(largestFeature))
+			} else {
+				this
+			}
+		}
+		is GeometryCollection -> {
+			val largestGeometry = geometries.maxByOrNull { it.countCoordinates() }
+			if (largestGeometry != null) {
+				this.copy(geometries = listOf(largestGeometry))
+			} else {
+				this
+			}
+		}
+		else -> this
 	}
 }
 

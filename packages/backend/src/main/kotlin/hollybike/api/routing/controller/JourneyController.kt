@@ -29,12 +29,10 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.adaptivity.xmlutil.*
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
-import java.io.File
 import java.util.Timer
 import kotlin.concurrent.schedule
 import kotlin.math.ceil
@@ -232,7 +230,6 @@ class JourneyController(
 			val journey = journeyService.getById(call.user, it.id.id) ?: run {
 				return@get call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
 			}
-			println(journeyPositions)
 			journeyPositions[journey.id.value]?.let { journeyPosition ->
 				repeat(60) {
 					if (journeyPosition.haveEnd) {

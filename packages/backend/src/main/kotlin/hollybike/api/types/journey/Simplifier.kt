@@ -170,7 +170,7 @@ fun GeoJson.encodeUrl(): String {
 
 fun GeoJson.clean(): GeoJson {
 	return when (this) {
-		is Feature -> this.copy(properties = null)
+		is Feature -> this.copy(properties = JsonObject(emptyMap()))
 		is FeatureCollection -> this.copy(features = this.features.map { it.clean() })
 		is GeometryCollection -> this.copy(geometries = this.geometries.map { it.clean() as GeometryShape })
 		else -> this

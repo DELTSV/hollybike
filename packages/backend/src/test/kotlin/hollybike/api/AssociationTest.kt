@@ -245,8 +245,6 @@ class AssociationTest : IntegrationSpec({
 			cloudTestApp {
 				it.get("/api/associations?per_page=10&page=0") {
 					auth(UserStore.root)
-					println(Clock.System.now())
-					println(tokenStore[UserStore.root])
 				}.apply {
 					status shouldBe HttpStatusCode.OK
 
