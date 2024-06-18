@@ -89,3 +89,8 @@ class DeleteEventFailure extends EventDetailsState {
   DeleteEventFailure(EventDetailsState state, {required this.errorMessage})
       : super.state(state.copyWith(status: EventDetailsStatus.error));
 }
+
+class LeaveEventSuccess extends EventDetailsState {
+  LeaveEventSuccess(EventDetailsState state)
+      : super.state(state.copyWith(status: EventDetailsStatus.success));
+}
