@@ -59,7 +59,7 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   void initState() {
     super.initState();
     controller = TextEditingController();
-    widget.controller.addListener(_updateTitle);
+    widget.controller.animation?.addListener(_updateTitle);
   }
 
   @override
@@ -70,9 +70,13 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   }
 
   void _updateTitle() {
-    controller.value = TextEditingValue(
-      text: widget.entries[widget.controller.index].title,
-    );
+    final newTab = widget.controller.animation!.value.round();
+
+    if (widget.controller.index != newTab) {
+      controller.value = TextEditingValue(
+        text: widget.entries[newTab].title,
+      );
+    }
   }
 
   List<DropdownMenuEntry<int>> _renderMenuEntries() {
