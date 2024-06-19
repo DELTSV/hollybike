@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hollybike/shared/utils/image_picker/img.dart';
+import 'package:hollybike/shared/utils/permissions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -24,19 +25,10 @@ class ImagePickerCameraButton extends StatelessWidget {
     );
   }
 
-  Future<bool> _checkCameraPermission() async {
-    final status = await Permission.camera.request();
-    if (status.isGranted) {
-      return true;
-    } else if (status.isPermanentlyDenied) {
-      return openAppSettings().then((value) => value);
-    }
-
-    return false;
-  }
-
   _onCameraTap() async {
-    if (await _checkCameraPermission() == false) {
+    final cameraPermission = await Permission.camera.requestAndCheck();
+
+    if (!cameraPermission) {
       return;
     }
 
