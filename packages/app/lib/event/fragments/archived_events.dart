@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 
 import '../../shared/utils/with_current_session.dart';
 import '../bloc/events_bloc/events_event.dart';
@@ -33,9 +34,11 @@ class ArchivedEvents extends StatelessWidget {
     });
   }
 
-  void _refreshEvents(BuildContext context) {
+  Future<void> _refreshEvents(BuildContext context) {
     withCurrentSession(context, (session) {
       context.read<ArchivedEventsBloc>().add(RefreshEvents(session: session));
     });
+
+    return context.read<ArchivedEventsBloc>().firstWhenNotLoading;
   }
 }

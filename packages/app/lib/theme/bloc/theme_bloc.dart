@@ -198,6 +198,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   ThemeData get getThemeData {
     return ThemeData(
       useMaterial3: true,
+      primarySwatch: Colors.blue,
       fontFamily: 'Inter',
       appBarTheme: _appBarTheme,
       textTheme: _textTheme,

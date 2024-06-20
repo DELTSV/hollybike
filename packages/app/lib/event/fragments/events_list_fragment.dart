@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/widgets/events_list/events_list_placeholder.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
@@ -15,7 +16,7 @@ import '../widgets/events_list/events_list.dart';
 class EventsListFragment<T extends EventsBloc> extends StatefulWidget {
   final void Function(MinimalEvent) navigateToEventDetails;
   final void Function() onNextPageRequested;
-  final void Function() onRefreshRequested;
+  final Future<void> Function() onRefreshRequested;
   final String placeholderText;
 
   const EventsListFragment({
@@ -65,11 +66,8 @@ class _EventsListFragmentState<T extends EventsBloc>
           },
         ),
       ],
-      child: RefreshIndicator(
-        triggerMode: RefreshIndicatorTriggerMode.anywhere,
-        onRefresh: () async {
-          widget.onRefreshRequested();
-        },
+      child: ThemedRefreshIndicator(
+        onRefresh: widget.onRefreshRequested,
         child: BlocBuilder<T, EventsState>(
           builder: (context, state) {
             if (state.events.isEmpty) {

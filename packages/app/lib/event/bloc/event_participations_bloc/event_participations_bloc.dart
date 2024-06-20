@@ -186,3 +186,11 @@ class EventParticipationBloc
     }
   }
 }
+
+extension FirstWhenNotLoading on EventParticipationBloc {
+  Future<EventParticipationsState> get firstWhenNotLoading async {
+    return stream.firstWhere((state) {
+      return state is! EventParticipationsPageLoadInProgress;
+    });
+  }
+}
