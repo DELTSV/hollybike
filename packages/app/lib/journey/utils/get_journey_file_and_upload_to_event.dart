@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../event/bloc/event_journey_bloc/event_journey_bloc.dart';
 import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../../event/types/event.dart';
+import '../../event/widgets/journey/upload_journey_modal.dart';
 import '../../shared/utils/with_current_session.dart';
 
 Future<File?> getJourneyFileAndUploadToEvent(BuildContext context, Event event) async {
@@ -58,6 +59,16 @@ Future<File?> getJourneyFileAndUploadToEvent(BuildContext context, Event event) 
       ),
     );
   });
+
+  await showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (context) {
+      return UploadJourneyModal(
+        isGpx: extension == 'gpx',
+      );
+    },
+  );
 
   return file;
 }
