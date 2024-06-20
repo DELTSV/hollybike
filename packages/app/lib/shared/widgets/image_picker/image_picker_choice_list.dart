@@ -17,12 +17,14 @@ class ImagePickerChoiceList extends StatefulWidget {
   final List<String> mediumIdSelectedList;
   final ImagePickerMode mode;
   final void Function(List<Img>) onImagesSelected;
+  final bool isLoading;
 
   const ImagePickerChoiceList({
     super.key,
     required this.mediumIdSelectedList,
     required this.mode,
     required this.onImagesSelected,
+    required this.isLoading,
   });
 
   @override
@@ -33,6 +35,8 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
   final mediumIdList = <String>[];
   bool _loadingImages = true;
   final imagePicker = ImagePicker();
+
+  get isLoading => _loadingImages || widget.isLoading;
 
   @override
   void initState() {
@@ -70,19 +74,18 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
       )
     ];
 
-    return AnimatedCrossFade(
-      crossFadeState:
-          _loadingImages ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      duration: const Duration(milliseconds: 200),
-      firstChild: const SizedBox(
-        height: 100,
-        child: Center(
-          child: CircularProgressIndicator(),
+    return SizedBox(
+      height: 100,
+      child: AnimatedCrossFade(
+        crossFadeState:
+            isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+        duration: const Duration(milliseconds: 200),
+        firstChild: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
-      ),
-      secondChild: SizedBox(
-        height: 100,
-        child: ListView.separated(
+        secondChild: ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(width: 8);
           },

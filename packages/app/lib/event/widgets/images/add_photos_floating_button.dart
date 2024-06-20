@@ -32,13 +32,18 @@ class AddPhotosFloatingButton extends StatelessWidget {
                   Navigator.of(context).pop();
                 }
               },
-              child: ImagePickerModal(
-                mode: ImagePickerMode.multiple,
-                onClose: () {
-                  Navigator.of(context).pop();
-                },
-                onSubmit: (images) {
-                  _onSubmit(context, images);
+              child: BlocBuilder<EventMyImagesBloc, EventImagesState>(
+                builder: (context, state) {
+                  return ImagePickerModal(
+                    isLoading: state is EventImagesOperationInProgress,
+                    mode: ImagePickerMode.multiple,
+                    onClose: () {
+                      Navigator.of(context).pop();
+                    },
+                    onSubmit: (images) {
+                      _onSubmit(context, images);
+                    },
+                  );
                 },
               ),
             );
