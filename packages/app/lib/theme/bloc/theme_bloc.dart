@@ -189,6 +189,12 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     );
   }
 
+  ProgressIndicatorThemeData get _indicatorTheme {
+    return ProgressIndicatorThemeData(
+      color: _darkColorScheme.onPrimary.withOpacity(0.7),
+    );
+  }
+
   ThemeData get getThemeData {
     return ThemeData(
       useMaterial3: true,
@@ -197,6 +203,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       textTheme: _textTheme,
       colorScheme: _colorScheme,
       iconTheme: _iconTheme,
+      progressIndicatorTheme: _indicatorTheme,
       inputDecorationTheme: _inputDecorationTheme,
       elevatedButtonTheme: _elevatedButtonTheme,
       floatingActionButtonTheme: _floatingActionButtonTheme,

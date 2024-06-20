@@ -73,54 +73,7 @@ class _EventsListFragmentState<T extends EventsBloc>
         child: BlocBuilder<T, EventsState>(
           builder: (context, state) {
             if (state.events.isEmpty) {
-              switch (state.status) {
-                case EventStatus.initial:
-                  return const SizedBox();
-                case EventStatus.loading:
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                case EventStatus.error:
-                  return EventsListPlaceholder(
-                    padding: MediaQuery.of(context).size.width * 0.1,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.asset(
-                          fit: BoxFit.cover,
-                          'assets/lottie/lottie_calendar_error_animation.json',
-                          repeat: false,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Une erreur est survenue lors du chargement des évènements',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                case EventStatus.success:
-                  return EventsListPlaceholder(
-                    padding: MediaQuery.of(context).size.width * 0.2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.asset(
-                          fit: BoxFit.cover,
-                          'assets/lottie/lottie_calendar_placeholder.json',
-                          repeat: false,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          widget.placeholderText,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-              }
+              return _buildPlaceholder(context, state);
             }
 
             return EventsList(
@@ -134,5 +87,56 @@ class _EventsListFragmentState<T extends EventsBloc>
         ),
       ),
     );
+  }
+
+  Widget _buildPlaceholder(BuildContext context, EventsState state) {
+    switch (state.status) {
+      case EventStatus.loading:
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      case EventStatus.error:
+        return EventsListPlaceholder(
+          padding: MediaQuery.of(context).size.width * 0.1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                fit: BoxFit.cover,
+                'assets/lottie/lottie_calendar_error_animation.json',
+                repeat: false,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Une erreur est survenue lors du chargement des évènements',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      case EventStatus.success:
+        return EventsListPlaceholder(
+          padding: MediaQuery.of(context).size.width * 0.2,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(
+                fit: BoxFit.cover,
+                'assets/lottie/lottie_calendar_placeholder.json',
+                repeat: false,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                widget.placeholderText,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      default:
+        return const SizedBox();
+    }
   }
 }
