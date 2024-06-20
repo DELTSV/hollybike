@@ -9,12 +9,14 @@ import '../../utils/image_picker/show_image_picker.dart';
 
 class ImagePickerModal extends StatefulWidget {
   final ImagePickerMode mode;
+  final bool isLoading;
   final void Function() onClose;
   final void Function(List<File>) onSubmit;
 
   const ImagePickerModal({
     super.key,
     required this.mode,
+    this.isLoading = false,
     required this.onClose,
     required this.onSubmit,
   });
@@ -60,7 +62,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
               ImagePickerModalHeader(
                 onClose: widget.onClose,
                 onSubmit: _onSubmit,
-                canSubmit: _selectedImages.isNotEmpty,
+                canSubmit: _selectedImages.isNotEmpty && !widget.isLoading,
               ),
               const SizedBox(
                 height: 16,
@@ -73,6 +75,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
                 mediumIdSelectedList: _getSelectedMediumIds(),
                 mode: widget.mode,
                 onImagesSelected: _onImagesSelected,
+                isLoading: widget.isLoading,
               )
             ],
           ),

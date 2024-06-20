@@ -4,7 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'json_map.dart';
 
 part 'position.freezed.dart';
-
 part 'position.g.dart';
 
 enum PositionType {
@@ -48,6 +47,7 @@ class Position with _$Position {
         return PositionType.airport;
       case "university":
       case "college":
+      case "school":
         return PositionType.school;
       case "motorway":
         return PositionType.motorway;

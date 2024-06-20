@@ -43,6 +43,7 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Flexible(
                 child: Column(

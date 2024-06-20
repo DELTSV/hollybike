@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/shared/utils/image_picker/img.dart';
 import 'package:hollybike/shared/utils/image_picker/show_image_picker.dart';
+import 'package:hollybike/shared/utils/permissions.dart';
 import 'package:hollybike/shared/widgets/image_picker/image_picker_gallery_button.dart';
 import 'package:hollybike/shared/widgets/image_picker/image_picker_thumbnail.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,21 +12,23 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
 import 'image_picker_camera_button.dart';
+
 class ImagePickerChoiceList extends StatefulWidget {
   final List<String> mediumIdSelectedList;
   final ImagePickerMode mode;
   final void Function(List<Img>) onImagesSelected;
+  final bool isLoading;
 
   const ImagePickerChoiceList({
     super.key,
     required this.mediumIdSelectedList,
     required this.mode,
     required this.onImagesSelected,
+    required this.isLoading,
   });
 
   @override
-  State<ImagePickerChoiceList> createState() =>
-      _ImagePickerChoiceListState();
+  State<ImagePickerChoiceList> createState() => _ImagePickerChoiceListState();
 }
 
 class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
@@ -30,10 +36,23 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
   bool _loadingImages = true;
   final imagePicker = ImagePicker();
 
+  get isLoading => _loadingImages || widget.isLoading;
+
   @override
   void initState() {
     super.initState();
-    _checkImagesPermission();
+
+    _checkImagesPermission().then(
+      (granted) {
+        if (granted) {
+          return _loadImages();
+        }
+      },
+    ).whenComplete(() {
+      setState(() {
+        _loadingImages = false;
+      });
+    });
   }
 
   @override
@@ -55,19 +74,18 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
       )
     ];
 
-    return AnimatedCrossFade(
-      crossFadeState:
-          _loadingImages ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      duration: const Duration(milliseconds: 200),
-      firstChild: const SizedBox(
-        height: 100,
-        child: Center(
-          child: CircularProgressIndicator(),
+    return SizedBox(
+      height: 100,
+      child: AnimatedCrossFade(
+        crossFadeState:
+            isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+        duration: const Duration(milliseconds: 200),
+        firstChild: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
         ),
-      ),
-      secondChild: SizedBox(
-        height: 100,
-        child: ListView.separated(
+        secondChild: ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(width: 8);
           },
@@ -83,17 +101,6 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
         ),
       ),
     );
-  }
-
-  Future<bool> _checkPositionPermission() async {
-    final status = await Permission.accessMediaLocation.request();
-    if (status.isGranted) {
-      return true;
-    } else if (status.isPermanentlyDenied) {
-      return openAppSettings().then((value) => value);
-    }
-
-    return false;
   }
 
   void _loadImages() {
@@ -113,20 +120,20 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
           mediumIdList.addAll(mediaPage.items.map((e) => e.id));
         });
       }
-    }).whenComplete(
-      () => setState(() {
-        _loadingImages = false;
-      }),
-    );
+    });
   }
 
-  _checkImagesPermission() async {
-    await _checkPositionPermission();
-    final status = await Permission.photos.request();
-    if (status.isGranted) {
-      _loadImages();
-    } else if (status.isPermanentlyDenied) {
-      openAppSettings();
+  Future<bool> _checkImagesPermission() async {
+    await Permission.accessMediaLocation.requestAndCheck();
+
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+
+      if (androidInfo.version.sdkInt <= 32) {
+        return Permission.storage.requestAndCheck();
+      }
     }
+
+    return Permission.photos.requestAndCheck();
   }
 }

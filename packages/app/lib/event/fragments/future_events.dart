@@ -21,6 +21,7 @@ class FutureEvents extends StatelessWidget {
       navigateToEventDetails: navigateToEventDetails,
       onNextPageRequested: () => _loadNextPage(context),
       onRefreshRequested: () => _refreshEvents(context),
+      placeholderText: 'Aucun événement à venir',
     );
   }
 
