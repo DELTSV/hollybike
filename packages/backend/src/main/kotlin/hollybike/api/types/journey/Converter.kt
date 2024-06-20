@@ -1,23 +1,29 @@
  package hollybike.api.types.journey
 
+import hollybike.api.logger
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlin.math.log
 
-fun Gpx.toGeoJson(): GeoJson {
+ fun Gpx.toGeoJson(): GeoJson {
+	logger.debug("Converter: Get tracks")
 	val tracks = trk.mapNotNull { track ->
 		track.getTrack()
 	}
 
+	logger.debug("Converter: Get routes")
 	val routes = rte.mapNotNull { route ->
 		route.getRoute()
 	}
 
+	logger.debug("Converter: Get waypoints")
 	val waypoints = wpt.map { waypoint ->
 		waypoint.getPoint()
 	}
 
+	logger.debug("Converter: Return")
 	return FeatureCollection(
 		tracks + routes + waypoints
 	)
@@ -25,6 +31,7 @@ fun Gpx.toGeoJson(): GeoJson {
 
 private fun Trk.getTrack(): Feature? {
 	val times = mutableListOf<JsonElement>()
+	logger.debug("Converter: Get tracks: Start map")
 	val track = trkSeg.map { segment ->
 		segment.trkPt.map { trkpt ->
 			trkpt.time?.let { t -> times.add(JsonPrimitive(t.toString())) }
@@ -35,6 +42,7 @@ private fun Trk.getTrack(): Feature? {
 			)
 		}
 	}
+	logger.debug("Converter: Get tracks: End map")
 	if(track.isEmpty()) {
 		return null
 	}
@@ -57,6 +65,7 @@ private fun Trk.getTrack(): Feature? {
 
 private fun Rte.getRoute(): Feature? {
 	val times = mutableListOf<JsonElement>()
+	logger.debug("Converter: Get Routes: Start map")
 	val line = rtePt.map { pt ->
 		pt.time?.let { times.add(JsonPrimitive(it.toString())) }
 		listOfNotNull(
@@ -65,6 +74,7 @@ private fun Rte.getRoute(): Feature? {
 			pt.ele
 		)
 	}
+	logger.debug("Converter: Get Routes: End map")
 	if(line.isEmpty()) {
 		return null
 	}

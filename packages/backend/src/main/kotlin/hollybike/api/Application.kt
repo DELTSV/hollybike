@@ -16,9 +16,13 @@ import hollybike.api.services.storage.StorageServiceFactory
 import hollybike.api.services.storage.signature.StorageSignatureMode
 import hollybike.api.services.storage.signature.StorageSignatureService
 import hollybike.api.utils.configureRestart
+import io.ktor.util.logging.*
+import kotlin.math.log
 import kotlin.system.measureTimeMillis
 
 lateinit var signatureService: StorageSignatureService
+
+lateinit var logger: Logger
 
 fun main() {
 	while (true) {
@@ -43,6 +47,7 @@ fun run(isTestEnv: Boolean = false): ApplicationEngine {
 }
 
 fun Application.module() {
+	logger = log
 	checkEnvironment()
 	checkOnPremise()
 	if(!loadConfig()) {
