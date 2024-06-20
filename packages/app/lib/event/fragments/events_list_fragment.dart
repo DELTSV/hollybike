@@ -106,10 +106,10 @@ class _EventsListFragmentState<T extends EventsBloc>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.calendar_today,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          size: 48,
+                        Lottie.asset(
+                          fit: BoxFit.cover,
+                          'assets/lottie/lottie_calendar_placeholder.json',
+                          repeat: false,
                         ),
                         const SizedBox(height: 16),
                         Text(
