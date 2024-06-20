@@ -84,7 +84,11 @@ dependencies {
 	implementation("io.ktor:ktor-server-resources:$ktorVersion")
 	implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 	implementation("io.ktor:ktor-server-html-builder:$ktorVersion")
-	implementation("io.ktor:ktor-serialization-kotlinx-xml:$ktorVersion")
+//	implementation("io.ktor:ktor-serialization-kotlinx-xml:$ktorVersion")
+
+	implementation("io.github.pdvrieze.xmlutil:core:0.90.1")
+//	implementation("io.github.pdvrieze.xmlutil:core-jvm:0.90.1")
+	implementation("io.github.pdvrieze.xmlutil:serialization-jvm:0.90.1")
 
 	implementation("io.ktor:ktor-client-core:$ktorVersion")
 	implementation("io.ktor:ktor-client-cio:$ktorVersion")
