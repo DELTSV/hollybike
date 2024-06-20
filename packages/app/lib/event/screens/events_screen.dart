@@ -106,9 +106,11 @@ class _EventsScreenState extends State<EventsScreen>
               ),
             ),
             floatingActionButton: _getFloatingActionButton(),
-            body: TabBarView(
-              controller: _controller,
-              children: tabs.map((tab) => tab.fragment).toList(),
+            body: Expanded(
+              child: TabBarView(
+                controller: _controller,
+                children: tabs.map((tab) => tab.fragment).toList(),
+              ),
             ),
             displayNavBar: true,
           );

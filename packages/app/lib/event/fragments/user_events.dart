@@ -23,6 +23,7 @@ class UserEvents extends StatelessWidget {
       navigateToEventDetails: navigateToEventDetails,
       onNextPageRequested: () => _loadNextPage(context),
       onRefreshRequested: () => _refreshEvents(context, userId),
+      placeholderText: 'Vous ne participez à aucun événement',
     );
   }
 

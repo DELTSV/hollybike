@@ -28,19 +28,13 @@ class _EventsListState extends State<EventsList> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      triggerMode: RefreshIndicatorTriggerMode.anywhere,
-      onRefresh: () async {
-        widget.onRefreshRequested();
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: EventsSectionsList(
-          events: widget.events,
-          onEventTap: widget.onEventTap,
-          hasMore: widget.hasMore,
-          controller: _scrollController,
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: EventsSectionsList(
+        events: widget.events,
+        onEventTap: widget.onEventTap,
+        hasMore: widget.hasMore,
+        controller: _scrollController,
       ),
     );
   }

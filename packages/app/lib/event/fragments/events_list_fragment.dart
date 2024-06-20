@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
+import 'package:hollybike/event/widgets/events_list/events_list_placeholder.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
@@ -14,19 +16,22 @@ class EventsListFragment<T extends EventsBloc> extends StatefulWidget {
   final void Function(MinimalEvent) navigateToEventDetails;
   final void Function() onNextPageRequested;
   final void Function() onRefreshRequested;
+  final String placeholderText;
 
   const EventsListFragment({
     super.key,
     required this.navigateToEventDetails,
     required this.onNextPageRequested,
     required this.onRefreshRequested,
+    required this.placeholderText,
   });
 
   @override
   State<EventsListFragment> createState() => _EventsListFragmentState<T>();
 }
 
-class _EventsListFragmentState<T extends EventsBloc> extends State<EventsListFragment> {
+class _EventsListFragmentState<T extends EventsBloc>
+    extends State<EventsListFragment> {
   @override
   void initState() {
     super.initState();
@@ -60,35 +65,73 @@ class _EventsListFragmentState<T extends EventsBloc> extends State<EventsListFra
           },
         ),
       ],
-      child: BlocBuilder<T, EventsState>(
-        builder: (context, state) {
-          if (state.events.isEmpty) {
-            switch (state.status) {
-              case EventStatus.initial:
-                return const SizedBox();
-              case EventStatus.loading:
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              case EventStatus.error:
-                return const Center(
-                  child: Text('Oups, une erreur est survenue.'),
-                );
-              case EventStatus.success:
-                return const Center(
-                  child: Text('Aucun event trouvé.'),
-                );
-            }
-          }
-
-          return EventsList(
-            hasMore: state.hasMore,
-            events: state.events,
-            onNextPageRequested: widget.onNextPageRequested,
-            onEventTap: widget.navigateToEventDetails,
-            onRefreshRequested: widget.onRefreshRequested,
-          );
+      child: RefreshIndicator(
+        triggerMode: RefreshIndicatorTriggerMode.anywhere,
+        onRefresh: () async {
+          widget.onRefreshRequested();
         },
+        child: BlocBuilder<T, EventsState>(
+          builder: (context, state) {
+            if (state.events.isEmpty) {
+              switch (state.status) {
+                case EventStatus.initial:
+                  return const SizedBox();
+                case EventStatus.loading:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                case EventStatus.error:
+                  return EventsListPlaceholder(
+                    padding: MediaQuery.of(context).size.width * 0.1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          fit: BoxFit.cover,
+                          'assets/lottie/lottie_calendar_error_animation.json',
+                          repeat: false,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Une erreur est survenue lors du chargement des évènements',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                case EventStatus.success:
+                  return EventsListPlaceholder(
+                    padding: MediaQuery.of(context).size.width * 0.2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          size: 48,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          widget.placeholderText,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+              }
+            }
+
+            return EventsList(
+              hasMore: state.hasMore,
+              events: state.events,
+              onNextPageRequested: widget.onNextPageRequested,
+              onEventTap: widget.navigateToEventDetails,
+              onRefreshRequested: widget.onRefreshRequested,
+            );
+          },
+        ),
       ),
     );
   }
