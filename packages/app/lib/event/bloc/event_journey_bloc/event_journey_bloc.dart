@@ -24,23 +24,17 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
     UploadJourneyFileToEvent event,
     Emitter<EventJourneyState> emit,
   ) async {
-    emit(EventJourneyOperationInProgress(state));
+    emit(EventJourneyCreationInProgress(state));
+
+    final session = event.session;
 
     Journey journey;
 
     try {
       journey = await journeyRepository.createJourney(
-        event.session,
+        session,
         event.name,
       );
-
-      await eventRepository.addJourneyToEvent(
-        event.session,
-        event.eventId,
-        journey,
-      );
-
-      emit(EventJourneyOperationSuccess(state, successMessage: 'Parcours créé'));
     } catch (e) {
       emit(EventJourneyOperationFailure(
         state,
@@ -53,27 +47,44 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
     try {
       final journeyWithFile = await journeyRepository.uploadJourneyFile(
-        event.session,
+        session,
         journey.id,
         event.file,
       );
 
+      emit(EventJourneyUploadSuccess(state));
+
+      await eventRepository.addJourneyToEvent(
+        session,
+        event.eventId,
+        journey,
+      );
+
       eventRepository.onEventJourneyUpdated(journeyWithFile);
 
-      emit(EventJourneyUploadSuccess(state));
+      emit(EventJourneyCreationSuccess(state));
+
+      journeyRepository.getPositions(session, journeyWithFile.id).then(
+        (journeyWithPositions) {
+          eventRepository.onEventJourneyUpdated(journeyWithPositions);
+        },
+      ).catchError(
+        (e) {
+          log('Error while fetching journey positions', error: e);
+        },
+      );
     } catch (e) {
       emit(EventJourneyOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
-      return;
     }
   }
 
   Future<void> _onAttachJourneyToEvent(
-      AttachJourneyToEvent event,
-      Emitter<EventJourneyState> emit,
-      ) async {
+    AttachJourneyToEvent event,
+    Emitter<EventJourneyState> emit,
+  ) async {
     emit(EventJourneyOperationInProgress(state));
 
     try {

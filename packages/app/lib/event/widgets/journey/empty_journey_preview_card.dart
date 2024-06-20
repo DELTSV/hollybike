@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_state.dart';
 import 'package:hollybike/event/types/event.dart';
-import 'package:hollybike/journey/utils/get_journey_file_and_upload_to_event.dart';
+import 'package:hollybike/event/widgets/journey/upload_journey_modal.dart';
 import 'package:hollybike/journey/widgets/journey_library_modal.dart';
 import 'package:lottie/lottie.dart';
 
@@ -103,7 +103,13 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
         );
         break;
       case NewJourneyType.file:
-        getJourneyFileAndUploadToEvent(context, event);
+        // getJourneyFileAndUploadToEvent(context, event);
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return UploadJourneyModal();
+            });
     }
   }
 }

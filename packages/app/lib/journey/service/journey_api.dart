@@ -59,4 +59,14 @@ class JourneyApi {
 
     return Journey.fromJson(response.data);
   }
+
+  Future<Journey> getPositions(AuthSession session, int journeyId) async {
+    final response = await DioClient(session).dio.get('/journeys/$journeyId/positions');
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to fetch journey positions");
+    }
+
+    return Journey.fromJson(response.data);
+  }
 }

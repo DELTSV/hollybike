@@ -57,4 +57,10 @@ class JourneyRepository {
 
     return journey;
   }
+
+  Future<Journey> getPositions(AuthSession session, int journeyId) async {
+    final journey = await journeyApi.getPositions(session, journeyId);
+
+    return journey;
+  }
 }
