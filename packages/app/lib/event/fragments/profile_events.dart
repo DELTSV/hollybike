@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 import 'package:hollybike/event/widgets/events_list/events_sections_list.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
@@ -32,8 +33,7 @@ class ProfileEvents extends StatefulWidget {
 class _ProfileEventsState extends State<ProfileEvents> {
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      triggerMode: RefreshIndicatorTriggerMode.anywhere,
+    return ThemedRefreshIndicator(
       onRefresh: () => _refreshEvents(context, widget.userId),
       child: MultiBlocListener(
         listeners: [

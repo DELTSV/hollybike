@@ -13,6 +13,7 @@ import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/bar/top_bar.dart';
 import '../../../shared/widgets/bar/top_bar_title.dart';
+import '../../../shared/widgets/loaders/themed_refresh_indicator.dart';
 import '../../types/participation/event_participation.dart';
 import '../../widgets/participations/event_participation_card.dart';
 
@@ -107,11 +108,8 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
             icon: const Icon(Icons.group_add),
           );
         }),
-        body: RefreshIndicator(
-          triggerMode: RefreshIndicatorTriggerMode.anywhere,
-          onRefresh: () async {
-            _refreshParticipants();
-          },
+        body: ThemedRefreshIndicator(
+          onRefresh: () => _refreshParticipants(),
           child: Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
@@ -187,7 +185,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
     );
   }
 
-  void _refreshParticipants() {
+  Future<void> _refreshParticipants() {
     withCurrentSession(
       context,
       (session) {
@@ -200,5 +198,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
             );
       },
     );
+
+    return context.read<EventParticipationBloc>().firstWhenNotLoading;
   }
 }

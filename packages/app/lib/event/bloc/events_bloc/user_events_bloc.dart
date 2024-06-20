@@ -32,7 +32,7 @@ class UserEventsBloc extends EventsBloc {
     Emitter<EventsState> emit,
   ) async {
     userId = event.userId;
-    emit(EventPageLoadInProgress(const EventsState()));
+    emit(EventPageLoadInProgress(state));
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(

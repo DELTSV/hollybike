@@ -83,7 +83,7 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     RefreshEvents event,
     Emitter<EventsState> emit,
   ) async {
-    emit(EventPageLoadInProgress(const EventsState()));
+    emit(EventPageLoadInProgress(state));
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
