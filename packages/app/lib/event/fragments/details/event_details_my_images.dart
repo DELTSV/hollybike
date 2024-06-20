@@ -9,6 +9,8 @@ import '../../../app/app_router.gr.dart';
 import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/image_gallery/image_gallery.dart';
+import '../../bloc/event_details_bloc/event_details_bloc.dart';
+import '../../bloc/event_details_bloc/event_details_event.dart';
 import '../../bloc/event_images_bloc/event_images_state.dart';
 import '../../bloc/event_images_bloc/event_my_images_bloc.dart';
 import '../../bloc/event_images_bloc/event_my_images_event.dart';
@@ -16,12 +18,14 @@ import '../../bloc/event_images_bloc/event_my_images_event.dart';
 class EventDetailsMyImages extends StatelessWidget {
   final int eventId;
   final bool isImagesPublic;
+  final bool isParticipating;
   final ScrollController scrollController;
 
   const EventDetailsMyImages({
     super.key,
     required this.eventId,
     required this.scrollController,
+    required this.isParticipating,
     required this.isImagesPublic,
   });
 
@@ -58,21 +62,7 @@ class EventDetailsMyImages extends StatelessWidget {
                 scrollViewKey: 'event_details_my_images_$eventId',
                 child: ImageGallery(
                   scrollController: scrollController,
-                  emptyPlaceholder: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Lottie.asset(
-                        fit: BoxFit.cover,
-                        'assets/lottie/lottie_images_placeholder.json',
-                        repeat: false,
-                        height: 150,
-                      ),
-                      const Text(
-                        "Vous n'avez ajouté aucune photo",
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+                  emptyPlaceholder: _buildPlaceholder(context),
                   onRefresh: () => _refreshImages(context),
                   onLoadNextPage: () => _loadNextPage(context),
                   images: state.images,
@@ -163,6 +153,40 @@ class EventDetailsMyImages extends StatelessWidget {
     );
   }
 
+  Widget _buildPlaceholder(BuildContext context) {
+    final message = isParticipating
+        ? "Vous n'avez ajouté aucune photo"
+        : "Vous devez participer à l'évènement ajouter des photos";
+
+    final widgets = <Widget>[
+      Lottie.asset(
+        fit: BoxFit.cover,
+        'assets/lottie/lottie_images_placeholder.json',
+        repeat: false,
+        height: 150,
+      ),
+      Text(
+        message,
+        textAlign: TextAlign.center,
+      ),
+    ];
+
+    if (!isParticipating) {
+      widgets.addAll([
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () => _onJoin(context),
+          child: const Text("Rejoindre l'évènement"),
+        ),
+      ]);
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: widgets,
+    );
+  }
+
   void _refreshImages(BuildContext context) {
     withCurrentSession(
       context,
@@ -185,6 +209,20 @@ class EventDetailsMyImages extends StatelessWidget {
               LoadMyEventImagesNextPage(
                 session: session,
                 eventId: eventId,
+              ),
+            );
+      },
+    );
+  }
+
+  void _onJoin(BuildContext context) {
+    withCurrentSession(
+      context,
+      (session) {
+        context.read<EventDetailsBloc>().add(
+              JoinEvent(
+                eventId: eventId,
+                session: session,
               ),
             );
       },

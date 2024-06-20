@@ -208,6 +208,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       ),
       EventDetailsMyImages(
         scrollController: _scrollController,
+        isParticipating: eventDetails.isParticipating,
         isImagesPublic:
             eventDetails.callerParticipation?.isImagesPublic ?? false,
         eventId: eventDetails.event.id,
@@ -253,7 +254,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           builder: (context, state) {
             if (state is EventDetailsLoadFailure ||
                 state is EventDetailsLoadInProgress ||
-                state.eventDetails == null) {
+                state.eventDetails == null ||
+                state.eventDetails?.isParticipating == false) {
               return const SizedBox();
             }
 
