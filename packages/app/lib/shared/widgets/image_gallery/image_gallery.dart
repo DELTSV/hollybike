@@ -11,6 +11,7 @@ class ImageGallery extends StatefulWidget {
   final void Function(EventImage) onImageTap;
   final void Function() onRefresh;
   final void Function() onLoadNextPage;
+  final Widget emptyPlaceholder;
 
   const ImageGallery({
     super.key,
@@ -20,6 +21,7 @@ class ImageGallery extends StatefulWidget {
     required this.onRefresh,
     required this.onLoadNextPage,
     required this.onImageTap,
+    required this.emptyPlaceholder,
   });
 
   @override
@@ -48,6 +50,22 @@ class _ImageGalleryState extends State<ImageGallery> {
           height: 300,
           child: Center(
             child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    if (widget.images.isEmpty) {
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 350,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.2,
+            ),
+            child: Center(
+              child: widget.emptyPlaceholder,
+            ),
           ),
         ),
       );

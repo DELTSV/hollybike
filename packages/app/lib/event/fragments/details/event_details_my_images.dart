@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/event/widgets/images/event_images_visibility_dialog.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../shared/utils/with_current_session.dart';
@@ -57,6 +58,21 @@ class EventDetailsMyImages extends StatelessWidget {
                 scrollViewKey: 'event_details_my_images_$eventId',
                 child: ImageGallery(
                   scrollController: scrollController,
+                  emptyPlaceholder: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Lottie.asset(
+                        fit: BoxFit.cover,
+                        'assets/lottie/lottie_images_placeholder.json',
+                        repeat: false,
+                        height: 150,
+                      ),
+                      const Text(
+                        "Vous n'avez ajouté aucune photo",
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                   onRefresh: () => _refreshImages(context),
                   onLoadNextPage: () => _loadNextPage(context),
                   images: state.images,

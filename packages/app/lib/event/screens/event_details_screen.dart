@@ -8,7 +8,6 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
-import 'package:hollybike/event/widgets/images/add_photos_floating_button.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
@@ -24,6 +23,7 @@ import '../bloc/event_details_bloc/event_details_state.dart';
 import '../fragments/details/event_details_my_images.dart';
 import '../types/event_details.dart';
 import '../widgets/details/event_details_actions_menu.dart';
+import '../widgets/images/show_event_images_picker.dart';
 
 enum EventDetailsTab { info, photos, myPhotos, map }
 
@@ -61,7 +61,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     super.initState();
 
     _tabController.animation?.addListener(() {
-      final newTab = EventDetailsTab.values[_tabController.animation!.value.round()];
+      final newTab =
+          EventDetailsTab.values[_tabController.animation!.value.round()];
 
       if (currentTab != newTab) {
         setState(() {
@@ -202,6 +203,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       EventDetailsImages(
         scrollController: _scrollController,
         eventId: eventDetails.event.id,
+        isParticipating: eventDetails.isParticipating,
+        onAddPhotos: _onAddPhotoFromAllPhotos,
       ),
       EventDetailsMyImages(
         scrollController: _scrollController,
@@ -256,14 +259,32 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
             final eventDetails = state.eventDetails!;
 
-            return AddPhotosFloatingButton(
-              eventId: eventDetails.event.id,
+            return FloatingActionButton.extended(
+              onPressed: () => showEventImagesPicker(
+                context,
+                eventDetails.event.id,
+              ),
+              label: Text(
+                "Ajouter des photos",
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+              icon: const Icon(Icons.add_a_photo),
             );
           },
         );
       case EventDetailsTab.map:
         return null;
     }
+  }
+
+  void _onAddPhotoFromAllPhotos() {
+    _tabController.animateTo(2);
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showEventImagesPicker(context, widget.event.id);
+    });
   }
 
   Widget? _renderActions(EventDetailsState state) {
