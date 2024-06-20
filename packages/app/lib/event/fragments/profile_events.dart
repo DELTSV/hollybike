@@ -1,18 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 import 'package:hollybike/event/widgets/events_list/events_sections_list.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../shared/utils/with_current_session.dart';
+import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../types/minimal_event.dart';
-import '../../shared/utils/with_current_session.dart';
-import '../../shared/widgets/app_toast.dart';
 
 class ProfileEvents extends StatefulWidget {
   final int? userId;
@@ -33,9 +34,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       triggerMode: RefreshIndicatorTriggerMode.anywhere,
-      onRefresh: () async {
-        _refreshEvents(context, widget.userId);
-      },
+      onRefresh: () => _refreshEvents(context, widget.userId),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
@@ -106,8 +105,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
 
     final scrollController = widget.scrollView.currentState!.innerController;
     scrollController.addListener(() {
-      var nextPageTrigger =
-          0.8 * scrollController.position.maxScrollExtent;
+      var nextPageTrigger = 0.8 * scrollController.position.maxScrollExtent;
 
       if (scrollController.position.pixels > nextPageTrigger) {
         _loadNextPage(context);
@@ -121,8 +119,8 @@ class _ProfileEventsState extends State<ProfileEvents> {
     });
   }
 
-  void _refreshEvents(BuildContext context, int? userId) {
-    if (userId == null) return;
+  Future<void> _refreshEvents(BuildContext context, int? userId) {
+    if (userId == null) return Future.value();
 
     withCurrentSession(context, (session) {
       context.read<UserEventsBloc>().add(
@@ -132,6 +130,8 @@ class _ProfileEventsState extends State<ProfileEvents> {
             ),
           );
     });
+
+    return context.read<UserEventsBloc>().firstWhenNotLoading;
   }
 
   void _navigateToEventDetails(

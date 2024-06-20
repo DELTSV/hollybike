@@ -113,3 +113,11 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     );
   }
 }
+
+extension FirstWhenNotLoading on EventsBloc {
+  Future<EventsState> get firstWhenNotLoading async {
+    return stream.firstWhere((state) {
+      return state is! EventPageLoadInProgress;
+    });
+  }
+}

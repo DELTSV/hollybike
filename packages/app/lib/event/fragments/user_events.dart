@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 
 import '../../shared/utils/with_current_session.dart';
@@ -40,8 +41,8 @@ class UserEvents extends StatelessWidget {
     );
   }
 
-  void _refreshEvents(BuildContext context, int? userId) {
-    if (userId == null) return;
+  Future<void> _refreshEvents(BuildContext context, int? userId) {
+    if (userId == null) return Future.value();
 
     withCurrentSession(
       context,
@@ -54,5 +55,7 @@ class UserEvents extends StatelessWidget {
             );
       },
     );
+
+    return context.read<UserEventsBloc>().firstWhenNotLoading;
   }
 }
