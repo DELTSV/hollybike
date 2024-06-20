@@ -325,3 +325,12 @@ ALTER TABLE events
 
 ALTER TABLE journeys
     ADD COLUMN IF NOT EXISTS preview_image VARCHAR(2048) DEFAULT NULL;
+
+-- changeset loic:10
+
+ALTER TABLE events
+    DROP CONSTRAINT events_journey_fkey;
+
+ALTER TABLE events
+    ADD CONSTRAINT events_journey_fkey FOREIGN KEY (journey) REFERENCES journeys(id_journey) ON DELETE SET NULL;
+
