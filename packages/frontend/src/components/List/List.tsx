@@ -14,6 +14,7 @@ import {
 import { TList } from "../../types/TList.ts";
 import { Button } from "../Button/Button.tsx";
 import { Reload } from "../../utils/useReload.ts";
+import { Filters } from "./Filters.tsx";
 
 interface ListProps<T> {
 	columns: Columns[],
@@ -25,21 +26,21 @@ interface ListProps<T> {
 }
 
 export function List<T>(props: ListProps<T>) {
-	const sortFilterColumns = useApi<TMetaData>(`${props.baseUrl}/meta-data`);
+	const metadata = useApi<TMetaData>(`${props.baseUrl}/meta-data`);
 	const [sort, setSort] = useState<{[name: string]: Sort}>({});
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(0);
 
 	useEffect(() => {
 		const sortMap: {[name: string]: Sort} = {};
-		Object.keys(sortFilterColumns.data ?? []).forEach((c) => {
+		Object.keys(metadata.data ?? []).forEach((c) => {
 			sortMap[c] = {
 				column: c,
 				order: "none",
 			};
 		});
 		setSort(sortMap);
-	}, [sortFilterColumns, setSort]);
+	}, [metadata, setSort]);
 
 	const setOrder = useCallback((col: string) => {
 		if (sort[col] !== undefined) {
@@ -95,10 +96,13 @@ export function List<T>(props: ListProps<T>) {
 
 	return (
 		<div className={"flex flex-col grow gap-2"}>
-			<Input
-				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
-				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
-			/>
+			<div className={"flex justify-between"}>
+				<Input
+					value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
+					placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
+				/>
+				<Filters metaData={metadata.data ?? []}/>
+			</div>
 			<table className={"rounded bg-slate-100 dark:bg-slate-800 table-fixed"}>
 				<thead>
 					<tr>
@@ -154,6 +158,6 @@ interface Columns {
 	visible?: boolean
 }
 
-interface TMetaData {
+export interface TMetaData {
 	[name: string]: string
 }
