@@ -10,6 +10,7 @@ import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
+import hollybike.api.types.websocket.NewEventNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
@@ -31,6 +32,7 @@ import kotlin.time.Duration.Companion.hours
 class EventService(
 	private val db: Database,
 	private val storageService: StorageService,
+	private val notificationService: NotificationService
 ) {
 	private fun checkEventTextFields(name: String, description: String?): Result<Unit> {
 		if (name.isBlank()) {
@@ -267,7 +269,7 @@ class EventService(
 			?: return@transaction null
 	}
 
-	fun createEvent(
+	suspend fun createEvent(
 		caller: User,
 		name: String,
 		description: String?,
@@ -298,6 +300,21 @@ class EventService(
 			Result.success(
 				createdEvent
 			)
+		}.apply {
+			onSuccess { e ->
+				notificationService.sendToAssociation(
+					association.id.value,
+					NewEventNotification(
+						e.id.value,
+						e.name,
+						e.description,
+						e.startDateTime,
+						e.signedImage,
+						e.owner.id.value,
+						e.owner.username
+					)
+				)
+			}
 		}
 	}
 
