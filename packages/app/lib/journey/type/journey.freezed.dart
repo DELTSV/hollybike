@@ -31,6 +31,11 @@ mixin _$Journey {
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
   Position? get destination => throw _privateConstructorUsedError;
+  int? get totalDistance => throw _privateConstructorUsedError;
+  int? get minElevation => throw _privateConstructorUsedError;
+  int? get maxElevation => throw _privateConstructorUsedError;
+  int? get totalElevationGain => throw _privateConstructorUsedError;
+  int? get totalElevationLoss => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -51,7 +56,12 @@ abstract class $JourneyCopyWith<$Res> {
       MinimalUser creator,
       Position? start,
       Position? end,
-      Position? destination});
+      Position? destination,
+      int? totalDistance,
+      int? minElevation,
+      int? maxElevation,
+      int? totalElevationGain,
+      int? totalElevationLoss});
 
   $MinimalUserCopyWith<$Res> get creator;
   $PositionCopyWith<$Res>? get start;
@@ -81,6 +91,11 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
     Object? start = freezed,
     Object? end = freezed,
     Object? destination = freezed,
+    Object? totalDistance = freezed,
+    Object? minElevation = freezed,
+    Object? maxElevation = freezed,
+    Object? totalElevationGain = freezed,
+    Object? totalElevationLoss = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -119,6 +134,26 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as Position?,
+      totalDistance: freezed == totalDistance
+          ? _value.totalDistance
+          : totalDistance // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minElevation: freezed == minElevation
+          ? _value.minElevation
+          : minElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      maxElevation: freezed == maxElevation
+          ? _value.maxElevation
+          : maxElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationGain: freezed == totalElevationGain
+          ? _value.totalElevationGain
+          : totalElevationGain // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationLoss: freezed == totalElevationLoss
+          ? _value.totalElevationLoss
+          : totalElevationLoss // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -183,7 +218,12 @@ abstract class _$$JourneyImplCopyWith<$Res> implements $JourneyCopyWith<$Res> {
       MinimalUser creator,
       Position? start,
       Position? end,
-      Position? destination});
+      Position? destination,
+      int? totalDistance,
+      int? minElevation,
+      int? maxElevation,
+      int? totalElevationGain,
+      int? totalElevationLoss});
 
   @override
   $MinimalUserCopyWith<$Res> get creator;
@@ -215,6 +255,11 @@ class __$$JourneyImplCopyWithImpl<$Res>
     Object? start = freezed,
     Object? end = freezed,
     Object? destination = freezed,
+    Object? totalDistance = freezed,
+    Object? minElevation = freezed,
+    Object? maxElevation = freezed,
+    Object? totalElevationGain = freezed,
+    Object? totalElevationLoss = freezed,
   }) {
     return _then(_$JourneyImpl(
       id: null == id
@@ -253,6 +298,26 @@ class __$$JourneyImplCopyWithImpl<$Res>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as Position?,
+      totalDistance: freezed == totalDistance
+          ? _value.totalDistance
+          : totalDistance // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minElevation: freezed == minElevation
+          ? _value.minElevation
+          : minElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      maxElevation: freezed == maxElevation
+          ? _value.maxElevation
+          : maxElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationGain: freezed == totalElevationGain
+          ? _value.totalElevationGain
+          : totalElevationGain // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationLoss: freezed == totalElevationLoss
+          ? _value.totalElevationLoss
+          : totalElevationLoss // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -269,7 +334,12 @@ class _$JourneyImpl extends _Journey {
       required this.creator,
       required this.start,
       required this.end,
-      required this.destination})
+      required this.destination,
+      required this.totalDistance,
+      required this.minElevation,
+      required this.maxElevation,
+      required this.totalElevationGain,
+      required this.totalElevationLoss})
       : super._();
 
   factory _$JourneyImpl.fromJson(Map<String, dynamic> json) =>
@@ -295,10 +365,20 @@ class _$JourneyImpl extends _Journey {
   final Position? end;
   @override
   final Position? destination;
+  @override
+  final int? totalDistance;
+  @override
+  final int? minElevation;
+  @override
+  final int? maxElevation;
+  @override
+  final int? totalElevationGain;
+  @override
+  final int? totalElevationLoss;
 
   @override
   String toString() {
-    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, creator: $creator, start: $start, end: $end, destination: $destination)';
+    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, creator: $creator, start: $start, end: $end, destination: $destination, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss)';
   }
 
   @override
@@ -317,13 +397,37 @@ class _$JourneyImpl extends _Journey {
             (identical(other.start, start) || other.start == start) &&
             (identical(other.end, end) || other.end == end) &&
             (identical(other.destination, destination) ||
-                other.destination == destination));
+                other.destination == destination) &&
+            (identical(other.totalDistance, totalDistance) ||
+                other.totalDistance == totalDistance) &&
+            (identical(other.minElevation, minElevation) ||
+                other.minElevation == minElevation) &&
+            (identical(other.maxElevation, maxElevation) ||
+                other.maxElevation == maxElevation) &&
+            (identical(other.totalElevationGain, totalElevationGain) ||
+                other.totalElevationGain == totalElevationGain) &&
+            (identical(other.totalElevationLoss, totalElevationLoss) ||
+                other.totalElevationLoss == totalElevationLoss));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, file, createdAt,
-      previewImage, creator, start, end, destination);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      file,
+      createdAt,
+      previewImage,
+      creator,
+      start,
+      end,
+      destination,
+      totalDistance,
+      minElevation,
+      maxElevation,
+      totalElevationGain,
+      totalElevationLoss);
 
   @JsonKey(ignore: true)
   @override
@@ -349,7 +453,12 @@ abstract class _Journey extends Journey {
       required final MinimalUser creator,
       required final Position? start,
       required final Position? end,
-      required final Position? destination}) = _$JourneyImpl;
+      required final Position? destination,
+      required final int? totalDistance,
+      required final int? minElevation,
+      required final int? maxElevation,
+      required final int? totalElevationGain,
+      required final int? totalElevationLoss}) = _$JourneyImpl;
   const _Journey._() : super._();
 
   factory _Journey.fromJson(Map<String, dynamic> json) = _$JourneyImpl.fromJson;
@@ -374,6 +483,16 @@ abstract class _Journey extends Journey {
   Position? get end;
   @override
   Position? get destination;
+  @override
+  int? get totalDistance;
+  @override
+  int? get minElevation;
+  @override
+  int? get maxElevation;
+  @override
+  int? get totalElevationGain;
+  @override
+  int? get totalElevationLoss;
   @override
   @JsonKey(ignore: true)
   _$$JourneyImplCopyWith<_$JourneyImpl> get copyWith =>

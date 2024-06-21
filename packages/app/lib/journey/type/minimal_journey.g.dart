@@ -19,6 +19,11 @@ _$MinimalJourneyImpl _$$MinimalJourneyImplFromJson(Map<String, dynamic> json) =>
       destination: json['destination'] == null
           ? null
           : Position.fromJson(json['destination'] as Map<String, dynamic>),
+      totalDistance: (json['totalDistance'] as num?)?.toInt(),
+      minElevation: (json['minElevation'] as num?)?.toInt(),
+      maxElevation: (json['maxElevation'] as num?)?.toInt(),
+      totalElevationGain: (json['totalElevationGain'] as num?)?.toInt(),
+      totalElevationLoss: (json['totalElevationLoss'] as num?)?.toInt(),
       previewImage: json['preview_image'] as String?,
     );
 
@@ -30,5 +35,10 @@ Map<String, dynamic> _$$MinimalJourneyImplToJson(
       'start': instance.start,
       'end': instance.end,
       'destination': instance.destination,
+      'totalDistance': instance.totalDistance,
+      'minElevation': instance.minElevation,
+      'maxElevation': instance.maxElevation,
+      'totalElevationGain': instance.totalElevationGain,
+      'totalElevationLoss': instance.totalElevationLoss,
       'preview_image': instance.previewImage,
     };

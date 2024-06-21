@@ -23,6 +23,11 @@ _$JourneyImpl _$$JourneyImplFromJson(Map<String, dynamic> json) =>
       destination: json['destination'] == null
           ? null
           : Position.fromJson(json['destination'] as Map<String, dynamic>),
+      totalDistance: (json['totalDistance'] as num?)?.toInt(),
+      minElevation: (json['minElevation'] as num?)?.toInt(),
+      maxElevation: (json['maxElevation'] as num?)?.toInt(),
+      totalElevationGain: (json['totalElevationGain'] as num?)?.toInt(),
+      totalElevationLoss: (json['totalElevationLoss'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$JourneyImplToJson(_$JourneyImpl instance) =>
@@ -36,4 +41,9 @@ Map<String, dynamic> _$$JourneyImplToJson(_$JourneyImpl instance) =>
       'start': instance.start,
       'end': instance.end,
       'destination': instance.destination,
+      'totalDistance': instance.totalDistance,
+      'minElevation': instance.minElevation,
+      'maxElevation': instance.maxElevation,
+      'totalElevationGain': instance.totalElevationGain,
+      'totalElevationLoss': instance.totalElevationLoss,
     };

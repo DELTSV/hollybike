@@ -22,6 +22,11 @@ class Journey with _$Journey {
     required Position? start,
     required Position? end,
     required Position? destination,
+    required int? totalDistance,
+    required int? minElevation,
+    required int? maxElevation,
+    required int? totalElevationGain,
+    required int? totalElevationLoss,
   }) = _Journey;
 
   MinimalJourney toMinimalJourney() => MinimalJourney(
@@ -31,6 +36,11 @@ class Journey with _$Journey {
     start: start,
     end: end,
     destination: destination,
+    totalDistance: totalDistance,
+    minElevation: minElevation,
+    maxElevation: maxElevation,
+    totalElevationGain: totalElevationGain,
+    totalElevationLoss: totalElevationLoss,
   );
 
   factory Journey.fromJson(JsonMap json) => _$JourneyFromJson(json);
