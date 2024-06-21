@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/minimal_event.dart';
-import 'package:hollybike/event/widgets/event_status.dart';
 import 'package:hollybike/shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
 import 'package:hollybike/shared/widgets/loading_placeholders/text_loading_placeholder.dart';
-
-import '../event_form/event_date.dart';
 
 class PlaceholderEventPreviewCard extends StatelessWidget {
   const PlaceholderEventPreviewCard({super.key});

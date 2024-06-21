@@ -1,11 +1,6 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/loading_placeholders/text_loading_placeholder.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/loading_profile_picture.dart';
-import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
-
-import '../../../app/app_router.gr.dart';
 
 class PlaceholderSearchProfileCard extends StatelessWidget {
   const PlaceholderSearchProfileCard({super.key});
