@@ -180,34 +180,30 @@ class JourneyController(
 				contentType.toString()
 			).onSuccess {
 				println("File uploaded")
+
 				cleanedGeoJson.start?.let { start ->
-					println("get start position")
 					cleanedGeoJson.end?.let { end ->
-						println("get end positions")
 						journeyPositions[journey.id.value] = TJourneyPositions(
 							journey,
 							true
 						)
-						println("send end position request")
 						positionService.getPositionOrPush(
 							"journey-end-position",
 							journey.id.value,
 							TPositionRequest(end[1], end[0], end.getOrNull(2), EPositionScope.Country)
 						)
-						println("request sent")
 					} ?: run {
 						journeyPositions[journey.id.value] = TJourneyPositions(
 							journey,
 							false
 						)
 					}
-					println("send start position request")
+
 					positionService.getPositionOrPush(
 						"journey-start-position",
 						journey.id.value,
 						TPositionRequest(start[1], start[0], start.getOrNull(2), EPositionScope.Country)
 					)
-					println("request sent")
 				}
 				call.respond(HttpStatusCode.OK, TJourney(journey))
 			}.onFailure { err ->

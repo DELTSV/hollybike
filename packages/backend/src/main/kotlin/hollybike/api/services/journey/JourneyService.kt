@@ -132,7 +132,15 @@ class JourneyService(
 		val path = "j/${journey.id}/f"
 
 		storageService.store(geoJson.toJson().toByteArray(), path, fileContentType)
-		transaction(db) { journey.file = path }
+
+		transaction(db) {
+			journey.file = path
+			journey.totalDistance = geoJson.totalDistance.toInt()
+			journey.minElevation = geoJson.minMaxAltitude?.first?.round(2)
+			journey.maxElevation = geoJson.minMaxAltitude?.second?.round(2)
+			journey.totalElevationGain = geoJson.totalHeightDifference.first.round(2)
+			journey.totalElevationLoss = geoJson.totalHeightDifference.second.round(2)
+		}
 
 		addPreviewImage(geoJson, journey).onFailure {
 			println("Failed to add preview image: $it")
