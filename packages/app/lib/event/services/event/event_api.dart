@@ -11,18 +11,21 @@ import '../../types/participation/event_participation.dart';
 class EventApi {
   Future<PaginatedList<MinimalEvent>> getEvents(
     AuthSession session,
-    String requestType,
+    String? requestType,
     int page,
     int eventsPerPage, {
     int? userId,
+    String? query,
   }) async {
     final response = await DioClient(session).dio.get(
-          '/events/$requestType',
+          '/events${requestType == null ? "" : "/$requestType"}',
           queryParameters: {
             'page': page,
             'per_page': eventsPerPage,
             'sort': 'start_date_time.asc',
-          }..addAll(userId == null ? {} : {"participant_id": "eq:$userId"}),
+          }
+            ..addAll(userId == null ? {} : {"participant_id": "eq:$userId"})
+            ..addAll(query == null ? {} : {"query": query}),
         );
 
     if (response.statusCode != 200) {

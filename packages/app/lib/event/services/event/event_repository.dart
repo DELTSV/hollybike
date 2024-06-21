@@ -26,6 +26,9 @@ class EventRepository {
   late final _archivedStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
+  late final _searchStreamController =
+      BehaviorSubject<List<MinimalEvent>>.seeded([]);
+
   EventRepository({required this.eventApi});
 
   Stream<EventDetails?> get eventDetailsStream =>
@@ -39,12 +42,16 @@ class EventRepository {
   Stream<List<MinimalEvent>> get archivedEventsStream =>
       _archivedStreamController.stream;
 
+  Stream<List<MinimalEvent>> get searchEventsStream =>
+      _searchStreamController.stream;
+
   Future<PaginatedList<MinimalEvent>> fetchEvents(
     AuthSession session,
-    String requestType,
+    String? requestType,
     int page,
     int eventsPerPage, {
     int? userId,
+    String? query,
   }) async {
     final pageResult = await eventApi.getEvents(
       session,
@@ -52,6 +59,7 @@ class EventRepository {
       page,
       eventsPerPage,
       userId: userId,
+      query: query,
     );
 
     if (userId != null) {
@@ -73,6 +81,11 @@ class EventRepository {
           _archivedStreamController.value + pageResult.items,
         );
         break;
+      default:
+        _searchStreamController.add(
+          _searchStreamController.value + pageResult.items,
+        );
+        break;
     }
 
     return pageResult;
@@ -80,9 +93,10 @@ class EventRepository {
 
   Future<PaginatedList<MinimalEvent>> refreshEvents(
     AuthSession session,
-    String requestType,
+    String? requestType,
     int eventsPerPage, {
     int? userId,
+    String? query,
   }) async {
     final pageResult = await eventApi.getEvents(
       session,
@@ -90,6 +104,7 @@ class EventRepository {
       0,
       eventsPerPage,
       userId: userId,
+      query: query,
     );
 
     if (userId != null) {
@@ -111,13 +126,20 @@ class EventRepository {
           pageResult.items,
         );
         break;
+      default:
+        _searchStreamController.add(
+          pageResult.items,
+        );
+        break;
     }
 
     return pageResult;
   }
 
   Future<EventDetails> fetchEventDetails(
-      AuthSession session, int eventId) async {
+    AuthSession session,
+    int eventId,
+  ) async {
     final eventDetails = await eventApi.getEventDetails(session, eventId);
 
     _eventDetailsStreamController.add(eventDetails);
@@ -130,7 +152,10 @@ class EventRepository {
   }
 
   Future<void> editEvent(
-      AuthSession session, int eventId, EventFormData event) async {
+    AuthSession session,
+    int eventId,
+    EventFormData event,
+  ) async {
     final editedEvent = await eventApi.editEvent(session, eventId, event);
 
     final details = _eventDetailsStreamController.value;
@@ -149,6 +174,7 @@ class EventRepository {
       _futureStreamController,
       _userStreamController,
       _archivedStreamController,
+      _searchStreamController,
     ]) {
       controller.add(
         controller.value
@@ -156,12 +182,6 @@ class EventRepository {
             .toList(),
       );
     }
-
-    _futureStreamController.add(
-      _futureStreamController.value
-          .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
-          .toList(),
-    );
   }
 
   Future<void> publishEvent(AuthSession session, int eventId) async {
@@ -179,6 +199,7 @@ class EventRepository {
       _futureStreamController,
       _userStreamController,
       _archivedStreamController,
+      _searchStreamController,
     ]) {
       controller.add(
         controller.value
@@ -241,6 +262,7 @@ class EventRepository {
       _futureStreamController,
       _userStreamController,
       _archivedStreamController,
+      _searchStreamController,
     ]) {
       controller.add(
         controller.value
@@ -315,6 +337,7 @@ class EventRepository {
     _futureStreamController.close();
     _userStreamController.close();
     _archivedStreamController.close();
+    _searchStreamController.close();
   }
 
   Future<void> addJourneyToEvent(

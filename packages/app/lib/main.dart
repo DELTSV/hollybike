@@ -13,15 +13,13 @@ import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_bloc.dart'
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
-import 'package:hollybike/event/types/minimal_event_factory.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
-import 'package:hollybike/search/bloc/events_search_bloc.dart';
-import 'package:hollybike/search/services/search_api.dart';
-import 'package:hollybike/search/services/search_repository.dart';
+import 'package:hollybike/search/bloc/search_bloc.dart';
+import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
@@ -217,14 +215,15 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
-            BlocProvider<EventsSearchBloc>(
-              create: (context) => EventsSearchBloc(
-                searchRepository: SearchRepository(
-                  searchApi: SearchApi(
-                    factory: MinimalEventFactory(),
-                  ),
+            BlocProvider<SearchBloc>(
+              create: (context) => SearchBloc(
+                eventRepository: RepositoryProvider.of<EventRepository>(
+                  context,
                 ),
-              ),
+                profileRepository: RepositoryProvider.of<ProfileRepository>(
+                  context,
+                ),
+              )..add(SubscribeToEventsSearch()),
             ),
           ],
           child: const App(),

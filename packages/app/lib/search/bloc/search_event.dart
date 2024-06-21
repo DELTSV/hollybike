@@ -5,11 +5,22 @@ import '../../../auth/types/auth_session.dart';
 @immutable
 abstract class SearchEvent {}
 
-class LoadSearchNextPage extends SearchEvent {
+class SubscribeToEventsSearch extends SearchEvent {
+  SubscribeToEventsSearch();
+}
+
+class LoadEventsSearchNextPage extends SearchEvent {
   final AuthSession session;
   final String query;
 
-  LoadSearchNextPage({required this.session, required this.query});
+  LoadEventsSearchNextPage({required this.session, required this.query});
+}
+
+class LoadProfilesSearchNextPage extends SearchEvent {
+  final AuthSession session;
+  final String query;
+
+  LoadProfilesSearchNextPage({required this.session, required this.query});
 }
 
 class RefreshSearch extends SearchEvent {

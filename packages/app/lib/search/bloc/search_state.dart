@@ -1,68 +1,91 @@
 import 'package:flutter/cupertino.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/minimal_event.dart';
+import 'package:hollybike/profile/types/profile.dart';
 
 enum SearchStatus { loading, success, error, initial }
 
 @immutable
-class SearchState<D> {
-  final List<D> data;
+class SearchState {
+  final List<MinimalEvent> events;
+  final bool hasMoreEvents;
+  final int eventsNextPage;
+
+  final List<Profile> profiles;
+  final bool hasMoreProfiles;
+  final int profilesNextPage;
 
   final SearchStatus status;
 
-  final bool hasMore;
-  final int nextPage;
-
   const SearchState({
-    this.data = const [],
-    this.hasMore = true,
-    this.nextPage = 0,
+    this.events = const [],
+    this.hasMoreEvents = true,
+    this.eventsNextPage = 0,
+    this.profiles = const [],
+    this.hasMoreProfiles = true,
+    this.profilesNextPage = 0,
     this.status = SearchStatus.initial,
   });
 
-  SearchState<D> copyWith({
-    List<D>? data,
-    bool? hasMore,
-    int? nextPage,
-    Event? createdEvent,
+  SearchState copyWith({
+    List<MinimalEvent>? events,
+    List<Profile>? profiles,
+    bool? hasMoreEvents,
+    int? eventsNextPage,
+    bool? hasMoreProfiles,
+    int? profilesNextPage,
+    SearchStatus? status,
   }) {
     return SearchState(
-      data: data ?? this.data,
-      hasMore: hasMore ?? this.hasMore,
-      nextPage: nextPage ?? this.nextPage,
+      events: events ?? this.events,
+      profiles: profiles ?? this.profiles,
+      hasMoreEvents: hasMoreEvents ?? this.hasMoreEvents,
+      eventsNextPage: eventsNextPage ?? this.eventsNextPage,
+      hasMoreProfiles: hasMoreProfiles ?? this.hasMoreProfiles,
+      profilesNextPage: profilesNextPage ?? this.profilesNextPage,
+      status: status ?? this.status,
     );
   }
 }
 
-class SearchInitial<D> extends SearchState<D> {}
+class SearchInitial extends SearchState {}
 
-class SearchLoadInProgress<D> extends SearchState<D> {
-  SearchLoadInProgress(SearchState<D> state)
+class SearchLoadInProgress extends SearchState {
+  SearchLoadInProgress(SearchState state)
       : super(
-          data: state.data,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
+          events: state.events,
+          hasMoreEvents: state.hasMoreEvents,
+          eventsNextPage: state.eventsNextPage,
+          profiles: state.profiles,
+          hasMoreProfiles: state.hasMoreProfiles,
+          profilesNextPage: state.profilesNextPage,
           status: SearchStatus.loading,
         );
 }
 
-class SearchLoadSuccess<D> extends SearchState<D> {
-  SearchLoadSuccess(SearchState<D> state)
+class SearchLoadSuccess extends SearchState {
+  SearchLoadSuccess(SearchState state)
       : super(
-          data: state.data,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
+          events: state.events,
+          hasMoreEvents: state.hasMoreEvents,
+          eventsNextPage: state.eventsNextPage,
+          profiles: state.profiles,
+          hasMoreProfiles: state.hasMoreProfiles,
+          profilesNextPage: state.profilesNextPage,
           status: SearchStatus.success,
         );
 }
 
-class SearchLoadFailure<D> extends SearchState<D> {
+class SearchLoadFailure extends SearchState {
   final String errorMessage;
 
-  SearchLoadFailure(SearchState<D> state, {required this.errorMessage})
+  SearchLoadFailure(SearchState state, {required this.errorMessage})
       : super(
-          data: state.data,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
+          events: state.events,
+          hasMoreEvents: state.hasMoreEvents,
+          eventsNextPage: state.eventsNextPage,
+          profiles: state.profiles,
+          hasMoreProfiles: state.hasMoreProfiles,
+          profilesNextPage: state.profilesNextPage,
           status: SearchStatus.error,
         );
 }

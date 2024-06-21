@@ -1,44 +1,68 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
+import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
-import 'package:hollybike/search/services/search_repository.dart';
-import 'package:hollybike/shared/types/dto_compatible.dart';
 
+import '../../event/types/minimal_event.dart';
 import 'search_state.dart';
 
-abstract class SearchBloc<D, F extends DtoCompatibleFactory<D>>
-    extends Bloc<SearchEvent, SearchState<D>> {
-  final SearchRepository<D, F> searchRepository;
+class SearchBloc extends Bloc<SearchEvent, SearchState> {
+  final EventRepository eventRepository;
+  final ProfileRepository profileRepository;
   final int numberOfEventsPerRequest = 10;
 
-  SearchBloc({required this.searchRepository}) : super(SearchInitial<D>()) {
-    on<LoadSearchNextPage>(onLoadSearchNextPage);
+  SearchBloc({
+    required this.eventRepository,
+    required this.profileRepository,
+  }) : super(SearchInitial()) {
+    on<SubscribeToEventsSearch>(_onSubscribeToEventsSearch);
+    on<LoadEventsSearchNextPage>(_onLoadEventsSearchNextPage);
+    on<LoadProfilesSearchNextPage>(_onLoadProfilesSearchNextPage);
     on<RefreshSearch>(_onRefreshSearch);
   }
 
-  Future<void> onLoadSearchNextPage(
-    LoadSearchNextPage event,
+  @override
+  Future<void> close() async {
+    await eventRepository.close();
+    return super.close();
+  }
+
+  Future<void> _onSubscribeToEventsSearch(
+    SubscribeToEventsSearch event,
     Emitter<SearchState> emit,
   ) async {
-    if (state.hasMore == false || state.status == SearchStatus.loading) {
+    await emit.forEach<List<MinimalEvent>>(
+      eventRepository.searchEventsStream,
+      onData: (events) => state.copyWith(events: events),
+    );
+  }
+
+  Future<void> _onLoadEventsSearchNextPage(
+    LoadEventsSearchNextPage event,
+    Emitter<SearchState> emit,
+  ) async {
+    if (state.hasMoreEvents == false || state.status == SearchStatus.loading) {
       return;
     }
 
-    emit(SearchLoadInProgress<D>(state));
+    emit(SearchLoadInProgress(state));
 
     try {
-      final page = await searchRepository.fetchSearch(
+      final page = await eventRepository.fetchEvents(
         event.session,
-        state.nextPage,
+        null,
+        state.eventsNextPage,
         numberOfEventsPerRequest,
+        query: event.query,
       );
 
       emit(
-        SearchLoadSuccess<D>(
+        SearchLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
-            nextPage: state.nextPage + 1,
+            hasMoreEvents: page.items.length == numberOfEventsPerRequest,
+            eventsNextPage: state.eventsNextPage + 1,
           ),
         ),
       );
@@ -47,34 +71,77 @@ abstract class SearchBloc<D, F extends DtoCompatibleFactory<D>>
     }
   }
 
-  Future<void> _onRefreshSearch(
-    RefreshSearch event,
-    Emitter<SearchState> emit,
-  ) async {
-    emit(SearchLoadInProgress<D>(const SearchState()));
+  Future<void> _onLoadProfilesSearchNextPage(
+      LoadProfilesSearchNextPage event,
+      Emitter<SearchState> emit,
+      ) async {
+    if (state.hasMoreEvents == false || state.status == SearchStatus.loading) {
+      return;
+    }
+
+    emit(SearchLoadInProgress(state));
 
     try {
-      final page = await searchRepository.refreshSearch(
+      final page = await profileRepository.searchProfiles(
         event.session,
-        numberOfEventsPerRequest,
+        state.profilesNextPage,
+        state.eventsNextPage,
+        event.query,
       );
 
       emit(
-        SearchLoadSuccess<D>(
+        SearchLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
-            nextPage: 1,
+            hasMoreProfiles: page.items.length == numberOfEventsPerRequest,
+            eventsNextPage: state.profilesNextPage + 1,
           ),
         ),
       );
     } catch (e) {
-      emit(handleError(e, 'Error while refreshing events'));
+      emit(handleError(e, 'Error while loading next page of profiles'));
+    }
+  }
+
+  Future<void> _onRefreshSearch(
+    RefreshSearch event,
+    Emitter<SearchState> emit,
+  ) async {
+    emit(SearchLoadInProgress(const SearchState()));
+
+    try {
+      final eventsPage = await eventRepository.refreshEvents(
+        event.session,
+        null,
+        numberOfEventsPerRequest,
+        query: event.query,
+      );
+
+      final profilesPage = await profileRepository.searchProfiles(
+        event.session,
+        null,
+        numberOfEventsPerRequest,
+        event.query,
+      );
+
+      emit(
+        SearchLoadSuccess(
+          state.copyWith(
+            hasMoreEvents: eventsPage.items.length == numberOfEventsPerRequest,
+            eventsNextPage: 1,
+            profiles: profilesPage.items,
+            hasMoreProfiles: profilesPage.items.length == numberOfEventsPerRequest,
+            profilesNextPage: 1,
+          ),
+        ),
+      );
+    } catch (e) {
+      emit(handleError(e, 'Error while refreshing search'));
     }
   }
 
   SearchState handleError(Object e, String logMessage) {
     log(logMessage, error: e);
-    return SearchLoadFailure<D>(
+    return SearchLoadFailure(
       state,
       errorMessage: 'Une erreur est survenue.',
     );
