@@ -14,6 +14,7 @@ import hollybike.api.utils.MailSender
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
+import io.ktor.server.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -53,6 +54,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventParticipationController(this, eventParticipationService)
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
+	WebSocketController(this, db)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)
