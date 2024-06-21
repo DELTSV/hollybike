@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
 import 'package:hollybike/event/widgets/event_preview_card.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
+import 'package:hollybike/search/widgets/search_initial_placeholder.dart';
 import 'package:hollybike/search/widgets/search_profile_card.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
@@ -30,6 +31,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String? _lastSearch;
   late final ScrollController _verticalScrollController;
   late final ScrollController _horizontalScrollController;
+  late final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: TopBar(
         title: TopBarSearchInput(
           defaultValue: _lastSearch,
+          focusNode: focusNode,
           onSearchRequested: _handleSearchRequest,
         ),
         noPadding: true,
@@ -49,7 +52,14 @@ class _SearchScreenState extends State<SearchScreen> {
         },
         child: BlocBuilder<SearchBloc, SearchState>(
           builder: (context, state) {
-            if (state is SearchInitial || (state.events.isEmpty && state.profiles.isEmpty)) {
+            if (state.status == SearchStatus.initial) {
+              return SearchInitialPlaceholder(
+                onButtonTap: () {
+                  focusNode.requestFocus();
+                },
+              );
+            }
+            if (state.events.isEmpty && state.profiles.isEmpty) {
               return const Placeholder();
             }
 
@@ -156,10 +166,12 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     _lastSearch = BlocProvider.of<SearchBloc>(context).state.lastSearchQuery;
-    
+    focusNode = FocusNode();
+
     _verticalScrollController = ScrollController();
     _verticalScrollController.addListener(() {
-      var nextPageTrigger = 0.8 * _verticalScrollController.position.maxScrollExtent;
+      var nextPageTrigger =
+          0.8 * _verticalScrollController.position.maxScrollExtent;
 
       if (_verticalScrollController.position.pixels > nextPageTrigger) {
         BlocProvider.of<SearchBloc>(context).add(
@@ -167,10 +179,11 @@ class _SearchScreenState extends State<SearchScreen> {
         );
       }
     });
-    
+
     _horizontalScrollController = ScrollController();
     _horizontalScrollController.addListener(() {
-      var nextPageTrigger = 0.8 * _horizontalScrollController.position.maxScrollExtent;
+      var nextPageTrigger =
+          0.8 * _horizontalScrollController.position.maxScrollExtent;
 
       if (_horizontalScrollController.position.pixels > nextPageTrigger) {
         BlocProvider.of<SearchBloc>(context).add(
@@ -178,6 +191,14 @@ class _SearchScreenState extends State<SearchScreen> {
         );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    _verticalScrollController.dispose();
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   void _navigateToEventDetails(
