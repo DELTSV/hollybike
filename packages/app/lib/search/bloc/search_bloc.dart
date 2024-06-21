@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
@@ -43,7 +44,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     LoadEventsSearchNextPage event,
     Emitter<SearchState> emit,
   ) async {
-    if (state.hasMoreEvents == false || state.status == SearchStatus.loading) {
+    if (state.hasMoreEvents == false ||
+        state.status == SearchStatus.loading ||
+        state.lastSearchQuery == null ||
+        state.lastSearchSession == null) {
       return;
     }
 
@@ -51,11 +55,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final page = await eventRepository.fetchEvents(
-        event.session,
+        state.lastSearchSession as AuthSession,
         null,
         state.eventsNextPage,
         numberOfEventsPerRequest,
-        query: event.query,
+        query: state.lastSearchQuery as String,
       );
 
       emit(
@@ -72,10 +76,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   Future<void> _onLoadProfilesSearchNextPage(
-      LoadProfilesSearchNextPage event,
-      Emitter<SearchState> emit,
-      ) async {
-    if (state.hasMoreEvents == false || state.status == SearchStatus.loading) {
+    LoadProfilesSearchNextPage event,
+    Emitter<SearchState> emit,
+  ) async {
+    if (state.hasMoreProfiles == false ||
+        state.status == SearchStatus.loading ||
+        state.lastSearchQuery == null ||
+        state.lastSearchSession == null) {
       return;
     }
 
@@ -83,17 +90,18 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final page = await profileRepository.searchProfiles(
-        event.session,
+        state.lastSearchSession as AuthSession,
         state.profilesNextPage,
         state.eventsNextPage,
-        event.query,
+        state.lastSearchQuery as String,
       );
 
       emit(
         SearchLoadSuccess(
           state.copyWith(
+            profiles: state.profiles + page.items,
             hasMoreProfiles: page.items.length == numberOfEventsPerRequest,
-            eventsNextPage: state.profilesNextPage + 1,
+            profilesNextPage: state.profilesNextPage + 1,
           ),
         ),
       );
@@ -126,10 +134,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(
         SearchLoadSuccess(
           state.copyWith(
+            lastSearchQuery: event.query,
+            lastSearchSession: event.session,
             hasMoreEvents: eventsPage.items.length == numberOfEventsPerRequest,
             eventsNextPage: 1,
             profiles: profilesPage.items,
-            hasMoreProfiles: profilesPage.items.length == numberOfEventsPerRequest,
+            hasMoreProfiles:
+                profilesPage.items.length == numberOfEventsPerRequest,
             profilesNextPage: 1,
           ),
         ),

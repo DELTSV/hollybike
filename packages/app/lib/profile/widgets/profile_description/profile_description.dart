@@ -18,9 +18,15 @@ class ProfileDescription extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: addSeparators(
           [
-            Text(
-              profile.username,
-              style: Theme.of(context).textTheme.titleMedium,
+            Hero(
+              tag: "user-${profile.id}-username",
+              child: SizedBox(
+                width: double.infinity,
+                child: Text(
+                  profile.username,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
             ),
             ProfileDescriptionSpec(
               icon: Icons.groups,

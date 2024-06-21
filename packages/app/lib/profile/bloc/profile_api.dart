@@ -45,7 +45,7 @@ class ProfileApi {
       queryParameters: {
         'page': page,
         'per_page': eventsPerPage,
-        'sort': 'start_date_time.asc',
+        'sort': 'username.asc',
         "query": query,
       },
     );

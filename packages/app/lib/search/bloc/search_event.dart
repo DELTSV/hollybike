@@ -10,17 +10,11 @@ class SubscribeToEventsSearch extends SearchEvent {
 }
 
 class LoadEventsSearchNextPage extends SearchEvent {
-  final AuthSession session;
-  final String query;
-
-  LoadEventsSearchNextPage({required this.session, required this.query});
+  LoadEventsSearchNextPage();
 }
 
 class LoadProfilesSearchNextPage extends SearchEvent {
-  final AuthSession session;
-  final String query;
-
-  LoadProfilesSearchNextPage({required this.session, required this.query});
+  LoadProfilesSearchNextPage();
 }
 
 class RefreshSearch extends SearchEvent {
