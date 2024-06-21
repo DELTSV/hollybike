@@ -17,22 +17,22 @@ class WebSocketCall(
 	var parameters: Parameters,
 	val path: String,
 	val body: Body?,
+	private val session: DefaultWebSocketServerSession
 ) {
-	internal var response: String? = null
-	private set
 
-	constructor(message: Message) : this(
+	constructor(message: Message, session: DefaultWebSocketServerSession) : this(
 		Parameters.Empty,
 		message.channel,
-		message.data
+		message.data,
+		session
 	)
 
-	fun respond(data: Body) {
-		response = Json.encodeToString(Message(data, path))
+	suspend fun respond(data: Body) {
+		session.sendSerialized(Message(data, path))
 	}
 
-	fun respondText(data: String) {
-		response = data
+	suspend fun respondText(data: String) {
+		session.send(data)
 	}
 }
 
@@ -50,14 +50,14 @@ class WebSocketRouter {
 		route(path, body)
 	}
 
-	fun request(name: String, body: WebSocketCall.() -> Unit) {
+	fun request(name: String, body: suspend WebSocketCall.() -> Unit) {
 		val path = name.toPath()
 		route(path) {
 			this.body = body
 		}
 	}
 
-	internal fun request(key: PathElement, body: WebSocketCall.() -> Unit) {
+	internal fun request(key: PathElement, body: suspend WebSocketCall.() -> Unit) {
 		(routes[key] ?: WebSocketRoute().also { routes[key] = it }).body = body
 	}
 
@@ -78,7 +78,7 @@ class WebSocketRouter {
 					val text = (frame as Frame.Text).readText()
 					val message = json.decodeFromString<Message>(text)
 					val path = message.channel.split("/").filter { it.isNotBlank() }.map { it.toPathElement() }
-					val call = WebSocketCall(message)
+					val call = WebSocketCall(message, this)
 					var handled = false
 					routes.match(path.firstOrNull() ?: PathFragment("")).forEach { (_ , route) ->
 						if(route?.execute(path.drop(1), call) == true) {
@@ -86,7 +86,6 @@ class WebSocketRouter {
 							return@forEach
 						}
 					}
-					call.response?.let { send(it) }
 					if(!handled) {
 						println("Not found")
 					}
@@ -104,21 +103,21 @@ class WebSocketRouter {
 class WebSocketRoute {
 	private val routes: RouteElement = mutableMapOf()
 
-	var body: (WebSocketCall.() -> Unit)? = null
+	var body: (suspend WebSocketCall.() -> Unit)? = null
 
 	fun route(name: String, body: WebSocketRoute.() -> Unit) {
 		val path = name.toPath()
 		route(path, body)
 	}
 
-	fun request(name: String, body: WebSocketCall.() -> Unit) {
+	fun request(name: String, body: suspend WebSocketCall.() -> Unit) {
 		val path = name.toPath()
 		route(path) {
 			this.body = body
 		}
 	}
 
-	internal fun request(key: PathElement, body: WebSocketCall.() -> Unit) {
+	internal fun request(key: PathElement, body: suspend WebSocketCall.() -> Unit) {
 		(routes[key] ?: WebSocketRoute().also { routes[key] = it }).body = body
 	}
 
@@ -132,7 +131,7 @@ class WebSocketRoute {
 		}
 	}
 
-	fun execute(path: List<PathElement>, call: WebSocketCall): Boolean {
+	suspend fun execute(path: List<PathElement>, call: WebSocketCall): Boolean {
 		if (path.isEmpty()) {
 			return body?.let { call.it(); true } ?: false
 		} else {

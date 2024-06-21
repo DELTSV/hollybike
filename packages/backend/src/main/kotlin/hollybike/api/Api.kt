@@ -9,6 +9,7 @@ import hollybike.api.services.auth.InvitationService
 import hollybike.api.services.journey.JourneyService
 import hollybike.api.services.image.EventImageService
 import hollybike.api.services.image.ImageMetadataService
+import hollybike.api.services.NotificationService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.utils.MailSender
 import hollybike.api.utils.websocket.AuthVerifier
@@ -32,11 +33,12 @@ fun Application.api(storageService: StorageService, db: Database) {
 
 	val positionService = PositionService(db, CoroutineScope(Dispatchers.Default))
 
+	val notificationService = NotificationService(db)
 	val associationService = AssociationService(db, storageService)
 	val userService = UserService(db, storageService, associationService)
 	val invitationService = InvitationService(db)
 	val authService = AuthService(db, conf.security, invitationService, userService)
-	val eventService = EventService(db, storageService)
+	val eventService = EventService(db, storageService, notificationService)
 	val eventParticipationService = EventParticipationService(db, eventService)
 	val imageMetadataService = ImageMetadataService()
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
@@ -57,7 +59,8 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
 	ProfileController(this, profileService)
-	WebSocketController(this, db, authVerifier)
+	WebSocketController(this, db, authVerifier, notificationService)
+	NotificationController(this, notificationService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

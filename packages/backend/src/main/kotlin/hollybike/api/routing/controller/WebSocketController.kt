@@ -1,6 +1,7 @@
 package hollybike.api.routing.controller
 
 import hollybike.api.repository.User
+import hollybike.api.services.NotificationService
 import hollybike.api.types.websocket.Subscribe
 import hollybike.api.types.websocket.Subscribed
 import hollybike.api.utils.websocket.AuthVerifier
@@ -12,7 +13,8 @@ import org.jetbrains.exposed.sql.Database
 class WebSocketController(
 	application: Application,
 	private val db: Database,
-	private val authVerifier: AuthVerifier
+	private val authVerifier: AuthVerifier,
+	private val notificationService: NotificationService
 ) {
 	init {
 		application.apply {
@@ -32,6 +34,9 @@ class WebSocketController(
 					user = authVerifier.verify(this.body.token)
 					user?.let {
 						respond(Subscribed(true))
+						for( notif in notificationService.getUserChannel(it.id.value)) {
+							respond(notif.data)
+						}
 					} ?: run {
 						respond(Subscribed(false))
 					}
