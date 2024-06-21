@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/journey/empty_journey_preview_card.dart';
+import 'package:hollybike/event/widgets/journey/journey_modal.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card_content.dart';
 
 import '../../../journey/type/minimal_journey.dart';
@@ -39,6 +40,7 @@ class JourneyPreviewCard extends StatelessWidget {
           return SizedBox(
             height: 140,
             child: _buildJourneyPreview(
+              context,
               state is EventJourneyGetPositionsInProgress,
             ),
           );
@@ -47,7 +49,7 @@ class JourneyPreviewCard extends StatelessWidget {
     );
   }
 
-  Widget _buildJourneyPreview(bool loadingPositions) {
+  Widget _buildJourneyPreview(BuildContext context, bool loadingPositions) {
     if (journey == null) {
       if (!canAddJourney) {
         return const SizedBox();
@@ -60,7 +62,12 @@ class JourneyPreviewCard extends StatelessWidget {
 
     return JourneyPreviewCardContainer(
       onTap: () {
-
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => JourneyModal(
+            journey: journey!,
+          ),
+        );
       },
       child: JourneyPreviewCardContent(
         journey: journey!,
