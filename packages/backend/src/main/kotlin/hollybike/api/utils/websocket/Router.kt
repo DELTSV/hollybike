@@ -1,6 +1,5 @@
 package hollybike.api.utils.websocket
 
-import hollybike.api.conf
 import hollybike.api.types.websocket.Body
 import hollybike.api.types.websocket.Message
 import io.ktor.http.*

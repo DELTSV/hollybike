@@ -1,7 +1,6 @@
 package hollybike.api.routing.controller
 
 import hollybike.api.repository.User
-import hollybike.api.types.websocket.Message
 import hollybike.api.types.websocket.Subscribe
 import hollybike.api.types.websocket.Subscribed
 import hollybike.api.utils.websocket.AuthVerifier
@@ -9,7 +8,6 @@ import hollybike.api.utils.websocket.WebSocketRouter
 import hollybike.api.utils.websocket.webSocket
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class WebSocketController(
 	application: Application,
