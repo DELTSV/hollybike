@@ -14,7 +14,6 @@ import hollybike.api.utils.MailSender
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
-import io.ktor.server.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database

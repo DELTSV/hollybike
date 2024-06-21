@@ -1,6 +1,5 @@
 package hollybike.api.types.websocket
 
-import hollybike.api.repository.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
