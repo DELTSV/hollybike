@@ -40,6 +40,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val imageMetadataService = ImageMetadataService()
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
 	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
+	val profileService = ProfileService(db)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
@@ -53,6 +54,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventParticipationController(this, eventParticipationService)
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
+	ProfileController(this, profileService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)
