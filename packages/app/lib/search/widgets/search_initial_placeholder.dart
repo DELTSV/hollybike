@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/shared/utils/add_separators.dart';
+import 'package:lottie/lottie.dart';
 
 class SearchInitialPlaceholder extends StatelessWidget {
   final void Function() onButtonTap;
@@ -10,21 +10,32 @@ class SearchInitialPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: addSeparators(
-          [
-            const Text(
-              "Cherchez des évènement ou d'autres utilisateurs par leur nom",
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: double.infinity),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              fit: BoxFit.cover,
+              'assets/lottie/lottie_search_initial_placeholder.json',
+              repeat: false,
+              height: 150,
             ),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 300),
+              child: Text(
+                "Cherchez des évènement ou d'autres utilisateurs par leur nom",
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox.square(dimension: 20),
             ElevatedButton(
               onPressed: onButtonTap,
               child: const Text("Commencer votre recherche"),
             )
           ],
-          const SizedBox.square(
-            dimension: 16,
-          ),
         ),
       ),
     );
