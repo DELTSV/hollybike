@@ -9,11 +9,14 @@ import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Journeys
 import hollybike.api.services.PositionService
 import hollybike.api.services.journey.JourneyService
-import hollybike.api.types.journey.toGeoJson
+import hollybike.api.types.association.TPartialAssociation
 import hollybike.api.types.journey.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.position.EPositionScope
+import hollybike.api.types.position.TPosition
 import hollybike.api.types.position.TPositionRequest
+import hollybike.api.types.position.TPositionResult
+import hollybike.api.types.user.TUserPartial
 import hollybike.api.utils.GeoJson
 import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
@@ -26,14 +29,15 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.datetime.Clock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import nl.adaptivity.xmlutil.*
+import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
-import java.util.Timer
+import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.math.ceil
 import kotlin.time.Duration.Companion.hours
@@ -49,22 +53,47 @@ class JourneyController(
 
 	init {
 		positionService.subscribe("journey-start-position") { response ->
-			journeyPositions[response.identifier]?.let { journeyPosition ->
-				journeyService.setJourneyStartPosition(journeyPosition.journey, response.content)
-				journeyPosition.start = response
+			if (response is TPositionResult.Success) {
+				journeyPositions[response.identifier]?.let { journeyPosition ->
+					journeyService.setJourneyStartPosition(journeyPosition.journey, response.position)
+					journeyPosition.start = response.position
+				}
+			} else if (response is TPositionResult.Error) {
+				journeyPositions.remove(response.identifier)
+				println("Error while getting start position for journey ${response.identifier}: ${response.message}")
 			}
 		}
+
 		positionService.subscribe("journey-end-position") { response ->
-			journeyPositions[response.identifier]?.let { journeyPosition ->
-				journeyService.setJourneyEndPosition(journeyPosition.journey, response.content)
-				journeyPosition.end = response
+			if (response is TPositionResult.Success) {
+				journeyPositions[response.identifier]?.let { journeyPosition ->
+					journeyService.setJourneyEndPosition(journeyPosition.journey, response.position)
+					journeyPosition.end = response.position
+				}
+			} else if (response is TPositionResult.Error) {
+				journeyPositions.remove(response.identifier)
+				println("Error while getting end position for journey ${response.identifier}: ${response.message}")
 			}
 		}
+
+		positionService.subscribe("journey-destination-position") { response ->
+			if (response is TPositionResult.Success) {
+				journeyPositions[response.identifier]?.let { journeyPosition ->
+					journeyService.setJourneyDestinationPosition(journeyPosition.journey, response.position)
+					journeyPosition.destination = response.position
+				}
+			} else if (response is TPositionResult.Error) {
+				journeyPositions.remove(response.identifier)
+				println("Error while getting destination position for journey ${response.identifier}: ${response.message}")
+			}
+		}
+
 		timer.schedule(0L, 3600_000L) {
 			journeyPositions.filterValues { (it.askedAt + 1.hours) < Clock.System.now() }.map { it.key }.forEach {
 				journeyPositions.remove(it)
 			}
 		}
+
 		application.routing {
 			authenticate {
 				getAll()
@@ -182,20 +211,33 @@ class JourneyController(
 				println("File uploaded")
 
 				cleanedGeoJson.start?.let { start ->
-					cleanedGeoJson.end?.let { end ->
-						journeyPositions[journey.id.value] = TJourneyPositions(
-							journey,
-							true
-						)
+					val end = cleanedGeoJson.end
+					val destination = cleanedGeoJson.farthestPointFromStart
+
+					journeyPositions[journey.id.value] = TJourneyPositions(
+						journey,
+						haveEnd = end != null,
+						haveDestination = destination != null
+					)
+
+					if (end != null) {
 						positionService.getPositionOrPush(
 							"journey-end-position",
 							journey.id.value,
 							TPositionRequest(end[1], end[0], end.getOrNull(2), EPositionScope.Country)
 						)
-					} ?: run {
-						journeyPositions[journey.id.value] = TJourneyPositions(
-							journey,
-							false
+					}
+
+					if (destination != null) {
+						positionService.getPositionOrPush(
+							"journey-destination-position",
+							journey.id.value,
+							TPositionRequest(
+								destination[1],
+								destination[0],
+								destination.getOrNull(2),
+								EPositionScope.Country
+							)
 						)
 					}
 
@@ -205,6 +247,7 @@ class JourneyController(
 						TPositionRequest(start[1], start[0], start.getOrNull(2), EPositionScope.Country)
 					)
 				}
+
 				call.respond(HttpStatusCode.OK, TJourney(journey))
 			}.onFailure { err ->
 				when (err) {
@@ -229,26 +272,86 @@ class JourneyController(
 	}
 
 	private fun Route.getJourneyPositions() {
-		get<Journeys.Id.Positions> {
-			val journey = journeyService.getById(call.user, it.id.id) ?: run {
+		get<Journeys.Id.Positions> { data ->
+			val journey = journeyService.getById(call.user, data.id.id) ?: run {
 				return@get call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
 			}
+
 			journeyPositions[journey.id.value]?.let { journeyPosition ->
-				repeat(60) {
-					if (journeyPosition.haveEnd) {
-						if (journeyPosition.start != null && journeyPosition.end != null) {
-							journeyPositions.remove(journey.id.value)
-							return@get call.respond(TJourney(journey))
-						}
-					} else {
-						if (journeyPosition.start != null) {
-							journeyPositions.remove(journey.id.value)
-							return@get call.respond(TJourney(journey))
+				val hasStart = journeyPosition.start != null
+				val hasEnd = journeyPosition.end != null || !journeyPosition.haveEnd
+				val hasDestination = journeyPosition.destination != null || !journeyPosition.haveDestination
+
+				if (hasStart && hasEnd && hasDestination) {
+					journeyPositions.remove(journey.id.value)
+					return@get call.respond(TJourney(journey))
+				}
+
+				val waiters = mutableListOf<String>()
+
+				if (!hasStart) {
+					waiters.add("journey-start-position")
+				}
+
+				if (!hasEnd) {
+					waiters.add("journey-end-position")
+				}
+
+				if (!hasDestination) {
+					waiters.add("journey-destination-position")
+				}
+
+				val requests = waiters.map {
+					async {
+						positionService.awaitResult(it, journey.id.value, 360)
+					}
+				}
+
+				val postions = awaitAll(*requests.toTypedArray())
+
+				postions.forEach {
+					if (it is TPositionResult.Success) {
+						when (it.topic) {
+							"journey-start-position" -> {
+								journeyPosition.start = it.position
+							}
+
+							"journey-end-position" -> {
+								journeyPosition.end = it.position
+							}
+
+							"journey-destination-position" -> {
+								journeyPosition.destination = it.position
+							}
 						}
 					}
-					delay(5_000)
 				}
-				call.respond(HttpStatusCode.TooEarly, "Les positions n'ont pas encore été récupérées")
+
+				if (postions.any { it is TPositionResult.Error }) {
+					return@get call.respond(
+						HttpStatusCode.InternalServerError,
+						"Erreur lors de la récupération des positions"
+					)
+				}
+
+				if (postions.any { it == null }) {
+					return@get call.respond(HttpStatusCode.TooEarly, "Les positions n'ont pas encore été récupérées")
+				}
+
+				call.respond(
+					TJourney(
+						journey.id.value,
+						journey.name,
+						journey.signedFile,
+						journey.signedPreviewImage,
+						journey.createdAt,
+						TUserPartial(journey.creator),
+						TPartialAssociation(journey.association),
+						journeyPosition.start?.let { TPosition(it) },
+						journeyPosition.end?.let { TPosition(it) },
+						journeyPosition.destination?.let { TPosition(it) }
+					)
+				)
 			} ?: run {
 				return@get call.respond(HttpStatusCode.Gone, "Les positions ont déjà été récupérées")
 			}

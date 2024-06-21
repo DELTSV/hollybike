@@ -20,6 +20,9 @@ _$JourneyImpl _$$JourneyImplFromJson(Map<String, dynamic> json) =>
       end: json['end'] == null
           ? null
           : Position.fromJson(json['end'] as Map<String, dynamic>),
+      destination: json['destination'] == null
+          ? null
+          : Position.fromJson(json['destination'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$JourneyImplToJson(_$JourneyImpl instance) =>
@@ -32,4 +35,5 @@ Map<String, dynamic> _$$JourneyImplToJson(_$JourneyImpl instance) =>
       'creator': instance.creator,
       'start': instance.start,
       'end': instance.end,
+      'destination': instance.destination,
     };

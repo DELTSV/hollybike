@@ -30,6 +30,7 @@ mixin _$Journey {
   MinimalUser get creator => throw _privateConstructorUsedError;
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
+  Position? get destination => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,11 +50,13 @@ abstract class $JourneyCopyWith<$Res> {
       @JsonKey(name: 'preview_image') String? previewImage,
       MinimalUser creator,
       Position? start,
-      Position? end});
+      Position? end,
+      Position? destination});
 
   $MinimalUserCopyWith<$Res> get creator;
   $PositionCopyWith<$Res>? get start;
   $PositionCopyWith<$Res>? get end;
+  $PositionCopyWith<$Res>? get destination;
 }
 
 /// @nodoc
@@ -77,6 +80,7 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
     Object? creator = null,
     Object? start = freezed,
     Object? end = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -110,6 +114,10 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
       end: freezed == end
           ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
+              as Position?,
+      destination: freezed == destination
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
               as Position?,
     ) as $Val);
   }
@@ -145,6 +153,18 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
       return _then(_value.copyWith(end: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PositionCopyWith<$Res>? get destination {
+    if (_value.destination == null) {
+      return null;
+    }
+
+    return $PositionCopyWith<$Res>(_value.destination!, (value) {
+      return _then(_value.copyWith(destination: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -162,7 +182,8 @@ abstract class _$$JourneyImplCopyWith<$Res> implements $JourneyCopyWith<$Res> {
       @JsonKey(name: 'preview_image') String? previewImage,
       MinimalUser creator,
       Position? start,
-      Position? end});
+      Position? end,
+      Position? destination});
 
   @override
   $MinimalUserCopyWith<$Res> get creator;
@@ -170,6 +191,8 @@ abstract class _$$JourneyImplCopyWith<$Res> implements $JourneyCopyWith<$Res> {
   $PositionCopyWith<$Res>? get start;
   @override
   $PositionCopyWith<$Res>? get end;
+  @override
+  $PositionCopyWith<$Res>? get destination;
 }
 
 /// @nodoc
@@ -191,6 +214,7 @@ class __$$JourneyImplCopyWithImpl<$Res>
     Object? creator = null,
     Object? start = freezed,
     Object? end = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_$JourneyImpl(
       id: null == id
@@ -225,6 +249,10 @@ class __$$JourneyImplCopyWithImpl<$Res>
           ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
               as Position?,
+      destination: freezed == destination
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as Position?,
     ));
   }
 }
@@ -240,7 +268,8 @@ class _$JourneyImpl extends _Journey {
       @JsonKey(name: 'preview_image') this.previewImage,
       required this.creator,
       required this.start,
-      required this.end})
+      required this.end,
+      required this.destination})
       : super._();
 
   factory _$JourneyImpl.fromJson(Map<String, dynamic> json) =>
@@ -264,10 +293,12 @@ class _$JourneyImpl extends _Journey {
   final Position? start;
   @override
   final Position? end;
+  @override
+  final Position? destination;
 
   @override
   String toString() {
-    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, creator: $creator, start: $start, end: $end)';
+    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, creator: $creator, start: $start, end: $end, destination: $destination)';
   }
 
   @override
@@ -284,13 +315,15 @@ class _$JourneyImpl extends _Journey {
                 other.previewImage == previewImage) &&
             (identical(other.creator, creator) || other.creator == creator) &&
             (identical(other.start, start) || other.start == start) &&
-            (identical(other.end, end) || other.end == end));
+            (identical(other.end, end) || other.end == end) &&
+            (identical(other.destination, destination) ||
+                other.destination == destination));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, file, createdAt,
-      previewImage, creator, start, end);
+      previewImage, creator, start, end, destination);
 
   @JsonKey(ignore: true)
   @override
@@ -315,7 +348,8 @@ abstract class _Journey extends Journey {
       @JsonKey(name: 'preview_image') final String? previewImage,
       required final MinimalUser creator,
       required final Position? start,
-      required final Position? end}) = _$JourneyImpl;
+      required final Position? end,
+      required final Position? destination}) = _$JourneyImpl;
   const _Journey._() : super._();
 
   factory _Journey.fromJson(Map<String, dynamic> json) = _$JourneyImpl.fromJson;
@@ -338,6 +372,8 @@ abstract class _Journey extends Journey {
   Position? get start;
   @override
   Position? get end;
+  @override
+  Position? get destination;
   @override
   @JsonKey(ignore: true)
   _$$JourneyImplCopyWith<_$JourneyImpl> get copyWith =>

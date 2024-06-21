@@ -21,6 +21,7 @@ class Journey with _$Journey {
     required MinimalUser creator,
     required Position? start,
     required Position? end,
+    required Position? destination,
   }) = _Journey;
 
   MinimalJourney toMinimalJourney() => MinimalJourney(
@@ -29,6 +30,7 @@ class Journey with _$Journey {
     previewImage: previewImage,
     start: start,
     end: end,
+    destination: destination,
   );
 
   factory Journey.fromJson(JsonMap json) => _$JourneyFromJson(json);

@@ -64,15 +64,16 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
       emit(EventJourneyCreationSuccess(state));
 
-      journeyRepository.getPositions(session, journeyWithFile.id).then(
-        (journeyWithPositions) {
-          eventRepository.onEventJourneyUpdated(journeyWithPositions);
-        },
-      ).catchError(
-        (e) {
-          log('Error while fetching journey positions', error: e);
-        },
-      );
+      try {
+        emit(EventJourneyGetPositionsInProgress(state));
+
+        final journeyWithPositions = await journeyRepository.getPositions(session, journeyWithFile.id);
+        eventRepository.onEventJourneyUpdated(journeyWithPositions);
+
+        emit(EventJourneyGetPositionsSuccess(state));
+      } catch (e) {
+        log('Error while fetching positions for journey', error: e);
+      }
     } catch (e) {
       emit(EventJourneyOperationFailure(
         state,

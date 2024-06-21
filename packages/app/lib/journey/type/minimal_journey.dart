@@ -13,6 +13,7 @@ class MinimalJourney with _$MinimalJourney {
     required String? file,
     required Position? start,
     required Position? end,
+    required Position? destination,
     @JsonKey(name: 'preview_image') String? previewImage,
   }) = _MinimalJourney;
 
