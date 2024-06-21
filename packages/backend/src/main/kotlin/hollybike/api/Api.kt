@@ -11,6 +11,7 @@ import hollybike.api.services.image.EventImageService
 import hollybike.api.services.image.ImageMetadataService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.utils.MailSender
+import hollybike.api.utils.websocket.AuthVerifier
 import io.ktor.server.application.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
@@ -43,6 +44,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
+	val authVerifier = AuthVerifier(conf.security, db, logger)
 
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
@@ -53,7 +55,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventParticipationController(this, eventParticipationService)
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
-	WebSocketController(this, db)
+	WebSocketController(this, db, authVerifier)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

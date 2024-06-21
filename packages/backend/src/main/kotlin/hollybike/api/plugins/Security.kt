@@ -33,7 +33,7 @@ fun Application.configureSecurity(db: Database) {
 			realm = jwtRealm
 			verifier(
 				JWT
-					.require(Algorithm.HMAC256(jwtSecret))
+					.require(Algorithm.HMAC512(jwtSecret))
 					.withAudience(jwtAudience)
 					.withIssuer(jwtDomain)
 					.build(),

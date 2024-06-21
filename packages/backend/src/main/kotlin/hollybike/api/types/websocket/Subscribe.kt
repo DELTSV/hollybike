@@ -6,6 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("subscribe")
 data class Subscribe(
-	val token: String,
-	var user: Int? = null
+	val token: String
+): Body
+
+@Serializable
+@SerialName("subscribed")
+data class Subscribed(
+	val subscribed: Boolean
 ): Body

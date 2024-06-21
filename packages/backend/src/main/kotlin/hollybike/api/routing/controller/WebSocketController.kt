@@ -1,7 +1,10 @@
 package hollybike.api.routing.controller
 
 import hollybike.api.repository.User
+import hollybike.api.types.websocket.Message
 import hollybike.api.types.websocket.Subscribe
+import hollybike.api.types.websocket.Subscribed
+import hollybike.api.utils.websocket.AuthVerifier
 import hollybike.api.utils.websocket.WebSocketRouter
 import hollybike.api.utils.websocket.webSocket
 import io.ktor.server.application.*
@@ -10,7 +13,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class WebSocketController(
 	application: Application,
-	private val db: Database
+	private val db: Database,
+	private val authVerifier: AuthVerifier
 ) {
 	init {
 		application.apply {
@@ -27,11 +31,11 @@ class WebSocketController(
 			var user: User? = null
 			when(this.body) {
 				is Subscribe -> {
-					body.user?.let {
-						user = transaction(db) { User.findById(it) }
-						println("SUBSCRIBED")
+					user = authVerifier.verify(this.body.token)
+					user?.let {
+						respond(Subscribed(true))
 					} ?: run {
-						println("SALE MERDE")
+						respond(Subscribed(false))
 					}
 				}
 				else -> {

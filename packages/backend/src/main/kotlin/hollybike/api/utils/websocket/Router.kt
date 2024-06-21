@@ -10,19 +10,31 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 
 class WebSocketCall(
 	var parameters: Parameters,
 	val path: String,
-	val body: Body?
+	val body: Body?,
 ) {
+	internal var response: String? = null
+	private set
+
 	constructor(message: Message) : this(
 		Parameters.Empty,
 		message.channel,
 		message.data
 	)
+
+	fun respond(data: Body) {
+		response = Json.encodeToString(Message(data, path))
+	}
+
+	fun respondText(data: String) {
+		response = data
+	}
 }
 
 typealias RouteElement = MutableMap<PathElement, WebSocketRoute>
@@ -75,6 +87,7 @@ class WebSocketRouter {
 							return@forEach
 						}
 					}
+					call.response?.let { send(it) }
 					if(!handled) {
 						println("Not found")
 					}
@@ -171,25 +184,11 @@ class WebSocketConfig {
 }
 
 fun Application.webSocket(route: String, db: Database, body: WebSocketConfig.() -> Unit) {
-	this.install(WebSockets) {
-		println(AuthVerifierExtension)
+	install(WebSockets) {
 		contentConverter = KotlinxWebsocketSerializationConverter(Json)
-		extensions {
-			install(AuthVerifierExtension) {
-				println("Conf")
-				logger = this@webSocket.log
-				conf = this@webSocket.attributes.conf.security
-				this.db = db
-			}
-		}
 	}
 	routing {
-		webSocket {
-			println(this.extensions)
-		}
 		webSocket(route) {
-			println(this.extensions)
-			extension(AuthVerifierExtension)
 			WebSocketConfig().apply(body).build(this)
 		}
 	}
