@@ -16,6 +16,7 @@ import 'package:hollybike/shared/widgets/hud/hud.dart';
 import '../../app/app_router.gr.dart';
 import '../../event/bloc/event_details_bloc/event_details_bloc.dart';
 import '../../event/types/minimal_event.dart';
+import '../../profile/types/profile.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/search_bloc.dart';
 import '../bloc/search_state.dart';
@@ -67,96 +68,54 @@ class _SearchScreenState extends State<SearchScreen> {
 
             return CustomScrollView(
               controller: _verticalScrollController,
-              slivers: [
-                SliverMainAxisGroup(
-                  slivers: [
+              slivers: _renderProfilesList(state.profiles) +
+                  [
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverPersistentHeader(
-                        pinned: true,
-                        delegate: PinnedHeaderDelegate(
-                          height: 50,
-                          animationDuration: 300,
-                          child: Container(
-                            width: double.infinity,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                              ),
-                              child: Text(
-                                "Profiles",
-                                style: Theme.of(context).textTheme.titleMedium,
+                      sliver: SliverMainAxisGroup(
+                        slivers: [
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: PinnedHeaderDelegate(
+                              height: 50,
+                              animationDuration: 300,
+                              child: Container(
+                                width: double.infinity,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  child: Text(
+                                    "Évènements",
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 100,
-                        child: ListView(
-                          controller: _horizontalScrollController,
-                          scrollDirection: Axis.horizontal,
-                          children: <Widget>[
-                                const SizedBox.square(dimension: 16)
-                              ] +
-                              addSeparators(
-                                state.profiles
-                                    .map(
-                                      (profile) =>
-                                          SearchProfileCard(profile: profile),
-                                    )
-                                    .toList(),
-                                const SizedBox.square(dimension: 8),
-                              ) +
-                              <Widget>[const SizedBox.square(dimension: 16)],
-                        ),
+                          SliverList.list(
+                            children: state.events
+                                .map(
+                                  (event) => EventPreviewCard(
+                                    event: event,
+                                    onTap: () {
+                                      _navigateToEventDetails(
+                                        context,
+                                        event,
+                                        true,
+                                      );
+                                    },
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverMainAxisGroup(
-                    slivers: [
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: PinnedHeaderDelegate(
-                          height: 50,
-                          animationDuration: 300,
-                          child: Container(
-                            width: double.infinity,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                              ),
-                              child: Text(
-                                "Evenements",
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SliverList.list(
-                        children: state.events
-                            .map(
-                              (event) => EventPreviewCard(
-                                event: event,
-                                onTap: () {
-                                  _navigateToEventDetails(context, event, true);
-                                },
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
             );
           },
         ),
@@ -202,6 +161,58 @@ class _SearchScreenState extends State<SearchScreen> {
     _verticalScrollController.dispose();
     _horizontalScrollController.dispose();
     super.dispose();
+  }
+
+  List<Widget> _renderProfilesList(List<Profile> profiles) {
+    if (profiles.isEmpty) return <Widget>[];
+    return <Widget>[
+      SliverMainAxisGroup(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverPersistentHeader(
+              pinned: true,
+              delegate: PinnedHeaderDelegate(
+                height: 50,
+                animationDuration: 300,
+                child: Container(
+                  width: double.infinity,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                    ),
+                    child: Text(
+                      "Profiles",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 100,
+              child: ListView(
+                controller: _horizontalScrollController,
+                scrollDirection: Axis.horizontal,
+                children: <Widget>[const SizedBox.square(dimension: 16)] +
+                    addSeparators(
+                      profiles
+                          .map(
+                            (profile) => SearchProfileCard(profile: profile),
+                          )
+                          .toList(),
+                      const SizedBox.square(dimension: 8),
+                    ) +
+                    <Widget>[const SizedBox.square(dimension: 16)],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
   }
 
   void _navigateToEventDetails(
