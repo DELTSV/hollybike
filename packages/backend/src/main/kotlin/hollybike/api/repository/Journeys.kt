@@ -18,6 +18,12 @@ object Journeys: IntIdTable("journeys", "id_journey") {
 	val association = reference("association", Associations)
 	val start = reference("start", Positions).nullable().default(null)
 	val end = reference("end", Positions).nullable().default(null)
+	val destination = reference("destination", Positions).nullable().default(null)
+	val totalDistance = integer("total_distance").nullable().default(null)
+	val minElevation = double("min_elevation").nullable().default(null)
+	val maxElevation = double("max_elevation").nullable().default(null)
+	val totalElevationGain = double("total_elevation_gain").nullable().default(null)
+	val totalElevationLoss = double("total_elevation_loss").nullable().default(null)
 }
 
 class Journey(id: EntityID<Int>) : IntEntity(id) {
@@ -31,6 +37,12 @@ class Journey(id: EntityID<Int>) : IntEntity(id) {
 	var association by Association referencedOn Journeys.association
 	var start by Position optionalReferencedOn Journeys.start
 	var end by Position optionalReferencedOn Journeys.end
+	var destination by Position optionalReferencedOn Journeys.destination
+	var totalDistance by Journeys.totalDistance
+	var minElevation by Journeys.minElevation
+	var maxElevation by Journeys.maxElevation
+	var totalElevationGain by Journeys.totalElevationGain
+	var totalElevationLoss by Journeys.totalElevationLoss
 
 	companion object: IntEntityClass<Journey>(Journeys)
 }

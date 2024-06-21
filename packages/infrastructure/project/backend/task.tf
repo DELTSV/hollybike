@@ -10,8 +10,7 @@ resource "aws_ecs_task_definition" "default" {
       repositoryCredentials : {
         "credentialsParameter" : aws_secretsmanager_secret.backend_ghcr_credentials.arn
       },
-      cpu       = 256
-      memory    = 256
+      memoryReservation : 384,
       essential = true
       secrets : [
         {

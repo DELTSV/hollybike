@@ -18,10 +18,14 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
+
+
+
 
 class PositionService(
 	private val db: Database,
@@ -40,7 +44,7 @@ class PositionService(
 	}
 
 	private val messageChannel = Channel<TPositionMessage>()
-	private val subscribers = MutableSharedFlow<TPositionResponse>(replay = 0)
+	private val subscribers = MutableSharedFlow<TPositionResult>(replay = 0)
 
 	init {
 		scope.launch {
@@ -49,15 +53,22 @@ class PositionService(
 				val message = messageChannel.tryReceive().getOrNull()
 				if (message != null) {
 					try {
+						val positionData = getPositionData(message.content)
 						subscribers.emit(
-							TPositionResponse(
+							TPositionResult.Success(
 								message.topic,
 								message.identifier,
-								getPositionData(message.content)
+								positionData
 							)
 						)
 					} catch (e: Exception) {
-						println("Error processing message for identifier ${message.identifier}: $e")
+						subscribers.emit(
+							TPositionResult.Error(
+								message.topic,
+								message.identifier,
+								e.message ?: "Unknown error"
+							)
+						)
 					}
 				}
 			}
@@ -67,7 +78,6 @@ class PositionService(
 	private fun push(topic: String, identifier: Int, content: TPositionRequest) {
 		val message = TPositionMessage(topic, identifier, content)
 		scope.launch {
-			delay(5000)
 			messageChannel.send(message)
 		}
 	}
@@ -79,20 +89,47 @@ class PositionService(
 			push(topic, identifier, content)
 		} else {
 			scope.launch {
-				subscribers.emit(TPositionResponse(topic, identifier, position))
+				try {
+					subscribers.emit(
+						TPositionResult.Success(
+							topic,
+							identifier,
+							position
+						)
+					)
+				} catch (e: Exception) {
+					subscribers.emit(
+						TPositionResult.Error(
+							topic,
+							identifier,
+							e.message ?: "Unknown error"
+						)
+					)
+				}
 			}
 		}
 	}
 
-	fun subscribe(topic: String, consumer: (TPositionResponse) -> Unit) {
+	fun subscribe(topic: String, consumer: (TPositionResult) -> Unit) {
 		scope.launch {
 			subscribers
-				.filter { it.topic == topic }
-				.collect { positionData ->
-					consumer(positionData)
+				.filter { result -> result.topic == topic }
+				.collect { result ->
+					consumer(result)
 				}
 		}
 	}
+
+	suspend fun awaitResult(
+		topic: String,
+		identifier: Int,
+		timeoutSeconds: Int
+	): TPositionResult? = withTimeoutOrNull(timeoutSeconds * 1000L) {
+		subscribers
+			.filter { result -> result.topic == topic && result.identifier == identifier }
+			.firstOrNull()
+	}
+
 
 	private fun getPositionFromCoordinates(latitude: Double, longitude: Double): Position? = transaction(db) {
 		val tolerance = 0.0001

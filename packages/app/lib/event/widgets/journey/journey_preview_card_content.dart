@@ -6,12 +6,12 @@ import '../../../shared/widgets/loading_placeholders/text_loading_placeholder.da
 
 class JourneyPreviewCardContent extends StatelessWidget {
   final MinimalJourney journey;
-  final bool loadingData;
+  final bool loadingPositions;
 
   const JourneyPreviewCardContent({
     super.key,
     required this.journey,
-    required this.loadingData,
+    required this.loadingPositions,
   });
 
   @override
@@ -49,7 +49,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: JourneyImage(
-              loadingData: loadingData,
+              loadingData: loadingPositions,
               journeyId: journey.id,
               imageUrl: journey.previewImage,
             ),
@@ -60,7 +60,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
   }
 
   Widget _getJourneyLocation(BuildContext context) {
-    if (loadingData) {
+    if (loadingPositions && !journey.haveAllPositions) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

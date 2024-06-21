@@ -9,6 +9,7 @@ import hollybike.api.services.storage.StorageService
 import hollybike.api.types.position.TPositionRequest
 import hollybike.api.types.position.EPositionScope
 import hollybike.api.types.position.TImageForProcessing
+import hollybike.api.types.position.TPositionResult
 import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
 import hollybike.api.utils.search.SearchParam
@@ -32,7 +33,9 @@ class EventImageService(
 ) {
 	init {
 		positionService.subscribe("images-positions") { positionResponse ->
-			handlePositionResponse(positionResponse.identifier, positionResponse.content)
+			if (positionResponse is TPositionResult.Success) {
+				handlePositionResponse(positionResponse.identifier, positionResponse.position)
+			}
 		}
 	}
 

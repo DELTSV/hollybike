@@ -24,6 +24,7 @@ mixin _$MinimalJourney {
   String? get file => throw _privateConstructorUsedError;
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
+  Position? get destination => throw _privateConstructorUsedError;
   @JsonKey(name: 'preview_image')
   String? get previewImage => throw _privateConstructorUsedError;
 
@@ -44,10 +45,12 @@ abstract class $MinimalJourneyCopyWith<$Res> {
       String? file,
       Position? start,
       Position? end,
+      Position? destination,
       @JsonKey(name: 'preview_image') String? previewImage});
 
   $PositionCopyWith<$Res>? get start;
   $PositionCopyWith<$Res>? get end;
+  $PositionCopyWith<$Res>? get destination;
 }
 
 /// @nodoc
@@ -67,6 +70,7 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
     Object? file = freezed,
     Object? start = freezed,
     Object? end = freezed,
+    Object? destination = freezed,
     Object? previewImage = freezed,
   }) {
     return _then(_value.copyWith(
@@ -85,6 +89,10 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
       end: freezed == end
           ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
+              as Position?,
+      destination: freezed == destination
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
               as Position?,
       previewImage: freezed == previewImage
           ? _value.previewImage
@@ -116,6 +124,18 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
       return _then(_value.copyWith(end: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PositionCopyWith<$Res>? get destination {
+    if (_value.destination == null) {
+      return null;
+    }
+
+    return $PositionCopyWith<$Res>(_value.destination!, (value) {
+      return _then(_value.copyWith(destination: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -131,12 +151,15 @@ abstract class _$$MinimalJourneyImplCopyWith<$Res>
       String? file,
       Position? start,
       Position? end,
+      Position? destination,
       @JsonKey(name: 'preview_image') String? previewImage});
 
   @override
   $PositionCopyWith<$Res>? get start;
   @override
   $PositionCopyWith<$Res>? get end;
+  @override
+  $PositionCopyWith<$Res>? get destination;
 }
 
 /// @nodoc
@@ -154,6 +177,7 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
     Object? file = freezed,
     Object? start = freezed,
     Object? end = freezed,
+    Object? destination = freezed,
     Object? previewImage = freezed,
   }) {
     return _then(_$MinimalJourneyImpl(
@@ -173,6 +197,10 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
           ? _value.end
           : end // ignore: cast_nullable_to_non_nullable
               as Position?,
+      destination: freezed == destination
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as Position?,
       previewImage: freezed == previewImage
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
@@ -183,13 +211,15 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$MinimalJourneyImpl implements _MinimalJourney {
+class _$MinimalJourneyImpl extends _MinimalJourney {
   const _$MinimalJourneyImpl(
       {required this.id,
       required this.file,
       required this.start,
       required this.end,
-      @JsonKey(name: 'preview_image') this.previewImage});
+      required this.destination,
+      @JsonKey(name: 'preview_image') this.previewImage})
+      : super._();
 
   factory _$MinimalJourneyImpl.fromJson(Map<String, dynamic> json) =>
       _$$MinimalJourneyImplFromJson(json);
@@ -203,12 +233,14 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
   @override
   final Position? end;
   @override
+  final Position? destination;
+  @override
   @JsonKey(name: 'preview_image')
   final String? previewImage;
 
   @override
   String toString() {
-    return 'MinimalJourney(id: $id, file: $file, start: $start, end: $end, previewImage: $previewImage)';
+    return 'MinimalJourney(id: $id, file: $file, start: $start, end: $end, destination: $destination, previewImage: $previewImage)';
   }
 
   @override
@@ -220,6 +252,8 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
             (identical(other.file, file) || other.file == file) &&
             (identical(other.start, start) || other.start == start) &&
             (identical(other.end, end) || other.end == end) &&
+            (identical(other.destination, destination) ||
+                other.destination == destination) &&
             (identical(other.previewImage, previewImage) ||
                 other.previewImage == previewImage));
   }
@@ -227,7 +261,7 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, file, start, end, previewImage);
+      Object.hash(runtimeType, id, file, start, end, destination, previewImage);
 
   @JsonKey(ignore: true)
   @override
@@ -244,14 +278,16 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
   }
 }
 
-abstract class _MinimalJourney implements MinimalJourney {
+abstract class _MinimalJourney extends MinimalJourney {
   const factory _MinimalJourney(
           {required final int id,
           required final String? file,
           required final Position? start,
           required final Position? end,
+          required final Position? destination,
           @JsonKey(name: 'preview_image') final String? previewImage}) =
       _$MinimalJourneyImpl;
+  const _MinimalJourney._() : super._();
 
   factory _MinimalJourney.fromJson(Map<String, dynamic> json) =
       _$MinimalJourneyImpl.fromJson;
@@ -264,6 +300,8 @@ abstract class _MinimalJourney implements MinimalJourney {
   Position? get start;
   @override
   Position? get end;
+  @override
+  Position? get destination;
   @override
   @JsonKey(name: 'preview_image')
   String? get previewImage;

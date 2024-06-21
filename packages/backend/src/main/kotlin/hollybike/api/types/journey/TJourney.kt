@@ -20,7 +20,8 @@ data class TJourney(
 	val creator: TUserPartial,
 	val association: TPartialAssociation,
 	val start: TPosition? = null,
-	val end: TPosition? = null
+	val end: TPosition? = null,
+	val destination: TPosition? = null
 ) {
 	constructor(journey: Journey) : this(
 		journey.id.value,
@@ -31,6 +32,7 @@ data class TJourney(
 		TUserPartial(journey.creator),
 		TPartialAssociation(journey.association),
 		journey.start?.let { TPosition(it) },
-		journey.end?.let { TPosition(it) }
+		journey.end?.let { TPosition(it) },
+		journey.destination?.let { TPosition(it) }
 	)
 }

@@ -334,3 +334,22 @@ ALTER TABLE events
 ALTER TABLE events
     ADD CONSTRAINT events_journey_fkey FOREIGN KEY (journey) REFERENCES journeys(id_journey) ON DELETE SET NULL;
 
+-- changeset loic:11
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS total_distance INTEGER DEFAULT NULL;
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS min_elevation DOUBLE PRECISION DEFAULT NULL;
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS max_elevation DOUBLE PRECISION DEFAULT NULL;
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS total_elevation_gain DOUBLE PRECISION DEFAULT NULL;
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS total_elevation_loss DOUBLE PRECISION DEFAULT NULL;
+
+ALTER TABLE journeys
+    ADD COLUMN IF NOT EXISTS destination INTEGER REFERENCES positions(id_position) DEFAULT NULL;

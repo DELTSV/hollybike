@@ -104,9 +104,9 @@ class Simplifier(pts: List<Pair<Double, Double>>) {
 	}
 }
 
-private fun simplifyCoordinates(coordinates: List<GeoJsonCoordinates>, rate: Double, closed: Boolean = false): List<GeoJsonCoordinates> {
+private fun simplifyCoordinates(coordinates: List<GeoJsonCoordinates>, number: Int, closed: Boolean = false): List<GeoJsonCoordinates> {
 	val simplifier = Simplifier(coordinates.map { it[0] to it[1] })
-	val simplified = simplifier.simplify(ratio = rate).map { listOf(it.first, it.second) }
+	val simplified = simplifier.simplify(number = number).map { listOf(it.first, it.second) }
 	return if (closed) {
 		simplified.dropLast(1) + simplified.first() as List<GeoJsonCoordinates>
 	} else {
@@ -114,16 +114,16 @@ private fun simplifyCoordinates(coordinates: List<GeoJsonCoordinates>, rate: Dou
 	}
 }
 
-fun GeoJson.simplify(rate: Double): GeoJson {
+fun GeoJson.simplify(number: Int): GeoJson {
 	return when (this) {
 		is Point, is MultiPoint -> this
-		is LineString -> this.copy(coordinates = simplifyCoordinates(this.coordinates, rate))
-		is MultiLineString -> this.copy(coordinates = this.coordinates.map { simplifyCoordinates(it, rate) })
-		is Polygon -> this.copy(coordinates = this.coordinates.map { simplifyCoordinates(it, rate, closed = true) })
-		is MultiPolygon -> this.copy(coordinates = this.coordinates.map { it.map { ring -> simplifyCoordinates(ring, rate, closed = true) } })
-		is GeometryCollection -> this.copy(geometries = this.geometries.map { it.simplify(rate) as GeometryShape })
-		is Feature -> this.copy(geometry = this.geometry?.let { it.simplify(rate) as GeometryShape })
-		is FeatureCollection -> this.copy(features = this.features.map { it.simplify(rate) })
+		is LineString -> this.copy(coordinates = simplifyCoordinates(this.coordinates, number))
+		is MultiLineString -> this.copy(coordinates = this.coordinates.map { simplifyCoordinates(it, number) })
+		is Polygon -> this.copy(coordinates = this.coordinates.map { simplifyCoordinates(it, number, closed = true) })
+		is MultiPolygon -> this.copy(coordinates = this.coordinates.map { it.map { ring -> simplifyCoordinates(ring, number, closed = true) } })
+		is GeometryCollection -> this.copy(geometries = this.geometries.map { it.simplify(number) as GeometryShape })
+		is Feature -> this.copy(geometry = this.geometry?.let { it.simplify(number) as GeometryShape })
+		is FeatureCollection -> this.copy(features = this.features.map { it.simplify(number) })
 	}
 }
 
@@ -145,19 +145,10 @@ fun GeoJson.updateGeoJsonProperties(key: String, value: JsonElement): GeoJson {
 }
 
 fun GeoJson.simplifyToUrlSafe(maxCharCount: Int = 7000): GeoJson {
-	var rate = 1.0
-	var simplifiedGeoJson = this.simplify(rate)
-	var encodedString = encodeUrl()
+	val maxCoordinatesLen = 25
+	val maxCoordinates = maxCharCount / maxCoordinatesLen
 
-	while (encodedString.length > maxCharCount) {
-		rate -= 0.05
-		if (rate <= 0.0) break
-
-		simplifiedGeoJson = this.simplify(rate)
-		encodedString = encodeUrl()
-	}
-
-	return simplifiedGeoJson
+	return this.simplify(maxCoordinates)
 }
 
 fun GeoJson.toJson(): String {
