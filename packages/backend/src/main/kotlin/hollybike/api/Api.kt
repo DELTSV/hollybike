@@ -47,7 +47,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
-	val authVerifier = AuthVerifier(conf.security, db, logger)
+	val authVerifier = AuthVerifier(conf.security, db, log)
 
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)

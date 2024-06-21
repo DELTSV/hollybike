@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
-object Notifications: IntIdTable("users", "id_notification") {
+object Notifications: IntIdTable("notifications", "id_notification") {
 	val user = reference("user", Users)
 	val data = text("data")
 	val creation = timestamp("creation").default(Clock.System.now())
@@ -16,7 +16,7 @@ object Notifications: IntIdTable("users", "id_notification") {
 }
 
 class Notification(id: EntityID<Int>) : IntEntity(id) {
-	var user by User referencedOn Users.id
+	var user by User referencedOn Notifications.user
 	var data by Notifications.data
 	var creation by Notifications.creation
 	var seen by Notifications.seen
