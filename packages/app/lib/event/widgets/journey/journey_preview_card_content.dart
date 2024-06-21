@@ -60,7 +60,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
   }
 
   Widget _getJourneyLocation(BuildContext context) {
-    if (loadingPositions) {
+    if (loadingPositions && !journey.haveAllPositions) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

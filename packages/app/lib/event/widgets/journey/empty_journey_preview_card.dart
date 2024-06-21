@@ -1,13 +1,10 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_state.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/journey/widgets/journey_library_modal.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../journey/utils/get_journey_file_and_upload_to_event.dart';
-import '../../bloc/event_journey_bloc/event_journey_bloc.dart';
 
 enum NewJourneyType {
   library,

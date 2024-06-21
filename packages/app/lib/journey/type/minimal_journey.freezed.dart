@@ -211,14 +211,15 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$MinimalJourneyImpl implements _MinimalJourney {
+class _$MinimalJourneyImpl extends _MinimalJourney {
   const _$MinimalJourneyImpl(
       {required this.id,
       required this.file,
       required this.start,
       required this.end,
       required this.destination,
-      @JsonKey(name: 'preview_image') this.previewImage});
+      @JsonKey(name: 'preview_image') this.previewImage})
+      : super._();
 
   factory _$MinimalJourneyImpl.fromJson(Map<String, dynamic> json) =>
       _$$MinimalJourneyImplFromJson(json);
@@ -277,7 +278,7 @@ class _$MinimalJourneyImpl implements _MinimalJourney {
   }
 }
 
-abstract class _MinimalJourney implements MinimalJourney {
+abstract class _MinimalJourney extends MinimalJourney {
   const factory _MinimalJourney(
           {required final int id,
           required final String? file,
@@ -286,6 +287,7 @@ abstract class _MinimalJourney implements MinimalJourney {
           required final Position? destination,
           @JsonKey(name: 'preview_image') final String? previewImage}) =
       _$MinimalJourneyImpl;
+  const _MinimalJourney._() : super._();
 
   factory _MinimalJourney.fromJson(Map<String, dynamic> json) =
       _$MinimalJourneyImpl.fromJson;
