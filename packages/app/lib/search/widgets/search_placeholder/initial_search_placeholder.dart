@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class SearchInitialPlaceholder extends StatelessWidget {
+class InitialSearchPlaceholder extends StatelessWidget {
   final void Function() onButtonTap;
 
-  const SearchInitialPlaceholder({super.key, required this.onButtonTap});
+  const InitialSearchPlaceholder({super.key, required this.onButtonTap});
 
   @override
   Widget build(BuildContext context) {

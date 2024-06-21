@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../shared/utils/dates.dart';
 import '../../../shared/widgets/pinned_header_delegate.dart';
 import '../../types/minimal_event.dart';
-import '../event_preview_card.dart';
+import '../event_preview_card/event_preview_card.dart';
 
 class EventSection {
   String title;

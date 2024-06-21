@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
 
-import '../../app/app_router.gr.dart';
+import '../../../app/app_router.gr.dart';
 
 class SearchProfileCard extends StatelessWidget {
   final Profile profile;
