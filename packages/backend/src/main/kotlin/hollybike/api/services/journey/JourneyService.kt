@@ -72,7 +72,7 @@ class JourneyService(
 					.innerJoin(Users, { Journeys.creator }, { Users.id })
 					.selectAll()
 					.applyParam(param)
-			).with(Journey::association, Journey::creator, Journey::start, Journey::end).toList()
+			).with(Journey::association, Journey::creator, Journey::start, Journey::end, Journey::destination).toList()
 		}
 	}
 
@@ -94,7 +94,7 @@ class JourneyService(
 
 	fun getById(caller: User, id: Int): Journey? = transaction(db) {
 		Journey.findById(id)
-			?.load(Journey::creator, Journey::association, Journey::start, Journey::end) getIfAllowed caller
+			?.load(Journey::creator, Journey::association, Journey::start, Journey::end, Journey::destination) getIfAllowed caller
 	}
 
 	fun createJourney(caller: User, new: TNewJourney): Result<Journey> {
@@ -113,7 +113,7 @@ class JourneyService(
 				this.name = new.name
 				this.association = association
 				this.creator = caller
-			}.load(Journey::creator, Journey::association, Journey::start, Journey::end)
+			}.load(Journey::creator, Journey::association, Journey::start, Journey::end, Journey::destination)
 		}
 
 		return Result.success(journey)
@@ -180,16 +180,23 @@ class JourneyService(
 		return true
 	}
 
-	fun setJourneyStartPosition(journey: Journey, start: Position): Journey? {
+	fun setJourneyStartPosition(journey: Journey, start: Position): Journey {
 		transaction(db) {
 			journey.start = start
 		}
 		return journey
 	}
 
-	fun setJourneyEndPosition(journey: Journey, end: Position): Journey? {
+	fun setJourneyEndPosition(journey: Journey, end: Position): Journey {
 		transaction(db) {
 			journey.end = end
+		}
+		return journey
+	}
+
+	fun setJourneyDestinationPosition(journey: Journey, destination: Position): Journey {
+		transaction(db) {
+			journey.destination = destination
 		}
 		return journey
 	}

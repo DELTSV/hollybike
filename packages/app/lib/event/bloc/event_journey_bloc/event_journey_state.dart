@@ -65,3 +65,13 @@ class EventJourneyOperationFailure extends EventJourneyState {
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventJourneyStatus.error));
 }
+
+class EventJourneyGetPositionsInProgress extends EventJourneyState {
+  EventJourneyGetPositionsInProgress(EventJourneyState state)
+      : super.state(state.copyWith(status: EventJourneyStatus.loading));
+}
+
+class EventJourneyGetPositionsSuccess extends EventJourneyState {
+  EventJourneyGetPositionsSuccess(EventJourneyState state)
+      : super.state(state.copyWith(status: EventJourneyStatus.success));
+}

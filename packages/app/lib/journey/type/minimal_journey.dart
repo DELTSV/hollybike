@@ -8,13 +8,18 @@ part 'minimal_journey.g.dart';
 
 @freezed
 class MinimalJourney with _$MinimalJourney {
+  const MinimalJourney._();
+
   const factory MinimalJourney({
     required int id,
     required String? file,
     required Position? start,
     required Position? end,
+    required Position? destination,
     @JsonKey(name: 'preview_image') String? previewImage,
   }) = _MinimalJourney;
 
   factory MinimalJourney.fromJson(JsonMap json) => _$MinimalJourneyFromJson(json);
+
+  get haveAllPositions => start != null && end != null && destination != null;
 }

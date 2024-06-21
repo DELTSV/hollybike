@@ -39,8 +39,7 @@ class JourneyPreviewCard extends StatelessWidget {
           return SizedBox(
             height: 140,
             child: _buildJourneyPreview(
-              state is EventJourneyOperationInProgress,
-              state is EventJourneyUploadInProgress,
+              state is EventJourneyGetPositionsInProgress,
             ),
           );
         },
@@ -48,7 +47,7 @@ class JourneyPreviewCard extends StatelessWidget {
     );
   }
 
-  Widget _buildJourneyPreview(bool loadingPreview, bool loadingUpload) {
+  Widget _buildJourneyPreview(bool loadingPositions) {
     if (journey == null) {
       if (!canAddJourney) {
         return const SizedBox();
@@ -59,21 +58,13 @@ class JourneyPreviewCard extends StatelessWidget {
       );
     }
 
-    if (loadingPreview) {
-      return const JourneyPreviewCardContainer(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     return JourneyPreviewCardContainer(
       onTap: () {
 
       },
       child: JourneyPreviewCardContent(
         journey: journey!,
-        loadingData: loadingUpload,
+        loadingPositions: loadingPositions,
       ),
     );
   }
