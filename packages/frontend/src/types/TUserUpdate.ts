@@ -4,5 +4,6 @@ export interface TUserUpdate {
 	password?: string,
 	status?: string,
 	scope?: string,
-	association?: number
+	association?: number,
+	role?: string,
 }

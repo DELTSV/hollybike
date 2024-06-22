@@ -9,5 +9,6 @@ export interface TUserPartial {
 	status: EUserStatus,
 	profile_picture?: string,
 	event_role?: EEventRole,
-	is_owner?: boolean
+	is_owner?: boolean,
+	role?: string
 }

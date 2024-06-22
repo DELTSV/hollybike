@@ -71,6 +71,15 @@ export function UserDetail() {
 						username: e.currentTarget.value,
 					}))}
 				/>
+				<p>Fonction</p>
+				<Input
+					placeholder={"Fonction"}
+					value={userData.role ?? ""}
+					onInput={e => setUserData(prev => ({
+						...prev!,
+						role: e.currentTarget.value,
+					}))}
+				/>
 				<p>Email</p>
 				<Input
 					value={userData.email} onInput={e => setUserData(prev => ({
@@ -126,6 +135,7 @@ export function UserDetail() {
 						status: userData.status,
 						scope: userData.scope,
 						association: userData.association.id,
+						role: userData.role,
 					};
 					api(`/users/${ userData.id}`, {
 						method: "PATCH",

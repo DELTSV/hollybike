@@ -12,7 +12,8 @@ export interface TUser {
 	status: EUserStatus,
 	last_login: Date,
 	association: TAssociation,
-	profile_picture?: string
+	profile_picture?: string,
+	role?: string
 }
 
 export const dummyUser: TUser = {
