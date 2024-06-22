@@ -3,7 +3,6 @@ import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
-import 'package:http/http.dart';
 
 class AuthRepository {
   final AuthApi authApi;
@@ -18,11 +17,11 @@ class AuthRepository {
     return authPersistence.getSessions();
   }
 
-  Future<Response> login(String host, LoginDto dto) {
+  Future<AuthSession> login(String host, LoginDto dto) {
     return authApi.login(host, dto);
   }
 
-  Future<Response> signup(String host, SignupDto dto) {
+  Future<AuthSession> signup(String host, SignupDto dto) {
     return authApi.signup(host, dto);
   }
 }

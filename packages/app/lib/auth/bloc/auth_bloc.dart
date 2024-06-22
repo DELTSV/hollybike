@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
@@ -63,16 +65,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
     try {
-      final response = await authRepository.login(
+      final session = await authRepository.login(
         event.host,
         event.loginDto,
       );
 
-      if (response.statusCode != 200) {
-        throw NotificationException(response.body);
-      }
-
-      final session = AuthSession.fromResponseJson(event.host, response.body);
       authSessionRepository.setCurrentSession(session);
       emit(AuthNewSession(session, state));
     } on NotificationException catch (exception) {
@@ -81,7 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         isError: true,
         consumerId: "loginForm",
       );
-    } catch (_) {
+    } catch (e) {
+      log(e.toString());
       notificationRepository.push(
         "Oups! Il semble y avoir une erreur. Veuillez vérifier l'adresse du serveur et réessayer.",
         isError: true,
@@ -92,16 +90,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onSignup(AuthSignup event, Emitter<AuthState> emit) async {
     try {
-      final response = await authRepository.signup(
+      final session = await authRepository.signup(
         event.host,
         event.signupDto,
       );
 
-      if (response.statusCode != 200) {
-        throw NotificationException(response.body);
-      }
-
-      final session = AuthSession.fromResponseJson(event.host, response.body);
 
       authSessionRepository.setCurrentSession(session);
       emit(AuthNewSession(session, state));
