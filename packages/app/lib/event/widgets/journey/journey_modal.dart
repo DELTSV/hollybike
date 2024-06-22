@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/journey/journey_modal_header.dart';
 import 'package:hollybike/journey/widgets/journey_image.dart';
+import 'package:hollybike/journey/widgets/journey_location.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import '../../../journey/type/minimal_journey.dart';
 
@@ -40,6 +41,8 @@ class JourneyModal extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               JourneyModalHeader(onViewOnMap: onViewOnMap, event: event),
+              const SizedBox(height: 14),
+              JourneyLocation(journey: journey),
               const SizedBox(height: 14),
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),

@@ -23,6 +23,7 @@ class UploadJourneyMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
+      padding: EdgeInsets.zero,
       icon: child,
       onSelected: onSelection,
       itemBuilder: (context) {
