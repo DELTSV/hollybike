@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
 import 'package:hollybike/event/widgets/event_preview_card/event_preview_card.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
+import 'package:hollybike/search/widgets/search_placeholder/empty_search_placeholder.dart';
 import 'package:hollybike/search/widgets/search_placeholder/initial_search_placeholder.dart';
 import 'package:hollybike/search/widgets/search_placeholder/loading_search_placeholder.dart';
 import 'package:hollybike/search/widgets/search_profile_card/search_profile_card.dart';
@@ -63,7 +64,7 @@ class _SearchScreenState extends State<SearchScreen> {
             } else if (state.status == SearchStatus.loading) {
               return const LoadingSearchPlaceholder();
             } else if (state.events.isEmpty && state.profiles.isEmpty) {
-              return const LoadingSearchPlaceholder();
+              return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
             }
 
             return CustomScrollView(

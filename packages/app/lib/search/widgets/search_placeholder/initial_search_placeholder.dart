@@ -26,7 +26,7 @@ class InitialSearchPlaceholder extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 300),
               child: Text(
                 "Cherchez des évènement ou d'autres utilisateurs par leur nom",
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
             ),
