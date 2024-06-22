@@ -24,8 +24,10 @@ class MeScreen extends StatelessWidget {
         ),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) =>
-            ProfilePage(profile: bloc.currentProfile),
+        builder: (context, bloc, state) => ProfilePage(
+          profile: bloc.currentProfile?.toMinimalUser(),
+          association: bloc.currentProfile?.association,
+        ),
       ),
     );
   }

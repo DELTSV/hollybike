@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hollybike/association/types/association.dart';
 import 'package:hollybike/profile/widgets/profile_description/profile_description_spec.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
-
-import '../../types/profile.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 class ProfileDescription extends StatelessWidget {
-  final Profile profile;
+  final MinimalUser profile;
+  final Association association;
 
-  const ProfileDescription({super.key, required this.profile});
+  const ProfileDescription({
+    super.key,
+    required this.profile,
+    required this.association,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +35,7 @@ class ProfileDescription extends StatelessWidget {
             ),
             ProfileDescriptionSpec(
               icon: Icons.groups,
-              text: profile.association.name,
-            ),
-            ProfileDescriptionSpec(
-              icon: Icons.alternate_email,
-              text: profile.email,
+              text: association.name,
             ),
           ],
           const SizedBox.square(dimension: 8),

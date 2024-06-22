@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
-import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 enum SearchStatus { loading, success, error, initial }
 
@@ -14,7 +14,7 @@ class SearchState {
   final bool hasMoreEvents;
   final int eventsNextPage;
 
-  final List<Profile> profiles;
+  final List<MinimalUser> profiles;
   final bool hasMoreProfiles;
   final int profilesNextPage;
 
@@ -36,7 +36,7 @@ class SearchState {
     String? lastSearchQuery,
     AuthSession? lastSearchSession,
     List<MinimalEvent>? events,
-    List<Profile>? profiles,
+    List<MinimalUser>? profiles,
     bool? hasMoreEvents,
     int? eventsNextPage,
     bool? hasMoreProfiles,

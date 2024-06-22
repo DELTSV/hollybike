@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/profile_picture_container.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 class ProfilePicture extends StatelessWidget {
-  final Profile profile;
+  final MinimalUser profile;
   final double size;
 
   const ProfilePicture({

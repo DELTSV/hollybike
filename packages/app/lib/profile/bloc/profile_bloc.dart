@@ -6,6 +6,7 @@ import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../auth/types/expired_token_exception.dart';
 
@@ -25,14 +26,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     return profile;
   }
 
-  Profile? getProfileById(int id) {
+  MinimalUser? getProfileById(int id) {
     final currentSession = state.currentSession;
     if (currentSession == null) return null;
 
-    bool isSearchedProfile(Profile profile) => profile.id == id;
+    bool isSearchedProfile(MinimalUser profile) => profile.id == id;
 
     try {
-      return state.sessionProfiles.values.firstWhere(
+      return state.sessionProfiles.values.map((sessionProfile) => sessionProfile.toMinimalUser()).firstWhere(
         isSearchedProfile,
         orElse: () =>
             state.profiles[currentSession]!.firstWhere(isSearchedProfile),

@@ -27,10 +27,6 @@ class PlaceholderProfileDescription extends StatelessWidget {
               minLetters: 12,
               maxLetters: 18,
             ),
-            const TextLoadingPlaceholder(
-              minLetters: 12,
-              maxLetters: 18,
-            ),
           ],
           const SizedBox.square(dimension: 8),
         ),

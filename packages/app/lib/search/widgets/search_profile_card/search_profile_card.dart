@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../../app/app_router.gr.dart';
 
 class SearchProfileCard extends StatelessWidget {
-  final Profile profile;
+  final MinimalUser profile;
 
   const SearchProfileCard({super.key, required this.profile});
 

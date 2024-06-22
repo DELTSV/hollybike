@@ -1,6 +1,7 @@
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../types/profile.dart';
 
@@ -15,11 +16,11 @@ class ProfileRepository {
     return profileApi.getSessionProfile(session);
   }
 
-  Future<Profile> getIdProfile(AuthSession currentSession, int id) async {
+  Future<MinimalUser> getIdProfile(AuthSession currentSession, int id) async {
     return profileApi.getIdProfile(currentSession, id);
   }
 
-  Future<PaginatedList<Profile>> searchProfiles(
+  Future<PaginatedList<MinimalUser>> searchProfiles(
     AuthSession currentSession,
     int? page,
     int eventsPerPage,

@@ -2,6 +2,7 @@ import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/expired_token_exception.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 import 'package:http/http.dart';
 
 import '../types/profile.dart';
@@ -21,27 +22,22 @@ class ProfileApi {
     return Profile.fromResponseJson(response.bodyBytes);
   }
 
-  Future<Profile> getIdProfile(AuthSession currentSession, int id) async {
-    final uri = Uri.parse("${currentSession.host}/api/users/$id");
+  Future<MinimalUser> getIdProfile(AuthSession session, int id) async {
+    final response = await DioClient(session).dio.get("/profiles/$id");
 
-    final response = await get(
-      uri,
-      headers: {'Authorization': "Bearer ${currentSession.token}"},
-    );
+    if (response.statusCode != 200) throw Exception("Failed to fetch user");
 
-    if (response.statusCode == 401) throw ExpiredTokenException();
-
-    return Profile.fromResponseJson(response.bodyBytes);
+    return MinimalUser.fromJson(response.data);
   }
 
-  Future<PaginatedList<Profile>> searchUsers(
+  Future<PaginatedList<MinimalUser>> searchUsers(
     AuthSession session,
     int page,
     int eventsPerPage,
     String query,
   ) async {
     final response = await DioClient(session).dio.get(
-      "/users",
+      "/profiles",
       queryParameters: {
         'page': page,
         'per_page': eventsPerPage,
@@ -52,6 +48,6 @@ class ProfileApi {
 
     if (response.statusCode != 200) throw Exception("Failed to fetch users");
 
-    return PaginatedList.fromJson(response.data, Profile.fromJson);
+    return PaginatedList.fromJson(response.data, MinimalUser.fromJson);
   }
 }
