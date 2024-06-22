@@ -38,4 +38,10 @@ class EventDetails with _$EventDetails {
   bool get isOrganizer =>
       callerParticipation != null &&
       callerParticipation!.role == EventRole.organizer;
+
+  bool get canEditJourney {
+    return isOrganizer &&
+        (event.status == EventStatusState.scheduled ||
+            event.status == EventStatusState.pending);
+  }
 }

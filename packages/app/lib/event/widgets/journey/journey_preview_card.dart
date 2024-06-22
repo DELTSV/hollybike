@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/types/event.dart';
+import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/journey/empty_journey_preview_card.dart';
 import 'package:hollybike/event/widgets/journey/journey_modal.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card_content.dart';
@@ -12,7 +12,7 @@ import '../../bloc/event_journey_bloc/event_journey_state.dart';
 import 'journey_preview_card_container.dart';
 
 class JourneyPreviewCard extends StatelessWidget {
-  final Event event;
+  final EventDetails eventDetails;
   final MinimalJourney? journey;
   final bool canAddJourney;
   final void Function() onViewOnMap;
@@ -20,7 +20,7 @@ class JourneyPreviewCard extends StatelessWidget {
   const JourneyPreviewCard({
     super.key,
     required this.journey,
-    required this.event,
+    required this.eventDetails,
     required this.canAddJourney,
     required this.onViewOnMap,
   });
@@ -62,7 +62,7 @@ class JourneyPreviewCard extends StatelessWidget {
       }
 
       return EmptyJourneyPreviewCard(
-        event: event,
+        event: eventDetails.event,
       );
     }
 
@@ -81,7 +81,7 @@ class JourneyPreviewCard extends StatelessWidget {
               context: context,
               builder: (context) => JourneyModal(
                 journey: journey!,
-                event: event,
+                eventDetails: eventDetails,
                 onViewOnMap: onViewOnMap,
               ),
             );

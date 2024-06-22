@@ -26,12 +26,6 @@ class EventDetailsInfos extends StatelessWidget {
     required this.onViewOnMap,
   });
 
-  get canAddJourney {
-    return eventDetails.isOrganizer &&
-        (eventDetails.event.status == EventStatusState.scheduled ||
-            eventDetails.event.status == EventStatusState.pending);
-  }
-
   @override
   Widget build(BuildContext context) {
     final event = eventDetails.event;
@@ -73,9 +67,9 @@ class EventDetailsInfos extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             JourneyPreviewCard(
-              canAddJourney: canAddJourney,
+              canAddJourney: eventDetails.canEditJourney,
               journey: eventDetails.journey,
-              event: event,
+              eventDetails: eventDetails,
               onViewOnMap: onViewOnMap,
             ),
           ],
