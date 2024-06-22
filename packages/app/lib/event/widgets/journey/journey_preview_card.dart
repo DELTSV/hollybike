@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/journey/empty_journey_preview_card.dart';
+import 'package:hollybike/event/widgets/journey/journey_modal.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card_content.dart';
 
 import '../../../journey/type/minimal_journey.dart';
@@ -14,12 +15,14 @@ class JourneyPreviewCard extends StatelessWidget {
   final Event event;
   final MinimalJourney? journey;
   final bool canAddJourney;
+  final void Function() onViewOnMap;
 
   const JourneyPreviewCard({
     super.key,
     required this.journey,
     required this.event,
     required this.canAddJourney,
+    required this.onViewOnMap,
   });
 
   @override
@@ -39,16 +42,21 @@ class JourneyPreviewCard extends StatelessWidget {
           return SizedBox(
             height: 140,
             child: _buildJourneyPreview(
-              state is EventJourneyGetPositionsInProgress,
-            ),
+                context,
+                state is EventJourneyGetPositionsInProgress,
+                state is EventJourneyOperationInProgress),
           );
         },
       ),
     );
   }
 
-  Widget _buildJourneyPreview(bool loadingPositions) {
-    if (journey == null) {
+  Widget _buildJourneyPreview(
+    BuildContext context,
+    bool loadingPositions,
+    bool loadingOperation,
+  ) {
+    if (journey == null && !loadingOperation) {
       if (!canAddJourney) {
         return const SizedBox();
       }
@@ -58,13 +66,42 @@ class JourneyPreviewCard extends StatelessWidget {
       );
     }
 
-    return JourneyPreviewCardContainer(
-      onTap: () {
-
-      },
-      child: JourneyPreviewCardContent(
-        journey: journey!,
-        loadingPositions: loadingPositions,
+    return AnimatedCrossFade(
+      duration: const Duration(milliseconds: 500),
+      crossFadeState: loadingOperation
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
+      firstChild: SizedBox(
+        height: 140,
+        child: JourneyPreviewCardContainer(
+          onTap: () {
+            showModalBottomSheet(
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (context) => JourneyModal(
+                journey: journey!,
+                event: event,
+                onViewOnMap: onViewOnMap,
+              ),
+            );
+          },
+          child: JourneyPreviewCardContent(
+            journey: journey,
+            loadingPositions: loadingPositions,
+          ),
+        ),
+      ),
+      secondChild: SizedBox(
+        height: 140,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
       ),
     );
   }

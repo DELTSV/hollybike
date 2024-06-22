@@ -218,7 +218,7 @@ class JourneyService(
 			.keepLargestCoordinateElement()
 			.updateGeoJsonProperties(
 				"stroke",
-				JsonPrimitive("#3457d5")
+				JsonPrimitive("#94e2d5")
 			)
 
 		val bboxURL = encodeBoundingBox(simplifiedGeoJson.getBoundingBox(withoutElevation = true))

@@ -33,3 +33,13 @@ class AttachJourneyToEvent extends EventJourneyEvent {
     required this.journey,
   });
 }
+
+class RemoveJourneyFromEvent extends EventJourneyEvent {
+  final AuthSession session;
+  final int eventId;
+
+  RemoveJourneyFromEvent({
+    required this.session,
+    required this.eventId,
+  });
+}

@@ -25,6 +25,11 @@ mixin _$MinimalJourney {
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
   Position? get destination => throw _privateConstructorUsedError;
+  int? get totalDistance => throw _privateConstructorUsedError;
+  int? get minElevation => throw _privateConstructorUsedError;
+  int? get maxElevation => throw _privateConstructorUsedError;
+  int? get totalElevationGain => throw _privateConstructorUsedError;
+  int? get totalElevationLoss => throw _privateConstructorUsedError;
   @JsonKey(name: 'preview_image')
   String? get previewImage => throw _privateConstructorUsedError;
 
@@ -46,6 +51,11 @@ abstract class $MinimalJourneyCopyWith<$Res> {
       Position? start,
       Position? end,
       Position? destination,
+      int? totalDistance,
+      int? minElevation,
+      int? maxElevation,
+      int? totalElevationGain,
+      int? totalElevationLoss,
       @JsonKey(name: 'preview_image') String? previewImage});
 
   $PositionCopyWith<$Res>? get start;
@@ -71,6 +81,11 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
     Object? start = freezed,
     Object? end = freezed,
     Object? destination = freezed,
+    Object? totalDistance = freezed,
+    Object? minElevation = freezed,
+    Object? maxElevation = freezed,
+    Object? totalElevationGain = freezed,
+    Object? totalElevationLoss = freezed,
     Object? previewImage = freezed,
   }) {
     return _then(_value.copyWith(
@@ -94,6 +109,26 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as Position?,
+      totalDistance: freezed == totalDistance
+          ? _value.totalDistance
+          : totalDistance // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minElevation: freezed == minElevation
+          ? _value.minElevation
+          : minElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      maxElevation: freezed == maxElevation
+          ? _value.maxElevation
+          : maxElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationGain: freezed == totalElevationGain
+          ? _value.totalElevationGain
+          : totalElevationGain // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationLoss: freezed == totalElevationLoss
+          ? _value.totalElevationLoss
+          : totalElevationLoss // ignore: cast_nullable_to_non_nullable
+              as int?,
       previewImage: freezed == previewImage
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
@@ -152,6 +187,11 @@ abstract class _$$MinimalJourneyImplCopyWith<$Res>
       Position? start,
       Position? end,
       Position? destination,
+      int? totalDistance,
+      int? minElevation,
+      int? maxElevation,
+      int? totalElevationGain,
+      int? totalElevationLoss,
       @JsonKey(name: 'preview_image') String? previewImage});
 
   @override
@@ -178,6 +218,11 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
     Object? start = freezed,
     Object? end = freezed,
     Object? destination = freezed,
+    Object? totalDistance = freezed,
+    Object? minElevation = freezed,
+    Object? maxElevation = freezed,
+    Object? totalElevationGain = freezed,
+    Object? totalElevationLoss = freezed,
     Object? previewImage = freezed,
   }) {
     return _then(_$MinimalJourneyImpl(
@@ -201,6 +246,26 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
           ? _value.destination
           : destination // ignore: cast_nullable_to_non_nullable
               as Position?,
+      totalDistance: freezed == totalDistance
+          ? _value.totalDistance
+          : totalDistance // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minElevation: freezed == minElevation
+          ? _value.minElevation
+          : minElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      maxElevation: freezed == maxElevation
+          ? _value.maxElevation
+          : maxElevation // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationGain: freezed == totalElevationGain
+          ? _value.totalElevationGain
+          : totalElevationGain // ignore: cast_nullable_to_non_nullable
+              as int?,
+      totalElevationLoss: freezed == totalElevationLoss
+          ? _value.totalElevationLoss
+          : totalElevationLoss // ignore: cast_nullable_to_non_nullable
+              as int?,
       previewImage: freezed == previewImage
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
@@ -218,6 +283,11 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
       required this.start,
       required this.end,
       required this.destination,
+      required this.totalDistance,
+      required this.minElevation,
+      required this.maxElevation,
+      required this.totalElevationGain,
+      required this.totalElevationLoss,
       @JsonKey(name: 'preview_image') this.previewImage})
       : super._();
 
@@ -235,12 +305,22 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
   @override
   final Position? destination;
   @override
+  final int? totalDistance;
+  @override
+  final int? minElevation;
+  @override
+  final int? maxElevation;
+  @override
+  final int? totalElevationGain;
+  @override
+  final int? totalElevationLoss;
+  @override
   @JsonKey(name: 'preview_image')
   final String? previewImage;
 
   @override
   String toString() {
-    return 'MinimalJourney(id: $id, file: $file, start: $start, end: $end, destination: $destination, previewImage: $previewImage)';
+    return 'MinimalJourney(id: $id, file: $file, start: $start, end: $end, destination: $destination, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss, previewImage: $previewImage)';
   }
 
   @override
@@ -254,14 +334,35 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
             (identical(other.end, end) || other.end == end) &&
             (identical(other.destination, destination) ||
                 other.destination == destination) &&
+            (identical(other.totalDistance, totalDistance) ||
+                other.totalDistance == totalDistance) &&
+            (identical(other.minElevation, minElevation) ||
+                other.minElevation == minElevation) &&
+            (identical(other.maxElevation, maxElevation) ||
+                other.maxElevation == maxElevation) &&
+            (identical(other.totalElevationGain, totalElevationGain) ||
+                other.totalElevationGain == totalElevationGain) &&
+            (identical(other.totalElevationLoss, totalElevationLoss) ||
+                other.totalElevationLoss == totalElevationLoss) &&
             (identical(other.previewImage, previewImage) ||
                 other.previewImage == previewImage));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, file, start, end, destination, previewImage);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      file,
+      start,
+      end,
+      destination,
+      totalDistance,
+      minElevation,
+      maxElevation,
+      totalElevationGain,
+      totalElevationLoss,
+      previewImage);
 
   @JsonKey(ignore: true)
   @override
@@ -285,6 +386,11 @@ abstract class _MinimalJourney extends MinimalJourney {
           required final Position? start,
           required final Position? end,
           required final Position? destination,
+          required final int? totalDistance,
+          required final int? minElevation,
+          required final int? maxElevation,
+          required final int? totalElevationGain,
+          required final int? totalElevationLoss,
           @JsonKey(name: 'preview_image') final String? previewImage}) =
       _$MinimalJourneyImpl;
   const _MinimalJourney._() : super._();
@@ -302,6 +408,16 @@ abstract class _MinimalJourney extends MinimalJourney {
   Position? get end;
   @override
   Position? get destination;
+  @override
+  int? get totalDistance;
+  @override
+  int? get minElevation;
+  @override
+  int? get maxElevation;
+  @override
+  int? get totalElevationGain;
+  @override
+  int? get totalElevationLoss;
   @override
   @JsonKey(name: 'preview_image')
   String? get previewImage;

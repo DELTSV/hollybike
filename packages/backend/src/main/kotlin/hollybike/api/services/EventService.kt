@@ -254,7 +254,8 @@ class EventService(
 			Event::association,
 			Event::journey,
 			Journey::start,
-			Journey::end
+			Journey::end,
+			Journey::destination
 		) to try {
 			EventParticipation.wrapRow(eventRow).load(EventParticipation::user)
 		} catch (e: Throwable) {
@@ -325,6 +326,16 @@ class EventService(
 			)
 
 			it.journey = journey
+
+			return@transaction Result.success(Unit)
+		}
+
+		Result.success(Unit)
+	}
+
+	fun removeJourneyFromEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
+		findEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
+			it.journey = null
 
 			return@transaction Result.success(Unit)
 		}

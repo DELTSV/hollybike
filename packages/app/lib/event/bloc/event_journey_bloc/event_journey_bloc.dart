@@ -18,6 +18,7 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
   }) : super(EventJourneyInitial()) {
     on<UploadJourneyFileToEvent>(_onUploadJourneyFileToEvent);
     on<AttachJourneyToEvent>(_onAttachJourneyToEvent);
+    on<RemoveJourneyFromEvent>(_onRemoveJourney);
   }
 
   _onUploadJourneyFileToEvent(
@@ -97,13 +98,38 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
       emit(EventJourneyOperationSuccess(
         state,
-        successMessage: 'Parcours ajouté à l\'évènement',
+        successMessage: 'Parcours mis à jour',
       ));
     } catch (e) {
       log('Error while attaching journey to event', error: e);
       emit(EventJourneyOperationFailure(
         state,
-        errorMessage: 'Impossible d\'ajouter le parcours à l\'évènement',
+        errorMessage: 'Impossible de mettre à jour le parcours.',
+      ));
+    }
+  }
+
+  Future<void> _onRemoveJourney(
+    RemoveJourneyFromEvent event,
+    Emitter<EventJourneyState> emit,
+  ) async {
+    emit(EventJourneyOperationInProgress(state));
+
+    try {
+      await eventRepository.removeJourneyFromEvent(
+        event.session,
+        event.eventId,
+      );
+
+      emit(EventJourneyOperationSuccess(
+        state,
+        successMessage: 'Parcours retiré de l\'événement.',
+      ));
+    } catch (e) {
+      log('Error while removing journey from event', error: e);
+      emit(EventJourneyOperationFailure(
+        state,
+        errorMessage: 'Impossible de retirer le parcours.',
       ));
     }
   }

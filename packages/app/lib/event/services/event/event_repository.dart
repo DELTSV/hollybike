@@ -1,5 +1,4 @@
 import 'package:hollybike/auth/types/auth_session.dart';
-
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
@@ -362,5 +361,26 @@ class EventRepository {
         journey: journey.toMinimalJourney(),
       ),
     );
+  }
+
+  Future<void> removeJourneyFromEvent(
+    AuthSession session,
+    int eventId,
+  ) async {
+    await eventApi.removeJourneyFromEvent(session, eventId);
+
+    final details = _eventDetailsStreamController.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamController.add(EventDetails(
+      event: details.event,
+      journey: null,
+      callerParticipation: details.callerParticipation,
+      previewParticipants: details.previewParticipants,
+      previewParticipantsCount: details.previewParticipantsCount,
+    ));
   }
 }

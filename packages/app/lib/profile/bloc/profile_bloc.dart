@@ -11,7 +11,6 @@ import 'package:hollybike/user/types/minimal_user.dart';
 import '../../auth/types/expired_token_exception.dart';
 
 part 'profile_event.dart';
-
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
