@@ -2,10 +2,8 @@ package hollybike.api.routing.controller
 
 import hollybike.api.repository.User
 import hollybike.api.services.NotificationService
-import hollybike.api.types.websocket.Subscribe
-import hollybike.api.types.websocket.Subscribed
-import hollybike.api.types.websocket.Unsubscribe
-import hollybike.api.types.websocket.Unsubscribed
+import hollybike.api.services.UserEventPositionService
+import hollybike.api.types.websocket.*
 import hollybike.api.utils.websocket.AuthVerifier
 import hollybike.api.utils.websocket.WebSocketRouter
 import hollybike.api.utils.websocket.webSocket
@@ -16,13 +14,15 @@ class WebSocketController(
 	application: Application,
 	private val db: Database,
 	private val authVerifier: AuthVerifier,
-	private val notificationService: NotificationService
+	private val notificationService: NotificationService,
+	private val userEventPositionService: UserEventPositionService
 ) {
 	init {
 		application.apply {
 			webSocket("/api/connect", db) {
 				routing {
 					notification()
+					userEventPosition()
 				}
 			}
 		}
@@ -54,6 +54,35 @@ class WebSocketController(
 				else -> {
 					println("Unknown data")
 				}
+			}
+		}
+	}
+
+	private fun WebSocketRouter.userEventPosition() {
+		var user: User? = null
+		request("/event/{id}") {
+			when(this.body) {
+				is Subscribe -> {
+					user = authVerifier.verify(this.body.token)
+					user?.let {
+						respond(Subscribed(true))
+						for(position in userEventPositionService.getSendChannel(parameters["id"]!!.toInt())) {
+							respond(position)
+						}
+					} ?: run {
+						respond(Unsubscribed(false))
+					}
+				}
+				is Unsubscribe -> {
+					respond(Unsubscribed(true))
+					user = null
+				}
+				is UserSendPosition -> {
+					user?.let {
+						userEventPositionService.getReceiveChannel(parameters["id"]!!.toInt(), it.id.value).send(this.body)
+					}
+				}
+				else -> {}
 			}
 		}
 	}
