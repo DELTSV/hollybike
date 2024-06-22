@@ -10,6 +10,6 @@ class Auth(val api: API = API()) {
 	@Resource("/signin")
 	class Signup(val auth: Auth = Auth())
 
-	@Resource("/link")
-	class Link(val auth: Auth = Auth())
+	@Resource("/refresh")
+	class Refresh(val auth: Auth = Auth())
 }

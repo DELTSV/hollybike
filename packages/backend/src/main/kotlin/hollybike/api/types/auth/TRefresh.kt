@@ -3,8 +3,7 @@ package hollybike.api.types.auth
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TLogin(
-	val email: String,
-	val password: String,
-	val device: String? = null
+data class TRefresh(
+	val device: String,
+	val token: String
 )

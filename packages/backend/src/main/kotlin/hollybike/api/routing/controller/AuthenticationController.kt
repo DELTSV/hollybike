@@ -4,15 +4,16 @@ import hollybike.api.conf
 import hollybike.api.exceptions.*
 import hollybike.api.routing.resources.Auth
 import hollybike.api.services.auth.AuthService
-import hollybike.api.types.auth.TAuthInfo
 import hollybike.api.types.auth.TLogin
+import hollybike.api.types.auth.TRefresh
 import hollybike.api.types.auth.TSignup
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.resources.post
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.routing
 
 class AuthenticationController(
 	application: Application,
@@ -22,6 +23,7 @@ class AuthenticationController(
 		application.routing {
 			login()
 			signup()
+			refreshToken()
 		}
 	}
 
@@ -29,7 +31,7 @@ class AuthenticationController(
 		post<Auth.Login> {
 			val login = call.receive<TLogin>()
 			authService.login(login).onSuccess {
-				call.respond(TAuthInfo(it))
+				call.respond(it)
 			}.onFailure {
 				when (it) {
 					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
@@ -45,7 +47,7 @@ class AuthenticationController(
 			val signup = call.receive<TSignup>()
 			val host = call.application.attributes.conf.security.domain
 			authService.signup(host, signup).onSuccess {
-				call.respond(TAuthInfo(it))
+				call.respond(it)
 			}.onFailure {
 				when (it) {
 					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalide")
@@ -57,6 +59,17 @@ class AuthenticationController(
 						call.respond(HttpStatusCode.InternalServerError)
 					}
 				}
+			}
+		}
+	}
+
+	private fun Route.refreshToken() {
+		patch<Auth.Refresh> {
+			val refresh = call.receive<TRefresh>()
+			authService.refreshAccessToken(refresh)?.let {
+				call.respond(it)
+			} ?: run {
+				call.respond(HttpStatusCode.Forbidden)
 			}
 		}
 	}
