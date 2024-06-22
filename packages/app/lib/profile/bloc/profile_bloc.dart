@@ -10,7 +10,6 @@ import 'package:hollybike/profile/types/profile.dart';
 import '../../auth/types/expired_token_exception.dart';
 
 part 'profile_event.dart';
-
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {

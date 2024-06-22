@@ -48,6 +48,7 @@ class EventController(
 				getEvent()
 				createEvent()
 				addJourneyToEvent()
+				removeJourneyFromEvent()
 				updateEvent()
 				uploadEventImage()
 				deleteEvent()
@@ -164,6 +165,19 @@ class EventController(
 				call.user,
 				data.journey.id,
 				journeyId
+			).onSuccess {
+				call.respond(HttpStatusCode.OK)
+			}.onFailure {
+				eventService.handleEventExceptions(it, call)
+			}
+		}
+	}
+
+	private fun Route.removeJourneyFromEvent() {
+		delete<Events.Id.Journey> { data ->
+			eventService.removeJourneyFromEvent(
+				call.user,
+				data.journey.id,
 			).onSuccess {
 				call.respond(HttpStatusCode.OK)
 			}.onFailure {

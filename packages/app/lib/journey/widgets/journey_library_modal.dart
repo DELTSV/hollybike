@@ -14,8 +14,13 @@ import '../utils/get_journey_file_and_upload_to_event.dart';
 
 class JourneyLibraryModal extends StatefulWidget {
   final Event event;
+  final void Function()? onAddJourney;
 
-  const JourneyLibraryModal({super.key, required this.event});
+  const JourneyLibraryModal({
+    super.key,
+    required this.event,
+    this.onAddJourney,
+  });
 
   @override
   State<JourneyLibraryModal> createState() => _JourneyLibraryModalState();
@@ -35,11 +40,6 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
 
   @override
   Widget build(BuildContext context) {
-    final border = BorderSide(
-      color: Theme.of(context).colorScheme.onPrimary,
-      width: 3,
-    );
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -50,11 +50,6 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
-              border: Border(
-                top: border,
-                left: border,
-                right: border,
-              ),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(31),
                 topRight: Radius.circular(31),
@@ -117,10 +112,18 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
   void _onAddJourney() async {
     final file = await getJourneyFileAndUploadToEvent(context, widget.event);
 
+    if (widget.onAddJourney != null) {
+      widget.onAddJourney!();
+    }
+
     if (file != null && mounted) Navigator.of(context).pop();
   }
 
   void _onSelectedJourney(Journey journey) {
+    if (widget.onAddJourney != null) {
+      widget.onAddJourney!();
+    }
+
     withCurrentSession(context, (session) {
       BlocProvider.of<EventJourneyBloc>(context).add(
         AttachJourneyToEvent(

@@ -15,12 +15,14 @@ class JourneyPreviewCard extends StatelessWidget {
   final Event event;
   final MinimalJourney? journey;
   final bool canAddJourney;
+  final void Function() onViewOnMap;
 
   const JourneyPreviewCard({
     super.key,
     required this.journey,
     required this.event,
     required this.canAddJourney,
+    required this.onViewOnMap,
   });
 
   @override
@@ -63,9 +65,12 @@ class JourneyPreviewCard extends StatelessWidget {
     return JourneyPreviewCardContainer(
       onTap: () {
         showModalBottomSheet(
+          backgroundColor: Colors.transparent,
           context: context,
           builder: (context) => JourneyModal(
             journey: journey!,
+            event: event,
+            onViewOnMap: onViewOnMap,
           ),
         );
       },

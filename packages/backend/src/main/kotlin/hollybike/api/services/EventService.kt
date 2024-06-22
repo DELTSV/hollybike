@@ -316,6 +316,16 @@ class EventService(
 		Result.success(Unit)
 	}
 
+	fun removeJourneyFromEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
+		findEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
+			it.journey = null
+
+			return@transaction Result.success(Unit)
+		}
+
+		Result.success(Unit)
+	}
+
 	fun updateEvent(
 		caller: User,
 		eventId: Int,

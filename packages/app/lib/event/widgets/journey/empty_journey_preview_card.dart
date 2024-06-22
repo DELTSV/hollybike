@@ -1,15 +1,9 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
-import 'package:hollybike/journey/widgets/journey_library_modal.dart';
+import 'package:hollybike/event/widgets/journey/journey_import_modal_from_type.dart';
+import 'package:hollybike/event/widgets/journey/upload_journey_menu.dart';
 import 'package:lottie/lottie.dart';
-
-import '../../../journey/utils/get_journey_file_and_upload_to_event.dart';
-
-enum NewJourneyType {
-  library,
-  file,
-}
 
 class EmptyJourneyPreviewCard extends StatelessWidget {
   final Event event;
@@ -58,42 +52,16 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
                 ],
               ),
             ),
-            PopupMenuButton(
-              icon: const Text('Sélectionner un parcours'),
-              onSelected: (type) => _onItemSelect(context, type),
-              itemBuilder: (context) {
-                return [
-                  const PopupMenuItem(
-                    value: NewJourneyType.library,
-                    child: Text('Depuis la bibliothèque'),
-                  ),
-                  const PopupMenuItem(
-                    value: NewJourneyType.file,
-                    child: Text('Importer un fichier GPX/GEOJSON'),
-                  ),
-                ];
+            UploadJourneyMenu(
+              event: event,
+              child: const Text('Sélectionner un parcours'),
+              onSelection: (type) {
+                journeyImportModalFromType(context, type, event);
               },
-            ),
+            )
           ],
         ),
       ),
     );
-  }
-
-  void _onItemSelect(BuildContext context, NewJourneyType type) async {
-    switch (type) {
-      case NewJourneyType.library:
-        showModalBottomSheet<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return JourneyLibraryModal(
-              event: event,
-            );
-          },
-        );
-        break;
-      case NewJourneyType.file:
-        getJourneyFileAndUploadToEvent(context, event);
-    }
   }
 }

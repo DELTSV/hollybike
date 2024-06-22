@@ -199,6 +199,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     return [
       EventDetailsInfos(
         eventDetails: eventDetails,
+        onViewOnMap: () {
+          _tabController.animateTo(3);
+        },
       ),
       EventDetailsImages(
         scrollController: _scrollController,

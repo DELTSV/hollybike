@@ -17,10 +17,12 @@ import '../../widgets/details/event_warning_feed.dart';
 
 class EventDetailsInfos extends StatelessWidget {
   final EventDetails eventDetails;
+  final void Function() onViewOnMap;
 
   const EventDetailsInfos({
     super.key,
     required this.eventDetails,
+    required this.onViewOnMap,
   });
 
   @override
@@ -67,6 +69,7 @@ class EventDetailsInfos extends StatelessWidget {
               canAddJourney: eventDetails.isOrganizer,
               journey: eventDetails.journey,
               event: event,
+              onViewOnMap: onViewOnMap,
             ),
           ],
         ),

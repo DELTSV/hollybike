@@ -138,4 +138,17 @@ class EventApi {
       throw Exception("Failed to add journey to event");
     }
   }
+
+  Future<void> removeJourneyFromEvent(
+    AuthSession session,
+    int eventId,
+  ) async {
+    final response = await DioClient(session).dio.delete(
+      '/events/$eventId/journey',
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to remove journey from event");
+    }
+  }
 }
