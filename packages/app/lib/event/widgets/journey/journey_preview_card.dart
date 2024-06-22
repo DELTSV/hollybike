@@ -42,10 +42,9 @@ class JourneyPreviewCard extends StatelessWidget {
           return SizedBox(
             height: 140,
             child: _buildJourneyPreview(
-              context,
-              state is EventJourneyGetPositionsInProgress,
-              state is EventJourneyOperationInProgress,
-            ),
+                context,
+                state is EventJourneyGetPositionsInProgress,
+                state is EventJourneyOperationInProgress),
           );
         },
       ),
@@ -57,7 +56,7 @@ class JourneyPreviewCard extends StatelessWidget {
     bool loadingPositions,
     bool loadingOperation,
   ) {
-    if (journey == null) {
+    if (journey == null && !loadingOperation) {
       if (!canAddJourney) {
         return const SizedBox();
       }
@@ -67,22 +66,42 @@ class JourneyPreviewCard extends StatelessWidget {
       );
     }
 
-    return JourneyPreviewCardContainer(
-      loading: loadingOperation,
-      onTap: () {
-        showModalBottomSheet(
-          backgroundColor: Colors.transparent,
-          context: context,
-          builder: (context) => JourneyModal(
-            journey: journey!,
-            event: event,
-            onViewOnMap: onViewOnMap,
+    return AnimatedCrossFade(
+      duration: const Duration(milliseconds: 500),
+      crossFadeState: loadingOperation
+          ? CrossFadeState.showSecond
+          : CrossFadeState.showFirst,
+      firstChild: SizedBox(
+        height: 140,
+        child: JourneyPreviewCardContainer(
+          onTap: () {
+            showModalBottomSheet(
+              backgroundColor: Colors.transparent,
+              context: context,
+              builder: (context) => JourneyModal(
+                journey: journey!,
+                event: event,
+                onViewOnMap: onViewOnMap,
+              ),
+            );
+          },
+          child: JourneyPreviewCardContent(
+            journey: journey,
+            loadingPositions: loadingPositions,
           ),
-        );
-      },
-      child: JourneyPreviewCardContent(
-        journey: journey!,
-        loadingPositions: loadingPositions,
+        ),
+      ),
+      secondChild: SizedBox(
+        height: 140,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
       ),
     );
   }

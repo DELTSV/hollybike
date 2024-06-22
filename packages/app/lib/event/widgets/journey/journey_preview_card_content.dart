@@ -7,7 +7,7 @@ import '../../../journey/widgets/journey_image.dart';
 import '../../../shared/widgets/loading_placeholders/text_loading_placeholder.dart';
 
 class JourneyPreviewCardContent extends StatelessWidget {
-  final MinimalJourney journey;
+  final MinimalJourney? journey;
   final bool loadingPositions;
 
   const JourneyPreviewCardContent({
@@ -18,6 +18,14 @@ class JourneyPreviewCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (journey == null) {
+      return const SizedBox();
+    }
+
+    // return const SizedBox.expand();
+
+    final existingJourney = journey!;
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,7 +39,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    journey.distanceLabel,
+                    existingJourney.distanceLabel,
                     style: Theme.of(context).textTheme.titleMedium,
                     softWrap: true,
                   ),
@@ -39,7 +47,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              _getJourneyLocation(context),
+              _getJourneyLocation(context, existingJourney),
             ],
           ),
         ),
@@ -51,8 +59,8 @@ class JourneyPreviewCardContent extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: JourneyImage(
-              journeyId: journey.id,
-              imageUrl: journey.previewImage,
+              journeyId: existingJourney.id,
+              imageUrl: existingJourney.previewImage,
             ),
           ),
         ),
@@ -60,7 +68,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
     );
   }
 
-  Widget _getJourneyLocation(BuildContext context) {
+  Widget _getJourneyLocation(BuildContext context, MinimalJourney journey) {
     if (loadingPositions && journey.destination == null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
