@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/widgets/event_preview_card.dart';
+import 'package:hollybike/event/widgets/event_preview_card/event_preview_card.dart';
 
 import '../../types/minimal_event.dart';
 import 'events_sections_list.dart';

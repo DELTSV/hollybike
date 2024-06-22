@@ -8,9 +8,10 @@ import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import '../../types/profile.dart';
 
 class ProfilePage extends StatefulWidget {
+  final int? id;
   final Profile? profile;
 
-  const ProfilePage({super.key, required this.profile});
+  const ProfilePage({super.key, this.id, required this.profile});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -23,7 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     if (widget.profile == null) {
-      return const PlaceholderProfilePage();
+      return PlaceholderProfilePage(
+        loadingProfileId: widget.id,
+      );
     }
 
     return DefaultTabController(

@@ -24,9 +24,27 @@ class Profile {
   });
 
   static Profile fromResponseJson(List<int> response) {
-    final object = jsonDecode(utf8.decode(response));
-    verifyObjectAttributeNotNull(String attribute) {
-      if (object[attribute] == null) {
+    final json = jsonDecode(utf8.decode(response));
+    return Profile.fromJson(json);
+  }
+
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    _verifyObjectAttributeNotNull(json);
+    return Profile(
+      id: json["id"],
+      email: json["email"],
+      username: json["username"],
+      scope: json["scope"],
+      status: json["status"],
+      lastLogin: DateTime.parse(json["last_login"]),
+      association: Association.fromJsonObject(json["association"]),
+      profilePicture: json["profile_picture"],
+    );
+  }
+
+  static void _verifyObjectAttributeNotNull(Map<String, dynamic> json) {
+    verifyAttribute(String attribute) {
+      if (json[attribute] == null) {
         throw FormatException("Missing $attribute inside server response");
       }
     }
@@ -39,17 +57,6 @@ class Profile {
       "status",
       "last_login",
       "association",
-    ].forEach(verifyObjectAttributeNotNull);
-
-    return Profile(
-      id: object["id"],
-      email: object["email"],
-      username: object["username"],
-      scope: object["scope"],
-      status: object["status"],
-      lastLogin: DateTime.parse(object["last_login"]),
-      association: Association.fromJsonObject(object["association"]),
-      profilePicture: object["profile_picture"],
-    );
+    ].forEach(verifyAttribute);
   }
 }

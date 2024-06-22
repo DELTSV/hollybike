@@ -24,12 +24,13 @@ class EventsState {
     List<MinimalEvent>? events,
     bool? hasMore,
     int? nextPage,
-    Event? createdEvent,
+    EventStatus? status,
   }) {
     return EventsState(
       events: events ?? this.events,
       hasMore: hasMore ?? this.hasMore,
       nextPage: nextPage ?? this.nextPage,
+      status: status ?? this.status,
     );
   }
 }

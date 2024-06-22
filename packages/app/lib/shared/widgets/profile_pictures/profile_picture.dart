@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/profile_picture_container.dart';
@@ -15,10 +16,13 @@ class ProfilePicture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profilePicture = switch (profile.profilePicture) {
-      String src => Image.network(src),
+      String src => CachedNetworkImage(imageUrl: src),
       _ => Image.asset("assets/images/placeholder_profile_picture.jpg"),
     };
 
-    return ProfilePictureContainer(size: size, child: profilePicture);
+    return Hero(
+      tag: "user-${profile.id}-profile-picture",
+      child: ProfilePictureContainer(size: size, child: profilePicture),
+    );
   }
 }

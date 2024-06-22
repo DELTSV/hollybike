@@ -18,6 +18,8 @@ import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
+import 'package:hollybike/search/bloc/search_bloc.dart';
+import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
@@ -212,6 +214,16 @@ class MyApp extends StatelessWidget {
                   context,
                 ),
               ),
+            ),
+            BlocProvider<SearchBloc>(
+              create: (context) => SearchBloc(
+                eventRepository: RepositoryProvider.of<EventRepository>(
+                  context,
+                ),
+                profileRepository: RepositoryProvider.of<ProfileRepository>(
+                  context,
+                ),
+              )..add(SubscribeToEventsSearch()),
             ),
           ],
           child: const App(),
