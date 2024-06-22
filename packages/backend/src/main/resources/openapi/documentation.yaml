@@ -189,15 +189,38 @@ paths:
             '*/*':
               schema:
                 type: "object"
+  /auth/refresh:
+    patch:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TRefresh"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAuthInfo"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
   /auth/signin:
     post:
       description: ""
       parameters:
-      - name: "Host"
-        in: "header"
-        required: false
-        schema:
-          type: "string"
       - name: "api"
         in: "query"
         required: false
@@ -210,6 +233,12 @@ paths:
               $ref: "#/components/schemas/TSignup"
         required: true
       responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TAuthInfo"
         "400":
           description: "Bad Request"
           content:
@@ -219,14 +248,6 @@ paths:
               examples:
                 Example#1:
                   value: "Email invalide"
-                Example#2:
-                  value: "Aucun Host"
-        "200":
-          description: "OK"
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/TAuthInfo"
         "403":
           description: "Forbidden"
           content:
@@ -850,11 +871,6 @@ paths:
           type: "array"
           items:
             type: "string"
-      - name: "Host"
-        in: "header"
-        required: false
-        schema:
-          type: "string"
       - name: "parent"
         in: "query"
         required: true
@@ -876,15 +892,6 @@ paths:
         schema:
           type: "object"
       responses:
-        "400":
-          description: "Bad Request"
-          content:
-            '*/*':
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Aucun Host fourni"
         "404":
           description: "Not Found"
           content:
@@ -1301,26 +1308,12 @@ paths:
           type: "array"
           items:
             type: "string"
-      - name: "Host"
-        in: "header"
-        required: false
-        schema:
-          type: "string"
       - name: "api"
         in: "query"
         required: false
         schema:
           type: "object"
       responses:
-        "400":
-          description: "Bad Request"
-          content:
-            '*/*':
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Aucun Host fourni"
         "403":
           description: "Forbidden"
           content:
@@ -1342,11 +1335,6 @@ paths:
     post:
       description: ""
       parameters:
-      - name: "Host"
-        in: "header"
-        required: false
-        schema:
-          type: "string"
       - name: "api"
         in: "query"
         required: false
@@ -1359,15 +1347,6 @@ paths:
               $ref: "#/components/schemas/TInvitationCreation"
         required: true
       responses:
-        "400":
-          description: "Bad Request"
-          content:
-            '*/*':
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Aucun Host fourni"
         "200":
           description: "OK"
           content:
@@ -1408,11 +1387,6 @@ paths:
     patch:
       description: ""
       parameters:
-      - name: "Host"
-        in: "header"
-        required: false
-        schema:
-          type: "string"
       - name: "api"
         in: "query"
         required: false
@@ -1424,15 +1398,6 @@ paths:
         schema:
           type: "integer"
       responses:
-        "400":
-          description: "Bad Request"
-          content:
-            '*/*':
-              schema:
-                type: "string"
-              examples:
-                Example#1:
-                  value: "Aucun Host fourni"
         "200":
           description: "OK"
           content:
@@ -1453,13 +1418,58 @@ paths:
                 type: "string"
               examples:
                 Example#1:
-                  value: "hollybike.api.repository.Invitation inconnue"
+                  value: "Invitation inconnue"
         "500":
           description: "Internal Server Error"
           content:
             '*/*':
               schema:
                 type: "object"
+  /invitation/{id}/send-mail:
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TMailDest"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Mail envoyé"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "L'invitation n'a pas été trouvé ou n'est plus valide"
   /invitation/meta-data:
     get:
       description: ""
@@ -1764,6 +1774,63 @@ paths:
               examples:
                 Example#1:
                   value: "Internal server error"
+  /events/{id}/details:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Event not found"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TEventDetails"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Internal server error"
   /events/{id}/finish:
     patch:
       description: ""
@@ -1853,6 +1920,119 @@ paths:
                 type: "string"
         "403":
           description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Internal server error"
+  /events/{id}/journey:
+    delete:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "409":
+          description: "Conflict"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Internal server error"
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TAddJourneyToEvent"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
           content:
             '*/*':
               schema:
@@ -2489,8 +2669,8 @@ paths:
               examples:
                 Example#1:
                   value: "Aucun utilisateur fourni"
-        "201":
-          description: "Created"
+        "200":
+          description: "OK"
           content:
             '*/*':
               schema:
@@ -2810,6 +2990,54 @@ paths:
               examples:
                 Example#1:
                   value: "Internal server error"
+    get:
+      description: ""
+      parameters:
+      - name: "page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "per_page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "query"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "sort"
+        in: "query"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "string"
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "imageId"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TEventImageDetails"
   /events/images/me:
     get:
       description: ""
@@ -2864,6 +3092,488 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Map_String"
+  /journeys:
+    get:
+      description: ""
+      parameters:
+      - name: "page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "per_page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "query"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "sort"
+        in: "query"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "string"
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TLists_TJourney"
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TNewJourney"
+        required: true
+      responses:
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TJourney"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Association inconnue"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /journeys/{id}:
+    delete:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Trajet inconnu"
+        "204":
+          description: "No Content"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TJourney"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Le trajet n'as pas été trouvé"
+  /journeys/{id}/file:
+    post:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Le fichier n'est n'y un GPX ni un GeoJSON"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Le trajet n'as pas été trouvé"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TJourney"
+        "403":
+          description: "Forbidden"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /journeys/{id}/positions:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Trajet inconnu"
+        "200":
+          description: ""
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Les positions n'ont pas encore été récupérées"
+        "500":
+          description: "Internal Server Error"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Erreur lors de la récupération des positions"
+        "410":
+          description: "Gone"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Les positions ont déjà été récupérées"
+  /journeys/meta-data:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /profiles:
+    get:
+      description: ""
+      parameters:
+      - name: "page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "per_page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "query"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "sort"
+        in: "query"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "string"
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TLists_TUserPartial"
+  /profiles/{id}:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TUserPartial"
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /profiles/meta-data:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /notifications:
+    get:
+      description: ""
+      parameters:
+      - name: "page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "per_page"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "query"
+        in: "query"
+        required: false
+        schema:
+          type: "string"
+      - name: "sort"
+        in: "query"
+        required: false
+        schema:
+          type: "array"
+          items:
+            type: "string"
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TLists_TNotification"
+  /notifications/{id}/seen:
+    put:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "404":
+          description: "Not Found"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Aucune notification trouvé"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TNotification"
+  /notifications/meta-data:
+    get:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Map_String"
+  /notifications/seen:
+    put:
+      description: ""
+      parameters:
+      - name: "api"
+        in: "query"
+        required: false
+        schema:
+          type: "object"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /:
+    get:
+      description: ""
+      parameters:
+      - name: "Connection"
+        in: "header"
+        required: true
+        description: "Websocket Connection parameter"
+        schema:
+          type: "string"
+      - name: "Upgrade"
+        in: "header"
+        required: true
+        description: "Websocket Upgrade parameter"
+        schema:
+          type: "string"
+      - name: "Sec-WebSocket-Key"
+        in: "header"
+        required: true
+        description: "Websocket Sec-WebSocket-Key parameter"
+        schema:
+          type: "string"
+      responses:
+        "101":
+          description: "Switching Protocols"
+          headers:
+            Connection:
+              required: true
+              schema:
+                type: "string"
+            Upgrade:
+              required: true
+              schema:
+                type: "string"
+            Sec-WebSocket-Accept:
+              required: true
+              schema:
+                type: "string"
 components:
   schemas:
     TConfDone:
@@ -2881,6 +3591,8 @@ components:
           type: "string"
         password:
           type: "string"
+        device:
+          type: "string"
       required:
       - "email"
       - "password"
@@ -2889,7 +3601,23 @@ components:
       properties:
         token:
           type: "string"
+        refreshToken:
+          type: "string"
+        deviceId:
+          type: "string"
       required:
+      - "token"
+      - "refreshToken"
+      - "deviceId"
+    TRefresh:
+      type: "object"
+      properties:
+        device:
+          type: "string"
+        token:
+          type: "string"
+      required:
+      - "device"
       - "token"
     TSignup:
       type: "object"
@@ -2968,6 +3696,8 @@ components:
           $ref: "#/components/schemas/TAssociation"
         profilePicture:
           type: "string"
+        role:
+          type: "string"
       required:
       - "email"
       - "username"
@@ -3036,6 +3766,8 @@ components:
         association:
           type: "integer"
           format: "int32"
+        role:
+          type: "string"
     ImagePath:
       type: "object"
       properties:
@@ -3053,6 +3785,8 @@ components:
         newPasswordAgain:
           type: "string"
         oldPassword:
+          type: "string"
+        role:
           type: "string"
     Map:
       type: "object"
@@ -3187,6 +3921,13 @@ components:
           $ref: "#/components/schemas/Instant"
       required:
       - "role"
+    TMailDest:
+      type: "object"
+      properties:
+        dest:
+          type: "string"
+      required:
+      - "dest"
     TUserPartial:
       type: "object"
       properties:
@@ -3213,10 +3954,24 @@ components:
           enum:
           - "Member"
           - "Organizer"
+        role:
+          type: "string"
       required:
       - "username"
       - "scope"
       - "status"
+    TPartialAssociation:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+        picture:
+          type: "string"
+      required:
+      - "name"
     TEventPartial:
       type: "object"
       properties:
@@ -3247,6 +4002,8 @@ components:
           $ref: "#/components/schemas/Instant"
         updateDateTime:
           $ref: "#/components/schemas/Instant"
+        association:
+          $ref: "#/components/schemas/TPartialAssociation"
       required:
       - "name"
       - "status"
@@ -3254,6 +4011,7 @@ components:
       - "startDateTime"
       - "createDateTime"
       - "updateDateTime"
+      - "association"
     TLists_TEventPartial:
       type: "object"
       properties:
@@ -3281,9 +4039,12 @@ components:
         description:
           type: "string"
         startDate:
-          type: "string"
+          $ref: "#/components/schemas/Instant"
         endDate:
-          type: "string"
+          $ref: "#/components/schemas/Instant"
+        association:
+          type: "integer"
+          format: "int32"
       required:
       - "name"
       - "startDate"
@@ -3317,6 +4078,8 @@ components:
           $ref: "#/components/schemas/Instant"
         updateDateTime:
           $ref: "#/components/schemas/Instant"
+        association:
+          $ref: "#/components/schemas/TPartialAssociation"
       required:
       - "name"
       - "status"
@@ -3324,6 +4087,7 @@ components:
       - "startDateTime"
       - "createDateTime"
       - "updateDateTime"
+      - "association"
     TUpdateEvent:
       type: "object"
       properties:
@@ -3332,12 +4096,85 @@ components:
         description:
           type: "string"
         startDate:
-          type: "string"
+          $ref: "#/components/schemas/Instant"
         endDate:
-          type: "string"
+          $ref: "#/components/schemas/Instant"
       required:
       - "name"
       - "startDate"
+    TEventCallerParticipation:
+      type: "object"
+      properties:
+        role:
+          type: "string"
+          enum:
+          - "Member"
+          - "Organizer"
+        userId:
+          type: "integer"
+          format: "int32"
+        joinedDateTime:
+          $ref: "#/components/schemas/Instant"
+      required:
+      - "role"
+      - "joinedDateTime"
+    TPosition:
+      type: "object"
+      properties:
+        latitude:
+          type: "number"
+          format: "double"
+        longitude:
+          type: "number"
+          format: "double"
+        altitude:
+          type: "number"
+          format: "double"
+        placeName:
+          type: "string"
+        placeType:
+          type: "string"
+        cityName:
+          type: "string"
+        countryName:
+          type: "string"
+        countyName:
+          type: "string"
+        stateName:
+          type: "string"
+      required:
+      - "placeType"
+    TJourneyPartial:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        file:
+          type: "string"
+        previewImage:
+          type: "string"
+        start:
+          $ref: "#/components/schemas/TPosition"
+        end:
+          $ref: "#/components/schemas/TPosition"
+        destination:
+          $ref: "#/components/schemas/TPosition"
+        totalDistance:
+          type: "integer"
+          format: "int32"
+        minElevation:
+          type: "number"
+          format: "double"
+        maxElevation:
+          type: "number"
+          format: "double"
+        totalElevationGain:
+          type: "number"
+          format: "double"
+        totalElevationLoss:
+          type: "number"
+          format: "double"
     TEventParticipation:
       type: "object"
       properties:
@@ -3354,6 +4191,31 @@ components:
       - "user"
       - "role"
       - "joinedDateTime"
+    TEventDetails:
+      type: "object"
+      properties:
+        event:
+          $ref: "#/components/schemas/TEvent"
+        callerParticipation:
+          $ref: "#/components/schemas/TEventCallerParticipation"
+        journey:
+          $ref: "#/components/schemas/TJourneyPartial"
+        previewParticipants:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TEventParticipation"
+        previewParticipantsCount:
+          type: "integer"
+          format: "int32"
+      required:
+      - "event"
+      - "previewParticipants"
+    TAddJourneyToEvent:
+      type: "object"
+      properties:
+        journeyId:
+          type: "integer"
+          format: "int32"
     TLists_TEventParticipation:
       type: "object"
       properties:
@@ -3411,19 +4273,19 @@ components:
         id:
           type: "integer"
           format: "int32"
-        owner:
-          $ref: "#/components/schemas/TUserPartial"
-        path:
+        url:
           type: "string"
         size:
           type: "integer"
           format: "int32"
-        uploadDateTime:
-          type: "string"
+        width:
+          type: "integer"
+          format: "int32"
+        height:
+          type: "integer"
+          format: "int32"
       required:
-      - "owner"
-      - "path"
-      - "uploadDateTime"
+      - "url"
     TLists_TEventImage:
       type: "object"
       properties:
@@ -3431,6 +4293,134 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/TEventImage"
+        page:
+          type: "integer"
+          format: "int32"
+        totalPage:
+          type: "integer"
+          format: "int32"
+        perPage:
+          type: "integer"
+          format: "int32"
+        totalData:
+          type: "integer"
+          format: "int32"
+    TEventImageDetails:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        owner:
+          $ref: "#/components/schemas/TUserPartial"
+        event:
+          $ref: "#/components/schemas/TEventPartial"
+        position:
+          $ref: "#/components/schemas/TPosition"
+        takenDateTime:
+          $ref: "#/components/schemas/Instant"
+        uploadedDateTime:
+          $ref: "#/components/schemas/Instant"
+      required:
+      - "owner"
+      - "event"
+      - "uploadedDateTime"
+    TJourney:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+        file:
+          type: "string"
+        previewImage:
+          type: "string"
+        createdAt:
+          $ref: "#/components/schemas/Instant"
+        creator:
+          $ref: "#/components/schemas/TUserPartial"
+        association:
+          $ref: "#/components/schemas/TPartialAssociation"
+        start:
+          $ref: "#/components/schemas/TPosition"
+        end:
+          $ref: "#/components/schemas/TPosition"
+        destination:
+          $ref: "#/components/schemas/TPosition"
+        totalDistance:
+          type: "integer"
+          format: "int32"
+        minElevation:
+          type: "number"
+          format: "double"
+        maxElevation:
+          type: "number"
+          format: "double"
+        totalElevationGain:
+          type: "number"
+          format: "double"
+        totalElevationLoss:
+          type: "number"
+          format: "double"
+      required:
+      - "name"
+      - "createdAt"
+      - "creator"
+      - "association"
+    TLists_TJourney:
+      type: "object"
+      properties:
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TJourney"
+        page:
+          type: "integer"
+          format: "int32"
+        totalPage:
+          type: "integer"
+          format: "int32"
+        perPage:
+          type: "integer"
+          format: "int32"
+        totalData:
+          type: "integer"
+          format: "int32"
+    TNewJourney:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        association:
+          type: "integer"
+          format: "int32"
+      required:
+      - "name"
+    Body:
+      type: "object"
+      properties: {}
+    TNotification:
+      type: "object"
+      properties:
+        data:
+          $ref: "#/components/schemas/Body"
+        user:
+          type: "integer"
+          format: "int32"
+        id:
+          type: "integer"
+          format: "int32"
+      required:
+      - "data"
+    TLists_TNotification:
+      type: "object"
+      properties:
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TNotification"
         page:
           type: "integer"
           format: "int32"
