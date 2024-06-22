@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/journey/journey_modal_header.dart';
 import 'package:hollybike/journey/widgets/journey_image.dart';

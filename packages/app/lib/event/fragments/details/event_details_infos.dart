@@ -10,7 +10,6 @@ import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
 import '../../types/event_details.dart';
-import '../../types/event_status_state.dart';
 import '../../widgets/details/event_details_scroll_wrapper.dart';
 import '../../widgets/details/event_join_button.dart';
 import '../../widgets/details/event_participations_preview.dart';
