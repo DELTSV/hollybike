@@ -45,5 +45,14 @@ val userMapper: Mapper = mapOf(
 	"scope" to Users.scope,
 	"last_login" to Users.lastLogin,
 	"profile_picture" to Users.profilePicture,
-	"role" to Users.role,
+	"role" to Users.role
+)
+
+val profileMapper: Mapper = mapOf(
+	"username" to Users.username,
+	"status" to Users.status,
+	"scope" to Users.scope,
+	"last_login" to Users.lastLogin,
+	"profile_picture" to Users.profilePicture,
+	"role" to Users.role
 )

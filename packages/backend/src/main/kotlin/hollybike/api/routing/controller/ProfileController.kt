@@ -2,6 +2,7 @@ package hollybike.api.routing.controller
 
 import hollybike.api.plugins.user
 import hollybike.api.repository.Users
+import hollybike.api.repository.profileMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Profiles
 import hollybike.api.services.ProfileService
@@ -46,7 +47,7 @@ class ProfileController(
 
 	private fun Route.getAllProfiles() {
 		get<Profiles> {
-			val param = call.request.queryParameters.getSearchParam(userMapper).apply {
+			val param = call.request.queryParameters.getSearchParam(profileMapper).apply {
 				filter.add(Filter(Users.status, EUserStatus.Disabled.value.toString(), FilterMode.NOT_EQUAL))
 			}
 			val count = profileService.getAllProfileCount(call.user, param)
@@ -63,7 +64,7 @@ class ProfileController(
 
 	private fun Route.getMetadata() {
 		get<Profiles.MetaData> {
-			call.respond(userMapper.getMapperData())
+			call.respond(profileMapper.getMapperData())
 		}
 	}
 }
