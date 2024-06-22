@@ -8,8 +8,9 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.serialization.encodeToString
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 
@@ -81,7 +82,7 @@ class WebSocketRouter {
 					val call = WebSocketCall(message, this)
 					var handled = false
 					routes.match(path.firstOrNull() ?: PathFragment("")).forEach { (_ , route) ->
-						if(route?.execute(path.drop(1), call) == true) {
+						if(route?.execute(path.drop(1), call, this) == true) {
 							handled = true
 							return@forEach
 						}
@@ -131,9 +132,14 @@ class WebSocketRoute {
 		}
 	}
 
-	suspend fun execute(path: List<PathElement>, call: WebSocketCall): Boolean {
+	suspend fun execute(path: List<PathElement>, call: WebSocketCall, coroutineScope: CoroutineScope): Boolean {
 		if (path.isEmpty()) {
-			return body?.let { call.it(); true } ?: false
+			return body?.let {
+				coroutineScope.launch {
+					call.it()
+				}
+				true
+			} ?: false
 		} else {
 			routes.match(path.first()).forEach { (key , route) ->
 				val prevParam = call.parameters
@@ -143,7 +149,7 @@ class WebSocketRoute {
 						this.append(key.element, path.first().element)
 					}
 				}
-				if(route?.execute(path.drop(1), call) == true) {
+				if(route?.execute(path.drop(1), call, coroutineScope) == true) {
 					return true
 				}
 				call.parameters = prevParam
