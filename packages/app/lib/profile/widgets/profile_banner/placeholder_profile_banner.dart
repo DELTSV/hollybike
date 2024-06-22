@@ -4,15 +4,23 @@ import 'package:hollybike/profile/widgets/profile_banner/profile_banner_decorati
 import 'package:hollybike/shared/widgets/profile_pictures/loading_profile_picture.dart';
 
 class PlaceholderProfileBanner extends StatelessWidget {
-  const PlaceholderProfileBanner({super.key});
+  final int? loadingProfileId;
+
+  const PlaceholderProfileBanner({
+    super.key,
+    this.loadingProfileId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
+    return Stack(
       children: [
-        ProfileBannerBackground(),
+        const ProfileBannerBackground(),
         ProfileBannerDecoration(
-          profilePicture: LoadingProfilePicture(size: 100),
+          profilePicture: LoadingProfilePicture(
+            size: 100,
+            loadingProfileId: loadingProfileId,
+          ),
         ),
       ],
     );

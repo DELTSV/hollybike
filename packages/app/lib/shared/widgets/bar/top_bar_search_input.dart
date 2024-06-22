@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class TopBarSearchInput extends StatefulWidget {
+  final String? defaultValue;
+  final FocusNode? focusNode;
   final void Function(String) onSearchRequested;
 
   const TopBarSearchInput({
     super.key,
     required this.onSearchRequested,
+    this.focusNode,
+    this.defaultValue,
   });
 
   @override
@@ -58,14 +62,14 @@ class _TopBarSearchInputState extends State<TopBarSearchInput> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
-    _focusNode = FocusNode();
+    _controller = TextEditingController(text: widget.defaultValue);
+    _focusNode = widget.focusNode ?? FocusNode();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    _focusNode.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
     super.dispose();
   }
 

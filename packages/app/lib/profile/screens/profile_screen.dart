@@ -17,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hud(
-      displayNavBar: true,
       appBar: TopBar(
         prefix: TopBarActionIcon(
           icon: Icons.arrow_back,
@@ -26,8 +25,12 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
         builder: (context, bloc, state) => ProfilePage(
-          profile:
-              id == null ? null : bloc.getProfileById(int.parse(id as String)),
+          id: id == null ? null : int.parse(id as String),
+          profile: id == null
+              ? null
+              : bloc.getProfileById(
+                  int.parse(id as String),
+                ),
         ),
       ),
     );
