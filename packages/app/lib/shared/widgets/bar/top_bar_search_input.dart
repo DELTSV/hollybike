@@ -36,6 +36,7 @@ class _TopBarSearchInputState extends State<TopBarSearchInput> {
         ),
         child: TextFormField(
           focusNode: _focusNode,
+          textAlignVertical: TextAlignVertical.center,
           style: Theme.of(context).textTheme.titleSmall,
           onEditingComplete: _handleEditingCompletion,
           onTapOutside: _handleOutsideTap,
@@ -46,7 +47,7 @@ class _TopBarSearchInputState extends State<TopBarSearchInput> {
                   color: Theme.of(context).colorScheme.onPrimaryContainer,
                 ),
             constraints: const BoxConstraints.expand(height: 32),
-            contentPadding: EdgeInsets.zero,
+            contentPadding: const EdgeInsets.only(bottom: 14),
             prefixIcon: Icon(
               Icons.search,
               color: Theme.of(context).colorScheme.onPrimaryContainer,
