@@ -30,7 +30,7 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProfileCardContainer(
       onTap: onTap == null ? null : () => _handleCardTap(context),
-      profilePicture: ProfilePicture(profile: profile),
+      profilePicture: ProfilePicture(profile: profile.toMinimalUser()),
       profileTitle: ProfileTitle(profile: profile),
       endChild: endChild,
     );

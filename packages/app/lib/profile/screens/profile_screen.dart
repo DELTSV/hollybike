@@ -31,6 +31,7 @@ class ProfileScreen extends StatelessWidget {
               : bloc.getProfileById(
                   int.parse(id as String),
                 ),
+          association: bloc.currentProfile?.association,
         ),
       ),
     );

@@ -3,7 +3,7 @@ part of 'profile_bloc.dart';
 @immutable
 abstract class ProfileState {
   final Map<AuthSession, Profile> sessionProfiles;
-  final Map<AuthSession, List<Profile>> profiles;
+  final Map<AuthSession, List<MinimalUser>> profiles;
   final AuthSession? currentSession;
 
   const ProfileState({
@@ -35,7 +35,7 @@ class ProfileInitial extends ProfileState {
   ProfileInitial()
       : super(
           sessionProfiles: <AuthSession, Profile>{},
-          profiles: <AuthSession, List<Profile>>{},
+          profiles: <AuthSession, List<MinimalUser>>{},
           currentSession: null,
         );
 }
@@ -67,7 +67,7 @@ class SessionProfileSaving extends ProfileState {
 class ProfileSaving extends ProfileState {
   ProfileSaving({
     required ProfileState oldState,
-    required Profile profile,
+    required MinimalUser profile,
     required AuthSession session,
   }) : super(
           sessionProfiles: oldState.sessionProfiles,
@@ -78,10 +78,10 @@ class ProfileSaving extends ProfileState {
           currentSession: oldState.currentSession,
         );
 
-  static Map<AuthSession, List<Profile>> _getNewSessionProfileList(
+  static Map<AuthSession, List<MinimalUser>> _getNewSessionProfileList(
     ProfileState oldState,
     AuthSession session,
-    Profile profile,
+    MinimalUser profile,
   ) {
     final oldSessionProfileList = oldState.profiles[session];
     if (oldSessionProfileList == null) {

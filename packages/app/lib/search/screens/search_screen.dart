@@ -13,11 +13,11 @@ import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_search_input.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../event/bloc/event_details_bloc/event_details_bloc.dart';
 import '../../event/types/minimal_event.dart';
-import '../../profile/types/profile.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/search_bloc.dart';
 import '../bloc/search_state.dart';
@@ -164,7 +164,7 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  List<Widget> _renderProfilesList(List<Profile> profiles) {
+  List<Widget> _renderProfilesList(List<MinimalUser> profiles) {
     if (profiles.isEmpty) return <Widget>[];
     return <Widget>[
       SliverMainAxisGroup(
