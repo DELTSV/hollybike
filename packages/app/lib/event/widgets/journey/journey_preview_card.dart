@@ -77,6 +77,7 @@ class JourneyPreviewCard extends StatelessWidget {
           onTap: () {
             showModalBottomSheet(
               backgroundColor: Colors.transparent,
+              isScrollControlled: true,
               context: context,
               builder: (context) => JourneyModal(
                 journey: journey!,
