@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import '../../shared/types/position.dart';
 
 class JourneyPosition extends StatelessWidget {
+  final bool isLarge;
   final Position? pos;
 
   const JourneyPosition({
     super.key,
+    this.isLarge = false,
     required this.pos,
   });
 
@@ -16,6 +18,8 @@ class JourneyPosition extends StatelessWidget {
       return const SizedBox();
     }
 
+    final textStyle = getTextStyle(context);
+
     final texts = <TextSpan>[];
 
     void addSpan(TextSpan span) {
@@ -23,7 +27,7 @@ class JourneyPosition extends StatelessWidget {
         texts.add(
           TextSpan(
             text: ", ",
-            style: Theme.of(context).textTheme.bodySmall,
+            style: textStyle,
           ),
         );
       }
@@ -38,21 +42,21 @@ class JourneyPosition extends StatelessWidget {
     if (cityName != null) {
       addSpan(TextSpan(
         text: cityName,
-        style: Theme.of(context).textTheme.bodySmall,
+        style: textStyle,
       ));
     }
 
     if (countyName != null) {
       addSpan(TextSpan(
         text: countyName,
-        style: Theme.of(context).textTheme.bodySmall,
+        style: textStyle,
       ));
     }
 
     if (countryName != null && countryName != "France") {
       addSpan(TextSpan(
         text: countryName,
-        style: Theme.of(context).textTheme.bodySmall,
+        style: textStyle,
       ));
     }
 
@@ -68,5 +72,11 @@ class JourneyPosition extends StatelessWidget {
         children: texts,
       ),
     );
+  }
+
+  TextStyle? getTextStyle(BuildContext context) {
+    return isLarge
+        ? Theme.of(context).textTheme.titleSmall
+        : Theme.of(context).textTheme.bodySmall;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/types/event_status_state.dart';
 
 import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
@@ -9,6 +10,7 @@ enum EventDetailsAction { leave, delete, cancel }
 
 class EventDetailsActionsMenu extends StatelessWidget {
   final int eventId;
+  final EventStatusState status;
   final bool isOwner;
   final bool isJoined;
   final bool isOrganizer;
@@ -16,6 +18,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
   const EventDetailsActionsMenu({
     super.key,
     required this.eventId,
+    required this.status,
     required this.isOwner,
     required this.isJoined,
     required this.isOrganizer,
@@ -53,7 +56,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
       );
     }
 
-    if (isOrganizer) {
+    if (isOrganizer && status == EventStatusState.scheduled) {
       actions.add(
         const PopupMenuItem(
           value: EventDetailsAction.cancel,

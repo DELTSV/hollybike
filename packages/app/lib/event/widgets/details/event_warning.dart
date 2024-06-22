@@ -25,24 +25,27 @@ class EventWarning extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(message),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size.zero,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              surfaceTintColor: color,
-              backgroundColor: color,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(message),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size.zero,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                surfaceTintColor: color,
+                backgroundColor: color,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
+              onPressed: onAction,
+              child: actionText != null ? Text(actionText!) : null,
             ),
-            onPressed: onAction,
-            child: actionText != null ? Text(actionText!) : null,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

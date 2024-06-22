@@ -305,6 +305,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     return TopBarActionContainer(
       child: EventDetailsActionsMenu(
         eventId: event.event.id,
+        status: event.event.status,
         isOwner: event.isOwner,
         isJoined: event.isParticipating,
         isOrganizer: event.isOrganizer,
