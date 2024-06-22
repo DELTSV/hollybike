@@ -364,6 +364,4 @@ ALTER TABLE journeys
 
 --changetset denis:11
 ALTER TABLE users
-    ADD COLUMN role VARCHAR(255) DEFAULT NULL,
-    ADD CONSTRAINT users_email_association_unique_constraint UNIQUE (email, association);
-DROP INDEX users_email_uindex;
+    ADD COLUMN role VARCHAR(255) DEFAULT NULL;
