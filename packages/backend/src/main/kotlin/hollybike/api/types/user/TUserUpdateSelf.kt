@@ -11,5 +11,6 @@ data class TUserUpdateSelf(
 	@SerialName("new_password_again")
 	val newPasswordAgain: String? =  null,
 	@SerialName("old_password")
-	val oldPassword: String? =  null
+	val oldPassword: String? =  null,
+	val role: String? = null
 )

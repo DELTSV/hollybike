@@ -1,13 +1,13 @@
- package hollybike.api.types.journey
+package hollybike.api.types.journey
 
 import hollybike.api.logger
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlin.math.log
 
- fun Gpx.toGeoJson(): GeoJson {
+
+fun Gpx.toGeoJson(): GeoJson {
 	logger.debug("Converter: Get tracks")
 	val tracks = trk.mapNotNull { track ->
 		track.getTrack()
@@ -43,18 +43,19 @@ private fun Trk.getTrack(): Feature? {
 		}
 	}
 	logger.debug("Converter: Get tracks: End map")
-	if(track.isEmpty()) {
+	if (track.isEmpty()) {
 		return null
 	}
 	val properties = mutableMapOf<String, JsonElement>()
 	name?.let { properties["name"] = JsonPrimitive(it) }
 	cmt?.let { properties["cmt"] = JsonPrimitive(it) }
 	desc?.let { properties["desc"] = JsonPrimitive(it) }
-	if(times.isNotEmpty()) {
+	if (times.isNotEmpty()) {
 		properties["coordTimes"] = JsonArray(times)
+		properties["time"] = times.first()
 	}
 	return Feature(
-		geometry = if(track.size == 1) {
+		geometry = if (track.size == 1) {
 			LineString(track.first())
 		} else {
 			MultiLineString(track)
@@ -75,7 +76,7 @@ private fun Rte.getRoute(): Feature? {
 		)
 	}
 	logger.debug("Converter: Get Routes: End map")
-	if(line.isEmpty()) {
+	if (line.isEmpty()) {
 		return null
 	}
 	val properties = mutableMapOf<String, JsonElement>()
@@ -83,6 +84,10 @@ private fun Rte.getRoute(): Feature? {
 	cmt?.let { properties["cmt"] = JsonPrimitive(it) }
 	desc?.let { properties["desc"] = JsonPrimitive(it) }
 	type?.let { properties["type"] = JsonPrimitive(it) }
+	if(times.isNotEmpty()) {
+		properties["coordTimes"] = JsonArray(times)
+		properties["time"] = times.first()
+	}
 	return Feature(
 		properties = JsonObject(properties),
 		geometry = LineString(line)

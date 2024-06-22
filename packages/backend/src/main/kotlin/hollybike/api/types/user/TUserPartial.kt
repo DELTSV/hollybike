@@ -16,14 +16,16 @@ data class TUserPartial(
 	@SerialName("event_role")
 	val eventRole: EEventRole? = null,
 	@SerialName("is_owner")
-	val isOwner: Boolean? = null
+	val isOwner: Boolean? = null,
+	val role: String? = null
 ) {
 	constructor(entity: User) : this(
 		id = entity.id.value,
 		username = entity.username,
 		scope = entity.scope,
 		status = entity.status,
-		profilePicture = entity.signedProfilePicture
+		profilePicture = entity.signedProfilePicture,
+		role = entity.role
 	)
 
 	constructor(entity: User, isOwner: Boolean, eventRole: EEventRole?) : this(
@@ -33,6 +35,7 @@ data class TUserPartial(
 		status = entity.status,
 		profilePicture = entity.signedProfilePicture,
 		eventRole = eventRole,
-		isOwner = isOwner
+		isOwner = isOwner,
+		role = entity.role
 	)
 }

@@ -138,12 +138,13 @@ class UserService(
 				if (update.newPassword != update.newPasswordAgain) {
 					return@transaction Result.failure(UserDifferentNewPassword())
 				}
-				if (!verify(update.oldPassword, user.password.decodeBase64Bytes())) {
+				if (!verify(update.oldPassword, password.decodeBase64Bytes())) {
 					return@transaction Result.failure(UserWrongPassword())
 				}
-				user.password = hash(it).encodeBase64()
+				password = hash(it).encodeBase64()
 			}
-			update.username?.let { user.username = it }
+			update.username?.let { username = it }
+			update.role?.let { role = it }
 		}
 		return@transaction Result.success(user)
 	}
@@ -166,6 +167,7 @@ class UserService(
 				update.status?.let { status = it }
 				update.scope?.let { scope = it }
 				targetAssociation?.let { association = it }
+				update.role?.let { role = it }
 			})
 		}
 	}

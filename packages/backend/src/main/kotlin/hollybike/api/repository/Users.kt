@@ -19,6 +19,7 @@ object Users : IntIdTable("users", "id_user") {
 	val association = reference("association", Associations)
 	val lastLogin = timestamp("last_login")
 	val profilePicture = varchar("profile_picture", 2_048).nullable().default(null)
+	val role = varchar("role", 255).nullable().default(null)
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
@@ -31,6 +32,7 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 	var lastLogin by Users.lastLogin
 	var profilePicture by Users.profilePicture
 	var signedProfilePicture by Users.profilePicture.transform({ it }, { it?.let { signatureService.sign(it) } })
+	var role by Users.role
 
 	companion object : IntEntityClass<User>(Users)
 }
@@ -42,5 +44,6 @@ val userMapper: Mapper = mapOf(
 	"status" to Users.status,
 	"scope" to Users.scope,
 	"last_login" to Users.lastLogin,
-	"profile_picture" to Users.profilePicture
+	"profile_picture" to Users.profilePicture,
+	"role" to Users.role,
 )

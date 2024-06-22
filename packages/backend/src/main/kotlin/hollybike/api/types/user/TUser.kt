@@ -18,6 +18,7 @@ data class TUser(
 	val association: TAssociation,
 	@SerialName("profile_picture")
 	val profilePicture: String? = null,
+	val role: String? = null
 ) {
 	constructor(entity: User) : this(
 		id = entity.id.value,
@@ -27,6 +28,7 @@ data class TUser(
 		status = entity.status,
 		lastLogin = entity.lastLogin,
 		association = TAssociation(entity.association),
-		profilePicture = entity.signedProfilePicture
+		profilePicture = entity.signedProfilePicture,
+		role = entity.role
 	)
 }

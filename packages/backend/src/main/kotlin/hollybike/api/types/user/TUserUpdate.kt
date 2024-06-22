@@ -9,5 +9,6 @@ data class TUserUpdate(
 	val password: String? = null,
 	val status: EUserStatus? = null,
 	val scope: EUserScope? = null,
-	val association: Int? = null
+	val association: Int? = null,
+	val role: String? = null
 )

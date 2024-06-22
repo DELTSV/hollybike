@@ -361,3 +361,9 @@ ALTER TABLE journeys
 
 ALTER TABLE journeys
     ADD COLUMN IF NOT EXISTS destination INTEGER REFERENCES positions(id_position) DEFAULT NULL;
+
+--changetset denis:11
+ALTER TABLE users
+    ADD COLUMN role VARCHAR(255) DEFAULT NULL,
+    ADD CONSTRAINT users_email_association_unique_constraint UNIQUE (email, association);
+DROP INDEX users_email_uindex;

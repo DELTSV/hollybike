@@ -189,9 +189,7 @@ class JourneyController(
 				return@post call.respond(HttpStatusCode.BadRequest, "Le fichier n'est n'y un GPX ni un GeoJSON")
 			}
 
-			val cleanedGeoJson = geoJson.clean()
-
-			cleanedGeoJson.apply {
+			geoJson.apply {
 				bbox = getBoundingBox()
 			}
 
@@ -205,14 +203,14 @@ class JourneyController(
 			journeyService.uploadFile(
 				call.user,
 				journey,
-				cleanedGeoJson,
+				geoJson,
 				contentType.toString()
 			).onSuccess {
 				println("File uploaded")
 
-				cleanedGeoJson.start?.let { start ->
-					val end = cleanedGeoJson.end
-					val destination = cleanedGeoJson.farthestPointFromStart
+				geoJson.start?.let { start ->
+					val end = geoJson.end
+					val destination = geoJson.farthestPointFromStart
 
 					journeyPositions[journey.id.value] = TJourneyPositions(
 						journey,
