@@ -44,6 +44,7 @@ class JourneyPreviewCard extends StatelessWidget {
             child: _buildJourneyPreview(
               context,
               state is EventJourneyGetPositionsInProgress,
+              state is EventJourneyOperationInProgress,
             ),
           );
         },
@@ -51,7 +52,11 @@ class JourneyPreviewCard extends StatelessWidget {
     );
   }
 
-  Widget _buildJourneyPreview(BuildContext context, bool loadingPositions) {
+  Widget _buildJourneyPreview(
+    BuildContext context,
+    bool loadingPositions,
+    bool loadingOperation,
+  ) {
     if (journey == null) {
       if (!canAddJourney) {
         return const SizedBox();
@@ -63,6 +68,7 @@ class JourneyPreviewCard extends StatelessWidget {
     }
 
     return JourneyPreviewCardContainer(
+      loading: loadingOperation,
       onTap: () {
         showModalBottomSheet(
           backgroundColor: Colors.transparent,
