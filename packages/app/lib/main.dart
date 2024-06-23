@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hollybike/app/app.dart';
 import 'package:hollybike/auth/bloc/auth_api.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
@@ -15,12 +18,16 @@ import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
+import 'package:hollybike/positions/bloc/position_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_bloc.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:workmanager/workmanager.dart';
+
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
 import 'event/bloc/event_images_bloc/event_image_details_bloc.dart';
@@ -38,10 +45,57 @@ import 'journey/bloc/journeys_library_bloc/journeys_library_bloc.dart';
 import 'journey/service/journey_api.dart';
 import 'journey/service/journey_repository.dart';
 
+Future<void> infiniteDelay() async {
+  final completer = Completer<void>();
+  return completer.future;
+}
+
 void main() {
   NetworkImageCache();
   WidgetsFlutterBinding.ensureInitialized();
+
+  Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+
   runApp(const MyApp());
+}
+
+const simplePeriodicTask = "com.hollybike.hollybike.simplePeriodicTask";
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case simplePeriodicTask:
+        final accessToken = inputData?['accessToken'];
+        final host = inputData?['host'];
+
+        if (accessToken == null || host == null) {
+          return Future.value(false);
+        }
+
+        print("$host/api/connect");
+
+        final wsUrl = Uri.parse("$host/api/connect");
+        final channel = WebSocketChannel.connect(wsUrl, protocols: ['http']);
+
+        channel.stream.listen((event) {
+          print(event);
+        });
+
+        await Geolocator.getPositionStream().forEach((position) {
+          print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+        });
+
+        await infiniteDelay();
+
+        break;
+    }
+
+    return Future.value(true);
+  });
 }
 
 class NetworkImageCache extends WidgetsFlutterBinding {
@@ -224,6 +278,9 @@ class MyApp extends StatelessWidget {
                   context,
                 ),
               )..add(SubscribeToEventsSearch()),
+            ),
+            BlocProvider<PositionBloc>(
+              create: (context) => PositionBloc(),
             ),
           ],
           child: const App(),

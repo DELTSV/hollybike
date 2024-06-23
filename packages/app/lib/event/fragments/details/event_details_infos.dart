@@ -1,12 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
+import 'package:hollybike/positions/bloc/position_bloc.dart';
+import 'package:hollybike/shared/widgets/app_toast.dart';
+import 'package:hollybike/websockets/types/websocket_position.dart';
 
 import '../../../app/app_router.gr.dart';
+import '../../../positions/bloc/position_event.dart';
 import '../../../shared/utils/with_current_session.dart';
+import '../../../websockets/types/websocket_client.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
 import '../../types/event_details.dart';
@@ -15,7 +24,7 @@ import '../../widgets/details/event_join_button.dart';
 import '../../widgets/details/event_participations_preview.dart';
 import '../../widgets/details/event_warning_feed.dart';
 
-class EventDetailsInfos extends StatelessWidget {
+class EventDetailsInfos extends StatefulWidget {
   final EventDetails eventDetails;
   final void Function() onViewOnMap;
 
@@ -26,10 +35,19 @@ class EventDetailsInfos extends StatelessWidget {
   });
 
   @override
+  State<EventDetailsInfos> createState() => _EventDetailsInfosState();
+}
+
+class _EventDetailsInfosState extends State<EventDetailsInfos> {
+  String pos = '';
+  StreamSubscription<Position>? _positionSubscription;
+
+  @override
   Widget build(BuildContext context) {
-    final event = eventDetails.event;
-    final previewParticipants = eventDetails.previewParticipants;
-    final previewParticipantsCount = eventDetails.previewParticipantsCount;
+    final event = widget.eventDetails.event;
+    final previewParticipants = widget.eventDetails.previewParticipants;
+    final previewParticipantsCount =
+        widget.eventDetails.previewParticipantsCount;
 
     return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_infos_${event.id}',
@@ -39,6 +57,15 @@ class EventDetailsInfos extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             EventWarningFeed(event: event),
+            Text('Position: $pos'),
+            ElevatedButton(
+              onPressed: () => _onActivatePostions(context),
+              child: const Text('Position'),
+            ),
+            ElevatedButton(
+              onPressed: () => _cancelPostions(context),
+              child: const Text('Cancel'),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -50,7 +77,7 @@ class EventDetailsInfos extends StatelessWidget {
                     Timer(const Duration(milliseconds: 100), () {
                       context.router.push(
                         EventParticipationsRoute(
-                          eventDetails: eventDetails,
+                          eventDetails: widget.eventDetails,
                           participationPreview: previewParticipants,
                         ),
                       );
@@ -58,23 +85,118 @@ class EventDetailsInfos extends StatelessWidget {
                   },
                 ),
                 EventJoinButton(
-                  isJoined: eventDetails.isParticipating,
-                  canJoin: eventDetails.canJoin,
+                  isJoined: widget.eventDetails.isParticipating,
+                  canJoin: widget.eventDetails.canJoin,
                   onJoin: _onJoin,
                 ),
               ],
             ),
             const SizedBox(height: 16),
             JourneyPreviewCard(
-              canAddJourney: eventDetails.canEditJourney,
-              journey: eventDetails.journey,
-              eventDetails: eventDetails,
-              onViewOnMap: onViewOnMap,
+              canAddJourney: widget.eventDetails.canEditJourney,
+              journey: widget.eventDetails.journey,
+              eventDetails: widget.eventDetails,
+              onViewOnMap: widget.onViewOnMap,
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _onActivatePostions(BuildContext context) async {
+    withCurrentSession(
+      context,
+      (session) async {
+        final ws = await WebsocketClient(session: session).connect();
+
+        final channel = 'event/${widget.eventDetails.event.id}';
+
+        ws.listen((data) {
+          print('Received data: $data');
+        });
+
+        ws.subscribe(channel);
+
+        Future.delayed(
+          const Duration(seconds: 2),
+          () {
+            ws.sendUserPosition(
+              channel,
+              WebsocketPosition(
+                latitude: 2.0,
+                longitude: 2.0,
+                altitude: 2.0,
+                time: DateTime.now().toUtc(),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    _determinePosition().catchError(
+      (error) {
+        Toast.showErrorToast(context, error.toString());
+      },
+    ).then((_) async {
+      withCurrentSession(context, (session) {
+        context.read<PositionBloc>().add(
+              ListenAndSendUserPosition(session: session),
+            );
+      });
+
+      // _positionSubscription = Geolocator.getPositionStream().listen((position) {
+      //   setState(() {
+      //     pos = '${position.latitude}, ${position.longitude}';
+      //   });
+      // });
+    });
+  }
+
+  void _cancelPostions(BuildContext context) {
+    context.read<PositionBloc>().add(
+          DisableSendPositions(),
+        );
+  }
+
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
   }
 
   void _onJoin(BuildContext context) {
@@ -83,7 +205,7 @@ class EventDetailsInfos extends StatelessWidget {
       (session) {
         context.read<EventDetailsBloc>().add(
               JoinEvent(
-                eventId: eventDetails.event.id,
+                eventId: widget.eventDetails.event.id,
                 session: session,
               ),
             );
