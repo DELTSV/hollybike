@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hollybike/app/app.dart';
 import 'package:hollybike/auth/bloc/auth_api.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
@@ -29,7 +28,6 @@ import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:hollybike/websockets/types/recieve/websocket_subscribed.dart';
 import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
 import 'package:hollybike/websockets/types/websocket_client.dart';
-import 'package:workmanager/workmanager.dart';
 
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
@@ -57,85 +55,96 @@ void main() {
   NetworkImageCache();
   WidgetsFlutterBinding.ensureInitialized();
 
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true,
-  );
+  // Workmanager().initialize(
+  //   callbackDispatcher,
+  //   isInDebugMode: true,
+  // );
 
   runApp(const MyApp());
 }
-
-const simplePeriodicTask = "com.hollybike.hollybike.simplePeriodicTask";
-
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    switch (task) {
-      case simplePeriodicTask:
-        final accessToken = inputData?['accessToken'];
-        final host = inputData?['host'];
-        final eventId = inputData?['eventId'];
-
-        if (accessToken == null || host == null || eventId == null) {
-          return Future.value(false);
-        }
-
-        final ws = await WebsocketClient(
-          session: AuthSession(
-            token: accessToken,
-            host: host,
-          ),
-        ).connect();
-
-        final channel = 'event/$eventId';
-
-        try {
-          ws.listen((message) async {
-            switch (message.data.type) {
-              case 'subscribed':
-                final subscribed = message.data as WebsocketSubscribed;
-
-                if (!subscribed.subscribed) {
-                  break;
-                }
-
-                await Geolocator.getPositionStream().forEach(
-                      (position) {
-                    ws.sendUserPosition(
-                      channel,
-                      WebsocketSendPosition(
-                        latitude: keepFiveDigits(position.latitude),
-                        longitude: keepFiveDigits(position.longitude),
-                        altitude: keepFiveDigits(position.altitude),
-                        time: DateTime.now().toUtc(),
-                      ),
-                    );
-                  },
-                );
-
-                break;
-            }
-          });
-        } catch (e) {
-          print('Error: $e');
-        }
-
-        ws.subscribe(channel);
-
-        await Geolocator.getPositionStream().forEach(
-              (position) {
-            print("Position: ${position.latitude}, ${position.longitude}");
-          },
-        );
-
-        await infiniteDelay();
-
-        break;
-    }
-
-    return Future.value(true);
-  });
-}
+//
+// const simplePeriodicTask = "com.hollybike.hollybike.simplePeriodicTask";
+//
+// @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   // Workmanager().executeTask((task, inputData) async {
+//   //
+//   //   // log every 3 seconds
+//   //   Timer.periodic(Duration(seconds: 3), (timer) {
+//   //     print('Timer: ${DateTime.now()}');
+//   //   });
+//   //
+//   //   await infiniteDelay();
+//   //   return Future.value(true);
+//   // });
+//
+//   Workmanager().executeTask((task, inputData) async {
+//     switch (task) {
+//       case simplePeriodicTask:
+//         final accessToken = inputData?['accessToken'];
+//         final host = inputData?['host'];
+//         final eventId = inputData?['eventId'];
+//
+//         if (accessToken == null || host == null || eventId == null) {
+//           return Future.value(false);
+//         }
+//
+//         final ws = await WebsocketClient(
+//           session: AuthSession(
+//             token: accessToken,
+//             host: host,
+//           ),
+//         ).connect();
+//
+//         final channel = 'event/$eventId';
+//
+//         try {
+//           ws.listen((message) async {
+//             switch (message.data.type) {
+//               case 'subscribed':
+//                 final subscribed = message.data as WebsocketSubscribed;
+//
+//                 if (!subscribed.subscribed) {
+//                   break;
+//                 }
+//
+//                 // await Geolocator.getPositionStream().forEach(
+//                 //       (position) {
+//                 //     ws.sendUserPosition(
+//                 //       channel,
+//                 //       WebsocketSendPosition(
+//                 //         latitude: keepFiveDigits(position.latitude),
+//                 //         longitude: keepFiveDigits(position.longitude),
+//                 //         altitude: keepFiveDigits(position.altitude),
+//                 //         time: DateTime.now().toUtc(),
+//                 //       ),
+//                 //     );
+//                 //   },
+//                 // );
+//
+//                 break;
+//             }
+//           });
+//         } catch (e) {
+//           print('Error: $e');
+//         }
+//
+//         ws.subscribe(channel);
+//
+//         // await Geolocator.getPositionStream().forEach(
+//         //       (position) {
+//         //     print("Position: ${position.latitude}, ${position.longitude}");
+//         //   },
+//         // );
+//
+//         await infiniteDelay();
+//
+//         break;
+//     }
+//
+//     return Future.value(true);
+//   });
+// }
 
 double keepFiveDigits(double value) {
   return double.parse(value.toStringAsFixed(5));
