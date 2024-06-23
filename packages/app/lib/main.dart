@@ -9,6 +9,7 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
+import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_bloc.dart';
 import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_event.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
@@ -25,7 +26,9 @@ import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_bloc.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:hollybike/websockets/types/recieve/websocket_subscribed.dart';
+import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
+import 'package:hollybike/websockets/types/websocket_client.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
@@ -71,23 +74,59 @@ void callbackDispatcher() {
       case simplePeriodicTask:
         final accessToken = inputData?['accessToken'];
         final host = inputData?['host'];
+        final eventId = inputData?['eventId'];
 
-        if (accessToken == null || host == null) {
+        if (accessToken == null || host == null || eventId == null) {
           return Future.value(false);
         }
 
-        print("$host/api/connect");
+        final ws = await WebsocketClient(
+          session: AuthSession(
+            token: accessToken,
+            host: host,
+          ),
+        ).connect();
 
-        final wsUrl = Uri.parse("$host/api/connect");
-        final channel = WebSocketChannel.connect(wsUrl, protocols: ['http']);
+        final channel = 'event/$eventId';
 
-        channel.stream.listen((event) {
-          print(event);
-        });
+        try {
+          ws.listen((message) async {
+            switch (message.data.type) {
+              case 'subscribed':
+                final subscribed = message.data as WebsocketSubscribed;
 
-        await Geolocator.getPositionStream().forEach((position) {
-          print('Latitude: ${position.latitude}, Longitude: ${position.longitude}');
-        });
+                if (!subscribed.subscribed) {
+                  break;
+                }
+
+                await Geolocator.getPositionStream().forEach(
+                      (position) {
+                    ws.sendUserPosition(
+                      channel,
+                      WebsocketSendPosition(
+                        latitude: keepFiveDigits(position.latitude),
+                        longitude: keepFiveDigits(position.longitude),
+                        altitude: keepFiveDigits(position.altitude),
+                        time: DateTime.now().toUtc(),
+                      ),
+                    );
+                  },
+                );
+
+                break;
+            }
+          });
+        } catch (e) {
+          print('Error: $e');
+        }
+
+        ws.subscribe(channel);
+
+        await Geolocator.getPositionStream().forEach(
+              (position) {
+            print("Position: ${position.latitude}, ${position.longitude}");
+          },
+        );
 
         await infiniteDelay();
 
@@ -96,6 +135,10 @@ void callbackDispatcher() {
 
     return Future.value(true);
   });
+}
+
+double keepFiveDigits(double value) {
+  return double.parse(value.toStringAsFixed(5));
 }
 
 class NetworkImageCache extends WidgetsFlutterBinding {

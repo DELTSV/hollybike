@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +7,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
 import 'package:hollybike/positions/bloc/position_bloc.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
-import 'package:hollybike/websockets/types/websocket_position.dart';
+import 'package:hollybike/websockets/types/recieve/websocket_subscribed.dart';
+import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../positions/bloc/position_event.dart';
@@ -111,36 +109,6 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
   }
 
   void _onActivatePostions(BuildContext context) async {
-    withCurrentSession(
-      context,
-      (session) async {
-        final ws = await WebsocketClient(session: session).connect();
-
-        final channel = 'event/${widget.eventDetails.event.id}';
-
-        ws.listen((data) {
-          print('Received data: $data');
-        });
-
-        ws.subscribe(channel);
-
-        Future.delayed(
-          const Duration(seconds: 2),
-          () {
-            ws.sendUserPosition(
-              channel,
-              WebsocketPosition(
-                latitude: 2.0,
-                longitude: 2.0,
-                altitude: 2.0,
-                time: DateTime.now().toUtc(),
-              ),
-            );
-          },
-        );
-      },
-    );
-
     _determinePosition().catchError(
       (error) {
         Toast.showErrorToast(context, error.toString());
@@ -148,15 +116,12 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
     ).then((_) async {
       withCurrentSession(context, (session) {
         context.read<PositionBloc>().add(
-              ListenAndSendUserPosition(session: session),
+              ListenAndSendUserPosition(
+                session: session,
+                eventId: widget.eventDetails.event.id,
+              ),
             );
       });
-
-      // _positionSubscription = Geolocator.getPositionStream().listen((position) {
-      //   setState(() {
-      //     pos = '${position.latitude}, ${position.longitude}';
-      //   });
-      // });
     });
   }
 

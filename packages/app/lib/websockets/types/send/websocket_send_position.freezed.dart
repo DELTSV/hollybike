@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'websocket_position.dart';
+part of 'websocket_send_position.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,12 +14,13 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-WebsocketPosition _$WebsocketPositionFromJson(Map<String, dynamic> json) {
-  return _WebsocketPosition.fromJson(json);
+WebsocketSendPosition _$WebsocketSendPositionFromJson(
+    Map<String, dynamic> json) {
+  return _WebsocketSendPosition.fromJson(json);
 }
 
 /// @nodoc
-mixin _$WebsocketPosition {
+mixin _$WebsocketSendPosition {
   String get type => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
@@ -28,15 +29,15 @@ mixin _$WebsocketPosition {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $WebsocketPositionCopyWith<WebsocketPosition> get copyWith =>
+  $WebsocketSendPositionCopyWith<WebsocketSendPosition> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $WebsocketPositionCopyWith<$Res> {
-  factory $WebsocketPositionCopyWith(
-          WebsocketPosition value, $Res Function(WebsocketPosition) then) =
-      _$WebsocketPositionCopyWithImpl<$Res, WebsocketPosition>;
+abstract class $WebsocketSendPositionCopyWith<$Res> {
+  factory $WebsocketSendPositionCopyWith(WebsocketSendPosition value,
+          $Res Function(WebsocketSendPosition) then) =
+      _$WebsocketSendPositionCopyWithImpl<$Res, WebsocketSendPosition>;
   @useResult
   $Res call(
       {String type,
@@ -47,9 +48,10 @@ abstract class $WebsocketPositionCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$WebsocketPositionCopyWithImpl<$Res, $Val extends WebsocketPosition>
-    implements $WebsocketPositionCopyWith<$Res> {
-  _$WebsocketPositionCopyWithImpl(this._value, this._then);
+class _$WebsocketSendPositionCopyWithImpl<$Res,
+        $Val extends WebsocketSendPosition>
+    implements $WebsocketSendPositionCopyWith<$Res> {
+  _$WebsocketSendPositionCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -91,11 +93,12 @@ class _$WebsocketPositionCopyWithImpl<$Res, $Val extends WebsocketPosition>
 }
 
 /// @nodoc
-abstract class _$$WebsocketPositionImplCopyWith<$Res>
-    implements $WebsocketPositionCopyWith<$Res> {
-  factory _$$WebsocketPositionImplCopyWith(_$WebsocketPositionImpl value,
-          $Res Function(_$WebsocketPositionImpl) then) =
-      __$$WebsocketPositionImplCopyWithImpl<$Res>;
+abstract class _$$WebsocketSendPositionImplCopyWith<$Res>
+    implements $WebsocketSendPositionCopyWith<$Res> {
+  factory _$$WebsocketSendPositionImplCopyWith(
+          _$WebsocketSendPositionImpl value,
+          $Res Function(_$WebsocketSendPositionImpl) then) =
+      __$$WebsocketSendPositionImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -107,11 +110,12 @@ abstract class _$$WebsocketPositionImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$WebsocketPositionImplCopyWithImpl<$Res>
-    extends _$WebsocketPositionCopyWithImpl<$Res, _$WebsocketPositionImpl>
-    implements _$$WebsocketPositionImplCopyWith<$Res> {
-  __$$WebsocketPositionImplCopyWithImpl(_$WebsocketPositionImpl _value,
-      $Res Function(_$WebsocketPositionImpl) _then)
+class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
+    extends _$WebsocketSendPositionCopyWithImpl<$Res,
+        _$WebsocketSendPositionImpl>
+    implements _$$WebsocketSendPositionImplCopyWith<$Res> {
+  __$$WebsocketSendPositionImplCopyWithImpl(_$WebsocketSendPositionImpl _value,
+      $Res Function(_$WebsocketSendPositionImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -123,7 +127,7 @@ class __$$WebsocketPositionImplCopyWithImpl<$Res>
     Object? altitude = null,
     Object? time = null,
   }) {
-    return _then(_$WebsocketPositionImpl(
+    return _then(_$WebsocketSendPositionImpl(
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -150,16 +154,16 @@ class __$$WebsocketPositionImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$WebsocketPositionImpl implements _WebsocketPosition {
-  const _$WebsocketPositionImpl(
+class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
+  const _$WebsocketSendPositionImpl(
       {this.type = "send-user-position",
       required this.latitude,
       required this.longitude,
       required this.altitude,
       required this.time});
 
-  factory _$WebsocketPositionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$WebsocketPositionImplFromJson(json);
+  factory _$WebsocketSendPositionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WebsocketSendPositionImplFromJson(json);
 
   @override
   @JsonKey()
@@ -175,14 +179,14 @@ class _$WebsocketPositionImpl implements _WebsocketPosition {
 
   @override
   String toString() {
-    return 'WebsocketPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, time: $time)';
+    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, time: $time)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$WebsocketPositionImpl &&
+            other is _$WebsocketSendPositionImpl &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
@@ -201,28 +205,28 @@ class _$WebsocketPositionImpl implements _WebsocketPosition {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$WebsocketPositionImplCopyWith<_$WebsocketPositionImpl> get copyWith =>
-      __$$WebsocketPositionImplCopyWithImpl<_$WebsocketPositionImpl>(
-          this, _$identity);
+  _$$WebsocketSendPositionImplCopyWith<_$WebsocketSendPositionImpl>
+      get copyWith => __$$WebsocketSendPositionImplCopyWithImpl<
+          _$WebsocketSendPositionImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$WebsocketPositionImplToJson(
+    return _$$WebsocketSendPositionImplToJson(
       this,
     );
   }
 }
 
-abstract class _WebsocketPosition implements WebsocketPosition {
-  const factory _WebsocketPosition(
+abstract class _WebsocketSendPosition implements WebsocketSendPosition {
+  const factory _WebsocketSendPosition(
       {final String type,
       required final double latitude,
       required final double longitude,
       required final double altitude,
-      required final DateTime time}) = _$WebsocketPositionImpl;
+      required final DateTime time}) = _$WebsocketSendPositionImpl;
 
-  factory _WebsocketPosition.fromJson(Map<String, dynamic> json) =
-      _$WebsocketPositionImpl.fromJson;
+  factory _WebsocketSendPosition.fromJson(Map<String, dynamic> json) =
+      _$WebsocketSendPositionImpl.fromJson;
 
   @override
   String get type;
@@ -236,6 +240,6 @@ abstract class _WebsocketPosition implements WebsocketPosition {
   DateTime get time;
   @override
   @JsonKey(ignore: true)
-  _$$WebsocketPositionImplCopyWith<_$WebsocketPositionImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$WebsocketSendPositionImplCopyWith<_$WebsocketSendPositionImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

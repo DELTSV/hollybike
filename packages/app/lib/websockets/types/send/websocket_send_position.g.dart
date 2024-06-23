@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'websocket_position.dart';
+part of 'websocket_send_position.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$WebsocketPositionImpl _$$WebsocketPositionImplFromJson(
+_$WebsocketSendPositionImpl _$$WebsocketSendPositionImplFromJson(
         Map<String, dynamic> json) =>
-    _$WebsocketPositionImpl(
+    _$WebsocketSendPositionImpl(
       type: json['type'] as String? ?? "send-user-position",
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
@@ -16,8 +16,8 @@ _$WebsocketPositionImpl _$$WebsocketPositionImplFromJson(
       time: DateTime.parse(json['time'] as String),
     );
 
-Map<String, dynamic> _$$WebsocketPositionImplToJson(
-        _$WebsocketPositionImpl instance) =>
+Map<String, dynamic> _$$WebsocketSendPositionImplToJson(
+        _$WebsocketSendPositionImpl instance) =>
     <String, dynamic>{
       'type': instance.type,
       'latitude': instance.latitude,

@@ -6,7 +6,7 @@ part 'websocket_message.freezed.dart';
 part 'websocket_message.g.dart';
 
 abstract class WebsocketBody {
-  static const String type = '';
+  final String type = '';
 }
 
 @Freezed(genericArgumentFactories: true)

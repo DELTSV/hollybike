@@ -6,9 +6,11 @@ import '../../auth/types/auth_session.dart';
 abstract class PositionEvent {}
 
 class ListenAndSendUserPosition extends PositionEvent {
+  final int eventId;
   final AuthSession session;
 
   ListenAndSendUserPosition({
+    required this.eventId,
     required this.session,
   });
 }

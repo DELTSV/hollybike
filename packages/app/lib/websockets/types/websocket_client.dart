@@ -3,9 +3,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/websockets/types/recieve/websocket_subscribed.dart';
+import 'package:hollybike/websockets/types/send/websocket_subscribe.dart';
 import 'package:hollybike/websockets/types/websocket_message.dart';
-import 'package:hollybike/websockets/types/websocket_position.dart';
-import 'package:hollybike/websockets/types/websocket_subscribe.dart';
+import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -58,11 +59,27 @@ class WebsocketClient {
 
   bool get isConnected => _client != null;
 
-  void listen(void Function(dynamic) onData) {
-    _client?.stream.listen(onData);
+  void listen(void Function(WebsocketMessage) onData) {
+    _client?.stream.listen((data) {
+      final message = WebsocketMessage.fromJson(jsonDecode(data), (json) {
+        if (json['type'] == 'subscribed') {
+          return WebsocketSubscribed.fromJson(json);
+        } else if (json['type'] == 'receive-user-position') {
+          return WebsocketSubscribe(
+            token: session.token,
+          );
+        }
+
+        throw Exception('Unknown message type');
+      });
+
+      onData(message);
+    });
   }
 
   void subscribe(String channel) {
+    print('Subscribing to channel: $channel');
+
     final message = WebsocketMessage(
       channel: channel,
       data: WebsocketSubscribe(token: session.token),
@@ -77,14 +94,16 @@ class WebsocketClient {
     _send(jsonString);
   }
 
-  void sendUserPosition(String channel, WebsocketPosition position) {
+  void sendUserPosition(String channel, WebsocketSendPosition position) {
+    print('Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}');
+
     final message = WebsocketMessage(
       channel: channel,
       data: position,
     );
 
     final jsonObject = message.toJson(
-      (obj) => (obj as WebsocketPosition).toJson(),
+      (obj) => (obj as WebsocketSendPosition).toJson(),
     );
 
     final jsonString = jsonEncode(jsonObject);

@@ -18,9 +18,13 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     Workmanager().registerOneOffTask(
       taskName,
       taskName,
+      constraints: Constraints(
+        networkType: NetworkType.connected,
+      ),
       inputData: <String, dynamic>{
         'accessToken': event.session.token,
         'host': event.session.host,
+        'eventId': event.eventId,
       },
     );
   }
