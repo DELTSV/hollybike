@@ -1,7 +1,7 @@
 package hollybike.api.utils.websocket
 
-import hollybike.api.types.websocket.Body
-import hollybike.api.types.websocket.Message
+import hollybike.api.repository.User
+import hollybike.api.types.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
@@ -18,14 +18,18 @@ class WebSocketCall(
 	var parameters: Parameters,
 	val path: String,
 	val body: Body?,
-	private val session: DefaultWebSocketServerSession
+	private val session: DefaultWebSocketServerSession,
+	private val authVerifier: AuthVerifier
 ) {
 
-	constructor(message: Message, session: DefaultWebSocketServerSession) : this(
+	var user: User? = null
+
+	constructor(message: Message, session: DefaultWebSocketServerSession, authVerifier: AuthVerifier) : this(
 		Parameters.Empty,
 		message.channel,
 		message.data,
-		session
+		session,
+		authVerifier
 	)
 
 	suspend fun respond(data: Body) {
@@ -35,11 +39,32 @@ class WebSocketCall(
 	suspend fun respondText(data: String) {
 		session.send(data)
 	}
+
+	suspend fun onSubscribe(call: suspend WebSocketCall.() -> Unit) {
+		if(body is Subscribe) {
+			user = authVerifier.verify(this.body.token)?.apply {
+				call()
+			} ?: run {
+				respond(Subscribed(false))
+				null
+			}
+		}
+	}
+
+	suspend fun onUnsubscribe(call: suspend WebSocketCall.() -> Unit = {}) {
+		if(body is Unsubscribe) {
+			user = null
+			respond(Unsubscribed(false))
+			call()
+		}
+	}
 }
 
 typealias RouteElement = MutableMap<PathElement, WebSocketRoute>
 
-class WebSocketRouter {
+class WebSocketRouter(
+	private val authVerifier: AuthVerifier
+) {
 	private val json = Json {
 		ignoreUnknownKeys = true
 	}
@@ -79,7 +104,7 @@ class WebSocketRouter {
 					val text = (frame as Frame.Text).readText()
 					val message = json.decodeFromString<Message>(text)
 					val path = message.channel.split("/").filter { it.isNotBlank() }.map { it.toPathElement() }
-					val call = WebSocketCall(message, this)
+					val call = WebSocketCall(message, this, authVerifier)
 					var handled = false
 					routes.match(path.firstOrNull() ?: PathFragment("")).forEach { (_ , route) ->
 						if(route?.execute(path.drop(1), call, this) == true) {
@@ -159,9 +184,6 @@ class WebSocketRoute {
 	}
 }
 
-fun DefaultWebSocketServerSession.routing(body: WebSocketRouter.() -> Unit): WebSocketRouter =
-	WebSocketRouter().apply(body)
-
 private fun String.toPathElement(): PathElement {
 	return if (startsWith("{") && endsWith("}")) {
 		PathParam(this.trim('{', '}'))
@@ -178,8 +200,10 @@ private fun RouteElement.match(key: PathElement): List<Pair<PathElement, WebSock
 class WebSocketConfig {
 	private lateinit var router: WebSocketRouter
 
+	lateinit var authVerifier: AuthVerifier
+
 	fun routing(body: WebSocketRouter.() -> Unit) {
-		router = WebSocketRouter().apply(body)
+		router = WebSocketRouter(authVerifier).apply(body)
 	}
 
 	suspend fun build(serverSession: DefaultWebSocketServerSession) {
@@ -187,7 +211,7 @@ class WebSocketConfig {
 	}
 }
 
-fun Application.webSocket(route: String, db: Database, body: WebSocketConfig.() -> Unit) {
+fun Application.webSocket(route: String, body: WebSocketConfig.() -> Unit) {
 	install(WebSockets) {
 		contentConverter = KotlinxWebsocketSerializationConverter(Json)
 	}

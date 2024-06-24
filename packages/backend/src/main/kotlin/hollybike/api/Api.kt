@@ -60,7 +60,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
 	ProfileController(this, profileService)
-	WebSocketController(this, db, authVerifier, notificationService, userEventPositionService)
+	WebSocketController(this, authVerifier, notificationService, userEventPositionService)
 	NotificationController(this, notificationService)
 
 	if (isOnPremise) {

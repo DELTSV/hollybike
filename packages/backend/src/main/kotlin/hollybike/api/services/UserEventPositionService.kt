@@ -7,6 +7,7 @@ import hollybike.api.types.websocket.UserReceivePosition
 import hollybike.api.types.websocket.UserSendPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
@@ -17,28 +18,28 @@ class UserEventPositionService(
 	private val scope: CoroutineScope
 ) {
 	private val receiveChannels: MutableMap<Pair<Int, Int>, Channel<UserSendPosition>> = mutableMapOf()
-	
-	private val sendChannels: MutableMap<Int, Channel<UserReceivePosition>> = mutableMapOf()
 
-	fun getSendChannel(eventId: Int): Channel<UserReceivePosition> {
+	private val sendChannels: MutableMap<Int, MutableSharedFlow<UserReceivePosition>> = mutableMapOf()
+
+	fun getSendChannel(eventId: Int): MutableSharedFlow<UserReceivePosition> {
 		return sendChannels[eventId] ?: run {
-			Channel<UserReceivePosition>(Channel.BUFFERED).apply { sendChannels[eventId] = this }
+			MutableSharedFlow<UserReceivePosition>().apply { sendChannels[eventId] = this }
 		}
 	}
 
 	private suspend fun send(eventId: Int, position: UserEventPosition) {
-		getSendChannel(eventId).send(
+		getSendChannel(eventId).emit(
 			UserReceivePosition(
-			position.latitude,
-			position.longitude,
-			position.altitude,
-			position.time,
-			position.user.id.value
-		)
+				position.latitude,
+				position.longitude,
+				position.altitude,
+				position.time,
+				position.user.id.value
+			)
 		)
 	}
 
-	suspend fun getReceiveChannel(eventId: Int, userId: Int) : Channel<UserSendPosition> {
+	suspend fun getReceiveChannel(eventId: Int, userId: Int): Channel<UserSendPosition> {
 		return receiveChannels[eventId to userId] ?: run {
 			Channel<UserSendPosition>(Channel.BUFFERED).apply {
 				scope.launch {
@@ -52,7 +53,7 @@ class UserEventPositionService(
 	private suspend fun Channel<UserSendPosition>.listenChannel(eventId: Int, userId: Int) {
 		val event = transaction(db) { Event.findById(eventId) } ?: return
 		val user = transaction(db) { User.findById(userId) } ?: return
-		for(message in this) {
+		for (message in this) {
 			val entity = transaction(db) {
 				transaction(db) {
 					UserEventPosition.new {

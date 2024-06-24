@@ -1,6 +1,5 @@
 package hollybike.api.routing.controller
 
-import hollybike.api.repository.User
 import hollybike.api.services.NotificationService
 import hollybike.api.services.UserEventPositionService
 import hollybike.api.types.websocket.*
@@ -8,18 +7,18 @@ import hollybike.api.utils.websocket.AuthVerifier
 import hollybike.api.utils.websocket.WebSocketRouter
 import hollybike.api.utils.websocket.webSocket
 import io.ktor.server.application.*
-import org.jetbrains.exposed.sql.Database
+import kotlinx.coroutines.flow.onEach
 
 class WebSocketController(
 	application: Application,
-	private val db: Database,
 	private val authVerifier: AuthVerifier,
 	private val notificationService: NotificationService,
 	private val userEventPositionService: UserEventPositionService
 ) {
 	init {
 		application.apply {
-			webSocket("/api/connect", db) {
+			webSocket("/api/connect") {
+				this.authVerifier = this@WebSocketController.authVerifier
 				routing {
 					notification()
 					userEventPosition()
@@ -29,54 +28,33 @@ class WebSocketController(
 	}
 
 	private fun WebSocketRouter.notification() {
-		var user: User?
 		request("/notification") {
-			when(this.body) {
-				is Subscribe -> {
-					user = authVerifier.verify(this.body.token)
-					user?.let {
-						respond(Subscribed(true))
-						for( notif in notificationService.getUserChannel(it.id.value)) {
-							if(user == null){
-								break
-							}
-							respond(notif.data)
+			onSubscribe {
+				user?.let {
+					for( notif in notificationService.getUserChannel(it.id.value)) {
+						if(user == null){
+							break
 						}
-					} ?: run {
-						respond(Subscribed(false))
+						respond(notif.data)
 					}
 				}
-				is Unsubscribe -> {
-					println("Unsub")
-					respond(Unsubscribed(true))
-					user = null
-				}
-				else -> {
-					println("Unknown data")
-				}
 			}
+			onUnsubscribe()
 		}
 	}
 
 	private fun WebSocketRouter.userEventPosition() {
-		var user: User? = null
 		request("/event/{id}") {
-			when(this.body) {
-				is Subscribe -> {
-					user = authVerifier.verify(this.body.token)
-					user?.let {
-						respond(Subscribed(true))
-						for(position in userEventPositionService.getSendChannel(parameters["id"]!!.toInt())) {
-							respond(position)
-						}
-					} ?: run {
-						respond(Unsubscribed(false))
+			onSubscribe {
+				user?.let {
+					respond(Subscribed(true))
+					userEventPositionService.getSendChannel(parameters["id"]!!.toInt()).onEach {
+						respond(it)
 					}
 				}
-				is Unsubscribe -> {
-					respond(Unsubscribed(true))
-					user = null
-				}
+			}
+			onUnsubscribe()
+			when(this.body) {
 				is UserSendPosition -> {
 					user?.let {
 						userEventPositionService.getReceiveChannel(parameters["id"]!!.toInt(), it.id.value).send(this.body)
