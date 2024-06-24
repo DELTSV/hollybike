@@ -19,6 +19,7 @@ class WebSocketController(
 		application.apply {
 			webSocket("/api/connect") {
 				this.authVerifier = this@WebSocketController.authVerifier
+				this.logger = application.log
 				routing {
 					notification()
 					userEventPosition()
@@ -32,9 +33,9 @@ class WebSocketController(
 		request("/notification") {
 			onSubscribe {
 				user = it
-				for( notif in notificationService.getUserChannel(it.id.value)) {
-					if(user == null){
-						break
+				notificationService.getUserChannel(it.id.value).collect { notif ->
+					if(user == null) {
+						return@collect
 					}
 					respond(notif.data)
 				}

@@ -7,11 +7,14 @@ import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
+import io.ktor.util.logging.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import kotlin.math.log
 
 class WebSocketCall(
 	var parameters: Parameters,
@@ -60,7 +63,8 @@ class WebSocketCall(
 typealias RouteElement = MutableMap<PathElement, WebSocketRoute>
 
 class WebSocketRouter(
-	private val authVerifier: AuthVerifier
+	private val authVerifier: AuthVerifier,
+	private val logger: Logger
 ) {
 	private val json = Json {
 		ignoreUnknownKeys = true
@@ -99,7 +103,16 @@ class WebSocketRouter(
 			try {
 				for (frame in incoming) {
 					val text = (frame as Frame.Text).readText()
-					val message = json.decodeFromString<Message>(text)
+					val message = try {
+						json.decodeFromString<Message>(text)
+					} catch (e: SerializationException) {
+						logger.error(e)
+						null
+					}
+					if(message == null) {
+						sendSerialized(Message(Error("Message '$text' invalide."), "/errors"))
+						continue
+					}
 					val path = message.channel.split("/").filter { it.isNotBlank() }.map { it.toPathElement() }
 					val call = WebSocketCall(message, this, authVerifier)
 					var handled = false
@@ -110,14 +123,14 @@ class WebSocketRouter(
 						}
 					}
 					if(!handled) {
-						println("Not found")
+						sendSerialized(Message(Error("Channel non trouvé"), message.channel))
+						logger.warn("404 - NotFound ${message.channel}")
 					}
 				}
 			} catch (e: ClosedReceiveChannelException) {
-				println("Disconnect")
+				logger.info("Client disconnected: ${e.message}")
 			} catch (e: Throwable) {
-				e.printStackTrace()
-				println("Error")
+				logger.error(e)
 			}
 		}
 	}
@@ -199,8 +212,10 @@ class WebSocketConfig {
 
 	lateinit var authVerifier: AuthVerifier
 
+	lateinit var logger: Logger
+
 	fun routing(body: WebSocketRouter.() -> Unit) {
-		router = WebSocketRouter(authVerifier).apply(body)
+		router = WebSocketRouter(authVerifier, logger).apply(body)
 	}
 
 	suspend fun build(serverSession: DefaultWebSocketServerSession) {
