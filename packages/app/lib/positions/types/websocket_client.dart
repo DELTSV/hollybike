@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/websockets/types/recieve/websocket_subscribed.dart';
-import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
-import 'package:hollybike/websockets/types/send/websocket_subscribe.dart';
-import 'package:hollybike/websockets/types/websocket_message.dart';
+import 'package:hollybike/positions/types/recieve/websocket_subscribed.dart';
+import 'package:hollybike/positions/types/send/websocket_send_position.dart';
+import 'package:hollybike/positions/types/send/websocket_subscribe.dart';
+import 'package:hollybike/positions/types/websocket_message.dart';
 
 class WebsocketClient {
   final AuthSession session;
@@ -39,6 +39,12 @@ class WebsocketClient {
     _client = ws;
 
     return this;
+  }
+
+  void onDisconnect(void Function() onDisconnect) {
+    _client?.done.then((_) {
+      onDisconnect();
+    });
   }
 
   void _send(String message) {

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hollybike/websockets/types/websocket_message.dart';
 
 import '../../../shared/types/json_map.dart';
+import '../websocket_message.dart';
 
 part 'websocket_subscribe.freezed.dart';
 part 'websocket_subscribe.g.dart';

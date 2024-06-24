@@ -8,9 +8,9 @@ import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../positions/bloc/position_bloc.dart';
-import '../../../positions/bloc/position_event.dart';
-import '../../../positions/bloc/position_state.dart';
+import '../../../positions/bloc/my_position_bloc.dart';
+import '../../../positions/bloc/my_position_event.dart';
+import '../../../positions/bloc/my_position_state.dart';
 import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
@@ -49,7 +49,7 @@ class EventDetailsInfos extends StatelessWidget {
       scrollViewKey: 'event_details_infos_${event.id}',
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: BlocBuilder<PositionBloc, PositionState>(
+        child: BlocBuilder<MyPositionBloc, MyPositionState>(
           builder: (context, state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +108,7 @@ class EventDetailsInfos extends StatelessWidget {
   void _onStart(BuildContext context) async {
     if (await _checkLocationPermission() && context.mounted) {
       withCurrentSession(context, (session) {
-        context.read<PositionBloc>().add(
+        context.read<MyPositionBloc>().add(
               EnableSendPosition(
                 session: session,
                 eventId: eventDetails.event.id,
@@ -127,7 +127,7 @@ class EventDetailsInfos extends StatelessWidget {
   }
 
   void _cancelPostions(BuildContext context) {
-    context.read<PositionBloc>().add(
+    context.read<MyPositionBloc>().add(
           DisableSendPositions(),
         );
   }

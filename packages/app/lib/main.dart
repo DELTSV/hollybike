@@ -17,8 +17,8 @@ import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
-import 'package:hollybike/positions/bloc/position_bloc.dart';
-import 'package:hollybike/positions/bloc/position_event.dart';
+import 'package:hollybike/positions/bloc/my_position_bloc.dart';
+import 'package:hollybike/positions/bloc/my_position_event.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
@@ -236,10 +236,10 @@ class MyApp extends StatelessWidget {
                 ),
               )..add(SubscribeToEventsSearch()),
             ),
-            BlocProvider<PositionBloc>(
-              create: (context) => PositionBloc()
+            BlocProvider<MyPositionBloc>(
+              create: (context) => MyPositionBloc()
                 ..add(
-                  SubscribeToPositionUpdates(),
+                  SubscribeToMyPositionUpdates(),
                 ),
             ),
           ],

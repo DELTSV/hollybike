@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import '../../auth/types/auth_session.dart';
 
 @immutable
-abstract class PositionEvent {}
+abstract class MyPositionEvent {}
 
-class EnableSendPosition extends PositionEvent {
+class EnableSendPosition extends MyPositionEvent {
   final int eventId;
   final String eventName;
   final AuthSession session;
@@ -17,10 +17,10 @@ class EnableSendPosition extends PositionEvent {
   });
 }
 
-class DisableSendPositions extends PositionEvent {
+class DisableSendPositions extends MyPositionEvent {
   DisableSendPositions();
 }
 
-class SubscribeToPositionUpdates extends PositionEvent {
-  SubscribeToPositionUpdates();
+class SubscribeToMyPositionUpdates extends MyPositionEvent {
+  SubscribeToMyPositionUpdates();
 }
