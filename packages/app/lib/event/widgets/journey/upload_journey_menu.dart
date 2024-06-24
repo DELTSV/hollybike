@@ -9,12 +9,14 @@ enum NewJourneyType {
 class UploadJourneyMenu extends StatelessWidget {
   final bool popBefore;
   final Event event;
+  final bool noPadding;
   final Widget child;
   final void Function(NewJourneyType)? onSelection;
 
   const UploadJourneyMenu({
     super.key,
     this.popBefore = false,
+    this.noPadding = false,
     required this.event,
     required this.child,
     this.onSelection,
@@ -23,6 +25,7 @@ class UploadJourneyMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
+      padding: noPadding ? EdgeInsets.zero : const EdgeInsets.all(12),
       icon: child,
       onSelected: onSelection,
       itemBuilder: (context) {

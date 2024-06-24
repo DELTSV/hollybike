@@ -18,11 +18,13 @@ enum JourneyModalAction {
 class JourneyModalHeader extends StatelessWidget {
   final void Function() onViewOnMap;
   final Event event;
+  final bool canEditJourney;
 
   const JourneyModalHeader({
     super.key,
     required this.onViewOnMap,
     required this.event,
+    required this.canEditJourney,
   });
 
   @override
@@ -33,53 +35,69 @@ class JourneyModalHeader extends StatelessWidget {
           _returnToDetails(context);
         }
       },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          PopupMenuButton<JourneyModalAction>(
-            onSelected: (action) =>
-                _onActionsSelected(
-                  context,
-                  action,
-                ),
-            itemBuilder: (context) =>
-            [
-              PopupMenuItem(
-                value: JourneyModalAction.update,
-                child: UploadJourneyMenu(
-                  event: event,
-                  onSelection: (type) =>
-                      _onUpdateJourney(
-                        context,
-                        type,
-                      ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.swap_calls_rounded),
-                      SizedBox(width: 8),
-                      Text('Changer de parcours'),
-                    ],
-                  ),
-                ),
+      child: _buildHeader(context),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    final actions = <Widget>[];
+
+    if (canEditJourney) {
+      actions.add(
+        PopupMenuButton<JourneyModalAction>(
+          onSelected: (action) =>
+              _onActionsSelected(
+                context,
+                action,
               ),
-              const PopupMenuItem(
-                value: JourneyModalAction.delete,
-                child: Row(
+          itemBuilder: (context) =>
+          [
+            PopupMenuItem(
+              value: JourneyModalAction.update,
+              child: UploadJourneyMenu(
+                noPadding: true,
+                event: event,
+                onSelection: (type) =>
+                    _onUpdateJourney(
+                      context,
+                      type,
+                    ),
+                child: const Row(
                   children: [
-                    Icon(Icons.remove_circle),
+                    Icon(Icons.swap_calls_rounded),
                     SizedBox(width: 8),
-                    Text('Retirer le parcours'),
+                    Text('Changer de parcours'),
                   ],
                 ),
               ),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () => _onOpenMap(context),
-            child: const Text('Voir sur la carte'),
-          ),
-        ],
-      ),
+            ),
+            const PopupMenuItem(
+              value: JourneyModalAction.delete,
+              child: Row(
+                children: [
+                  Icon(Icons.remove_circle),
+                  SizedBox(width: 8),
+                  Text('Retirer le parcours'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    actions.add(
+        ElevatedButton(
+          onPressed: () => _onOpenMap(context),
+          child: const Text('Voir sur la carte'),
+        ),
+    );
+
+    return Row(
+      mainAxisAlignment: actions.length > 1
+          ? MainAxisAlignment.spaceBetween
+          : MainAxisAlignment.end,
+      children: actions,
     );
   }
 

@@ -214,6 +214,7 @@ class JourneyService(
 		}
 
 		val simplifiedGeoJson = geoJson
+			.clean()
 			.simplifyToUrlSafe()
 			.keepLargestCoordinateElement()
 			.updateGeoJsonProperties(
