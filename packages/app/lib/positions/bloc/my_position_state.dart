@@ -8,28 +8,34 @@ class MyPositionState {
   final LocationDto? lastLocation;
   final bool isRunning;
   final MyPositionStatus status;
+  final int? eventId;
 
   const MyPositionState({
     this.lastLocation,
     this.isRunning = false,
     this.status = MyPositionStatus.initial,
+    this.eventId,
   });
 
   MyPositionState.state(MyPositionState state)
       : this(
           lastLocation: state.lastLocation,
           isRunning: state.isRunning,
+          status: state.status,
+          eventId: state.eventId,
         );
 
   MyPositionState copyWith({
     MyPositionStatus? status,
     LocationDto? lastLocation,
     bool? isRunning,
+    int? eventId,
   }) {
     return MyPositionState(
       status: status ?? this.status,
       lastLocation: lastLocation ?? this.lastLocation,
       isRunning: isRunning ?? this.isRunning,
+      eventId: eventId ?? this.eventId,
     );
   }
 }
@@ -53,7 +59,14 @@ class MyPositionInitialized extends MyPositionState {
 
 
 class MyPositionStopped extends MyPositionState {
-  MyPositionStopped(super.state) : super.state();
+  MyPositionStopped(state) : super.state(
+    MyPositionState(
+      lastLocation: state.lastLocation,
+      isRunning: state.isRunning,
+      status: state.status,
+      eventId: null,
+    ),
+  );
 }
 
 class MyPositionFailure extends MyPositionState {
@@ -62,7 +75,6 @@ class MyPositionFailure extends MyPositionState {
   MyPositionFailure(super.state, this.errorMessage) : super.state();
 }
 
-
 class MyPositionUpdated extends MyPositionState {
   MyPositionUpdated(state, LocationDto? lastLocation)
       : super.state(
@@ -70,6 +82,7 @@ class MyPositionUpdated extends MyPositionState {
             lastLocation: lastLocation,
             isRunning: state.isRunning,
             status: state.status,
+            eventId: state.eventId,
           ),
         );
 }

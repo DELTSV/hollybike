@@ -20,7 +20,10 @@ class FutureEventsBloc extends EventsBloc {
     try {
       final createdEvent = await eventRepository.createEvent(
         event.session,
-        event.formData,
+        event.formData.copyWith(
+          startDate: event.formData.startDate.toUtc(),
+          endDate: event.formData.endDate?.toUtc(),
+        ),
       );
 
       emit(EventCreationSuccess(state, createdEvent: createdEvent));

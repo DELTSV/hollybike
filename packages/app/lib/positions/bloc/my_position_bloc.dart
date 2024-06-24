@@ -11,6 +11,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/positions/bloc/my_position_event.dart';
 import 'package:hollybike/positions/bloc/my_position_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../service/my_position_handler.dart';
 import '../service/my_position_repository.dart';
@@ -43,8 +44,14 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
     SubscribeToMyPositionUpdates event,
     Emitter<MyPositionState> emit,
   ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final eventId = prefs.getInt('tracking_event_id');
+
+    final isRunning = await BackgroundLocator.isServiceRunning();
+
     emit(MyPositionInitialized(state.copyWith(
-      isRunning: await BackgroundLocator.isServiceRunning(),
+      isRunning: isRunning,
+      eventId: isRunning ? eventId : null,
     )));
 
     await emit.forEach(
@@ -108,6 +115,10 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       'eventId': event.eventId,
     };
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setInt('tracking_event_id', event.eventId);
+
     if (state.isRunning) {
       await BackgroundLocator.unRegisterLocationUpdate();
     }
@@ -119,6 +130,7 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
     emit(MyPositionStarted(state.copyWith(
       isRunning: running,
       status: running ? MyPositionStatus.success : MyPositionStatus.error,
+      eventId: event.eventId,
     )));
   }
 
