@@ -108,6 +108,10 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       'eventId': event.eventId,
     };
 
+    if (state.isRunning) {
+      await BackgroundLocator.unRegisterLocationUpdate();
+    }
+
     await _startLocator(data, event.eventName);
 
     final running = await BackgroundLocator.isServiceRunning();
