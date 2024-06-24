@@ -23,7 +23,7 @@ class UserEventPositionService(
 
 	fun getSendChannel(eventId: Int): MutableSharedFlow<UserReceivePosition> {
 		return sendChannels[eventId] ?: run {
-			MutableSharedFlow<UserReceivePosition>().apply { sendChannels[eventId] = this }
+			MutableSharedFlow<UserReceivePosition>(15, 15).apply { sendChannels[eventId] = this }
 		}
 	}
 

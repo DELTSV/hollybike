@@ -12,7 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.Database
 
 class WebSocketCall(
 	var parameters: Parameters,
@@ -21,8 +20,6 @@ class WebSocketCall(
 	private val session: DefaultWebSocketServerSession,
 	private val authVerifier: AuthVerifier
 ) {
-
-	var user: User? = null
 
 	constructor(message: Message, session: DefaultWebSocketServerSession, authVerifier: AuthVerifier) : this(
 		Parameters.Empty,
@@ -40,10 +37,11 @@ class WebSocketCall(
 		session.send(data)
 	}
 
-	suspend fun onSubscribe(call: suspend WebSocketCall.() -> Unit) {
+	suspend fun onSubscribe(call: suspend WebSocketCall.(user: User) -> Unit) {
 		if(body is Subscribe) {
-			user = authVerifier.verify(this.body.token)?.apply {
-				call()
+			authVerifier.verify(this.body.token)?.apply {
+				respond(Subscribed(true))
+				call(this)
 			} ?: run {
 				respond(Subscribed(false))
 				null
@@ -53,7 +51,6 @@ class WebSocketCall(
 
 	suspend fun onUnsubscribe(call: suspend WebSocketCall.() -> Unit = {}) {
 		if(body is Unsubscribe) {
-			user = null
 			respond(Unsubscribed(false))
 			call()
 		}
