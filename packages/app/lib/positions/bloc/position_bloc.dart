@@ -12,6 +12,40 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/positions/bloc/position_event.dart';
 import 'package:hollybike/positions/bloc/position_state.dart';
 
+import '../../auth/types/auth_session.dart';
+import '../../websockets/types/recieve/websocket_subscribed.dart';
+import '../../websockets/types/send/websocket_send_position.dart';
+import '../../websockets/types/websocket_client.dart';
+
+@pragma('vm:entry-point')
+class LocationCallbackHandler {
+  @pragma('vm:entry-point')
+  static Future<void> initCallback(Map<dynamic, dynamic> params) async {
+    LocationServiceRepository myLocationCallbackRepository =
+        LocationServiceRepository();
+    await myLocationCallbackRepository.init(params);
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> disposeCallback() async {
+    LocationServiceRepository myLocationCallbackRepository =
+        LocationServiceRepository();
+    await myLocationCallbackRepository.dispose();
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> callback(LocationDto locationDto) async {
+    LocationServiceRepository myLocationCallbackRepository =
+        LocationServiceRepository();
+    await myLocationCallbackRepository.callback(locationDto);
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> notificationCallback() async {
+    print('***notificationCallback');
+  }
+}
+
 class PositionBloc extends Bloc<PositionEvent, PositionState> {
   ReceivePort port = ReceivePort();
 
@@ -61,8 +95,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
     print('Initialization done');
   }
 
-  Future<void> _startLocator(Map<String, dynamic> data) async {
-    Map<String, dynamic> data = {'countInit': 1};
+  Future<void> _startLocator(Map<String, dynamic> data, String eventName) async {
     return await BackgroundLocator.registerLocationUpdate(
       LocationCallbackHandler.callback,
       initCallback: LocationCallbackHandler.initCallback,
@@ -74,17 +107,17 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
         stopWithTerminate: true,
       ),
       autoStop: false,
-      androidSettings: const AndroidSettings(
-        accuracy: LocationAccuracy.HIGH,
+      androidSettings: AndroidSettings(
+        accuracy: LocationAccuracy.NAVIGATION,
         interval: 1,
         distanceFilter: 0,
         client: LocationClient.google,
         androidNotificationSettings: AndroidNotificationSettings(
-          notificationChannelName: 'Location tracking',
-          notificationTitle: 'Start Location Tracking',
-          notificationMsg: 'Track location in background',
+          notificationChannelName: 'location_tracking_channel',
+          notificationTitle: 'Suivi de votre position',
+          notificationMsg: 'Suivi de votre position en arrière-plan',
           notificationBigMsg:
-              'Background location is on to keep the app up-tp-date with your location. This is required for main features to work properly when the app is not running.',
+              'Le suivi de votre position est activé afin de partager votre position en temps réel avec les autres participants de l\'événement "$eventName" ',
           notificationIconColor: Colors.grey,
           notificationTapCallback: LocationCallbackHandler.notificationCallback,
         ),
@@ -104,7 +137,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       'eventId': event.eventId,
     };
 
-    await _startLocator(data);
+    await _startLocator(data, event.eventName);
 
     final running = await BackgroundLocator.isServiceRunning();
 
@@ -143,70 +176,83 @@ class LocationServiceRepository {
 
   static const String isolateName = 'LocatorIsolate';
 
-  int _count = -1;
+  WebsocketClient? client;
+  String channel = '';
 
   Future<void> init(Map<dynamic, dynamic> params) async {
-    //TODO change logs
-    print("***********Init callback handler");
-    if (params.containsKey('countInit')) {
-      dynamic tmpCount = params['countInit'];
-      if (tmpCount is double) {
-        _count = tmpCount.toInt();
-      } else if (tmpCount is String) {
-        _count = int.parse(tmpCount);
-      } else if (tmpCount is int) {
-        _count = tmpCount;
-      } else {
-        _count = -2;
-      }
-    } else {
-      _count = 0;
+    void onError() {
+      final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
+      send?.send(null);
     }
-    print("$_count");
-    final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
-    send?.send(null);
+
+    if (!params.containsKey('accessToken') || !params.containsKey('host') || !params.containsKey('eventId')) {
+      onError();
+      return;
+    }
+
+    final accessToken = params['accessToken'] as String?;
+    final host = params['host'] as String?;
+    final eventId = params['eventId'] as double?;
+
+    if (accessToken == null || host == null || eventId == null) {
+      onError();
+      return;
+    }
+
+    final ws = await WebsocketClient(
+      session: AuthSession(
+        token: accessToken,
+        host: host,
+      ),
+    ).connect();
+
+    channel = 'event/${eventId.toInt()}';
+
+    try {
+      ws.listen((message) async {
+        switch (message.data.type) {
+          case 'subscribed':
+            final subscribed = message.data as WebsocketSubscribed;
+
+            if (subscribed.subscribed) {
+              client = ws;
+              return;
+            }
+
+            throw Exception('Error: Not subscribed');
+        }
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    ws.subscribe(channel);
+
+    onError();
   }
 
   Future<void> dispose() async {
     print("***********Dispose callback handler");
-    print("$_count");
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(null);
   }
 
   Future<void> callback(LocationDto locationDto) async {
-    print('$_count location in dart: ${locationDto.toString()}');
+    client?.sendUserPosition(
+      channel,
+      WebsocketSendPosition(
+        latitude: keepFiveDigits(locationDto.latitude),
+        longitude: keepFiveDigits(locationDto.longitude),
+        altitude: keepFiveDigits(locationDto.altitude),
+        time: DateTime.now().toUtc(),
+      ),
+    );
+
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(locationDto.toJson());
-    _count++;
   }
 }
 
-@pragma('vm:entry-point')
-class LocationCallbackHandler {
-  @pragma('vm:entry-point')
-  static Future<void> initCallback(Map<dynamic, dynamic> params) async {
-    LocationServiceRepository myLocationCallbackRepository =
-        LocationServiceRepository();
-    await myLocationCallbackRepository.init(params);
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> disposeCallback() async {
-    LocationServiceRepository myLocationCallbackRepository =
-        LocationServiceRepository();
-    await myLocationCallbackRepository.dispose();
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> callback(LocationDto locationDto) async {
-    LocationServiceRepository myLocationCallbackRepository =
-        LocationServiceRepository();
-    await myLocationCallbackRepository.callback(locationDto);
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> notificationCallback() async {
-    print('***notificationCallback');
-  }
+double keepFiveDigits(double value) {
+  return double.parse(value.toStringAsFixed(5));
 }

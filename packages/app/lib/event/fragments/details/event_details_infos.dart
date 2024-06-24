@@ -5,10 +5,10 @@ import 'package:background_locator_2/location_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
-import 'package:hollybike/positions/bloc/position_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../app/app_router.gr.dart';
+import '../../../positions/bloc/position_bloc.dart';
 import '../../../positions/bloc/position_event.dart';
 import '../../../positions/bloc/position_state.dart';
 import '../../../shared/utils/with_current_session.dart';
@@ -43,8 +43,7 @@ class EventDetailsInfos extends StatelessWidget {
   Widget build(BuildContext context) {
     final event = eventDetails.event;
     final previewParticipants = eventDetails.previewParticipants;
-    final previewParticipantsCount =
-        eventDetails.previewParticipantsCount;
+    final previewParticipantsCount = eventDetails.previewParticipantsCount;
 
     return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_infos_${event.id}',
@@ -110,11 +109,12 @@ class EventDetailsInfos extends StatelessWidget {
     if (await _checkLocationPermission() && context.mounted) {
       withCurrentSession(context, (session) {
         context.read<PositionBloc>().add(
-          EnableSendPosition(
-            session: session,
-            eventId: eventDetails.event.id,
-          ),
-        );
+              EnableSendPosition(
+                session: session,
+                eventId: eventDetails.event.id,
+                eventName: eventDetails.event.name,
+              ),
+            );
       });
     }
   }
@@ -128,20 +128,20 @@ class EventDetailsInfos extends StatelessWidget {
 
   void _cancelPostions(BuildContext context) {
     context.read<PositionBloc>().add(
-      DisableSendPositions(),
-    );
+          DisableSendPositions(),
+        );
   }
 
   void _onJoin(BuildContext context) {
     withCurrentSession(
       context,
-          (session) {
+      (session) {
         context.read<EventDetailsBloc>().add(
-          JoinEvent(
-            eventId: eventDetails.event.id,
-            session: session,
-          ),
-        );
+              JoinEvent(
+                eventId: eventDetails.event.id,
+                session: session,
+              ),
+            );
       },
     );
   }

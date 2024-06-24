@@ -7,10 +7,12 @@ abstract class PositionEvent {}
 
 class EnableSendPosition extends PositionEvent {
   final int eventId;
+  final String eventName;
   final AuthSession session;
 
   EnableSendPosition({
     required this.eventId,
+    required this.eventName,
     required this.session,
   });
 }

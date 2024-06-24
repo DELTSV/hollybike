@@ -4,16 +4,14 @@ import 'dart:math';
 
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/websockets/types/recieve/websocket_subscribed.dart';
+import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
 import 'package:hollybike/websockets/types/send/websocket_subscribe.dart';
 import 'package:hollybike/websockets/types/websocket_message.dart';
-import 'package:hollybike/websockets/types/send/websocket_send_position.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebsocketClient {
   final AuthSession session;
 
-  WebSocketChannel? _client;
+  WebSocket? _client;
 
   WebsocketClient({required this.session});
 
@@ -38,7 +36,7 @@ class WebsocketClient {
       serverSide: false,
     );
 
-    _client = IOWebSocketChannel(ws);
+    _client = ws;
 
     return this;
   }
@@ -48,19 +46,19 @@ class WebsocketClient {
       throw Exception('Websocket not connected');
     }
 
-    _client?.sink.add(message);
+    print('Sending message: $message');
+
+    _client?.add(message);
   }
 
   void close() {
-    _client?.sink.close();
+    _client?.close();
   }
-
-  Stream<dynamic>? get stream => _client?.stream;
 
   bool get isConnected => _client != null;
 
   void listen(void Function(WebsocketMessage) onData) {
-    _client?.stream.listen((data) {
+    _client?.listen((data) {
       final message = WebsocketMessage.fromJson(jsonDecode(data), (json) {
         if (json['type'] == 'subscribed') {
           return WebsocketSubscribed.fromJson(json);
@@ -95,7 +93,8 @@ class WebsocketClient {
   }
 
   void sendUserPosition(String channel, WebsocketSendPosition position) {
-    print('Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}');
+    print(
+        'Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}');
 
     final message = WebsocketMessage(
       channel: channel,
