@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
 import 'package:background_locator_2/settings/android_settings.dart';
@@ -9,29 +13,181 @@ import 'package:hollybike/positions/bloc/position_event.dart';
 import 'package:hollybike/positions/bloc/position_state.dart';
 
 class PositionBloc extends Bloc<PositionEvent, PositionState> {
+  ReceivePort port = ReceivePort();
+
+  bool isRunning = false;
+  LocationDto? lastLocation;
+
+  late final StreamSubscription sub;
+
   PositionBloc() : super(PositionInitial()) {
     on<ListenAndSendUserPosition>(_onListenAndSendUserPosition);
     on<DisableSendPositions>(_onDisableSendPositions);
+
+    if (IsolateNameServer.lookupPortByName(
+            LocationServiceRepository.isolateName) !=
+        null) {
+      IsolateNameServer.removePortNameMapping(
+          LocationServiceRepository.isolateName);
+    }
+
+    IsolateNameServer.registerPortWithName(
+        port.sendPort, LocationServiceRepository.isolateName);
+
+    sub = port.listen(
+      (dynamic data) async {
+        print(data);
+      },
+    );
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    print('Initializing...');
+    await BackgroundLocator.initialize();
+    print('Initialization done');
+    final _isRunning = await BackgroundLocator.isServiceRunning();
+    isRunning = _isRunning;
+    print('Running ${isRunning.toString()}');
+  }
+
+  Future<void> _startLocator(Map<String, dynamic> data) async {
+    Map<String, dynamic> data = {'countInit': 1};
+    return await BackgroundLocator.registerLocationUpdate(
+      LocationCallbackHandler.callback,
+      initCallback: LocationCallbackHandler.initCallback,
+      initDataCallback: data,
+      disposeCallback: LocationCallbackHandler.disposeCallback,
+      iosSettings: const IOSSettings(
+        accuracy: LocationAccuracy.NAVIGATION,
+        distanceFilter: 0,
+        stopWithTerminate: true,
+      ),
+      autoStop: false,
+      androidSettings: const AndroidSettings(
+        accuracy: LocationAccuracy.NAVIGATION,
+        interval: 1,
+        distanceFilter: 0,
+        client: LocationClient.google,
+        androidNotificationSettings: AndroidNotificationSettings(
+          notificationChannelName: 'Location tracking',
+          notificationTitle: 'Start Location Tracking',
+          notificationMsg: 'Track location in background',
+          notificationBigMsg:
+              'Background location is on to keep the app up-tp-date with your location. This is required for main features to work properly when the app is not running.',
+          notificationIconColor: Colors.grey,
+          notificationTapCallback: LocationCallbackHandler.notificationCallback,
+        ),
+      ),
+    );
   }
 
   void _onListenAndSendUserPosition(
     ListenAndSendUserPosition event,
     Emitter<PositionState> emit,
   ) async {
-    // Map<String, dynamic> data = {
-    //   'accessToken': event.session.token,
-    //   'host': event.session.host,
-    //   'eventId': event.eventId,
-    // };
+    Map<String, dynamic> data = {
+      'accessToken': event.session.token,
+      'host': event.session.host,
+      'eventId': event.eventId,
+    };
 
     print('ListenAndSendUserPosition');
+
+    await _startLocator(data);
+    final _isRunning = await BackgroundLocator.isServiceRunning();
+
+    isRunning = _isRunning;
+    lastLocation = null;
   }
 
   void _onDisableSendPositions(
     DisableSendPositions event,
     Emitter<PositionState> emit,
-  ) {
+  ) async {
     print('DisableSendPositions');
-    BackgroundLocator.unRegisterLocationUpdate();
+    await BackgroundLocator.unRegisterLocationUpdate();
+
+    isRunning = await BackgroundLocator.isServiceRunning();
+  }
+}
+
+class LocationServiceRepository {
+  static final LocationServiceRepository _instance =
+      LocationServiceRepository._();
+
+  LocationServiceRepository._();
+
+  factory LocationServiceRepository() {
+    return _instance;
+  }
+
+  static const String isolateName = 'LocatorIsolate';
+
+  int _count = -1;
+
+  Future<void> init(Map<dynamic, dynamic> params) async {
+    //TODO change logs
+    print("***********Init callback handler");
+    if (params.containsKey('countInit')) {
+      dynamic tmpCount = params['countInit'];
+      if (tmpCount is double) {
+        _count = tmpCount.toInt();
+      } else if (tmpCount is String) {
+        _count = int.parse(tmpCount);
+      } else if (tmpCount is int) {
+        _count = tmpCount;
+      } else {
+        _count = -2;
+      }
+    } else {
+      _count = 0;
+    }
+    print("$_count");
+    final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
+    send?.send(null);
+  }
+
+  Future<void> dispose() async {
+    print("***********Dispose callback handler");
+    print("$_count");
+    final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
+    send?.send(null);
+  }
+
+  Future<void> callback(LocationDto locationDto) async {
+    print('$_count location in dart: ${locationDto.toString()}');
+    final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
+    send?.send(locationDto.toJson());
+    _count++;
+  }
+}
+
+@pragma('vm:entry-point')
+class LocationCallbackHandler {
+  @pragma('vm:entry-point')
+  static Future<void> initCallback(Map<dynamic, dynamic> params) async {
+    LocationServiceRepository myLocationCallbackRepository =
+        LocationServiceRepository();
+    await myLocationCallbackRepository.init(params);
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> disposeCallback() async {
+    LocationServiceRepository myLocationCallbackRepository =
+        LocationServiceRepository();
+    await myLocationCallbackRepository.dispose();
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> callback(LocationDto locationDto) async {
+    LocationServiceRepository myLocationCallbackRepository =
+        LocationServiceRepository();
+    await myLocationCallbackRepository.callback(locationDto);
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> notificationCallback() async {
+    print('***notificationCallback');
   }
 }
