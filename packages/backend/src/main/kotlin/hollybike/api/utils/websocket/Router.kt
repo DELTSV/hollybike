@@ -14,7 +14,6 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import kotlin.math.log
 
 class WebSocketCall(
 	var parameters: Parameters,
