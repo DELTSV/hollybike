@@ -15,40 +15,50 @@ import 'package:hollybike/positions/bloc/position_state.dart';
 class PositionBloc extends Bloc<PositionEvent, PositionState> {
   ReceivePort port = ReceivePort();
 
-  bool isRunning = false;
-  LocationDto? lastLocation;
-
-  late final StreamSubscription sub;
-
   PositionBloc() : super(PositionInitial()) {
-    on<ListenAndSendUserPosition>(_onListenAndSendUserPosition);
+    on<SubscribeToPositionUpdates>(_onSubscribeToPositionUpdates);
+    on<EnableSendPosition>(_onListenAndSendUserPosition);
     on<DisableSendPositions>(_onDisableSendPositions);
 
     if (IsolateNameServer.lookupPortByName(
             LocationServiceRepository.isolateName) !=
         null) {
       IsolateNameServer.removePortNameMapping(
-          LocationServiceRepository.isolateName);
+        LocationServiceRepository.isolateName,
+      );
     }
 
     IsolateNameServer.registerPortWithName(
-        port.sendPort, LocationServiceRepository.isolateName);
+      port.sendPort,
+      LocationServiceRepository.isolateName,
+    );
 
-    sub = port.listen(
-      (dynamic data) async {
-        print(data);
+    initPlatformState();
+  }
+
+  void _onSubscribeToPositionUpdates(
+    SubscribeToPositionUpdates event,
+    Emitter<PositionState> emit,
+  ) async {
+    emit(PositionInitialized(state.copyWith(
+      isRunning: await BackgroundLocator.isServiceRunning(),
+    )));
+
+    await emit.forEach(
+      port.asBroadcastStream(),
+      onData: (data) {
+        return PositionUpdated(
+          state,
+          data != null ? LocationDto.fromJson(data) : null,
+        );
       },
     );
-    initPlatformState();
   }
 
   Future<void> initPlatformState() async {
     print('Initializing...');
     await BackgroundLocator.initialize();
     print('Initialization done');
-    final _isRunning = await BackgroundLocator.isServiceRunning();
-    isRunning = _isRunning;
-    print('Running ${isRunning.toString()}');
   }
 
   Future<void> _startLocator(Map<String, dynamic> data) async {
@@ -65,7 +75,7 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
       ),
       autoStop: false,
       androidSettings: const AndroidSettings(
-        accuracy: LocationAccuracy.NAVIGATION,
+        accuracy: LocationAccuracy.HIGH,
         interval: 1,
         distanceFilter: 0,
         client: LocationClient.google,
@@ -83,32 +93,41 @@ class PositionBloc extends Bloc<PositionEvent, PositionState> {
   }
 
   void _onListenAndSendUserPosition(
-    ListenAndSendUserPosition event,
+    EnableSendPosition event,
     Emitter<PositionState> emit,
   ) async {
+    emit(PositionLoading(state));
+
     Map<String, dynamic> data = {
       'accessToken': event.session.token,
       'host': event.session.host,
       'eventId': event.eventId,
     };
 
-    print('ListenAndSendUserPosition');
-
     await _startLocator(data);
-    final _isRunning = await BackgroundLocator.isServiceRunning();
 
-    isRunning = _isRunning;
-    lastLocation = null;
+    final running = await BackgroundLocator.isServiceRunning();
+
+    emit(PositionStarted(state.copyWith(
+      isRunning: running,
+      status: running ? PositionStatus.success : PositionStatus.error,
+    )));
   }
 
   void _onDisableSendPositions(
     DisableSendPositions event,
     Emitter<PositionState> emit,
   ) async {
-    print('DisableSendPositions');
+    emit(PositionLoading(state));
+
     await BackgroundLocator.unRegisterLocationUpdate();
 
-    isRunning = await BackgroundLocator.isServiceRunning();
+    final running = await BackgroundLocator.isServiceRunning();
+
+    emit(PositionStopped(state.copyWith(
+      isRunning: running,
+      status: running ? PositionStatus.error : PositionStatus.success,
+    )));
   }
 }
 

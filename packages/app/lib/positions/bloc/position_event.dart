@@ -5,11 +5,11 @@ import '../../auth/types/auth_session.dart';
 @immutable
 abstract class PositionEvent {}
 
-class ListenAndSendUserPosition extends PositionEvent {
+class EnableSendPosition extends PositionEvent {
   final int eventId;
   final AuthSession session;
 
-  ListenAndSendUserPosition({
+  EnableSendPosition({
     required this.eventId,
     required this.session,
   });
@@ -17,4 +17,8 @@ class ListenAndSendUserPosition extends PositionEvent {
 
 class DisableSendPositions extends PositionEvent {
   DisableSendPositions();
+}
+
+class SubscribeToPositionUpdates extends PositionEvent {
+  SubscribeToPositionUpdates();
 }

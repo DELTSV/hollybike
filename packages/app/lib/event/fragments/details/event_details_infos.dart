@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:background_locator_2/location_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
@@ -9,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../positions/bloc/position_event.dart';
+import '../../../positions/bloc/position_state.dart';
 import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
@@ -18,7 +20,7 @@ import '../../widgets/details/event_join_button.dart';
 import '../../widgets/details/event_participations_preview.dart';
 import '../../widgets/details/event_warning_feed.dart';
 
-class EventDetailsInfos extends StatefulWidget {
+class EventDetailsInfos extends StatelessWidget {
   final EventDetails eventDetails;
   final void Function() onViewOnMap;
 
@@ -28,139 +30,91 @@ class EventDetailsInfos extends StatefulWidget {
     required this.onViewOnMap,
   });
 
-  @override
-  State<EventDetailsInfos> createState() => _EventDetailsInfosState();
-}
+  Widget _buildPosition(LocationDto? location) {
+    if (location == null) {
+      return const Text('No location');
+    }
 
-class _EventDetailsInfosState extends State<EventDetailsInfos> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    final str = 'Lat: ${location.latitude}, Lng: ${location.longitude}';
+    return Text(str);
   }
 
   @override
   Widget build(BuildContext context) {
-    // final start = SizedBox(
-    //   width: double.maxFinite,
-    //   child: ElevatedButton(
-    //     child: Text('Start'),
-    //     onPressed: () {
-    //       _onStart();
-    //     },
-    //   ),
-    // );
-    // final stop = SizedBox(
-    //   width: double.maxFinite,
-    //   child: ElevatedButton(
-    //     child: Text('Stop'),
-    //     onPressed: () {
-    //       onStop();
-    //     },
-    //   ),
-    // );
-    // String msgStatus = "-";
-    // if (isRunning) {
-    //   msgStatus = 'Is running';
-    // } else {
-    //   msgStatus = 'Is not running';
-    // }
-    // final status = Text("Status: $msgStatus");
-    //
-    // final log = Text(
-    //   logStr,
-    // );
-    //
-    // return MaterialApp(
-    //   home: Scaffold(
-    //     appBar: AppBar(
-    //       title: const Text('Flutter background Locator'),
-    //     ),
-    //     body: Container(
-    //       width: double.maxFinite,
-    //       padding: const EdgeInsets.all(22),
-    //       child: SingleChildScrollView(
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.center,
-    //           children: <Widget>[start, stop, status, log],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
-
-    final event = widget.eventDetails.event;
-    final previewParticipants = widget.eventDetails.previewParticipants;
+    final event = eventDetails.event;
+    final previewParticipants = eventDetails.previewParticipants;
     final previewParticipantsCount =
-        widget.eventDetails.previewParticipantsCount;
+        eventDetails.previewParticipantsCount;
 
     return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_infos_${event.id}',
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            EventWarningFeed(event: event),
-            ElevatedButton(
-              onPressed: () => _onStart(),
-              child: const Text('Position'),
-            ),
-            ElevatedButton(
-              onPressed: () => _cancelPostions(context),
-              child: const Text('Cancel'),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: BlocBuilder<PositionBloc, PositionState>(
+          builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                EventParticipationsPreview(
-                  event: event,
-                  previewParticipants: previewParticipants,
-                  previewParticipantsCount: previewParticipantsCount,
-                  onTap: () {
-                    Timer(const Duration(milliseconds: 100), () {
-                      context.router.push(
-                        EventParticipationsRoute(
-                          eventDetails: widget.eventDetails,
-                          participationPreview: previewParticipants,
-                        ),
-                      );
-                    });
-                  },
+                EventWarningFeed(event: event),
+                _buildPosition(state.lastLocation),
+                Text('Is running: ${state.isRunning}'),
+                ElevatedButton(
+                  onPressed: () => _onStart(context),
+                  child: const Text('Position'),
                 ),
-                EventJoinButton(
-                  isJoined: widget.eventDetails.isParticipating,
-                  canJoin: widget.eventDetails.canJoin,
-                  onJoin: _onJoin,
+                ElevatedButton(
+                  onPressed: () => _cancelPostions(context),
+                  child: const Text('Cancel'),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    EventParticipationsPreview(
+                      event: event,
+                      previewParticipants: previewParticipants,
+                      previewParticipantsCount: previewParticipantsCount,
+                      onTap: () {
+                        Timer(const Duration(milliseconds: 100), () {
+                          context.router.push(
+                            EventParticipationsRoute(
+                              eventDetails: eventDetails,
+                              participationPreview: previewParticipants,
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                    EventJoinButton(
+                      isJoined: eventDetails.isParticipating,
+                      canJoin: eventDetails.canJoin,
+                      onJoin: _onJoin,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                JourneyPreviewCard(
+                  canAddJourney: eventDetails.canEditJourney,
+                  journey: eventDetails.journey,
+                  eventDetails: eventDetails,
+                  onViewOnMap: onViewOnMap,
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
-            JourneyPreviewCard(
-              canAddJourney: widget.eventDetails.canEditJourney,
-              journey: widget.eventDetails.journey,
-              eventDetails: widget.eventDetails,
-              onViewOnMap: widget.onViewOnMap,
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 
-  void _onStart() async {
-    if (await _checkLocationPermission()) {
+  void _onStart(BuildContext context) async {
+    if (await _checkLocationPermission() && context.mounted) {
       withCurrentSession(context, (session) {
         context.read<PositionBloc>().add(
-              ListenAndSendUserPosition(
-                session: session,
-                eventId: widget.eventDetails.event.id,
-              ),
-            );
+          EnableSendPosition(
+            session: session,
+            eventId: eventDetails.event.id,
+          ),
+        );
       });
     }
   }
@@ -174,20 +128,20 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
 
   void _cancelPostions(BuildContext context) {
     context.read<PositionBloc>().add(
-          DisableSendPositions(),
-        );
+      DisableSendPositions(),
+    );
   }
 
   void _onJoin(BuildContext context) {
     withCurrentSession(
       context,
-      (session) {
+          (session) {
         context.read<EventDetailsBloc>().add(
-              JoinEvent(
-                eventId: widget.eventDetails.event.id,
-                session: session,
-              ),
-            );
+          JoinEvent(
+            eventId: eventDetails.event.id,
+            session: session,
+          ),
+        );
       },
     );
   }
