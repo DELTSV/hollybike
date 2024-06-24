@@ -4,6 +4,7 @@ import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 import '../../../auth/types/auth_session.dart';
+import '../../../shared/http/annotation/session_related.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
