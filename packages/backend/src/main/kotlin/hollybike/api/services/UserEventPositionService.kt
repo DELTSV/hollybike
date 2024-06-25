@@ -72,7 +72,7 @@ class UserEventPositionService(
 						this.user = user
 						this.event = event
 						this.latitude = message.latitude
-						this.longitude = message.latitude
+						this.longitude = message.longitude
 						this.altitude = message.altitude
 						this.time = message.time
 						this.speed = message.speed
