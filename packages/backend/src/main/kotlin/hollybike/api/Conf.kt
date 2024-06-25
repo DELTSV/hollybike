@@ -3,7 +3,6 @@ package hollybike.api
 import io.ktor.util.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
 import java.io.File
 
 val confKey = AttributeKey<Conf>("hollybikeConf")
@@ -82,10 +81,6 @@ fun parseConf(): Conf? {
 			null
 		}
 	}
-}
-
-private val json = Json {
-	ignoreUnknownKeys = true
 }
 
 private fun parseFileConf(f: File): Conf = json.decodeFromString(f.readText())

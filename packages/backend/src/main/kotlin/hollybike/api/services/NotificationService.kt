@@ -1,5 +1,6 @@
 package hollybike.api.services
 
+import hollybike.api.json
 import hollybike.api.repository.Notification
 import hollybike.api.repository.Notifications
 import hollybike.api.repository.User
@@ -10,9 +11,8 @@ import hollybike.api.types.websocket.Body
 import hollybike.api.types.websocket.TNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -21,10 +21,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class NotificationService(
 	private val db: Database
 ) {
-	private val notificationChannels: MutableMap<Int, Channel<TNotification>> = mutableMapOf()
+	private val notificationChannels: MutableMap<Int, MutableSharedFlow<TNotification>> = mutableMapOf()
 
-	fun getUserChannel(userId: Int): Channel<TNotification> = notificationChannels.getOrElse(userId) {
-		val new = Channel<TNotification>(Channel.BUFFERED)
+	fun getUserChannel(userId: Int): MutableSharedFlow<TNotification> = notificationChannels.getOrElse(userId) {
+		val new = MutableSharedFlow<TNotification>(15, 15)
 		notificationChannels[userId] = new
 		return new
 	}
@@ -33,10 +33,10 @@ class NotificationService(
 		val n = transaction(db) {
 			Notification.new {
 				this.user = user
-				this.data = Json.encodeToString(notification)
+				this.data = json.encodeToString(notification)
 			}
 		}
-		getUserChannel(user.id.value).send(TNotification(notification, user.id.value, n.id.value))
+		getUserChannel(user.id.value).emit(TNotification(notification, user.id.value, n.id.value))
 	}
 
 	suspend fun send(users: List<User>, notification: Body) {

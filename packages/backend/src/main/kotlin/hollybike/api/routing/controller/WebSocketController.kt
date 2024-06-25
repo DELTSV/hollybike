@@ -2,48 +2,69 @@ package hollybike.api.routing.controller
 
 import hollybike.api.repository.User
 import hollybike.api.services.NotificationService
-import hollybike.api.types.websocket.Subscribe
-import hollybike.api.types.websocket.Subscribed
+import hollybike.api.services.UserEventPositionService
+import hollybike.api.types.websocket.*
 import hollybike.api.utils.websocket.AuthVerifier
 import hollybike.api.utils.websocket.WebSocketRouter
 import hollybike.api.utils.websocket.webSocket
 import io.ktor.server.application.*
-import org.jetbrains.exposed.sql.Database
 
 class WebSocketController(
 	application: Application,
-	private val db: Database,
 	private val authVerifier: AuthVerifier,
-	private val notificationService: NotificationService
+	private val notificationService: NotificationService,
+	private val userEventPositionService: UserEventPositionService
 ) {
 	init {
 		application.apply {
-			webSocket("/api/connect", db) {
+			webSocket("/api/connect") {
+				this.authVerifier = this@WebSocketController.authVerifier
+				this.logger = application.log
 				routing {
 					notification()
+					userEventPosition()
 				}
 			}
 		}
 	}
 
 	private fun WebSocketRouter.notification() {
+		var user: User?
 		request("/notification") {
-			var user: User? = null
+			onSubscribe {
+				user = it
+				notificationService.getUserChannel(it.id.value).collect { notif ->
+					if(user == null) {
+						return@collect
+					}
+					respond(notif.data)
+				}
+			}
+			onUnsubscribe {
+				user = null
+			}
+		}
+	}
+
+	private fun WebSocketRouter.userEventPosition() {
+		var user: User? = null
+		request("/event/{id}") {
+			onSubscribe {
+				user = it
+				userEventPositionService.getSendChannel(parameters["id"]!!.toInt()).collect { position ->
+					respond(position)
+				}
+			}
+			onUnsubscribe {
+				user = null
+			}
 			when(this.body) {
-				is Subscribe -> {
-					user = authVerifier.verify(this.body.token)
+				is UserSendPosition -> {
 					user?.let {
-						respond(Subscribed(true))
-						for( notif in notificationService.getUserChannel(it.id.value)) {
-							respond(notif.data)
-						}
-					} ?: run {
-						respond(Subscribed(false))
+						userEventPositionService.getReceiveChannel(parameters["id"]!!.toInt(), it.id.value).send(this.body)
 					}
 				}
-				else -> {
-					println("Unknown data")
-				}
+				else -> {}
 			}
 		}
 	}

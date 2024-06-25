@@ -1,30 +1,35 @@
 package hollybike.api.utils.websocket
 
-import hollybike.api.types.websocket.Body
-import hollybike.api.types.websocket.Message
+import hollybike.api.json
+import hollybike.api.repository.User
+import hollybike.api.types.websocket.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
+import io.ktor.util.logging.*
 import io.ktor.websocket.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.serialization.encodeToString
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.Database
 
 class WebSocketCall(
 	var parameters: Parameters,
 	val path: String,
 	val body: Body?,
-	private val session: DefaultWebSocketServerSession
+	private val session: DefaultWebSocketServerSession,
+	private val authVerifier: AuthVerifier
 ) {
 
-	constructor(message: Message, session: DefaultWebSocketServerSession) : this(
+	constructor(message: Message, session: DefaultWebSocketServerSession, authVerifier: AuthVerifier) : this(
 		Parameters.Empty,
 		message.channel,
 		message.data,
-		session
+		session,
+		authVerifier
 	)
 
 	suspend fun respond(data: Body) {
@@ -34,14 +39,33 @@ class WebSocketCall(
 	suspend fun respondText(data: String) {
 		session.send(data)
 	}
+
+	suspend fun onSubscribe(call: suspend WebSocketCall.(user: User) -> Unit) {
+		if(body is Subscribe) {
+			authVerifier.verify(this.body.token)?.apply {
+				respond(Subscribed(true))
+				call(this)
+			} ?: run {
+				respond(Subscribed(false))
+				null
+			}
+		}
+	}
+
+	suspend fun onUnsubscribe(call: suspend WebSocketCall.() -> Unit = {}) {
+		if(body is Unsubscribe) {
+			respond(Unsubscribed(false))
+			call()
+		}
+	}
 }
 
 typealias RouteElement = MutableMap<PathElement, WebSocketRoute>
 
-class WebSocketRouter {
-	private val json = Json {
-		ignoreUnknownKeys = true
-	}
+class WebSocketRouter(
+	private val authVerifier: AuthVerifier,
+	private val logger: Logger
+) {
 
 	private val routes: RouteElement = mutableMapOf()
 
@@ -76,25 +100,34 @@ class WebSocketRouter {
 			try {
 				for (frame in incoming) {
 					val text = (frame as Frame.Text).readText()
-					val message = json.decodeFromString<Message>(text)
+					val message = try {
+						json.decodeFromString<Message>(text)
+					} catch (e: SerializationException) {
+						logger.error(e)
+						null
+					}
+					if(message == null) {
+						sendSerialized(Message(Error("Message '$text' invalide."), "/errors"))
+						continue
+					}
 					val path = message.channel.split("/").filter { it.isNotBlank() }.map { it.toPathElement() }
-					val call = WebSocketCall(message, this)
+					val call = WebSocketCall(message, this, authVerifier)
 					var handled = false
 					routes.match(path.firstOrNull() ?: PathFragment("")).forEach { (_ , route) ->
-						if(route?.execute(path.drop(1), call) == true) {
+						if(route?.execute(path.drop(1), call, this) == true) {
 							handled = true
 							return@forEach
 						}
 					}
 					if(!handled) {
-						println("Not found")
+						sendSerialized(Message(Error("Channel non trouvé"), message.channel))
+						logger.warn("404 - NotFound ${message.channel}")
 					}
 				}
 			} catch (e: ClosedReceiveChannelException) {
-				println("Disconnect")
+				logger.info("Client disconnected: ${e.message}")
 			} catch (e: Throwable) {
-				e.printStackTrace()
-				println("Error")
+				logger.error(e)
 			}
 		}
 	}
@@ -131,9 +164,14 @@ class WebSocketRoute {
 		}
 	}
 
-	suspend fun execute(path: List<PathElement>, call: WebSocketCall): Boolean {
+	suspend fun execute(path: List<PathElement>, call: WebSocketCall, coroutineScope: CoroutineScope): Boolean {
 		if (path.isEmpty()) {
-			return body?.let { call.it(); true } ?: false
+			return body?.let {
+				coroutineScope.launch {
+					call.it()
+				}
+				true
+			} ?: false
 		} else {
 			routes.match(path.first()).forEach { (key , route) ->
 				val prevParam = call.parameters
@@ -143,7 +181,7 @@ class WebSocketRoute {
 						this.append(key.element, path.first().element)
 					}
 				}
-				if(route?.execute(path.drop(1), call) == true) {
+				if(route?.execute(path.drop(1), call, coroutineScope) == true) {
 					return true
 				}
 				call.parameters = prevParam
@@ -152,9 +190,6 @@ class WebSocketRoute {
 		}
 	}
 }
-
-fun DefaultWebSocketServerSession.routing(body: WebSocketRouter.() -> Unit): WebSocketRouter =
-	WebSocketRouter().apply(body)
 
 private fun String.toPathElement(): PathElement {
 	return if (startsWith("{") && endsWith("}")) {
@@ -172,8 +207,12 @@ private fun RouteElement.match(key: PathElement): List<Pair<PathElement, WebSock
 class WebSocketConfig {
 	private lateinit var router: WebSocketRouter
 
+	lateinit var authVerifier: AuthVerifier
+
+	lateinit var logger: Logger
+
 	fun routing(body: WebSocketRouter.() -> Unit) {
-		router = WebSocketRouter().apply(body)
+		router = WebSocketRouter(authVerifier, logger).apply(body)
 	}
 
 	suspend fun build(serverSession: DefaultWebSocketServerSession) {
@@ -181,7 +220,7 @@ class WebSocketConfig {
 	}
 }
 
-fun Application.webSocket(route: String, db: Database, body: WebSocketConfig.() -> Unit) {
+fun Application.webSocket(route: String, body: WebSocketConfig.() -> Unit) {
 	install(WebSockets) {
 		contentConverter = KotlinxWebsocketSerializationConverter(Json)
 	}

@@ -18,8 +18,13 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.resources.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.slf4j.event.Level
+
+val json = Json {
+	ignoreUnknownKeys = true
+}
 
 fun Application.api(storageService: StorageService, db: Database) {
 	val conf = attributes.conf
@@ -44,6 +49,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
 	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
 	val profileService = ProfileService(db)
+	val userEventPositionService = UserEventPositionService(db, CoroutineScope(Dispatchers.Default))
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
@@ -54,12 +60,12 @@ fun Application.api(storageService: StorageService, db: Database) {
 	UserController(this, userService, storageService)
 	AssociationController(this, associationService, invitationService, authService)
 	InvitationController(this, authService, invitationService, mailSender)
-	EventController(this, eventService, eventParticipationService, associationService)
+	EventController(this, eventService, eventParticipationService, associationService, userService, userEventPositionService)
 	EventParticipationController(this, eventParticipationService)
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
 	ProfileController(this, profileService)
-	WebSocketController(this, db, authVerifier, notificationService)
+	WebSocketController(this, authVerifier, notificationService, userEventPositionService)
 	NotificationController(this, notificationService)
 
 	if (isOnPremise) {
