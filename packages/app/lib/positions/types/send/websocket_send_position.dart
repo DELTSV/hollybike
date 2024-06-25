@@ -13,6 +13,10 @@ class WebsocketSendPosition with _$WebsocketSendPosition implements WebsocketBod
     required double latitude,
     required double longitude,
     required double altitude,
+    required double heading,
+    @JsonKey(name: "acceleration_x") required double accelerationX,
+    @JsonKey(name: "acceleration_y") required double accelerationY,
+    @JsonKey(name: "acceleration_z") required double accelerationZ,
     required DateTime time,
     required double speed,
   }) = _WebsocketSendPosition;
