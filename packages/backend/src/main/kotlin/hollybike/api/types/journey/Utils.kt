@@ -163,7 +163,7 @@ val GeoJson.totalDistance: Double
 }
 
 
-private fun calculateDistance(coords: List<GeoJsonCoordinates>): Double {
+fun calculateDistance(coords: List<GeoJsonCoordinates>): Double {
 	if (coords.size < 2) return 0.0
 	var totalDistance = 0.0
 	for (i in 0 until coords.size - 1) {

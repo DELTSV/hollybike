@@ -3,10 +3,7 @@ package hollybike.api.services
 import hollybike.api.json
 import hollybike.api.repository.*
 import hollybike.api.services.storage.StorageService
-import hollybike.api.types.journey.Feature
-import hollybike.api.types.journey.GeoJson
-import hollybike.api.types.journey.GeoJsonCoordinates
-import hollybike.api.types.journey.LineString
+import hollybike.api.types.journey.*
 import hollybike.api.types.websocket.UserReceivePosition
 import hollybike.api.types.websocket.UserSendPosition
 import kotlinx.coroutines.CoroutineScope
@@ -161,7 +158,7 @@ class UserEventPositionService(
 				this.avgSpeed = avgSpeed
 				this.totalElevationGain = elevationGain
 				this.totalElevationLoss = elevationLoss
-				this.totalDistance = 0.0
+				this.totalDistance = calculateDistance(coord)
 				this.minElevation = minElevation
 				this.maxElevation = maxElevation
 				this.totalTime = totalTime
