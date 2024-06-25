@@ -42,9 +42,10 @@ class JourneyPreviewCard extends StatelessWidget {
           return SizedBox(
             height: 140,
             child: _buildJourneyPreview(
-                context,
-                state is EventJourneyGetPositionsInProgress,
-                state is EventJourneyOperationInProgress),
+              context,
+              state is EventJourneyGetPositionsInProgress,
+              state is EventJourneyOperationInProgress,
+            ),
           );
         },
       ),

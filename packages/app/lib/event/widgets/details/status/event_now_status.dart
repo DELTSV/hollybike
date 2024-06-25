@@ -32,7 +32,7 @@ class EventNowStatus extends StatelessWidget {
       );
     }
 
-    if (eventDetails.isParticipating) {
+    if (eventDetails.isParticipating && eventDetails.journey != null) {
       return EventDetailsStatus(
         loading: isLoading,
         status: EventStatusState.now,

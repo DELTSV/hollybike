@@ -41,7 +41,7 @@ class EventDetails with _$EventDetails {
 
   bool get canEditJourney {
     return isOrganizer &&
-        (event.status == EventStatusState.scheduled ||
-            event.status == EventStatusState.pending);
+        (event.status != EventStatusState.finished &&
+            event.status != EventStatusState.canceled);
   }
 }
