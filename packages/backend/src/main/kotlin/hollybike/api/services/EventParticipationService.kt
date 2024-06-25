@@ -146,7 +146,7 @@ class EventParticipationService(
 					user = caller
 					this.event = Event[eventId]
 					role = EEventRole.Member
-				}
+				}.load(EventParticipation::user, EventParticipation::journey)
 			)
 		}
 	}
