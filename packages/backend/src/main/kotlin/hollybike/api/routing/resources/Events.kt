@@ -63,6 +63,9 @@ class Events(val api: API = API()) {
 
 				@Resource("demote")
 				class Demote(val demote: User)
+
+				@Resource("journey")
+				class Journey(val user: User)
 			}
 		}
 

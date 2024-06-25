@@ -104,7 +104,6 @@ class AuthService(
 		}
 		val refresh = randomString(35)
 		val device = login.device ?: UUID.randomUUID().toString()
-		println(device)
 		transaction(db) {
 			Token.find { (Tokens.user eq user.id) and (Tokens.device eq device) }.firstOrNull()?.apply { token = refresh }
 				?: Token.new {

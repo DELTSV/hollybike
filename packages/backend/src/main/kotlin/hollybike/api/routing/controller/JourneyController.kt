@@ -2,6 +2,7 @@ package hollybike.api.routing.controller
 
 import hollybike.api.exceptions.AssociationNotFound
 import hollybike.api.exceptions.NotAllowedException
+import hollybike.api.json
 import hollybike.api.plugins.user
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.journeysMapper
@@ -33,7 +34,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.datetime.Clock
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
@@ -115,10 +115,6 @@ class JourneyController(
 					emptyList()
 				}
 		}
-	}
-
-	private val json = Json {
-		ignoreUnknownKeys = true
 	}
 
 	private fun Route.getAll() {

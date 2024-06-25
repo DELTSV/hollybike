@@ -10,7 +10,8 @@ data class UserSendPosition(
 	val latitude: Double,
 	val longitude: Double,
 	val altitude: Double,
-	val time: Instant
+	val time: Instant,
+	val speed: Double
 ): Body
 
 @Serializable
@@ -20,5 +21,6 @@ data class UserReceivePosition(
 	val longitude: Double,
 	val altitude: Double,
 	val time: Instant,
+	val speed: Double,
 	val user: Int
 ): Body

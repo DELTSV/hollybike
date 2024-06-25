@@ -13,6 +13,7 @@ object UsersEventsPositions: IntIdTable("users_events_positions", "id_user_event
 	val longitude = double("longitude")
 	val altitude = double("altitude")
 	val time = timestamp("time")
+	val speed = double("speed")
 }
 
 class UserEventPosition(id: EntityID<Int>) : IntEntity(id) {
@@ -22,6 +23,7 @@ class UserEventPosition(id: EntityID<Int>) : IntEntity(id) {
 	var longitude by UsersEventsPositions.longitude
 	var altitude by UsersEventsPositions.altitude
 	var time by UsersEventsPositions.time
+	var speed by UsersEventsPositions.speed
 
 	companion object : IntEntityClass<UserEventPosition>(UsersEventsPositions)
 }

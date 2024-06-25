@@ -6,9 +6,7 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
-import hollybike.api.services.AssociationService
-import hollybike.api.services.EventParticipationService
-import hollybike.api.services.EventService
+import hollybike.api.services.*
 import hollybike.api.types.event.*
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
@@ -34,7 +32,9 @@ class EventController(
 	application: Application,
 	private val eventService: EventService,
 	private val eventParticipationService: EventParticipationService,
-	private val associationService: AssociationService
+	private val associationService: AssociationService,
+	private val userService: UserService,
+	private val userEventPositionService: UserEventPositionService
 ) {
 	private val mapper = eventMapper + associationMapper + userMapper
 
@@ -57,6 +57,7 @@ class EventController(
 				finishEvent()
 				pendEvent()
 				getMetaData()
+				getParticipantJourney()
 			}
 		}
 	}
@@ -281,6 +282,25 @@ class EventController(
 	private fun Route.getMetaData() {
 		get<Events.MetaData>(EUserScope.Admin) {
 			call.respond(mapper.getMapperData())
+		}
+	}
+
+	private fun Route.getParticipantJourney() {
+		get<Events.Id.Participations.User.Journey> {
+			val event = eventService.getEvent(call.user, it.user.user.eventId.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
+				return@get
+			}
+			val user = userService.getUser(call.user, it.user.userId) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+				return@get
+			}
+			val journey = eventService.getUserJourney(event.id.value, user.id.value) ?: run {
+				val geojson = userEventPositionService.retrieveUserJourney(user, event)
+				eventService.uploadUserJourney(geojson, event.id.value, user.id.value)
+				geojson
+			}
+			call.respond(journey)
 		}
 	}
 }

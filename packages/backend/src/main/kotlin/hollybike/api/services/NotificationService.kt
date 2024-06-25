@@ -1,5 +1,6 @@
 package hollybike.api.services
 
+import hollybike.api.json
 import hollybike.api.repository.Notification
 import hollybike.api.repository.Notifications
 import hollybike.api.repository.User
@@ -12,7 +13,6 @@ import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -33,7 +33,7 @@ class NotificationService(
 		val n = transaction(db) {
 			Notification.new {
 				this.user = user
-				this.data = Json.encodeToString(notification)
+				this.data = json.encodeToString(notification)
 			}
 		}
 		getUserChannel(user.id.value).emit(TNotification(notification, user.id.value, n.id.value))

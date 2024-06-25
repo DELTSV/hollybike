@@ -1,16 +1,22 @@
 package hollybike.api.services
 
-import hollybike.api.repository.Event
-import hollybike.api.repository.User
-import hollybike.api.repository.UserEventPosition
+import hollybike.api.repository.*
+import hollybike.api.types.journey.Feature
+import hollybike.api.types.journey.GeoJson
+import hollybike.api.types.journey.GeoJsonCoordinates
+import hollybike.api.types.journey.LineString
 import hollybike.api.types.websocket.UserReceivePosition
 import hollybike.api.types.websocket.UserSendPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserEventPositionService(
@@ -34,6 +40,7 @@ class UserEventPositionService(
 				position.longitude,
 				position.altitude,
 				position.time,
+				position.speed,
 				position.user.id.value
 			)
 		)
@@ -63,10 +70,34 @@ class UserEventPositionService(
 						this.longitude = message.latitude
 						this.altitude = message.altitude
 						this.time = message.time
+						this.speed = message.speed
 					}
 				}.load(UserEventPosition::user)
 			}
 			send(eventId, entity)
 		}
+	}
+
+	fun retrieveUserJourney(user: User, event: Event): GeoJson {
+		val coord = mutableListOf<GeoJsonCoordinates>()
+		val times = mutableListOf<JsonPrimitive>()
+		val speed = mutableListOf<JsonPrimitive>()
+		transaction(db) {
+			UserEventPosition.find { (UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id) }.forEach { pos ->
+				coord.add(listOf(pos.latitude, pos.longitude, pos.altitude))
+				times.add(JsonPrimitive(pos.time.toString()))
+				speed.add(JsonPrimitive(pos.speed))
+				pos.delete()
+			}
+		}
+		return Feature(
+			geometry = LineString(coord),
+			properties = JsonObject(
+				mapOf(
+					"coordTimes" to JsonArray(times),
+					"speed" to JsonArray(speed)
+				)
+			)
+		)
 	}
 }

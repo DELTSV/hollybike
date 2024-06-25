@@ -1,7 +1,7 @@
 package hollybike.api.types.journey
 
+import hollybike.api.json
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import java.net.URLEncoder
@@ -104,6 +104,7 @@ class Simplifier(pts: List<Pair<Double, Double>>) {
 	}
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun simplifyCoordinates(coordinates: List<GeoJsonCoordinates>, number: Int, closed: Boolean = false): List<GeoJsonCoordinates> {
 	val simplifier = Simplifier(coordinates.map { it[0] to it[1] })
 	val simplified = simplifier.simplify(number = number).map { listOf(it.first, it.second) }
@@ -152,7 +153,7 @@ fun GeoJson.simplifyToUrlSafe(maxCharCount: Int = 7000): GeoJson {
 }
 
 fun GeoJson.toJson(): String {
-	return Json.encodeToString(this)
+	return json.encodeToString(this)
 }
 
 fun GeoJson.encodeUrl(): String {

@@ -1,5 +1,6 @@
 package hollybike.api.utils.websocket
 
+import hollybike.api.json
 import hollybike.api.repository.User
 import hollybike.api.types.websocket.*
 import io.ktor.http.*
@@ -65,9 +66,6 @@ class WebSocketRouter(
 	private val authVerifier: AuthVerifier,
 	private val logger: Logger
 ) {
-	private val json = Json {
-		ignoreUnknownKeys = true
-	}
 
 	private val routes: RouteElement = mutableMapOf()
 

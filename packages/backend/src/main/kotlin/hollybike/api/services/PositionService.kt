@@ -24,9 +24,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
-
-
 class PositionService(
 	private val db: Database,
 	private val scope: CoroutineScope
