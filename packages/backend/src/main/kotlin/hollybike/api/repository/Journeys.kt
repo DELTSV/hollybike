@@ -13,7 +13,7 @@ object Journeys: IntIdTable("journeys", "id_journey") {
 	val file = varchar("file", 2_048).nullable().default(null)
 	val previewImage = varchar("preview_image", 2_048).nullable().default(null)
 	val name = varchar("name", 1_000)
-	val createdAt = timestamp("created_at").default(Clock.System.now())
+	val createdAt = timestamp("created_at")
 	val creator = reference("creator", Users)
 	val association = reference("association", Associations)
 	val start = reference("start", Positions).nullable().default(null)
