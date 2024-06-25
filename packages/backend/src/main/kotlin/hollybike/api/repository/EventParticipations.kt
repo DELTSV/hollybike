@@ -1,7 +1,5 @@
 package hollybike.api.repository
 
-import hollybike.api.repository.Invitation.Companion.optionalReferrersOn
-import hollybike.api.repository.Invitation.Companion.referrersOn
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock

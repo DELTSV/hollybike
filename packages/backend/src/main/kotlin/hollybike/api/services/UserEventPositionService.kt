@@ -9,7 +9,6 @@ import hollybike.api.types.journey.GeoJsonCoordinates
 import hollybike.api.types.journey.LineString
 import hollybike.api.types.websocket.UserReceivePosition
 import hollybike.api.types.websocket.UserSendPosition
-import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +18,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.double
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and

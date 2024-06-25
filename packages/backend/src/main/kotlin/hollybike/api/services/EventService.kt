@@ -3,14 +3,12 @@ package hollybike.api.services
 import hollybike.api.database.addtime
 import hollybike.api.database.now
 import hollybike.api.exceptions.*
-import hollybike.api.json
 import hollybike.api.repository.*
 import hollybike.api.repository.Event
 import hollybike.api.repository.EventParticipation
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.types.event.EEventStatus
-import hollybike.api.types.journey.GeoJson
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.websocket.NewEventNotification
 import hollybike.api.utils.search.SearchParam
@@ -18,11 +16,9 @@ import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.serialization.encodeToString
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
