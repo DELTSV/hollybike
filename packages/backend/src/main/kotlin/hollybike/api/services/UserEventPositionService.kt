@@ -27,7 +27,7 @@ class UserEventPositionService(
 
 	private val sendChannels: MutableMap<Int, MutableSharedFlow<UserReceivePosition>> = mutableMapOf()
 
-	private val lastPosition: MutableMap<Int, MutableMap<Int, UserEventPosition>> = mutableMapOf()
+	val lastPosition: MutableMap<Int, MutableMap<Int, UserEventPosition>> = mutableMapOf()
 
 	fun getSendChannel(eventId: Int): MutableSharedFlow<UserReceivePosition> {
 		return sendChannels[eventId] ?: run {
@@ -105,11 +105,5 @@ class UserEventPositionService(
 				)
 			)
 		)
-	}
-
-	suspend fun sendLastPosition(eventId: Int) {
-		lastPosition[eventId]?.forEach {
-			send(eventId, it.value)
-		}
 	}
 }
