@@ -27,6 +27,8 @@ class UserEventPositionService(
 
 	private val sendChannels: MutableMap<Int, MutableSharedFlow<UserReceivePosition>> = mutableMapOf()
 
+	val lastPosition: MutableMap<Int, MutableMap<Int, UserEventPosition>> = mutableMapOf()
+
 	fun getSendChannel(eventId: Int): MutableSharedFlow<UserReceivePosition> {
 		return sendChannels[eventId] ?: run {
 			MutableSharedFlow<UserReceivePosition>(15, 15).apply { sendChannels[eventId] = this }
@@ -48,6 +50,9 @@ class UserEventPositionService(
 
 	suspend fun getReceiveChannel(eventId: Int, userId: Int): Channel<UserSendPosition> {
 		return receiveChannels[eventId to userId] ?: run {
+			lastPosition[eventId] ?: run {
+				lastPosition[eventId] = mutableMapOf()
+			}
 			Channel<UserSendPosition>(Channel.BUFFERED).apply {
 				scope.launch {
 					listenChannel(eventId, userId)
@@ -74,6 +79,7 @@ class UserEventPositionService(
 					}
 				}.load(UserEventPosition::user)
 			}
+			lastPosition[eventId]!![userId] = entity
 			send(eventId, entity)
 		}
 	}

@@ -1,5 +1,6 @@
 package hollybike.api.types.websocket
 
+import hollybike.api.repository.UserEventPosition
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -23,4 +24,13 @@ data class UserReceivePosition(
 	val time: Instant,
 	val speed: Double,
 	val user: Int
-): Body
+): Body {
+	constructor(data: UserEventPosition): this(
+		data.latitude,
+		data.longitude,
+		data.altitude,
+		data.time,
+		data.speed,
+		data.user.id.value
+	)
+}

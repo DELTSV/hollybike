@@ -51,6 +51,9 @@ class WebSocketController(
 		request("/event/{id}") {
 			onSubscribe {
 				user = it
+				userEventPositionService.lastPosition[parameters["id"]!!.toInt()]?.forEach { entry ->
+					respond(UserReceivePosition(entry.value))
+				}
 				userEventPositionService.getSendChannel(parameters["id"]!!.toInt()).collect { position ->
 					respond(position)
 				}
