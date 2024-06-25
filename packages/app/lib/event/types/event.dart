@@ -28,6 +28,8 @@ class Event with _$Event {
     String? image,
   }) = _Event;
 
+  get color => getStatusColor(status);
+
   factory Event.fromJson(JsonMap json) => _$EventFromJson(json);
 
   ImageProvider get imageProvider => imageProviderFromDateTimeAndImage(
@@ -47,6 +49,21 @@ class Event with _$Event {
       updatedAt: updatedAt,
       image: image,
     );
+  }
+
+  static Color getStatusColor(EventStatusState status) {
+    switch (status) {
+      case EventStatusState.canceled:
+        return const Color(0xFFE57373);
+      case EventStatusState.pending:
+        return const Color(0xFF64B5F6);
+      case EventStatusState.now:
+        return const Color(0xff94e2d5);
+      case EventStatusState.finished:
+        return const Color(0xFFB0BEC5);
+      case EventStatusState.scheduled:
+        return const Color(0xFF81C784);
+    }
   }
 
   static String placeholderImageFromDateTime(DateTime startDate) {

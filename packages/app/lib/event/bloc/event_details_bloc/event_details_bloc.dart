@@ -97,7 +97,10 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
       await _eventRepository.editEvent(
         event.session,
         event.eventId,
-        event.formData,
+        event.formData.copyWith(
+          startDate: event.formData.startDate.toUtc(),
+          endDate: event.formData.endDate?.toUtc(),
+        ),
       );
 
       emit(EventOperationSuccess(

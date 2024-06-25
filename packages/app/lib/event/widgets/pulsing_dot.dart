@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class PulsingDot extends StatefulWidget {
   final double size;
+  final Color color;
 
-  const PulsingDot({super.key, required this.size});
+  const PulsingDot({
+    super.key,
+    required this.size,
+    required this.color,
+  });
 
   @override
   State<PulsingDot> createState() => _PulsingDotState();
@@ -52,14 +57,16 @@ class _PulsingDotState extends State<PulsingDot>
               width: widget.size * 1.5,
               height: widget.size * 1.5,
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.green.shade300),
+                shape: BoxShape.circle,
+                color: widget.color,
+              ),
             ),
           ),
         ),
         Icon(
           Icons.circle,
           size: widget.size,
-          color: Colors.green,
+          color: widget.color,
         )
       ],
     );

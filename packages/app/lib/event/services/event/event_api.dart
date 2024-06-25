@@ -17,12 +17,18 @@ class EventApi {
     int? userId,
     String? query,
   }) async {
+    var sortDirection = 'asc';
+
+    if (requestType == "archived") {
+      sortDirection = 'desc';
+    }
+
     final response = await DioClient(session).dio.get(
           '/events${requestType == null ? "" : "/$requestType"}',
           queryParameters: {
             'page': page,
             'per_page': eventsPerPage,
-            'sort': 'start_date_time.asc',
+            'sort': 'start_date_time.$sortDirection',
           }
             ..addAll(userId == null ? {} : {"participant_id": "eq:$userId"})
             ..addAll(query == null ? {} : {"query": query}),

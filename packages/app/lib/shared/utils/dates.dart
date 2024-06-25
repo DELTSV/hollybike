@@ -75,3 +75,30 @@ bool checkSameDate(DateTime date1, DateTime date2) {
 String? dateToJson(DateTime? dateTime) => dateTime == null
     ? null
     : DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTime);
+
+
+String formatPastTime(DateTime date) {
+  final now = DateTime.now();
+  final difference = now.difference(date);
+
+  if (difference.inDays > 365) {
+    final years = difference.inDays ~/ 365;
+    return "il y a $years an${years > 1 ? "s" : ""}";
+  } else if (difference.inDays > 30) {
+    final months = difference.inDays ~/ 30;
+    return "il y a $months mois";
+  } else if (difference.inDays > 7) {
+    final weeks = difference.inDays ~/ 7;
+    return "il y a $weeks semaine${weeks > 1 ? "s" : ""}";
+  } else if (difference.inDays > 1) {
+    return "il y a ${difference.inDays} jours";
+  } else if (difference.inHours > 1) {
+    return "il y a ${difference.inHours} heures";
+  } else if (difference.inHours == 1) {
+    return "il y a une heure";
+  } else if (difference.inMinutes > 1) {
+    return "il y a ${difference.inMinutes} minutes";
+  } else {
+    return "il y a ${difference.inSeconds} seconde${difference.inSeconds > 1 ? "s" : ""}";
+  }
+}

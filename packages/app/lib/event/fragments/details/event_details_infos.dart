@@ -13,9 +13,9 @@ import '../../types/event_details.dart';
 import '../../widgets/details/event_details_scroll_wrapper.dart';
 import '../../widgets/details/event_join_button.dart';
 import '../../widgets/details/event_participations_preview.dart';
-import '../../widgets/details/event_warning_feed.dart';
+import '../../widgets/details/status/event_status_feed.dart';
 
-class EventDetailsInfos extends StatelessWidget {
+class EventDetailsInfos extends StatefulWidget {
   final EventDetails eventDetails;
   final void Function() onViewOnMap;
 
@@ -26,53 +26,68 @@ class EventDetailsInfos extends StatelessWidget {
   });
 
   @override
+  State<EventDetailsInfos> createState() => _EventDetailsInfosState();
+}
+
+class _EventDetailsInfosState extends State<EventDetailsInfos> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final event = eventDetails.event;
-    final previewParticipants = eventDetails.previewParticipants;
-    final previewParticipantsCount = eventDetails.previewParticipantsCount;
+    final event = widget.eventDetails.event;
+    final previewParticipants = widget.eventDetails.previewParticipants;
+    final previewParticipantsCount =
+        widget.eventDetails.previewParticipantsCount;
 
     return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_infos_${event.id}',
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            EventWarningFeed(event: event),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EventStatusFeed(eventDetails: widget.eventDetails),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
               children: [
-                EventParticipationsPreview(
-                  event: event,
-                  previewParticipants: previewParticipants,
-                  previewParticipantsCount: previewParticipantsCount,
-                  onTap: () {
-                    Timer(const Duration(milliseconds: 100), () {
-                      context.router.push(
-                        EventParticipationsRoute(
-                          eventDetails: eventDetails,
-                          participationPreview: previewParticipants,
-                        ),
-                      );
-                    });
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    EventParticipationsPreview(
+                      event: event,
+                      previewParticipants: previewParticipants,
+                      previewParticipantsCount: previewParticipantsCount,
+                      onTap: () {
+                        Timer(const Duration(milliseconds: 100), () {
+                          context.router.push(
+                            EventParticipationsRoute(
+                              eventDetails: widget.eventDetails,
+                              participationPreview: previewParticipants,
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                    EventJoinButton(
+                      isJoined: widget.eventDetails.isParticipating,
+                      canJoin: widget.eventDetails.canJoin,
+                      onJoin: _onJoin,
+                    ),
+                  ],
                 ),
-                EventJoinButton(
-                  isJoined: eventDetails.isParticipating,
-                  canJoin: eventDetails.canJoin,
-                  onJoin: _onJoin,
+                const SizedBox(height: 16),
+                JourneyPreviewCard(
+                  canAddJourney: widget.eventDetails.canEditJourney,
+                  journey: widget.eventDetails.journey,
+                  eventDetails: widget.eventDetails,
+                  onViewOnMap: widget.onViewOnMap,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            JourneyPreviewCard(
-              canAddJourney: eventDetails.canEditJourney,
-              journey: eventDetails.journey,
-              eventDetails: eventDetails,
-              onViewOnMap: onViewOnMap,
-            ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
@@ -83,7 +98,7 @@ class EventDetailsInfos extends StatelessWidget {
       (session) {
         context.read<EventDetailsBloc>().add(
               JoinEvent(
-                eventId: eventDetails.event.id,
+                eventId: widget.eventDetails.event.id,
                 session: session,
               ),
             );

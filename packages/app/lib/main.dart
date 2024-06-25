@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app.dart';
@@ -15,12 +17,15 @@ import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
+import 'package:hollybike/positions/bloc/my_position_bloc.dart';
+import 'package:hollybike/positions/bloc/my_position_event.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_bloc.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
+
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
 import 'event/bloc/event_images_bloc/event_image_details_bloc.dart';
@@ -38,9 +43,15 @@ import 'journey/bloc/journeys_library_bloc/journeys_library_bloc.dart';
 import 'journey/service/journey_api.dart';
 import 'journey/service/journey_repository.dart';
 
+Future<void> infiniteDelay() async {
+  final completer = Completer<void>();
+  return completer.future;
+}
+
 void main() {
   NetworkImageCache();
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -224,6 +235,12 @@ class MyApp extends StatelessWidget {
                   context,
                 ),
               )..add(SubscribeToEventsSearch()),
+            ),
+            BlocProvider<MyPositionBloc>(
+              create: (context) => MyPositionBloc()
+                ..add(
+                  SubscribeToMyPositionUpdates(),
+                ),
             ),
           ],
           child: const App(),

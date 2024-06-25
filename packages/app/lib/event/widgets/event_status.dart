@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
-import 'package:hollybike/event/widgets/pulsing_dot.dart';
 
 import '../../shared/utils/dates.dart';
+import 'event_dot.dart';
 
 class EventStatusIndicator extends StatelessWidget {
   final MinimalEvent event;
@@ -26,42 +26,14 @@ class EventStatusIndicator extends StatelessWidget {
     }
   }
 
-  Color _getStatusColor(EventStatusState status) {
-    switch (status) {
-      case EventStatusState.canceled:
-        return Colors.red;
-      case EventStatusState.pending:
-        return Colors.blue;
-      case EventStatusState.now:
-        return Colors.green;
-      case EventStatusState.finished:
-        return Colors.grey;
-      case EventStatusState.scheduled:
-        return Colors.green;
-    }
-  }
-
-  Widget _buildStatusIcon(EventStatusState status) {
-    final color = _getStatusColor(status);
-
-    if (status == EventStatusState.now) {
-      return const PulsingDot(
-        size: 13,
-      );
-    }
-
-    return Icon(
-      Icons.circle,
-      size: 13,
-      color: color,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _buildStatusIcon(event.status),
+        EventDot(
+          status: event.status,
+          size: 13,
+        ),
         const SizedBox(width: 5),
         _buildStatusText(event.status),
       ],
