@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -66,9 +67,9 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
   }
 
   Future<void> initPlatformState() async {
-    print('Initializing...');
+    log('Initializing Background Locator...');
     await BackgroundLocator.initialize();
-    print('Initialization done');
+    log('Background Locator initialization done');
   }
 
   Future<void> _startLocator(

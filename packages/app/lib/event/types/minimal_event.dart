@@ -7,7 +7,6 @@ import '../../user/types/minimal_user.dart';
 import 'event_status_state.dart';
 
 part 'minimal_event.freezed.dart';
-
 part 'minimal_event.g.dart';
 
 @freezed
@@ -26,6 +25,8 @@ class MinimalEvent with _$MinimalEvent {
     String? description,
     String? image,
   }) = _MinimalEvent;
+
+  get color => Event.getStatusColor(status);
 
   factory MinimalEvent.fromJson(JsonMap json) => _$MinimalEventFromJson(json);
 

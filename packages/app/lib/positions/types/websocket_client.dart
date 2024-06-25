@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/positions/types/recieve/websocket_subscribed.dart';
@@ -16,7 +17,7 @@ class WebsocketClient {
   WebsocketClient({required this.session});
 
   Future<WebsocketClient> connect() async {
-    Random r = Random();
+    math.Random r = math.Random();
     String key = base64.encode(List<int>.generate(8, (_) => r.nextInt(256)));
 
     HttpClient client = HttpClient();
@@ -52,7 +53,7 @@ class WebsocketClient {
       throw Exception('Websocket not connected');
     }
 
-    print('Sending message: $message');
+    log('Sending message: $message');
 
     _client?.add(message);
   }
@@ -82,7 +83,7 @@ class WebsocketClient {
   }
 
   void subscribe(String channel) {
-    print('Subscribing to channel: $channel');
+    log('Subscribing to channel: $channel');
 
     final message = WebsocketMessage(
       channel: channel,
@@ -99,7 +100,7 @@ class WebsocketClient {
   }
 
   void sendUserPosition(String channel, WebsocketSendPosition position) {
-    print(
+    log(
         'Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}');
 
     final message = WebsocketMessage(

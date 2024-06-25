@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -32,7 +33,7 @@ class MyPositionServiceRepository {
 
   Future<void> init(Map<dynamic, dynamic> params) async {
     await initParams(params).catchError((e) {
-      print('Error while init callback: $e');
+      log('Error while init callback: $e', stackTrace: StackTrace.current);
       BackgroundLocator.unRegisterLocationUpdate();
     });
 
@@ -67,10 +68,10 @@ class MyPositionServiceRepository {
   void retryConnection() {
     Future.delayed(const Duration(seconds: 10), () async {
       try {
-        print('Retrying connection');
+        log('Retrying connection');
         await _listenAndSubscribe();
       } catch (e) {
-        print('Error: $e');
+        log('Error: $e', stackTrace: StackTrace.current);
         retryConnection(); // Retry again if an error occurs
       }
     });
@@ -85,7 +86,7 @@ class MyPositionServiceRepository {
     ).connect();
 
     ws.onDisconnect(() {
-      print('Websocket Disconnected');
+      log('Websocket Disconnected');
       _client = null;
 
       retryConnection();
@@ -109,7 +110,6 @@ class MyPositionServiceRepository {
   }
 
   Future<void> dispose() async {
-    print("***********Dispose callback handler");
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(null);
   }

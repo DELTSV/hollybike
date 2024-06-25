@@ -27,6 +27,5 @@ class MyPositionCallbackHandler {
 
   @pragma('vm:entry-point')
   static Future<void> notificationCallback() async {
-    print('***notificationCallback');
   }
 }
