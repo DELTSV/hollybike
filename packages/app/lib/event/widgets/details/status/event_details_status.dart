@@ -10,6 +10,7 @@ class EventDetailsStatus extends StatelessWidget {
   final bool loading;
   final EventStatusState status;
   final String message;
+  final double? height;
 
   const EventDetailsStatus({
     super.key,
@@ -18,6 +19,7 @@ class EventDetailsStatus extends StatelessWidget {
     required this.status,
     this.onAction,
     this.actionText,
+    this.height,
   });
 
   @override
@@ -25,6 +27,7 @@ class EventDetailsStatus extends StatelessWidget {
     return Column(
       children: [
         Container(
+          height: height,
           color: Theme.of(context).colorScheme.primaryContainer,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

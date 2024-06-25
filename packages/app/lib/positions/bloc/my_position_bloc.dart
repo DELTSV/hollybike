@@ -44,6 +44,8 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
     SubscribeToMyPositionUpdates event,
     Emitter<MyPositionState> emit,
   ) async {
+    emit(MyPositionLoading(state));
+
     final prefs = await SharedPreferences.getInstance();
     final eventId = prefs.getInt('tracking_event_id');
 
