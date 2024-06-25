@@ -1,5 +1,7 @@
 package hollybike.api.repository
 
+import hollybike.api.repository.Invitation.Companion.optionalReferrersOn
+import hollybike.api.repository.Invitation.Companion.referrersOn
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
@@ -17,7 +19,7 @@ class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	var isImagesPublic by EventParticipations.isImagesPublic
 	var joinedDateTime by EventParticipations.joinedDateTime
 	var leftDateTime by EventParticipations.leftDateTime
-	var journey by EventParticipations.journey
+	var journey by UserJourney optionalReferencedOn EventParticipations.journey
 
 	companion object : IntEntityClass<EventParticipation>(EventParticipations)
 }
@@ -30,7 +32,7 @@ object EventParticipations : IntIdTable("event_participations", "id_participatio
 	val isJoined = bool("is_joined").default(true)
 	val joinedDateTime = timestamp("joined_date_time").clientDefault { Clock.System.now() }
 	val leftDateTime = timestamp("left_date_time").nullable()
-	val journey = varchar("journey", 2048).nullable().default(null)
+	val journey = reference("journey", UsersJourneys).nullable().default(null)
 }
 
 val eventParticipationMapper: Mapper = mapOf(

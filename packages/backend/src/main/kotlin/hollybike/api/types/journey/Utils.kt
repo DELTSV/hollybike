@@ -215,7 +215,7 @@ val GeoJson.totalHeightDifference: Pair<Double, Double>
 				acc.first + up to acc.second + down
 			}
 
-			is Feature -> geometry?.totalHeightDifference ?: 0.0 to 0.0
+			is Feature -> geometry?.totalHeightDifference ?: (0.0 to 0.0)
 			is GeometryCollection -> geometries.fold(0.0 to 0.0) { acc, geom ->
 				val (up, down) = geom.totalHeightDifference
 				acc.first + up to acc.second + down

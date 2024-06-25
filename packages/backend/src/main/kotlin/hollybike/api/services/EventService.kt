@@ -445,15 +445,4 @@ class EventService(
 
 		Result.success(event.delete())
 	}
-
-	suspend fun uploadUserJourney(geoJson: GeoJson, eventId: Int, userId: Int) {
-		val json = json.encodeToString(geoJson).toByteArray()
-		storageService.store(json, "e/$eventId/u/$userId/j", "application/geo+json")
-	}
-
-	suspend fun getUserJourney(eventId: Int, userId: Int): GeoJson? {
-		return storageService.retrieve("e/$eventId/u/$userId/j")?.toString(Charset.forName("UTF-8"))?.let {
-			json.decodeFromString(it)
-		}
-	}
 }

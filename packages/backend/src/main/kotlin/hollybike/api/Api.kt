@@ -49,7 +49,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
 	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
 	val profileService = ProfileService(db)
-	val userEventPositionService = UserEventPositionService(db, CoroutineScope(Dispatchers.Default))
+	val userEventPositionService = UserEventPositionService(db, CoroutineScope(Dispatchers.Default), storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}

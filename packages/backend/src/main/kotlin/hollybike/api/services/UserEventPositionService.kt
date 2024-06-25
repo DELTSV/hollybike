@@ -1,19 +1,25 @@
 package hollybike.api.services
 
+import hollybike.api.json
 import hollybike.api.repository.*
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.journey.Feature
 import hollybike.api.types.journey.GeoJson
 import hollybike.api.types.journey.GeoJsonCoordinates
 import hollybike.api.types.journey.LineString
 import hollybike.api.types.websocket.UserReceivePosition
 import hollybike.api.types.websocket.UserSendPosition
+import io.ktor.utils.io.charsets.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.double
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.and
@@ -21,7 +27,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserEventPositionService(
 	private val db: Database,
-	private val scope: CoroutineScope
+	private val scope: CoroutineScope,
+	private val storageService: StorageService
 ) {
 	private val receiveChannels: MutableMap<Pair<Int, Int>, Channel<UserSendPosition>> = mutableMapOf()
 
@@ -76,6 +83,10 @@ class UserEventPositionService(
 						this.altitude = message.altitude
 						this.time = message.time
 						this.speed = message.speed
+						this.heading = message.heading
+						this.accelerationX = message.accelerationX
+						this.accelerationY = message.accelerationY
+						this.accelerationZ = message.accelerationZ
 					}
 				}.load(UserEventPosition::user)
 			}
@@ -84,19 +95,56 @@ class UserEventPositionService(
 		}
 	}
 
-	fun retrieveUserJourney(user: User, event: Event): GeoJson {
+	fun getUserJourney(user: User, event: Event): UserJourney? = transaction(db) {
+		val participation = EventParticipation.find {
+			(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
+		}.firstOrNull()?.load(EventParticipation::journey) ?: return@transaction null
+		participation.journey
+	}
+
+	suspend fun retrieveUserJourney(user: User, event: Event): UserJourney {
 		val coord = mutableListOf<GeoJsonCoordinates>()
 		val times = mutableListOf<JsonPrimitive>()
 		val speed = mutableListOf<JsonPrimitive>()
+		var elevationGain = 0.0
+		var elevationLoss = 0.0
+		var minElevation = Double.POSITIVE_INFINITY
+		var maxElevation = Double.NEGATIVE_INFINITY
+		var prevAltitude: Double? = null
+		var maxSpeed = Double.NEGATIVE_INFINITY
+		var totalSpeed = 0.0
+		var totalSpeedCount = 0
 		transaction(db) {
 			UserEventPosition.find { (UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id) }.forEach { pos ->
 				coord.add(listOf(pos.longitude, pos.latitude, pos.altitude))
 				times.add(JsonPrimitive(pos.time.toString()))
 				speed.add(JsonPrimitive(pos.speed))
+				if(prevAltitude == null) {
+					prevAltitude = pos.altitude
+				} else {
+					if(pos.altitude < (prevAltitude ?: pos.altitude)) {
+						elevationLoss += (prevAltitude ?: pos.altitude) - pos.altitude
+					} else {
+						elevationGain += pos.altitude - (prevAltitude ?: pos.altitude)
+					}
+				}
+				if(pos.altitude < minElevation) {
+					minElevation = pos.altitude
+				}
+				if(pos.altitude > maxElevation) {
+					maxElevation = pos.altitude
+				}
+				if(pos.speed > maxSpeed) {
+					maxSpeed = pos.speed
+				}
+				totalSpeed += pos.speed
+				totalSpeedCount++
 				pos.delete()
 			}
 		}
-		return Feature(
+		val avgSpeed = totalSpeed / totalSpeedCount
+		val totalTime = (Instant.parse(times.last().content) - Instant.parse(times.first().content)).inWholeSeconds
+		val geojson = Feature(
 			geometry = LineString(coord),
 			properties = JsonObject(
 				mapOf(
@@ -105,5 +153,31 @@ class UserEventPositionService(
 				)
 			)
 		)
+		val file = uploadUserJourney(geojson, event.id.value, user.id.value)
+		return transaction(db) {
+			val participation = EventParticipation.find {
+				(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
+			}.first()
+			UserJourney.new {
+				this.journey = file
+				this.avgSpeed = avgSpeed
+				this.totalElevationGain = elevationGain
+				this.totalElevationLoss = elevationLoss
+				this.totalDistance = 0.0
+				this.minElevation = minElevation
+				this.maxElevation = maxElevation
+				this.totalTime = totalTime
+				this.maxSpeed = maxSpeed
+			}.apply {
+				participation.journey = this
+			}
+		}
+	}
+
+	private suspend fun uploadUserJourney(geoJson: GeoJson, eventId: Int, userId: Int): String {
+		val json = json.encodeToString(geoJson).toByteArray()
+		val path = "e/$eventId/u/$userId/j"
+		storageService.store(json, path, "application/geo+json")
+		return path
 	}
 }

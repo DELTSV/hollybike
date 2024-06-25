@@ -8,6 +8,7 @@ import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.*
 import hollybike.api.types.event.*
+import hollybike.api.types.event.participation.TUserJourney
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.checkContentType
@@ -295,12 +296,8 @@ class EventController(
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 				return@get
 			}
-			val journey = eventService.getUserJourney(event.id.value, user.id.value) ?: run {
-				val geojson = userEventPositionService.retrieveUserJourney(user, event)
-				eventService.uploadUserJourney(geojson, event.id.value, user.id.value)
-				geojson
-			}
-			call.respond(journey)
+			val journey = userEventPositionService.getUserJourney(user, event) ?: userEventPositionService.retrieveUserJourney(user, event)
+			call.respond(TUserJourney(journey))
 		}
 	}
 }
