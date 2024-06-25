@@ -90,7 +90,7 @@ class UserEventPositionService(
 		val speed = mutableListOf<JsonPrimitive>()
 		transaction(db) {
 			UserEventPosition.find { (UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id) }.forEach { pos ->
-				coord.add(listOf(pos.latitude, pos.longitude, pos.altitude))
+				coord.add(listOf(pos.longitude, pos.latitude, pos.altitude))
 				times.add(JsonPrimitive(pos.time.toString()))
 				speed.add(JsonPrimitive(pos.speed))
 				pos.delete()
