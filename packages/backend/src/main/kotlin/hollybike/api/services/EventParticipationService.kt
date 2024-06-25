@@ -106,7 +106,7 @@ class EventParticipationService(
 						.selectAll()
 						.applyParam(searchParam)
 						.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
-				).with(EventParticipation::user).toList()
+				).with(EventParticipation::user, EventParticipation::journey).toList()
 			)
 		}
 
@@ -131,7 +131,7 @@ class EventParticipationService(
 
 		val eventParticipation = EventParticipation.find {
 			(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
-		}.with(EventParticipation::user).firstOrNull()
+		}.with(EventParticipation::user, EventParticipation::journey).firstOrNull()
 
 		return@transaction if (eventParticipation != null && eventParticipation.isJoined) {
 			Result.failure(AlreadyParticipatingToEventException("Vous participez déjà à cet événement"))
@@ -146,7 +146,7 @@ class EventParticipationService(
 					user = caller
 					this.event = Event[eventId]
 					role = EEventRole.Member
-				}
+				}.load(EventParticipation::user, EventParticipation::journey)
 			)
 		}
 	}
@@ -218,14 +218,14 @@ class EventParticipationService(
 			users.map { user ->
 				val userParticipation = EventParticipation.find {
 					(EventParticipations.user eq user.id) and (EventParticipations.event eq eventId)
-				}.with(EventParticipation::user).firstOrNull()
+				}.with(EventParticipation::user, EventParticipation::journey).firstOrNull()
 
 				if (userParticipation == null) {
 					EventParticipation.new {
 						this.user = user
 						this.event = event
 						role = EEventRole.Member
-					}
+					}.load(EventParticipation::user, EventParticipation::journey)
 				} else if (userParticipation.isJoined.not()) {
 					userParticipation.isJoined = true
 					userParticipation.joinedDateTime = Clock.System.now()
@@ -248,7 +248,7 @@ class EventParticipationService(
 
 		val participation = EventParticipation.find {
 			eventParticipationUserEventCondition(caller, eventId)
-		}.with(EventParticipation::user).firstOrNull()
+		}.with(EventParticipation::user, EventParticipation::journey).firstOrNull()
 
 		if (participation == null) {
 			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
@@ -305,7 +305,7 @@ class EventParticipationService(
 			Result.success(
 				EventParticipation.find {
 					eventParticipationUserEventCondition(user, eventId)
-				}.with(EventParticipation::user).firstOrNull()?.apply {
+				}.with(EventParticipation::user, EventParticipation::journey).firstOrNull()?.apply {
 					if (role == EEventRole.Member) {
 						role = EEventRole.Organizer
 					} else {
@@ -341,7 +341,7 @@ class EventParticipationService(
 			Result.success(
 				EventParticipation.find {
 					eventParticipationUserEventCondition(user, eventId)
-				}.with(EventParticipation::user).firstOrNull()?.apply {
+				}.with(EventParticipation::user, EventParticipation::journey).firstOrNull()?.apply {
 					if (role == EEventRole.Organizer) {
 						role = EEventRole.Member
 					} else {

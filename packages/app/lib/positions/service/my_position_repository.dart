@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../auth/types/auth_session.dart';
 import '../types/recieve/websocket_subscribed.dart';
@@ -29,12 +30,22 @@ class MyPositionServiceRepository {
   String _host = '';
   double _eventId = -1;
 
+  double accelerationX = 0;
+  double accelerationY = 0;
+  double accelerationZ = 0;
+
   final _locationBuffer = <LocationDto>[];
 
   Future<void> init(Map<dynamic, dynamic> params) async {
     await initParams(params).catchError((e) {
       log('Error while init callback: $e', stackTrace: StackTrace.current);
       BackgroundLocator.unRegisterLocationUpdate();
+    });
+
+    userAccelerometerEventStream().listen((event) {
+      accelerationX = event.x;
+      accelerationY = event.y;
+      accelerationZ = event.z;
     });
 
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
@@ -146,6 +157,10 @@ class MyPositionServiceRepository {
         altitude: keepFiveDigits(location.altitude),
         time: timestampToDateTime(location.time),
         speed: keepFiveDigits(location.speed),
+        heading: location.heading,
+        accelerationX: keepFiveDigits(accelerationX),
+        accelerationY: keepFiveDigits(accelerationY),
+        accelerationZ: keepFiveDigits(accelerationZ),
       ),
     );
   }

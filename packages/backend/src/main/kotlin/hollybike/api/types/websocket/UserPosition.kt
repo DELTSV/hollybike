@@ -12,7 +12,14 @@ data class UserSendPosition(
 	val longitude: Double,
 	val altitude: Double,
 	val time: Instant,
-	val speed: Double
+	val speed: Double,
+	val heading: Double,
+	@SerialName("acceleration_x")
+	val accelerationX: Double,
+	@SerialName("acceleration_y")
+	val accelerationY: Double,
+	@SerialName("acceleration_z")
+	val accelerationZ: Double
 ): Body
 
 @Serializable

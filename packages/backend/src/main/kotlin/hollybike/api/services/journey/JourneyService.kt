@@ -19,6 +19,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
@@ -113,6 +114,7 @@ class JourneyService(
 				this.name = new.name
 				this.association = association
 				this.creator = caller
+				this.createdAt = Clock.System.now()
 			}.load(Journey::creator, Journey::association, Journey::start, Journey::end, Journey::destination)
 		}
 

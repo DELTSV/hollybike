@@ -24,6 +24,7 @@ mixin _$EventParticipation {
   bool get isImagesPublic => throw _privateConstructorUsedError;
   EventRole get role => throw _privateConstructorUsedError;
   DateTime get joinedDateTime => throw _privateConstructorUsedError;
+  UserJourney? get journey => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,9 +42,11 @@ abstract class $EventParticipationCopyWith<$Res> {
       {MinimalUser user,
       bool isImagesPublic,
       EventRole role,
-      DateTime joinedDateTime});
+      DateTime joinedDateTime,
+      UserJourney? journey});
 
   $MinimalUserCopyWith<$Res> get user;
+  $UserJourneyCopyWith<$Res>? get journey;
 }
 
 /// @nodoc
@@ -63,6 +66,7 @@ class _$EventParticipationCopyWithImpl<$Res, $Val extends EventParticipation>
     Object? isImagesPublic = null,
     Object? role = null,
     Object? joinedDateTime = null,
+    Object? journey = freezed,
   }) {
     return _then(_value.copyWith(
       user: null == user
@@ -81,6 +85,10 @@ class _$EventParticipationCopyWithImpl<$Res, $Val extends EventParticipation>
           ? _value.joinedDateTime
           : joinedDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      journey: freezed == journey
+          ? _value.journey
+          : journey // ignore: cast_nullable_to_non_nullable
+              as UserJourney?,
     ) as $Val);
   }
 
@@ -89,6 +97,18 @@ class _$EventParticipationCopyWithImpl<$Res, $Val extends EventParticipation>
   $MinimalUserCopyWith<$Res> get user {
     return $MinimalUserCopyWith<$Res>(_value.user, (value) {
       return _then(_value.copyWith(user: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserJourneyCopyWith<$Res>? get journey {
+    if (_value.journey == null) {
+      return null;
+    }
+
+    return $UserJourneyCopyWith<$Res>(_value.journey!, (value) {
+      return _then(_value.copyWith(journey: value) as $Val);
     });
   }
 }
@@ -105,10 +125,13 @@ abstract class _$$EventParticipationImplCopyWith<$Res>
       {MinimalUser user,
       bool isImagesPublic,
       EventRole role,
-      DateTime joinedDateTime});
+      DateTime joinedDateTime,
+      UserJourney? journey});
 
   @override
   $MinimalUserCopyWith<$Res> get user;
+  @override
+  $UserJourneyCopyWith<$Res>? get journey;
 }
 
 /// @nodoc
@@ -126,6 +149,7 @@ class __$$EventParticipationImplCopyWithImpl<$Res>
     Object? isImagesPublic = null,
     Object? role = null,
     Object? joinedDateTime = null,
+    Object? journey = freezed,
   }) {
     return _then(_$EventParticipationImpl(
       user: null == user
@@ -144,6 +168,10 @@ class __$$EventParticipationImplCopyWithImpl<$Res>
           ? _value.joinedDateTime
           : joinedDateTime // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      journey: freezed == journey
+          ? _value.journey
+          : journey // ignore: cast_nullable_to_non_nullable
+              as UserJourney?,
     ));
   }
 }
@@ -155,7 +183,8 @@ class _$EventParticipationImpl extends _EventParticipation {
       {required this.user,
       required this.isImagesPublic,
       required this.role,
-      required this.joinedDateTime})
+      required this.joinedDateTime,
+      required this.journey})
       : super._();
 
   factory _$EventParticipationImpl.fromJson(Map<String, dynamic> json) =>
@@ -169,10 +198,12 @@ class _$EventParticipationImpl extends _EventParticipation {
   final EventRole role;
   @override
   final DateTime joinedDateTime;
+  @override
+  final UserJourney? journey;
 
   @override
   String toString() {
-    return 'EventParticipation(user: $user, isImagesPublic: $isImagesPublic, role: $role, joinedDateTime: $joinedDateTime)';
+    return 'EventParticipation(user: $user, isImagesPublic: $isImagesPublic, role: $role, joinedDateTime: $joinedDateTime, journey: $journey)';
   }
 
   @override
@@ -185,13 +216,14 @@ class _$EventParticipationImpl extends _EventParticipation {
                 other.isImagesPublic == isImagesPublic) &&
             (identical(other.role, role) || other.role == role) &&
             (identical(other.joinedDateTime, joinedDateTime) ||
-                other.joinedDateTime == joinedDateTime));
+                other.joinedDateTime == joinedDateTime) &&
+            (identical(other.journey, journey) || other.journey == journey));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, user, isImagesPublic, role, joinedDateTime);
+  int get hashCode => Object.hash(
+      runtimeType, user, isImagesPublic, role, joinedDateTime, journey);
 
   @JsonKey(ignore: true)
   @override
@@ -213,7 +245,8 @@ abstract class _EventParticipation extends EventParticipation {
       {required final MinimalUser user,
       required final bool isImagesPublic,
       required final EventRole role,
-      required final DateTime joinedDateTime}) = _$EventParticipationImpl;
+      required final DateTime joinedDateTime,
+      required final UserJourney? journey}) = _$EventParticipationImpl;
   const _EventParticipation._() : super._();
 
   factory _EventParticipation.fromJson(Map<String, dynamic> json) =
@@ -227,6 +260,8 @@ abstract class _EventParticipation extends EventParticipation {
   EventRole get role;
   @override
   DateTime get joinedDateTime;
+  @override
+  UserJourney? get journey;
   @override
   @JsonKey(ignore: true)
   _$$EventParticipationImplCopyWith<_$EventParticipationImpl> get copyWith =>

@@ -1,14 +1,13 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 import 'package:hollybike/event/widgets/participations/event_participation_actions_menu.dart';
+import 'package:hollybike/event/widgets/participations/event_participation_modal.dart';
 import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../bloc/event_participations_bloc/event_participations_bloc.dart';
 import '../../types/participation/event_participation.dart';
-import '../../types/participation/event_role.dart';
 
 class EventParticipationCard extends StatelessWidget {
   final int eventId;
@@ -31,7 +30,7 @@ class EventParticipationCard extends StatelessWidget {
     return Card(
       child: ListTile(
         onTap: () {
-          context.router.pushNamed("/profile/${participation.user.id}");
+          _onOpenParticipationModal(context);
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -50,7 +49,7 @@ class EventParticipationCard extends StatelessWidget {
           style: Theme.of(context).textTheme.titleSmall,
         ),
         subtitle: Text(
-          _eventRoleName(participation.role),
+          participation.roleName,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         trailing: EventParticipationActionsMenu(
@@ -62,15 +61,6 @@ class EventParticipationCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _eventRoleName(EventRole role) {
-    switch (role) {
-      case EventRole.organizer:
-        return "Organisateur";
-      case EventRole.member:
-        return "Participant";
-    }
   }
 
   void _onPromote(BuildContext context) {
@@ -107,5 +97,17 @@ class EventParticipationCard extends StatelessWidget {
             ),
           );
     });
+  }
+
+  void _onOpenParticipationModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return EventParticipationModal(
+          participation: participation,
+        );
+      },
+    );
   }
 }

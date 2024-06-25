@@ -11,11 +11,13 @@ data class TEventParticipation(
 	val role: EEventRole,
 	val isImagesPublic: Boolean,
 	val joinedDateTime: Instant,
+	val journey: TUserJourney? = null
 ) {
 	constructor(entity: EventParticipation) : this(
 		user = TUserPartial(entity.user),
 		role = entity.role,
 		isImagesPublic = entity.isImagesPublic,
-		joinedDateTime = entity.joinedDateTime
+		joinedDateTime = entity.joinedDateTime,
+		journey = entity.journey?.let { TUserJourney(it) }
 	)
 }

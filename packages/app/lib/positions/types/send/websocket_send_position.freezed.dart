@@ -25,6 +25,13 @@ mixin _$WebsocketSendPosition {
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
   double get altitude => throw _privateConstructorUsedError;
+  double get heading => throw _privateConstructorUsedError;
+  @JsonKey(name: "acceleration_x")
+  double get accelerationX => throw _privateConstructorUsedError;
+  @JsonKey(name: "acceleration_y")
+  double get accelerationY => throw _privateConstructorUsedError;
+  @JsonKey(name: "acceleration_z")
+  double get accelerationZ => throw _privateConstructorUsedError;
   DateTime get time => throw _privateConstructorUsedError;
   double get speed => throw _privateConstructorUsedError;
 
@@ -45,6 +52,10 @@ abstract class $WebsocketSendPositionCopyWith<$Res> {
       double latitude,
       double longitude,
       double altitude,
+      double heading,
+      @JsonKey(name: "acceleration_x") double accelerationX,
+      @JsonKey(name: "acceleration_y") double accelerationY,
+      @JsonKey(name: "acceleration_z") double accelerationZ,
       DateTime time,
       double speed});
 }
@@ -67,6 +78,10 @@ class _$WebsocketSendPositionCopyWithImpl<$Res,
     Object? latitude = null,
     Object? longitude = null,
     Object? altitude = null,
+    Object? heading = null,
+    Object? accelerationX = null,
+    Object? accelerationY = null,
+    Object? accelerationZ = null,
     Object? time = null,
     Object? speed = null,
   }) {
@@ -86,6 +101,22 @@ class _$WebsocketSendPositionCopyWithImpl<$Res,
       altitude: null == altitude
           ? _value.altitude
           : altitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      heading: null == heading
+          ? _value.heading
+          : heading // ignore: cast_nullable_to_non_nullable
+              as double,
+      accelerationX: null == accelerationX
+          ? _value.accelerationX
+          : accelerationX // ignore: cast_nullable_to_non_nullable
+              as double,
+      accelerationY: null == accelerationY
+          ? _value.accelerationY
+          : accelerationY // ignore: cast_nullable_to_non_nullable
+              as double,
+      accelerationZ: null == accelerationZ
+          ? _value.accelerationZ
+          : accelerationZ // ignore: cast_nullable_to_non_nullable
               as double,
       time: null == time
           ? _value.time
@@ -113,6 +144,10 @@ abstract class _$$WebsocketSendPositionImplCopyWith<$Res>
       double latitude,
       double longitude,
       double altitude,
+      double heading,
+      @JsonKey(name: "acceleration_x") double accelerationX,
+      @JsonKey(name: "acceleration_y") double accelerationY,
+      @JsonKey(name: "acceleration_z") double accelerationZ,
       DateTime time,
       double speed});
 }
@@ -133,6 +168,10 @@ class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
     Object? latitude = null,
     Object? longitude = null,
     Object? altitude = null,
+    Object? heading = null,
+    Object? accelerationX = null,
+    Object? accelerationY = null,
+    Object? accelerationZ = null,
     Object? time = null,
     Object? speed = null,
   }) {
@@ -152,6 +191,22 @@ class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
       altitude: null == altitude
           ? _value.altitude
           : altitude // ignore: cast_nullable_to_non_nullable
+              as double,
+      heading: null == heading
+          ? _value.heading
+          : heading // ignore: cast_nullable_to_non_nullable
+              as double,
+      accelerationX: null == accelerationX
+          ? _value.accelerationX
+          : accelerationX // ignore: cast_nullable_to_non_nullable
+              as double,
+      accelerationY: null == accelerationY
+          ? _value.accelerationY
+          : accelerationY // ignore: cast_nullable_to_non_nullable
+              as double,
+      accelerationZ: null == accelerationZ
+          ? _value.accelerationZ
+          : accelerationZ // ignore: cast_nullable_to_non_nullable
               as double,
       time: null == time
           ? _value.time
@@ -173,6 +228,10 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
       required this.latitude,
       required this.longitude,
       required this.altitude,
+      required this.heading,
+      @JsonKey(name: "acceleration_x") required this.accelerationX,
+      @JsonKey(name: "acceleration_y") required this.accelerationY,
+      @JsonKey(name: "acceleration_z") required this.accelerationZ,
       required this.time,
       required this.speed});
 
@@ -189,13 +248,24 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
   @override
   final double altitude;
   @override
+  final double heading;
+  @override
+  @JsonKey(name: "acceleration_x")
+  final double accelerationX;
+  @override
+  @JsonKey(name: "acceleration_y")
+  final double accelerationY;
+  @override
+  @JsonKey(name: "acceleration_z")
+  final double accelerationZ;
+  @override
   final DateTime time;
   @override
   final double speed;
 
   @override
   String toString() {
-    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, time: $time, speed: $speed)';
+    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, heading: $heading, accelerationX: $accelerationX, accelerationY: $accelerationY, accelerationZ: $accelerationZ, time: $time, speed: $speed)';
   }
 
   @override
@@ -210,6 +280,13 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
                 other.longitude == longitude) &&
             (identical(other.altitude, altitude) ||
                 other.altitude == altitude) &&
+            (identical(other.heading, heading) || other.heading == heading) &&
+            (identical(other.accelerationX, accelerationX) ||
+                other.accelerationX == accelerationX) &&
+            (identical(other.accelerationY, accelerationY) ||
+                other.accelerationY == accelerationY) &&
+            (identical(other.accelerationZ, accelerationZ) ||
+                other.accelerationZ == accelerationZ) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.speed, speed) || other.speed == speed));
   }
@@ -217,7 +294,17 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, type, latitude, longitude, altitude, time, speed);
+      runtimeType,
+      type,
+      latitude,
+      longitude,
+      altitude,
+      heading,
+      accelerationX,
+      accelerationY,
+      accelerationZ,
+      time,
+      speed);
 
   @JsonKey(ignore: true)
   @override
@@ -240,6 +327,10 @@ abstract class _WebsocketSendPosition implements WebsocketSendPosition {
       required final double latitude,
       required final double longitude,
       required final double altitude,
+      required final double heading,
+      @JsonKey(name: "acceleration_x") required final double accelerationX,
+      @JsonKey(name: "acceleration_y") required final double accelerationY,
+      @JsonKey(name: "acceleration_z") required final double accelerationZ,
       required final DateTime time,
       required final double speed}) = _$WebsocketSendPositionImpl;
 
@@ -254,6 +345,17 @@ abstract class _WebsocketSendPosition implements WebsocketSendPosition {
   double get longitude;
   @override
   double get altitude;
+  @override
+  double get heading;
+  @override
+  @JsonKey(name: "acceleration_x")
+  double get accelerationX;
+  @override
+  @JsonKey(name: "acceleration_y")
+  double get accelerationY;
+  @override
+  @JsonKey(name: "acceleration_z")
+  double get accelerationZ;
   @override
   DateTime get time;
   @override

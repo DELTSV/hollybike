@@ -26,18 +26,22 @@ class MinimalJourney with _$MinimalJourney {
 
   factory MinimalJourney.fromJson(JsonMap json) => _$MinimalJourneyFromJson(json);
 
-  get distanceLabel {
+  static String getDistanceLabel(int? totalDistance) {
     if (totalDistance == null) {
       return '';
     }
 
-    final totalDistanceInMeters = totalDistance!;
+    final totalDistanceInMeters = totalDistance;
 
     if (totalDistanceInMeters < 1000) {
       return '$totalDistanceInMeters m';
     } else {
       return '${totalDistanceInMeters ~/ 1000} km';
     }
+  }
+
+  get distanceLabel {
+    return getDistanceLabel(totalDistance);
   }
 
   String? get readablePartialLocation {
