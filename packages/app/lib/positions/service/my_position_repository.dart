@@ -12,7 +12,7 @@ import '../types/websocket_client.dart';
 
 class MyPositionServiceRepository {
   static final MyPositionServiceRepository _instance =
-  MyPositionServiceRepository._();
+      MyPositionServiceRepository._();
 
   MyPositionServiceRepository._();
 
@@ -112,6 +112,8 @@ class MyPositionServiceRepository {
   Future<void> dispose() async {
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(null);
+
+    _client?.close();
   }
 
   Future<void> callback(LocationDto locationDto) async {
@@ -143,13 +145,17 @@ class MyPositionServiceRepository {
         longitude: keepFiveDigits(location.longitude),
         altitude: keepFiveDigits(location.altitude),
         time: timestampToDateTime(location.time),
+        speed: keepFiveDigits(location.speed),
       ),
     );
   }
 }
 
 DateTime timestampToDateTime(double timestamp) {
-  return DateTime.fromMillisecondsSinceEpoch(timestamp.toInt()).toUtc();
+  return DateTime.fromMillisecondsSinceEpoch(
+    timestamp.toInt(),
+    isUtc: false,
+  ).toUtc();
 }
 
 double keepFiveDigits(double value) {

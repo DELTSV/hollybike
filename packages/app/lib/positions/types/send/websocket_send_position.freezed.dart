@@ -26,6 +26,7 @@ mixin _$WebsocketSendPosition {
   double get longitude => throw _privateConstructorUsedError;
   double get altitude => throw _privateConstructorUsedError;
   DateTime get time => throw _privateConstructorUsedError;
+  double get speed => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,7 +45,8 @@ abstract class $WebsocketSendPositionCopyWith<$Res> {
       double latitude,
       double longitude,
       double altitude,
-      DateTime time});
+      DateTime time,
+      double speed});
 }
 
 /// @nodoc
@@ -66,6 +68,7 @@ class _$WebsocketSendPositionCopyWithImpl<$Res,
     Object? longitude = null,
     Object? altitude = null,
     Object? time = null,
+    Object? speed = null,
   }) {
     return _then(_value.copyWith(
       type: null == type
@@ -88,6 +91,10 @@ class _$WebsocketSendPositionCopyWithImpl<$Res,
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      speed: null == speed
+          ? _value.speed
+          : speed // ignore: cast_nullable_to_non_nullable
+              as double,
     ) as $Val);
   }
 }
@@ -106,7 +113,8 @@ abstract class _$$WebsocketSendPositionImplCopyWith<$Res>
       double latitude,
       double longitude,
       double altitude,
-      DateTime time});
+      DateTime time,
+      double speed});
 }
 
 /// @nodoc
@@ -126,6 +134,7 @@ class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
     Object? longitude = null,
     Object? altitude = null,
     Object? time = null,
+    Object? speed = null,
   }) {
     return _then(_$WebsocketSendPositionImpl(
       type: null == type
@@ -148,6 +157,10 @@ class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      speed: null == speed
+          ? _value.speed
+          : speed // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -160,7 +173,8 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
       required this.latitude,
       required this.longitude,
       required this.altitude,
-      required this.time});
+      required this.time,
+      required this.speed});
 
   factory _$WebsocketSendPositionImpl.fromJson(Map<String, dynamic> json) =>
       _$$WebsocketSendPositionImplFromJson(json);
@@ -176,10 +190,12 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
   final double altitude;
   @override
   final DateTime time;
+  @override
+  final double speed;
 
   @override
   String toString() {
-    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, time: $time)';
+    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, time: $time, speed: $speed)';
   }
 
   @override
@@ -194,13 +210,14 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
                 other.longitude == longitude) &&
             (identical(other.altitude, altitude) ||
                 other.altitude == altitude) &&
-            (identical(other.time, time) || other.time == time));
+            (identical(other.time, time) || other.time == time) &&
+            (identical(other.speed, speed) || other.speed == speed));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, type, latitude, longitude, altitude, time);
+  int get hashCode => Object.hash(
+      runtimeType, type, latitude, longitude, altitude, time, speed);
 
   @JsonKey(ignore: true)
   @override
@@ -223,7 +240,8 @@ abstract class _WebsocketSendPosition implements WebsocketSendPosition {
       required final double latitude,
       required final double longitude,
       required final double altitude,
-      required final DateTime time}) = _$WebsocketSendPositionImpl;
+      required final DateTime time,
+      required final double speed}) = _$WebsocketSendPositionImpl;
 
   factory _WebsocketSendPosition.fromJson(Map<String, dynamic> json) =
       _$WebsocketSendPositionImpl.fromJson;
@@ -238,6 +256,8 @@ abstract class _WebsocketSendPosition implements WebsocketSendPosition {
   double get altitude;
   @override
   DateTime get time;
+  @override
+  double get speed;
   @override
   @JsonKey(ignore: true)
   _$$WebsocketSendPositionImplCopyWith<_$WebsocketSendPositionImpl>

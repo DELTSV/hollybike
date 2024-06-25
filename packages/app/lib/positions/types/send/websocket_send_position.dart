@@ -14,6 +14,7 @@ class WebsocketSendPosition with _$WebsocketSendPosition implements WebsocketBod
     required double longitude,
     required double altitude,
     required DateTime time,
+    required double speed,
   }) = _WebsocketSendPosition;
 
   factory WebsocketSendPosition.fromJson(JsonMap json) => _$WebsocketSendPositionFromJson(json);

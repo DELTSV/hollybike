@@ -101,7 +101,7 @@ class WebsocketClient {
 
   void sendUserPosition(String channel, WebsocketSendPosition position) {
     log(
-        'Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}');
+        'Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}, ${position.speed}');
 
     final message = WebsocketMessage(
       channel: channel,
