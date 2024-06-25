@@ -34,6 +34,7 @@ class EventStatusFeed extends StatelessWidget {
         return BlocBuilder<MyPositionBloc, MyPositionState>(
           builder: (context, state) {
             return EventNowStatus(
+              isLoading: state is MyPositionLoading,
               eventDetails: eventDetails,
               isShared:
                   state.isRunning && state.eventId == eventDetails.event.id,

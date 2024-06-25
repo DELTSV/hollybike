@@ -4,7 +4,6 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:background_locator_2/background_locator.dart';
-import 'package:background_locator_2/location_dto.dart';
 import 'package:background_locator_2/settings/android_settings.dart';
 import 'package:background_locator_2/settings/ios_settings.dart';
 import 'package:background_locator_2/settings/locator_settings.dart';
@@ -55,15 +54,15 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       eventId: isRunning ? eventId : null,
     )));
 
-    await emit.forEach(
-      port.asBroadcastStream(),
-      onData: (data) {
-        return MyPositionUpdated(
-          state,
-          data != null ? LocationDto.fromJson(data) : null,
-        );
-      },
-    );
+    // await emit.forEach(
+    //   port.asBroadcastStream(),
+    //   onData: (data) {
+    //     return MyPositionUpdated(
+    //       state,
+    //       data != null ? LocationDto.fromJson(data) : null,
+    //     );
+    //   },
+    // );
   }
 
   Future<void> initPlatformState() async {

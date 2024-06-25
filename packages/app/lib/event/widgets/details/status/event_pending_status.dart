@@ -20,17 +20,10 @@ class EventPendingStatus extends StatelessWidget {
     return EventDetailsStatus(
       status: EventStatusState.pending,
       message: 'En attente de publication',
-      action: TextButton(
-        onPressed: () {
-          _onPublish(context);
-        },
-        child: Text(
-          'Publier',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Colors.blue.shade400,
-              ),
-        ),
-      ),
+      actionText: 'Publier',
+      onAction: () {
+        _onPublish(context);
+      },
     );
   }
 

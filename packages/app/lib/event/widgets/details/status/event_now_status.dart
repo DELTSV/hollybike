@@ -11,44 +11,34 @@ import '../../../types/event_status_state.dart';
 class EventNowStatus extends StatelessWidget {
   final EventDetails eventDetails;
   final bool isShared;
+  final bool isLoading;
 
   const EventNowStatus({
     super.key,
     required this.eventDetails,
     required this.isShared,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     if (isShared) {
       return EventDetailsStatus(
+        loading: isLoading,
         status: EventStatusState.now,
         message: 'Votre position est partagée',
-        action: TextButton(
-          onPressed: () => _cancelPostions(context),
-          child: Text(
-            'Désactiver',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-        ),
+        actionText: 'Désactiver',
+        onAction: () => _cancelPostions(context),
       );
     }
 
     if (eventDetails.isParticipating) {
       return EventDetailsStatus(
+        loading: isLoading,
         status: EventStatusState.now,
         message: 'Partagez votre position',
-        action: TextButton(
-          onPressed: () => _onStart(context),
-          child: Text(
-            'Activer',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-        ),
+        actionText: 'Activer',
+        onAction: () => _onStart(context),
       );
     }
 

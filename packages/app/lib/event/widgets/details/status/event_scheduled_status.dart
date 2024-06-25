@@ -17,17 +17,10 @@ class EventScheduledStatus extends StatelessWidget {
     return EventDetailsStatus(
       status: EventStatusState.scheduled,
       message: fromDateToDuration(startDate),
-      action: TextButton(
-        onPressed: () {
-          _onAddToCalendar(context);
-        },
-        child: Text(
-          'Ajouter au calendrier',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: Colors.green.shade400,
-          ),
-        ),
-      ),
+      actionText: 'Ajouter au calendrier',
+      onAction: () {
+        _onAddToCalendar(context);
+      },
     );
   }
 

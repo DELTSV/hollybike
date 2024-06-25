@@ -20,17 +20,10 @@ class EventCancelledStatus extends StatelessWidget {
     return EventDetailsStatus(
         status: EventStatusState.canceled,
         message: 'Evénement annulé',
-        action: TextButton(
-          onPressed: () {
-            _onPublish(context);
-          },
-          child: Text(
-            'Publier',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.red.shade400,
-            ),
-          ),
-        )
+        actionText: 'Publier',
+        onAction: () {
+          _onPublish(context);
+        },
     );
   }
 
