@@ -23,6 +23,9 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
         description: 'AWS Secret Access Key'
+      MAPBOX_PUBLIC_ACCESS_TOKEN:
+        required: true
+        description: 'Mapbox public token'
 
   pull_request:
     branches:
@@ -230,6 +233,8 @@ jobs:
     uses: ./.github/workflows/build-frontend.yml
     with:
       version: ${{ github.event.inputs.version }}
+    secrets:
+      MAPBOX_PUBLIC_ACCESS_TOKEN: ${{ secrets.MAPBOX_PUBLIC_ACCESS_TOKEN }}
 
   deploy-frontend:
     name: Frontend

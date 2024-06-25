@@ -12,6 +12,10 @@ on:
         description: 'Version of the release'
         type: string
         required: true
+    secrets:
+      MAPBOX_PUBLIC_ACCESS_TOKEN:
+        description: 'Mapbox public token'
+        required: true
 
   pull_request:
     branches:
@@ -49,6 +53,8 @@ jobs:
         run: bun run lint
 
       - name: Try building application
+        env:
+          VITE_MAPBOX_KEY: ${{ secrets.MAPBOX_PUBLIC_ACCESS_TOKEN }}
         run: bun run build
 
       - name: Upload artifacts
