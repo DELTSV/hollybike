@@ -132,7 +132,7 @@ export function App() {
 			element: <Conf/>,
 		},
 		{
-			path: "/privacy",
+			path: "/privacy-policy",
 			element: <CGU/>,
 		},
 		{
