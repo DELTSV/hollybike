@@ -36,88 +36,89 @@ export function App() {
 	const auth = useAuth();
 	const theme = useTheme();
 	const systemDark = useSystemDarkMode();
+	const protectedRoute = useMemo(() => [
+		{
+			path: "/",
+			element: <Home/>,
+		},
+		{
+			path: "associations",
+			element: <ListAssociations/>,
+		},
+		{
+			path: "associations/new",
+			element: <CreateAssociation/>,
+		},
+		{
+			path: "associations/:id",
+			element: <Association/>,
+		},
+		{
+			path: "users",
+			element: <ListUser/>,
+		},
+		{
+			path: "users/:id",
+			element: <UserDetail/>,
+		},
+		{
+			path: "associations/:id/invitations",
+			element: <ListInvitations/>,
+		},
+		{
+			path: "associations/:id/users",
+			element: <ListUser/>,
+		},
+		{
+			path: "associations/:id/events",
+			element: <ListEvent/>,
+		},
+		{
+			path: "associations/:id/journeys",
+			element: <ListJourneys/>,
+		},
+		{
+			path: "invitations",
+			element: <ListInvitations/>,
+		},
+		{
+			path: "invitations/new",
+			element: <CreateInvitation/>,
+		},
+		{
+			path: "events",
+			element: <ListEvent/>,
+		},
+		{
+			path: "events/new",
+			element: <CreateEvent/>,
+		},
+		{
+			path: "events/:id",
+			element: <EventDetail/>,
+		},
+		{
+			path: "journeys",
+			element: <ListJourneys/>,
+		},
+		{
+			path: "journeys/view/:id",
+			element: <JourneyView/>,
+		},
+		{
+			path: "journeys/new",
+			element: <NewJourney/>,
+		},
+		{
+			path: "conf",
+			element: <Conf/>,
+		},
+	], []);
 	const router = createBrowserRouter([
 		{
 			path: "/",
 			element: <Root/>,
-			children: [
-				{
-					path: "/",
-					element: <Home/>,
-				},
-				{
-					path: "associations",
-					element: <ListAssociations/>,
-				},
-				{
-					path: "associations/new",
-					element: <CreateAssociation/>,
-				},
-				{
-					path: "associations/:id",
-					element: <Association/>,
-				},
-				{
-					path: "users",
-					element: <ListUser/>,
-				},
-				{
-					path: "users/:id",
-					element: <UserDetail/>,
-				},
-				{
-					path: "associations/:id/invitations",
-					element: <ListInvitations/>,
-				},
-				{
-					path: "associations/:id/users",
-					element: <ListUser/>,
-				},
-				{
-					path: "associations/:id/events",
-					element: <ListEvent/>,
-				},
-				{
-					path: "associations/:id/journeys",
-					element: <ListJourneys/>,
-				},
-				{
-					path: "invitations",
-					element: <ListInvitations/>,
-				},
-				{
-					path: "invitations/new",
-					element: <CreateInvitation/>,
-				},
-				{
-					path: "events",
-					element: <ListEvent/>,
-				},
-				{
-					path: "events/new",
-					element: <CreateEvent/>,
-				},
-				{
-					path: "events/:id",
-					element: <EventDetail/>,
-				},
-				{
-					path: "journeys",
-					element: <ListJourneys/>,
-				},
-				{
-					path: "journeys/view/:id",
-					element: <JourneyView/>,
-				},
-				{
-					path: "journeys/new",
-					element: <NewJourney/>,
-				},
-				{
-					path: "conf",
-					element: <Conf/>,
-				},
-			],
+			children: protectedRoute,
 		},
 		{
 			path: "/login",
@@ -153,7 +154,7 @@ export function App() {
 		if (loaded) {
 			if (confMode === false) {
 				router.navigate("/conf-mode");
-			} else if (!auth.isLoggedIn) {
+			} else if (!auth.isLoggedIn && protectedRoute.find(r => r.path == router.state.location.pathname) !== undefined) {
 				router.navigate("/login");
 			}
 		}
