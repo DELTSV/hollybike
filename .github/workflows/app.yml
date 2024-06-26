@@ -211,7 +211,7 @@ jobs:
           serviceAccountJson: packages/app/${{ env.SERVICE_ACCOUNT_PATH }}
           packageName: com.hollybike.hollybike
           releaseFiles: ${{ env.AAB_PATH }}
-          status: completed
+          status: draft
           changesNotSentForReview: true
           track: internal
   
