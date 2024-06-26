@@ -19,7 +19,10 @@ data class UserSendPosition(
 	@SerialName("acceleration_y")
 	val accelerationY: Double,
 	@SerialName("acceleration_z")
-	val accelerationZ: Double
+	val accelerationZ: Double,
+	val accuracy: Double,
+	@SerialName("speed_accuracy")
+	val speedAccuracy: Double
 ): Body
 
 @Serializable

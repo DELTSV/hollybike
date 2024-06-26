@@ -83,6 +83,8 @@ class UserEventPositionService(
 						this.accelerationX = message.accelerationX
 						this.accelerationY = message.accelerationY
 						this.accelerationZ = message.accelerationZ
+						this.accuracy = message.accuracy
+						this.speedAccuracy = message.speedAccuracy
 					}
 				}.load(UserEventPosition::user)
 			}
@@ -110,27 +112,32 @@ class UserEventPositionService(
 		var maxSpeed = Double.NEGATIVE_INFINITY
 		var totalSpeed = 0.0
 		var totalSpeedCount = 0
+
 		transaction(db) {
-			UserEventPosition.find { (UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id) }.orderBy(UsersEventsPositions.time to SortOrder.ASC).forEach { pos ->
+			UserEventPosition.find {
+				(UsersEventsPositions.user eq user.id) and
+					(UsersEventsPositions.event eq event.id) and
+					(UsersEventsPositions.accuracy lessEq 20.0)
+			}.orderBy(UsersEventsPositions.time to SortOrder.ASC).forEach { pos ->
 				coord.add(listOf(pos.longitude, pos.latitude, pos.altitude))
 				times.add(JsonPrimitive(pos.time.toString()))
 				speed.add(JsonPrimitive(pos.speed))
 
-				if(pos.altitude < (prevAltitude ?: pos.altitude)) {
+				if (pos.altitude < (prevAltitude ?: pos.altitude)) {
 					elevationLoss += (prevAltitude ?: pos.altitude) - pos.altitude
 				} else {
 					elevationGain += pos.altitude - (prevAltitude ?: pos.altitude)
 				}
 				prevAltitude = pos.altitude
 
-				if(pos.altitude < minElevation) {
+				if (pos.altitude < minElevation) {
 					minElevation = pos.altitude
 				}
-				if(pos.altitude > maxElevation) {
+				if (pos.altitude > maxElevation) {
 					maxElevation = pos.altitude
 				}
 
-				if(pos.speed > maxSpeed) {
+				if (pos.speed > maxSpeed) {
 					maxSpeed = pos.speed
 				}
 				totalSpeed += pos.speed
