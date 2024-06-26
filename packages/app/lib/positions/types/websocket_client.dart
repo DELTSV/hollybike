@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
 import 'package:hollybike/positions/types/recieve/websocket_subscribed.dart';
 import 'package:hollybike/positions/types/send/websocket_send_position.dart';
 import 'package:hollybike/positions/types/send/websocket_subscribe.dart';
@@ -62,24 +63,27 @@ class WebsocketClient {
     _client?.close();
   }
 
+  WebsocketMessage parseMessage(String data) {
+    return WebsocketMessage.fromJson(jsonDecode(data), (json) {
+      switch (json['type']) {
+        case 'subscribed':
+          return WebsocketSubscribed.fromJson(json);
+        case 'receive-user-position':
+          return WebsocketReceivePosition.fromJson(json);
+      }
+
+      throw Exception('Unknown message type');
+    });
+  }
+
+  Stream<WebsocketMessage>? get stream => _client
+      ?.asBroadcastStream()
+      .map((event) => parseMessage(event));
+
   bool get isConnected => _client != null;
 
   void listen(void Function(WebsocketMessage) onData) {
-    _client?.listen((data) {
-      final message = WebsocketMessage.fromJson(jsonDecode(data), (json) {
-        if (json['type'] == 'subscribed') {
-          return WebsocketSubscribed.fromJson(json);
-        } else if (json['type'] == 'receive-user-position') {
-          return WebsocketSubscribe(
-            token: session.token,
-          );
-        }
-
-        throw Exception('Unknown message type');
-      });
-
-      onData(message);
-    });
+    _client?.listen((data) => onData(parseMessage(data)));
   }
 
   void subscribe(String channel) {

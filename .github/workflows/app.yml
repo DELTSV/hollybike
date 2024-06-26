@@ -212,6 +212,5 @@ jobs:
           packageName: com.hollybike.hollybike
           releaseFiles: ${{ env.AAB_PATH }}
           status: draft
-          changesNotSentForReview: true
           track: internal
   
