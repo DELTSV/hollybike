@@ -212,5 +212,6 @@ jobs:
           packageName: com.hollybike.hollybike
           releaseFiles: ${{ env.AAB_PATH }}
           status: completed
+          changesNotSentForReview: true
           track: internal
   
