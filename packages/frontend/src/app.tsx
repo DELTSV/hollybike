@@ -28,6 +28,8 @@ import { ListJourneys } from "./journey/ListJourneys.tsx";
 import { JourneyView } from "./journey/JourneyView.tsx";
 import { NewJourney } from "./journey/NewJourney.tsx";
 import { useConfMode } from "./utils/useConfMode.tsx";
+import { CGU } from "./page/CGU.tsx";
+import { Invite } from "./page/Invite.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -129,6 +131,14 @@ export function App() {
 			path: "/conf-mode",
 			element: <Conf/>,
 		},
+		{
+			path: "/privacy",
+			element: <CGU/>,
+		},
+		{
+			path: "/invite",
+			element: <Invite/>,
+		},
 	]);
 
 	const { confMode } = useConfMode();
@@ -145,8 +155,6 @@ export function App() {
 				router.navigate("/conf-mode");
 			} else if (!auth.isLoggedIn) {
 				router.navigate("/login");
-			} else {
-				router.navigate("/");
 			}
 		}
 	}, [
