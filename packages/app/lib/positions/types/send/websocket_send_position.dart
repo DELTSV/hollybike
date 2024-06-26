@@ -19,6 +19,8 @@ class WebsocketSendPosition with _$WebsocketSendPosition implements WebsocketBod
     @JsonKey(name: "acceleration_z") required double accelerationZ,
     required DateTime time,
     required double speed,
+    @JsonKey(name: "speed_accuracy") required double speedAccuracy,
+    required double accuracy,
   }) = _WebsocketSendPosition;
 
   factory WebsocketSendPosition.fromJson(JsonMap json) => _$WebsocketSendPositionFromJson(json);

@@ -89,7 +89,7 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       androidSettings: AndroidSettings(
         accuracy: LocationAccuracy.NAVIGATION,
         interval: 1,
-        distanceFilter: 0,
+        distanceFilter: 1,
         client: LocationClient.google,
         androidNotificationSettings: AndroidNotificationSettings(
           notificationChannelName: 'location_tracking_channel',

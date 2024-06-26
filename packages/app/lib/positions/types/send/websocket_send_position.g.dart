@@ -19,6 +19,8 @@ _$WebsocketSendPositionImpl _$$WebsocketSendPositionImplFromJson(
       accelerationZ: (json['acceleration_z'] as num).toDouble(),
       time: DateTime.parse(json['time'] as String),
       speed: (json['speed'] as num).toDouble(),
+      speedAccuracy: (json['speed_accuracy'] as num).toDouble(),
+      accuracy: (json['accuracy'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$$WebsocketSendPositionImplToJson(
@@ -34,4 +36,6 @@ Map<String, dynamic> _$$WebsocketSendPositionImplToJson(
       'acceleration_z': instance.accelerationZ,
       'time': instance.time.toIso8601String(),
       'speed': instance.speed,
+      'speed_accuracy': instance.speedAccuracy,
+      'accuracy': instance.accuracy,
     };
