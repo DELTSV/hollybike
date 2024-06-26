@@ -17,6 +17,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -110,7 +111,7 @@ class UserEventPositionService(
 		var totalSpeed = 0.0
 		var totalSpeedCount = 0
 		transaction(db) {
-			UserEventPosition.find { (UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id) }.forEach { pos ->
+			UserEventPosition.find { (UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id) }.orderBy(UsersEventsPositions.time to SortOrder.ASC).forEach { pos ->
 				coord.add(listOf(pos.longitude, pos.latitude, pos.altitude))
 				times.add(JsonPrimitive(pos.time.toString()))
 				speed.add(JsonPrimitive(pos.speed))
