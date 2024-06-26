@@ -115,21 +115,21 @@ class UserEventPositionService(
 				coord.add(listOf(pos.longitude, pos.latitude, pos.altitude))
 				times.add(JsonPrimitive(pos.time.toString()))
 				speed.add(JsonPrimitive(pos.speed))
-				if(prevAltitude == null) {
-					prevAltitude = pos.altitude
+
+				if(pos.altitude < (prevAltitude ?: pos.altitude)) {
+					elevationLoss += (prevAltitude ?: pos.altitude) - pos.altitude
 				} else {
-					if(pos.altitude < (prevAltitude ?: pos.altitude)) {
-						elevationLoss += (prevAltitude ?: pos.altitude) - pos.altitude
-					} else {
-						elevationGain += pos.altitude - (prevAltitude ?: pos.altitude)
-					}
+					elevationGain += pos.altitude - (prevAltitude ?: pos.altitude)
 				}
+				prevAltitude = pos.altitude
+
 				if(pos.altitude < minElevation) {
 					minElevation = pos.altitude
 				}
 				if(pos.altitude > maxElevation) {
 					maxElevation = pos.altitude
 				}
+
 				if(pos.speed > maxSpeed) {
 					maxSpeed = pos.speed
 				}
