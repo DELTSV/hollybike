@@ -1,6 +1,6 @@
 export function CGU() {
 	return (
-		<div className={"p-4 overflow-x-hidden w-9/10"}>
+		<div className={"p-4 overflow-x-hidden w-9/10 h-full"}>
 			<style>
 				{ "p {font-weight: normal;}" }
 			</style>
