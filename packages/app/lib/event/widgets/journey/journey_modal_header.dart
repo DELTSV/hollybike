@@ -55,7 +55,6 @@ class JourneyModalHeader extends StatelessWidget {
             PopupMenuItem(
               value: JourneyModalAction.update,
               child: UploadJourneyMenu(
-                noPadding: true,
                 event: event,
                 onSelection: (type) =>
                     _onUpdateJourney(
