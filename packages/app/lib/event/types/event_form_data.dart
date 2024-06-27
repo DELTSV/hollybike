@@ -11,7 +11,8 @@ class EventFormData with _$EventFormData {
   const factory EventFormData({
     required String name,
     String? description,
-    @JsonKey(toJson: dateToJson, name: "start_date") required DateTime startDate,
+    @JsonKey(toJson: dateToJson, name: "start_date")
+    required DateTime startDate,
     @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate,
   }) = _EventFormData;
 

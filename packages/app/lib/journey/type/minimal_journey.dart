@@ -24,7 +24,8 @@ class MinimalJourney with _$MinimalJourney {
     @JsonKey(name: 'preview_image') String? previewImage,
   }) = _MinimalJourney;
 
-  factory MinimalJourney.fromJson(JsonMap json) => _$MinimalJourneyFromJson(json);
+  factory MinimalJourney.fromJson(JsonMap json) =>
+      _$MinimalJourneyFromJson(json);
 
   static String getDistanceLabel(int? totalDistance) {
     if (totalDistance == null) {

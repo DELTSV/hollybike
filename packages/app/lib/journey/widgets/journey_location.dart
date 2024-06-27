@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
+
 import 'journey_position.dart';
 
 class JourneyLocation extends StatelessWidget {

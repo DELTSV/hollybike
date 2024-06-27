@@ -92,11 +92,8 @@ class EventParticipationModal extends StatelessWidget {
 
   Widget _buildParticipationJourney() {
     if (participation.journey != null) {
-      return SizedBox(
-        height: 105,
-        child: EventParticipationJourneyContent(
-          existingJourney: participation.journey!,
-        ),
+      return EventParticipationJourneyContent(
+        existingJourney: participation.journey!,
       );
     }
 
@@ -107,7 +104,7 @@ class EventParticipationModal extends StatelessWidget {
   }
 
   String _getJoinedDate() {
-    final date = participation.joinedDateTime;
+    final date = participation.joinedDateTime.toLocal();
     final now = DateTime.now();
     final difference = now.difference(date).inDays;
 

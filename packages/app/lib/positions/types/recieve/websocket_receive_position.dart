@@ -7,7 +7,9 @@ part 'websocket_receive_position.freezed.dart';
 part 'websocket_receive_position.g.dart';
 
 @freezed
-class WebsocketReceivePosition with _$WebsocketReceivePosition implements WebsocketBody {
+class WebsocketReceivePosition
+    with _$WebsocketReceivePosition
+    implements WebsocketBody {
   const factory WebsocketReceivePosition({
     required String type,
     required double latitude,
@@ -18,5 +20,6 @@ class WebsocketReceivePosition with _$WebsocketReceivePosition implements Websoc
     @JsonKey(name: "user") required int userId,
   }) = _WebsocketReceivePosition;
 
-  factory WebsocketReceivePosition.fromJson(JsonMap json) => _$WebsocketReceivePositionFromJson(json);
+  factory WebsocketReceivePosition.fromJson(JsonMap json) =>
+      _$WebsocketReceivePositionFromJson(json);
 }

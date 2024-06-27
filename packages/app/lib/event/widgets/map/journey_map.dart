@@ -3,10 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:geojson_vi/geojson_vi.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-
-
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../../shared/utils/waiter.dart';
 
 class JourneyMap extends StatefulWidget {

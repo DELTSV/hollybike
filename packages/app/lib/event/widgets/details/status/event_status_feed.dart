@@ -27,7 +27,9 @@ class EventStatusFeed extends StatelessWidget {
       case EventStatusState.canceled:
         return EventCancelledStatus(eventId: eventDetails.event.id);
       case EventStatusState.scheduled:
-        return EventScheduledStatus(startDate: eventDetails.event.startDate);
+        return EventScheduledStatus(
+          eventDetails: eventDetails,
+        );
       case EventStatusState.finished:
         return EventFinishedStatus(endDate: eventDetails.event.startDate);
       case EventStatusState.now:

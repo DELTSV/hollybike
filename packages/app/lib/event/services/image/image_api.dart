@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';

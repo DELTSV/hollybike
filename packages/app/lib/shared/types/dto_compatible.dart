@@ -1,4 +1,3 @@
-
 import 'json_map.dart';
 
 mixin DtoCompatibleFactory<D> {

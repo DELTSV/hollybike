@@ -10,7 +10,8 @@ import '../../event/types/event.dart';
 import '../../event/widgets/journey/upload_journey_modal.dart';
 import '../../shared/utils/with_current_session.dart';
 
-Future<File?> getJourneyFileAndUploadToEvent(BuildContext context, Event event) async {
+Future<File?> getJourneyFileAndUploadToEvent(
+    BuildContext context, Event event) async {
   final FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.any,
   );

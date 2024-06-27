@@ -7,10 +7,8 @@ import 'package:hollybike/shared/widgets/switch_with_text.dart';
 import '../../bloc/event_images_bloc/event_my_images_bloc.dart';
 import '../../bloc/event_images_bloc/event_my_images_event.dart';
 
-Future<void> showEventImagesVisibilityDialog(
-  BuildContext context,
-    {required bool isImagesPublic, required int eventId}
-) {
+Future<void> showEventImagesVisibilityDialog(BuildContext context,
+    {required bool isImagesPublic, required int eventId}) {
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {

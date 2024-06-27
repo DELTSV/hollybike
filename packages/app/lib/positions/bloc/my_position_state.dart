@@ -57,16 +57,16 @@ class MyPositionInitialized extends MyPositionState {
   MyPositionInitialized(super.state) : super.state();
 }
 
-
 class MyPositionStopped extends MyPositionState {
-  MyPositionStopped(state) : super.state(
-    MyPositionState(
-      lastLocation: state.lastLocation,
-      isRunning: state.isRunning,
-      status: state.status,
-      eventId: null,
-    ),
-  );
+  MyPositionStopped(state)
+      : super.state(
+          MyPositionState(
+            lastLocation: state.lastLocation,
+            isRunning: state.isRunning,
+            status: state.status,
+            eventId: null,
+          ),
+        );
 }
 
 class MyPositionFailure extends MyPositionState {

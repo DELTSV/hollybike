@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hollybike/app/app_router.dart';
 import 'package:hollybike/auth/guards/auth_stream.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -30,7 +29,6 @@ class _AppState extends State<App> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(
@@ -50,9 +48,9 @@ class _AppState extends State<App> {
             systemNavigationBarContrastEnforced: false,
             systemStatusBarContrastEnforced: false,
             systemNavigationBarIconBrightness:
-            state.isDark ? Brightness.light : Brightness.dark,
+                state.isDark ? Brightness.light : Brightness.dark,
             statusBarIconBrightness:
-            state.isDark ? Brightness.light : Brightness.dark,
+                state.isDark ? Brightness.light : Brightness.dark,
           ),
           child: Container(
             color: Theme.of(context).scaffoldBackgroundColor,

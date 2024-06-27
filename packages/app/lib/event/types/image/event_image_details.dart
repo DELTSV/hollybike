@@ -8,7 +8,6 @@ import '../../../shared/types/json_map.dart';
 part 'event_image_details.freezed.dart';
 part 'event_image_details.g.dart';
 
-
 @freezed
 class EventImageDetails with _$EventImageDetails {
   const factory EventImageDetails({
@@ -20,5 +19,6 @@ class EventImageDetails with _$EventImageDetails {
     @JsonKey(name: "uploaded_date_time") required DateTime uploadDateTime,
   }) = _EventImageDetails;
 
-  factory EventImageDetails.fromJson(JsonMap json) => _$EventImageDetailsFromJson(json);
+  factory EventImageDetails.fromJson(JsonMap json) =>
+      _$EventImageDetailsFromJson(json);
 }

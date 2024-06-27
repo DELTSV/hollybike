@@ -153,8 +153,8 @@ class EventApi {
     int eventId,
   ) async {
     final response = await DioClient(session).dio.delete(
-      '/events/$eventId/journey',
-    );
+          '/events/$eventId/journey',
+        );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to remove journey from event");

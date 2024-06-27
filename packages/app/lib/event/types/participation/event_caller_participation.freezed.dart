@@ -22,11 +22,15 @@ EventCallerParticipation _$EventCallerParticipationFromJson(
 /// @nodoc
 mixin _$EventCallerParticipation {
   int get userId => throw _privateConstructorUsedError;
+
   bool get isImagesPublic => throw _privateConstructorUsedError;
+
   EventRole get role => throw _privateConstructorUsedError;
+
   DateTime get joinedDateTime => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
   @JsonKey(ignore: true)
   $EventCallerParticipationCopyWith<EventCallerParticipation> get copyWith =>
       throw _privateConstructorUsedError;
@@ -37,6 +41,7 @@ abstract class $EventCallerParticipationCopyWith<$Res> {
   factory $EventCallerParticipationCopyWith(EventCallerParticipation value,
           $Res Function(EventCallerParticipation) then) =
       _$EventCallerParticipationCopyWithImpl<$Res, EventCallerParticipation>;
+
   @useResult
   $Res call(
       {int userId,
@@ -53,6 +58,7 @@ class _$EventCallerParticipationCopyWithImpl<$Res,
 
   // ignore: unused_field
   final $Val _value;
+
   // ignore: unused_field
   final $Res Function($Val) _then;
 
@@ -92,6 +98,7 @@ abstract class _$$EventCallerParticipationImplCopyWith<$Res>
           _$EventCallerParticipationImpl value,
           $Res Function(_$EventCallerParticipationImpl) then) =
       __$$EventCallerParticipationImplCopyWithImpl<$Res>;
+
   @override
   @useResult
   $Res call(
@@ -211,12 +218,16 @@ abstract class _EventCallerParticipation implements EventCallerParticipation {
 
   @override
   int get userId;
+
   @override
   bool get isImagesPublic;
+
   @override
   EventRole get role;
+
   @override
   DateTime get joinedDateTime;
+
   @override
   @JsonKey(ignore: true)
   _$$EventCallerParticipationImplCopyWith<_$EventCallerParticipationImpl>

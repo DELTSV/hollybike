@@ -1,10 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../shared/types/json_map.dart';
 import 'minimal_journey.dart';
 
 part 'user_journey.freezed.dart';
 part 'user_journey.g.dart';
-
 
 @freezed
 class UserJourney with _$UserJourney {
@@ -27,22 +27,20 @@ class UserJourney with _$UserJourney {
     return MinimalJourney.getDistanceLabel(totalDistance);
   }
 
-  // the speed is in m/s, convert it to km/h
   get avgSpeedLabel {
     if (avgSpeed == null) {
       return '';
     }
-    return '${(avgSpeed! * 3.6).toStringAsFixed(1)} km/h';
+    return '${(avgSpeed! * 3.6).round()} km/h';
   }
 
-  // the speed is in m/s, convert it to km/h
   get maxSpeedLabel {
     if (maxSpeed == null) {
       return '';
     }
-    return '${(maxSpeed! * 3.6).toStringAsFixed(1)} km/h';
+    return '${(maxSpeed! * 3.6).round()} km/h';
   }
-  // total time in seconds convert it to hours and minutes
+
   get totalTimeLabel {
     if (totalTime == null) {
       return '';

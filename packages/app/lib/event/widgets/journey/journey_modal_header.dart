@@ -45,23 +45,19 @@ class JourneyModalHeader extends StatelessWidget {
     if (canEditJourney) {
       actions.add(
         PopupMenuButton<JourneyModalAction>(
-          onSelected: (action) =>
-              _onActionsSelected(
-                context,
-                action,
-              ),
-          itemBuilder: (context) =>
-          [
+          onSelected: (action) => _onActionsSelected(
+            context,
+            action,
+          ),
+          itemBuilder: (context) => [
             PopupMenuItem(
               value: JourneyModalAction.update,
               child: UploadJourneyMenu(
-                noPadding: true,
                 event: event,
-                onSelection: (type) =>
-                    _onUpdateJourney(
-                      context,
-                      type,
-                    ),
+                onSelection: (type) => _onUpdateJourney(
+                  context,
+                  type,
+                ),
                 child: const Row(
                   children: [
                     Icon(Icons.swap_calls_rounded),
@@ -87,10 +83,10 @@ class JourneyModalHeader extends StatelessWidget {
     }
 
     actions.add(
-        ElevatedButton(
-          onPressed: () => _onOpenMap(context),
-          child: const Text('Voir sur la carte'),
-        ),
+      ElevatedButton(
+        onPressed: () => _onOpenMap(context),
+        child: const Text('Voir sur la carte'),
+      ),
     );
 
     return Row(
@@ -121,11 +117,11 @@ class JourneyModalHeader extends StatelessWidget {
 
     withCurrentSession(context, (session) {
       context.read<EventJourneyBloc>().add(
-        RemoveJourneyFromEvent(
-          eventId: event.id,
-          session: session,
-        ),
-      );
+            RemoveJourneyFromEvent(
+              eventId: event.id,
+              session: session,
+            ),
+          );
     });
   }
 

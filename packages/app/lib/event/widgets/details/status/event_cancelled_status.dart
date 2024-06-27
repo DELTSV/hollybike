@@ -18,12 +18,12 @@ class EventCancelledStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EventDetailsStatus(
-        status: EventStatusState.canceled,
-        message: 'Evénement annulé',
-        actionText: 'Publier',
-        onAction: () {
-          _onPublish(context);
-        },
+      status: EventStatusState.canceled,
+      message: 'Evénement annulé',
+      actionText: 'Publier',
+      onAction: () {
+        _onPublish(context);
+      },
     );
   }
 

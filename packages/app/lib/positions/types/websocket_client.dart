@@ -76,9 +76,8 @@ class WebsocketClient {
     });
   }
 
-  Stream<WebsocketMessage>? get stream => _client
-      ?.asBroadcastStream()
-      .map((event) => parseMessage(event));
+  Stream<WebsocketMessage>? get stream =>
+      _client?.asBroadcastStream().map((event) => parseMessage(event));
 
   bool get isConnected => _client != null;
 
@@ -104,8 +103,7 @@ class WebsocketClient {
   }
 
   void sendUserPosition(String channel, WebsocketSendPosition position) {
-    log(
-        'Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}, ${position.speed}');
+    log('Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}, ${position.speed}');
 
     final message = WebsocketMessage(
       channel: channel,

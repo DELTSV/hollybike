@@ -56,7 +56,8 @@ class ImageGalleryDetailsEvent extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      formatReadableDate(event.startDate).capitalize(),
+                      formatReadableDate(event.startDate.toLocal())
+                          .capitalize(),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],

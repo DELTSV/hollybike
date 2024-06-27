@@ -16,9 +16,9 @@ class UserEventsBloc extends EventsBloc {
 
   @override
   Future<void> onSubscribeToEvents(
-      SubscribeToEvents event,
-      Emitter<EventsState> emit,
-      ) async {
+    SubscribeToEvents event,
+    Emitter<EventsState> emit,
+  ) async {
     await emit.forEach<List<MinimalEvent>>(
       eventRepository.userEventsStream,
       onData: (events) => state.copyWith(
@@ -57,9 +57,9 @@ class UserEventsBloc extends EventsBloc {
 
   @override
   Future<void> onLoadEventsNextPage(
-      LoadEventsNextPage event,
-      Emitter<EventsState> emit,
-      ) async {
+    LoadEventsNextPage event,
+    Emitter<EventsState> emit,
+  ) async {
     if (state.hasMore == false || state.status == EventStatus.loading) {
       return;
     }

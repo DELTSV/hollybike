@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../utils/dates.dart';
 
 class ImageGalleryDetailsTime extends StatelessWidget {
@@ -45,7 +46,7 @@ class ImageGalleryDetailsTime extends StatelessWidget {
   List<Widget> _buildDates(BuildContext context) {
     final widgets = <Widget>[
       Text(
-        "Ajoutée ${formatReadableDate(uploadedAt)}",
+        "Ajoutée ${formatReadableDate(uploadedAt.toLocal())}",
         style: Theme.of(context).textTheme.bodySmall,
       ),
     ];
@@ -54,7 +55,7 @@ class ImageGalleryDetailsTime extends StatelessWidget {
       widgets.addAll([
         const SizedBox(height: 4),
         Text(
-          "Prise ${formatReadableDate(takenAt!)}",
+          "Prise ${formatReadableDate(takenAt!.toLocal())}",
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ]);

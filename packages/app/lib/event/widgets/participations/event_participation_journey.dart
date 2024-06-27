@@ -13,7 +13,6 @@ class EventParticipationJourneyContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
@@ -21,6 +20,7 @@ class EventParticipationJourneyContent extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,6 +40,7 @@ class EventParticipationJourneyContent extends StatelessWidget {
           const Spacer(),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: addSeparators(
               [
                 Row(
@@ -101,6 +102,7 @@ class EventParticipationJourneyContent extends StatelessWidget {
           const SizedBox(width: 16),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: addSeparators(
               [
                 Row(

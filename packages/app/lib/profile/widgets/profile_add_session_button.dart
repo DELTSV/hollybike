@@ -18,7 +18,8 @@ class ProfileAddSessionButton extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
         onPressed: () {
-          context.router.push(LoginRoute(onAuthSuccess: () => context.router.maybePop(), canPop: true));
+          context.router.push(LoginRoute(
+              onAuthSuccess: () => context.router.maybePop(), canPop: true));
         },
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.start,
