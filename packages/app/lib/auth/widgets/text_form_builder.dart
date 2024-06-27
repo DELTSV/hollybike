@@ -199,7 +199,8 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     if (_formKey.currentState!.validate()) {
       final data = Map.fromIterables(
         _formControllers.keys,
-        _formControllers.values.map((controller) => controller.editingController.text),
+        _formControllers.values
+            .map((controller) => controller.editingController.text),
       );
       widget.onFormSubmit(data);
     }

@@ -21,22 +21,31 @@ Position _$PositionFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Position {
   double get latitude => throw _privateConstructorUsedError;
+
   double get longitude => throw _privateConstructorUsedError;
+
   double? get altitude => throw _privateConstructorUsedError;
+
   @JsonKey(name: "place_name")
   String? get placeName => throw _privateConstructorUsedError;
+
   @JsonKey(name: "place_type")
   String get placeType => throw _privateConstructorUsedError;
+
   @JsonKey(name: "city_name")
   String? get cityName => throw _privateConstructorUsedError;
+
   @JsonKey(name: "country_name")
   String? get countryName => throw _privateConstructorUsedError;
+
   @JsonKey(name: "county_name")
   String? get countyName => throw _privateConstructorUsedError;
+
   @JsonKey(name: "state_name")
   String? get stateName => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
   @JsonKey(ignore: true)
   $PositionCopyWith<Position> get copyWith =>
       throw _privateConstructorUsedError;
@@ -46,6 +55,7 @@ mixin _$Position {
 abstract class $PositionCopyWith<$Res> {
   factory $PositionCopyWith(Position value, $Res Function(Position) then) =
       _$PositionCopyWithImpl<$Res, Position>;
+
   @useResult
   $Res call(
       {double latitude,
@@ -66,6 +76,7 @@ class _$PositionCopyWithImpl<$Res, $Val extends Position>
 
   // ignore: unused_field
   final $Val _value;
+
   // ignore: unused_field
   final $Res Function($Val) _then;
 
@@ -129,6 +140,7 @@ abstract class _$$PositionImplCopyWith<$Res>
   factory _$$PositionImplCopyWith(
           _$PositionImpl value, $Res Function(_$PositionImpl) then) =
       __$$PositionImplCopyWithImpl<$Res>;
+
   @override
   @useResult
   $Res call(
@@ -309,6 +321,7 @@ abstract class _Position extends Position {
           @JsonKey(name: "county_name") required final String? countyName,
           @JsonKey(name: "state_name") required final String? stateName}) =
       _$PositionImpl;
+
   const _Position._() : super._();
 
   factory _Position.fromJson(Map<String, dynamic> json) =
@@ -316,28 +329,37 @@ abstract class _Position extends Position {
 
   @override
   double get latitude;
+
   @override
   double get longitude;
+
   @override
   double? get altitude;
+
   @override
   @JsonKey(name: "place_name")
   String? get placeName;
+
   @override
   @JsonKey(name: "place_type")
   String get placeType;
+
   @override
   @JsonKey(name: "city_name")
   String? get cityName;
+
   @override
   @JsonKey(name: "country_name")
   String? get countryName;
+
   @override
   @JsonKey(name: "county_name")
   String? get countyName;
+
   @override
   @JsonKey(name: "state_name")
   String? get stateName;
+
   @override
   @JsonKey(ignore: true)
   _$$PositionImplCopyWith<_$PositionImpl> get copyWith =>

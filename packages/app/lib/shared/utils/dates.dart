@@ -76,7 +76,6 @@ String? dateToJson(DateTime? dateTime) => dateTime == null
     ? null
     : DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTime);
 
-
 String formatPastTime(DateTime date) {
   final now = DateTime.now();
   final difference = now.difference(date);

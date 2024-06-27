@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_event.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_state.dart';
 
+import '../../../shared/types/paginated_list.dart';
 import '../../services/image/image_repository.dart';
 import '../../types/image/event_image.dart';
-import '../../../shared/types/paginated_list.dart';
 
 class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
   final int numberOfImagesPerRequest = 20;

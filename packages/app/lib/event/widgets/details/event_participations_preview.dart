@@ -4,7 +4,6 @@ import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 
 import '../../types/participation/event_participation.dart';
 
-
 class EventParticipationsPreview extends StatelessWidget {
   final Event event;
   final List<EventParticipation> previewParticipants;

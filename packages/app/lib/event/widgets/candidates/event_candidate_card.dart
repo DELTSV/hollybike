@@ -37,10 +37,12 @@ class EventCandidateCard extends StatelessWidget {
           candidate.username,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        subtitle: candidate.eventRole != null ? Text(
-          "Déjà ${_eventRoleName(candidate.eventRole!)}",
-          style: Theme.of(context).textTheme.bodyMedium,
-        ) : null,
+        subtitle: candidate.eventRole != null
+            ? Text(
+                "Déjà ${_eventRoleName(candidate.eventRole!)}",
+                style: Theme.of(context).textTheme.bodyMedium,
+              )
+            : null,
       ),
     );
   }

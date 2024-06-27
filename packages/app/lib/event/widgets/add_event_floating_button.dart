@@ -25,11 +25,11 @@ class AddEventFloatingButton extends StatelessWidget {
                 onSubmit: (formData) {
                   withCurrentSession(context, (session) {
                     context.read<FutureEventsBloc>().add(
-                      CreateEvent(
-                        session: session,
-                        formData: formData,
-                      ),
-                    );
+                          CreateEvent(
+                            session: session,
+                            formData: formData,
+                          ),
+                        );
                   });
 
                   Navigator.of(context).pop();
@@ -43,8 +43,8 @@ class AddEventFloatingButton extends StatelessWidget {
       label: Text(
         'Ajouter',
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-        ),
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
       icon: const Icon(Icons.add),
     );

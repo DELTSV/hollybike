@@ -3,10 +3,13 @@ import 'package:rxdart/rxdart.dart';
 
 class AuthSessionRepository {
   final Subject<AuthSession> _expirationSubject = BehaviorSubject();
+
   Stream<AuthSession> get expirationStream => _expirationSubject.stream;
 
   final Subject<AuthSession?> _currentSessionSubject = BehaviorSubject();
-  Stream<AuthSession?> get currentSessionStream => _currentSessionSubject.stream;
+
+  Stream<AuthSession?> get currentSessionStream =>
+      _currentSessionSubject.stream;
 
   AuthSessionRepository();
 

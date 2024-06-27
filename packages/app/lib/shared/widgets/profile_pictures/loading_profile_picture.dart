@@ -21,7 +21,9 @@ class LoadingProfilePicture extends StatelessWidget {
 
     if (loadingProfileId == null) return profilePicture;
     return Hero(
-      tag: loadingProfileId == null ? "" : "user-$loadingProfileId-profile-picture",
+      tag: loadingProfileId == null
+          ? ""
+          : "user-$loadingProfileId-profile-picture",
       child: profilePicture,
     );
   }

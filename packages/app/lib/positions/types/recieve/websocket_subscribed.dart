@@ -13,5 +13,6 @@ class WebsocketSubscribed with _$WebsocketSubscribed implements WebsocketBody {
     @Default("subscribed") String type,
   }) = _WebsocketSubscribed;
 
-  factory WebsocketSubscribed.fromJson(JsonMap json) => _$WebsocketSubscribedFromJson(json);
+  factory WebsocketSubscribed.fromJson(JsonMap json) =>
+      _$WebsocketSubscribedFromJson(json);
 }

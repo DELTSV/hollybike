@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/association/types/association.dart';
+import 'package:hollybike/event/fragments/profile_events.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
 import 'package:hollybike/profile/widgets/profile_description/profile_description.dart';
-import 'package:hollybike/event/fragments/profile_events.dart';
 import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
 import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import 'package:hollybike/user/types/minimal_user.dart';

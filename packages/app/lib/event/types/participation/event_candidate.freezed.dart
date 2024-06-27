@@ -21,15 +21,20 @@ EventCandidate _$EventCandidateFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$EventCandidate {
   int get id => throw _privateConstructorUsedError;
+
   String get username => throw _privateConstructorUsedError;
+
   @JsonKey(name: "is_owner")
   bool get isOwner => throw _privateConstructorUsedError;
+
   @JsonKey(name: "profile_picture")
   String? get profilePicture => throw _privateConstructorUsedError;
+
   @JsonKey(name: "event_role")
   EventRole? get eventRole => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
   @JsonKey(ignore: true)
   $EventCandidateCopyWith<EventCandidate> get copyWith =>
       throw _privateConstructorUsedError;
@@ -40,6 +45,7 @@ abstract class $EventCandidateCopyWith<$Res> {
   factory $EventCandidateCopyWith(
           EventCandidate value, $Res Function(EventCandidate) then) =
       _$EventCandidateCopyWithImpl<$Res, EventCandidate>;
+
   @useResult
   $Res call(
       {int id,
@@ -56,6 +62,7 @@ class _$EventCandidateCopyWithImpl<$Res, $Val extends EventCandidate>
 
   // ignore: unused_field
   final $Val _value;
+
   // ignore: unused_field
   final $Res Function($Val) _then;
 
@@ -99,6 +106,7 @@ abstract class _$$EventCandidateImplCopyWith<$Res>
   factory _$$EventCandidateImplCopyWith(_$EventCandidateImpl value,
           $Res Function(_$EventCandidateImpl) then) =
       __$$EventCandidateImplCopyWithImpl<$Res>;
+
   @override
   @useResult
   $Res call(
@@ -232,17 +240,22 @@ abstract class _EventCandidate implements EventCandidate {
 
   @override
   int get id;
+
   @override
   String get username;
+
   @override
   @JsonKey(name: "is_owner")
   bool get isOwner;
+
   @override
   @JsonKey(name: "profile_picture")
   String? get profilePicture;
+
   @override
   @JsonKey(name: "event_role")
   EventRole? get eventRole;
+
   @override
   @JsonKey(ignore: true)
   _$$EventCandidateImplCopyWith<_$EventCandidateImpl> get copyWith =>

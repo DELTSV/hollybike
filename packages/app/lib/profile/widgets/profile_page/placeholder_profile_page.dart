@@ -22,7 +22,8 @@ class _PlaceholderProfilePageState extends State<PlaceholderProfilePage>
     return Column(
       children: [
         PlaceholderProfileBanner(loadingProfileId: widget.loadingProfileId),
-        PlaceholderProfileDescription(loadingProfileId: widget.loadingProfileId),
+        PlaceholderProfileDescription(
+            loadingProfileId: widget.loadingProfileId),
         const SizedBox.square(dimension: 16),
         const TabsLoadingPlaceholder(length: 2),
       ],

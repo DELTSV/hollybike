@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'error_box.dart';
 import '../bloc/notification_bloc.dart';
+import 'error_box.dart';
 
 class ErrorConsumer extends StatefulWidget {
   final String notificationsConsumerId;

@@ -1,10 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../shared/types/json_map.dart';
 import 'minimal_journey.dart';
 
 part 'user_journey.freezed.dart';
 part 'user_journey.g.dart';
-
 
 @freezed
 class UserJourney with _$UserJourney {

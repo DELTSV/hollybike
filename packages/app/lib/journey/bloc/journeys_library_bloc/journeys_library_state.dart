@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hollybike/journey/type/journey.dart';
 
-
 enum JourneysLibraryStatus { loading, success, error, initial }
-
 
 @immutable
 class JourneysLibraryState {
@@ -23,11 +21,11 @@ class JourneysLibraryState {
 
   JourneysLibraryState.state(JourneysLibraryState state)
       : this(
-    journeys: state.journeys,
-    hasMore: state.hasMore,
-    nextPage: state.nextPage,
-    status: state.status,
-  );
+          journeys: state.journeys,
+          hasMore: state.hasMore,
+          nextPage: state.nextPage,
+          status: state.status,
+        );
 
   JourneysLibraryState copyWith({
     JourneysLibraryStatus? status,

@@ -9,7 +9,6 @@ import 'package:hollybike/journey/type/minimal_journey.dart';
 import '../../shared/types/json_map.dart';
 
 part 'event_details.freezed.dart';
-
 part 'event_details.g.dart';
 
 @freezed
@@ -33,7 +32,8 @@ class EventDetails with _$EventDetails {
   bool get isParticipating => callerParticipation != null;
 
   bool get canJoin =>
-      !isParticipating && event.status == EventStatusState.scheduled;
+      !isParticipating && event.status == EventStatusState.scheduled ||
+      event.status == EventStatusState.now;
 
   bool get isOrganizer =>
       callerParticipation != null &&

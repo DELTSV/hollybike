@@ -3,7 +3,6 @@ import 'package:hollybike/event/types/event_details.dart';
 
 import '../../types/participation/event_participation.dart';
 
-
 enum EventDetailsStatus { loading, success, error, initial }
 
 @immutable

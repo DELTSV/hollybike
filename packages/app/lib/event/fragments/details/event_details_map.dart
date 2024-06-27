@@ -64,7 +64,8 @@ class EventDetailsMap extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildUserPositions(List<WebsocketReceivePosition> userPositions) {
+  List<Widget> _buildUserPositions(
+      List<WebsocketReceivePosition> userPositions) {
     return userPositions.map((position) {
       return Row(
         children: [

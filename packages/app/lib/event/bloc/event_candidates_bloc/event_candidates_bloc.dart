@@ -146,7 +146,8 @@ class EventCandidatesBloc
     emit(EventAddCandidatesInProgress(state));
 
     try {
-      final addedParticipants = await eventParticipationsRepository.addParticipants(
+      final addedParticipants =
+          await eventParticipationsRepository.addParticipants(
         event.eventId,
         event.session,
         event.userIds,

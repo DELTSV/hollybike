@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/details/status/event_details_status.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import '../../../../positions/bloc/my_position_bloc.dart';
 import '../../../../positions/bloc/my_position_event.dart';
 import '../../../../shared/utils/with_current_session.dart';
@@ -52,12 +53,12 @@ class EventNowStatus extends StatelessWidget {
     if (await _checkLocationPermission() && context.mounted) {
       withCurrentSession(context, (session) {
         context.read<MyPositionBloc>().add(
-          EnableSendPosition(
-            session: session,
-            eventId: eventDetails.event.id,
-            eventName: eventDetails.event.name,
-          ),
-        );
+              EnableSendPosition(
+                session: session,
+                eventId: eventDetails.event.id,
+                eventName: eventDetails.event.name,
+              ),
+            );
       });
     }
   }
@@ -71,7 +72,7 @@ class EventNowStatus extends StatelessWidget {
 
   void _cancelPostions(BuildContext context) {
     context.read<MyPositionBloc>().add(
-      DisableSendPositions(),
-    );
+          DisableSendPositions(),
+        );
   }
 }
