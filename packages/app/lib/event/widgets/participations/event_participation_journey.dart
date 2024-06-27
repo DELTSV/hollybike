@@ -40,6 +40,7 @@ class EventParticipationJourneyContent extends StatelessWidget {
           const Spacer(),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: addSeparators(
               [
                 Row(
@@ -101,6 +102,7 @@ class EventParticipationJourneyContent extends StatelessWidget {
           const SizedBox(width: 16),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: addSeparators(
               [
                 Row(

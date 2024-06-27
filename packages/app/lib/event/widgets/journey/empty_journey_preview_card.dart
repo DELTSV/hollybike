@@ -1,8 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event.dart';
-import 'package:hollybike/event/widgets/journey/journey_import_modal_from_type.dart';
-import 'package:hollybike/event/widgets/journey/upload_journey_menu.dart';
 import 'package:lottie/lottie.dart';
 
 class EmptyJourneyPreviewCard extends StatelessWidget {
@@ -52,13 +50,7 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
                 ],
               ),
             ),
-            UploadJourneyMenu(
-              event: event,
-              child: const Text('Sélectionner un parcours'),
-              onSelection: (type) {
-                journeyImportModalFromType(context, type, event);
-              },
-            )
+            const Text('Sélectionner un parcours'),
           ],
         ),
       ),

@@ -22,8 +22,6 @@ class JourneyPreviewCardContent extends StatelessWidget {
       return const SizedBox();
     }
 
-    // return const SizedBox.expand();
-
     final existingJourney = journey!;
 
     return Row(

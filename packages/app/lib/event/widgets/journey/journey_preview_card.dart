@@ -4,11 +4,13 @@ import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/journey/empty_journey_preview_card.dart';
 import 'package:hollybike/event/widgets/journey/journey_modal.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card_content.dart';
+import 'package:hollybike/event/widgets/journey/upload_journey_menu.dart';
 
 import '../../../journey/type/minimal_journey.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../bloc/event_journey_bloc/event_journey_bloc.dart';
 import '../../bloc/event_journey_bloc/event_journey_state.dart';
+import 'journey_import_modal_from_type.dart';
 import 'journey_preview_card_container.dart';
 
 class JourneyPreviewCard extends StatelessWidget {
@@ -62,8 +64,17 @@ class JourneyPreviewCard extends StatelessWidget {
         return const SizedBox();
       }
 
-      return EmptyJourneyPreviewCard(
-        event: eventDetails.event,
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: UploadJourneyMenu(
+          event: eventDetails.event,
+          onSelection: (type) {
+            journeyImportModalFromType(context, type, eventDetails.event);
+          },
+          child: EmptyJourneyPreviewCard(
+            event: eventDetails.event,
+          ),
+        ),
       );
     }
 
