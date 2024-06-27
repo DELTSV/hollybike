@@ -82,7 +82,7 @@ class _EventFormState extends State<EventForm> {
     _nameController.text = data.name;
     _descriptionController.text = data.description ?? "";
 
-    _date = data.startDate;
+    _date = data.startDate.toLocal();
 
     if (data.endDate != null) {
       _selectEndDate = true;
@@ -91,13 +91,15 @@ class _EventFormState extends State<EventForm> {
     final endDate =
         data.endDate ?? data.startDate.add(const Duration(hours: 1));
 
+    final localEndDate = endDate.toLocal();
+
     _dateRange = DateTimeRange(
-      start: data.startDate,
-      end: endDate,
+      start: _date,
+      end: localEndDate,
     );
 
-    _startTime = TimeOfDay.fromDateTime(data.startDate);
-    _endTime = TimeOfDay.fromDateTime(endDate);
+    _startTime = TimeOfDay.fromDateTime(_date);
+    _endTime = TimeOfDay.fromDateTime(localEndDate);
   }
 
   void _initDefaultValues() {

@@ -107,7 +107,7 @@ class EventParticipationModal extends StatelessWidget {
   }
 
   String _getJoinedDate() {
-    final date = participation.joinedDateTime;
+    final date = participation.joinedDateTime.toLocal();
     final now = DateTime.now();
     final difference = now.difference(date).inDays;
 
