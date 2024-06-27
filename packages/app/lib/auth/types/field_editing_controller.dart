@@ -8,5 +8,7 @@ class FieldEditingController {
     bool? hasControlNode = false,
     String? defaultValue,
   })  : editingController = TextEditingController(text: defaultValue),
-        controlEditingController = hasControlNode == true ? TextEditingController(text: defaultValue) : null;
+        controlEditingController = hasControlNode == true
+            ? TextEditingController(text: defaultValue)
+            : null;
 }

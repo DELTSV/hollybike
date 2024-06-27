@@ -7,7 +7,9 @@ part 'websocket_send_position.freezed.dart';
 part 'websocket_send_position.g.dart';
 
 @freezed
-class WebsocketSendPosition with _$WebsocketSendPosition implements WebsocketBody {
+class WebsocketSendPosition
+    with _$WebsocketSendPosition
+    implements WebsocketBody {
   const factory WebsocketSendPosition({
     @Default("send-user-position") String type,
     required double latitude,
@@ -23,5 +25,6 @@ class WebsocketSendPosition with _$WebsocketSendPosition implements WebsocketBod
     required double accuracy,
   }) = _WebsocketSendPosition;
 
-  factory WebsocketSendPosition.fromJson(JsonMap json) => _$WebsocketSendPositionFromJson(json);
+  factory WebsocketSendPosition.fromJson(JsonMap json) =>
+      _$WebsocketSendPositionFromJson(json);
 }

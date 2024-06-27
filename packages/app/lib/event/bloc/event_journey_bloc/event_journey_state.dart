@@ -12,8 +12,8 @@ class EventJourneyState {
 
   EventJourneyState.state(EventJourneyState state)
       : this(
-    status: state.status,
-  );
+          status: state.status,
+        );
 
   EventJourneyState copyWith({
     EventJourneyStatus? status,
@@ -34,7 +34,8 @@ class EventJourneyOperationInProgress extends EventJourneyState {
 class EventJourneyOperationSuccess extends EventJourneyState {
   final String successMessage;
 
-  EventJourneyOperationSuccess(EventJourneyState state, {required this.successMessage})
+  EventJourneyOperationSuccess(EventJourneyState state,
+      {required this.successMessage})
       : super.state(state.copyWith(status: EventJourneyStatus.success));
 }
 

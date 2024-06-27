@@ -18,7 +18,7 @@ class AuthSession {
   }
 
   int? getIndexInList(List<AuthSession> list) {
-    if(list.isNotEmpty) {
+    if (list.isNotEmpty) {
       int index;
       for (index = 0; index < list.length; index++) {
         final sessionFromIndex = list[index];

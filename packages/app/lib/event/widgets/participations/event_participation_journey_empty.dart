@@ -32,12 +32,12 @@ class EventParticipationJourneyEmpty extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                'Lorsque vous participez à un événement, vous pouvez voir votre parcours ici.',
+                'Lorsque le parcours sera terminé, vous pourrez le retrouver ici',
                 softWrap: true,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
               ),
             ),
           ],

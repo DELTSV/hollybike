@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../types/event.dart';
 
 enum NewJourneyType {
@@ -26,35 +27,33 @@ class UploadJourneyMenu extends StatelessWidget {
         Positioned.fill(
           child: Material(
             color: Colors.transparent,
-            child: InkWell(
-                onTapDown: (details) {
-                  showMenu(
-                    context: context,
-                    position: RelativeRect.fromLTRB(
-                      details.globalPosition.dx,
-                      details.globalPosition.dy,
-                      details.globalPosition.dx,
-                      details.globalPosition.dy,
-                    ),
-                    items: [
-                      PopupMenuItem(
-                        value: NewJourneyType.library,
-                        child: const Text('Depuis un parcours existant'),
-                        onTap: () {
-                          onSelection?.call(NewJourneyType.library);
-                        },
-                      ),
-                      PopupMenuItem(
-                        value: NewJourneyType.file,
-                        child: const Text('Importer un fichier GPX/GEOJSON'),
-                        onTap: () {
-                          onSelection?.call(NewJourneyType.file);
-                        },
-                      ),
-                    ],
-                  );
-                }
-            ),
+            child: InkWell(onTapDown: (details) {
+              showMenu(
+                context: context,
+                position: RelativeRect.fromLTRB(
+                  details.globalPosition.dx,
+                  details.globalPosition.dy,
+                  details.globalPosition.dx,
+                  details.globalPosition.dy,
+                ),
+                items: [
+                  PopupMenuItem(
+                    value: NewJourneyType.library,
+                    child: const Text('Depuis un parcours existant'),
+                    onTap: () {
+                      onSelection?.call(NewJourneyType.library);
+                    },
+                  ),
+                  PopupMenuItem(
+                    value: NewJourneyType.file,
+                    child: const Text('Importer un fichier GPX/GEOJSON'),
+                    onTap: () {
+                      onSelection?.call(NewJourneyType.file);
+                    },
+                  ),
+                ],
+              );
+            }),
           ),
         ),
       ],

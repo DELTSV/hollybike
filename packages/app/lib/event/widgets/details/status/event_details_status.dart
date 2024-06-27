@@ -78,7 +78,10 @@ class EventDetailsStatus extends StatelessWidget {
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: !loading
                       ? Event.getStatusColor(status)
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.5),
                 ),
           ),
         ),

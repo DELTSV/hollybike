@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/shared/types/json_map.dart';
 
 part 'paginated_list.freezed.dart';
-
 part 'paginated_list.g.dart';
 
 @Freezed(genericArgumentFactories: true)

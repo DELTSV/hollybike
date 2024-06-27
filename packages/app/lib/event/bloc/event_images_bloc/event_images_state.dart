@@ -22,11 +22,11 @@ class EventImagesState {
 
   EventImagesState.state(EventImagesState state)
       : this(
-    images: state.images,
-    hasMore: state.hasMore,
-    nextPage: state.nextPage,
-    status: state.status,
-  );
+          images: state.images,
+          hasMore: state.hasMore,
+          nextPage: state.nextPage,
+          status: state.status,
+        );
 
   EventImagesState copyWith({
     EventImagesStatus? status,
@@ -72,7 +72,8 @@ class EventImagesOperationSuccess extends EventImagesState {
   final bool shouldRefresh;
   final String? successMessage;
 
-  EventImagesOperationSuccess(EventImagesState state, {this.shouldRefresh = false, this.successMessage})
+  EventImagesOperationSuccess(EventImagesState state,
+      {this.shouldRefresh = false, this.successMessage})
       : super.state(state.copyWith(status: EventImagesStatus.success));
 }
 

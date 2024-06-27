@@ -23,14 +23,15 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: canPop ? FloatingActionButton.small(
-        onPressed: () => context.router.maybePop(),
-        child: const Icon(Icons.arrow_back),
-      ): null,
+      floatingActionButton: canPop
+          ? FloatingActionButton.small(
+              onPressed: () => context.router.maybePop(),
+              child: const Icon(Icons.arrow_back),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-        },
+        listener: (context, state) {},
         child: BannerDialog(
           body: FormBuilder(
             title: "Inscrivez-vous!",

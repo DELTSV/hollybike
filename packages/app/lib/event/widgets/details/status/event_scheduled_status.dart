@@ -24,7 +24,5 @@ class EventScheduledStatus extends StatelessWidget {
     );
   }
 
-  void _onAddToCalendar(BuildContext context) {
-
-  }
+  void _onAddToCalendar(BuildContext context) {}
 }

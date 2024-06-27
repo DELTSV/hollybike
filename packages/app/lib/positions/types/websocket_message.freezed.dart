@@ -22,10 +22,12 @@ WebsocketMessage<T> _$WebsocketMessageFromJson<T extends WebsocketBody>(
 /// @nodoc
 mixin _$WebsocketMessage<T extends WebsocketBody> {
   String get channel => throw _privateConstructorUsedError;
+
   T get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson(Object? Function(T) toJsonT) =>
       throw _privateConstructorUsedError;
+
   @JsonKey(ignore: true)
   $WebsocketMessageCopyWith<T, WebsocketMessage<T>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -36,6 +38,7 @@ abstract class $WebsocketMessageCopyWith<T extends WebsocketBody, $Res> {
   factory $WebsocketMessageCopyWith(
           WebsocketMessage<T> value, $Res Function(WebsocketMessage<T>) then) =
       _$WebsocketMessageCopyWithImpl<T, $Res, WebsocketMessage<T>>;
+
   @useResult
   $Res call({String channel, T data});
 }
@@ -48,6 +51,7 @@ class _$WebsocketMessageCopyWithImpl<T extends WebsocketBody, $Res,
 
   // ignore: unused_field
   final $Val _value;
+
   // ignore: unused_field
   final $Res Function($Val) _then;
 
@@ -76,6 +80,7 @@ abstract class _$$WebsocketMessageImplCopyWith<T extends WebsocketBody, $Res>
   factory _$$WebsocketMessageImplCopyWith(_$WebsocketMessageImpl<T> value,
           $Res Function(_$WebsocketMessageImpl<T>) then) =
       __$$WebsocketMessageImplCopyWithImpl<T, $Res>;
+
   @override
   @useResult
   $Res call({String channel, T data});
@@ -167,8 +172,10 @@ abstract class _WebsocketMessage<T extends WebsocketBody>
 
   @override
   String get channel;
+
   @override
   T get data;
+
   @override
   @JsonKey(ignore: true)
   _$$WebsocketMessageImplCopyWith<T, _$WebsocketMessageImpl<T>> get copyWith =>

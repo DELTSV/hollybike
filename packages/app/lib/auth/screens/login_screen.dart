@@ -24,10 +24,12 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: canPop ? FloatingActionButton.small(
-        onPressed: () => context.router.maybePop(),
-        child: const Icon(Icons.arrow_back),
-      ): null,
+      floatingActionButton: canPop
+          ? FloatingActionButton.small(
+              onPressed: () => context.router.maybePop(),
+              child: const Icon(Icons.arrow_back),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -41,9 +43,9 @@ class LoginScreen extends StatelessWidget {
             formTexts: FormTexts(
               submit: "Connexion",
               link: (
-              description: "Vous n'avez pas encore de compte ?",
-              buttonText: "Inscrivez-vous",
-              onDestinationClick: () => _signupLinkDialogBuilder(context)
+                description: "Vous n'avez pas encore de compte ?",
+                buttonText: "Inscrivez-vous",
+                onDestinationClick: () => _signupLinkDialogBuilder(context)
               ),
             ),
             onFormSubmit: (formValue) {

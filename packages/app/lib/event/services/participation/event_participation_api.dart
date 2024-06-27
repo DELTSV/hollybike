@@ -1,4 +1,3 @@
-
 import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';
@@ -118,7 +117,8 @@ class EventParticipationsApi {
     }
 
     return List<EventParticipation>.from(
-      response.data.map((participation) => EventParticipation.fromJson(participation)),
+      response.data
+          .map((participation) => EventParticipation.fromJson(participation)),
     );
   }
 }

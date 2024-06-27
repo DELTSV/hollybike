@@ -4,9 +4,9 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:hollybike/shared/widgets/profile_card/loading_profile_card.dart';
 import 'package:hollybike/shared/widgets/profile_card/profile_card.dart';
-import 'package:hollybike/shared/widgets/async_renderer.dart';
 
 import '../../bloc/profile_repository.dart';
 
@@ -39,7 +39,7 @@ class ProfileModalList extends StatelessWidget {
     return ListWheelScrollView(
       itemExtent: 80,
       diameterRatio: 3,
-      children:  _populateList(context, state.storedSessions),
+      children: _populateList(context, state.storedSessions),
     );
   }
 

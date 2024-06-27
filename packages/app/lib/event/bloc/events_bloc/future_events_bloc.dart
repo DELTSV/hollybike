@@ -7,14 +7,15 @@ import 'events_event.dart';
 import 'events_state.dart';
 
 class FutureEventsBloc extends EventsBloc {
-  FutureEventsBloc({required super.eventRepository}) : super(requestType: "future") {
+  FutureEventsBloc({required super.eventRepository})
+      : super(requestType: "future") {
     on<CreateEvent>(_onCreateEvent);
   }
 
   Future<void> _onCreateEvent(
-      CreateEvent event,
-      Emitter<EventsState> emit,
-      ) async {
+    CreateEvent event,
+    Emitter<EventsState> emit,
+  ) async {
     emit(EventCreationInProgress(state));
 
     try {

@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_state.dart';
 
+import '../../../shared/types/paginated_list.dart';
 import '../../services/event/event_repository.dart';
 import '../../services/image/image_repository.dart';
 import '../../types/image/event_image.dart';
-import '../../../shared/types/paginated_list.dart';
 import 'event_my_images_event.dart';
 
 class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {

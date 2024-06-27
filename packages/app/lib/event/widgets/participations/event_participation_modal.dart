@@ -92,11 +92,8 @@ class EventParticipationModal extends StatelessWidget {
 
   Widget _buildParticipationJourney() {
     if (participation.journey != null) {
-      return SizedBox(
-        height: 105,
-        child: EventParticipationJourneyContent(
-          existingJourney: participation.journey!,
-        ),
+      return EventParticipationJourneyContent(
+        existingJourney: participation.journey!,
       );
     }
 

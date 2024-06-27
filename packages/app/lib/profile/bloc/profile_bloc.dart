@@ -32,11 +32,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     bool isSearchedProfile(MinimalUser profile) => profile.id == id;
 
     try {
-      return state.sessionProfiles.values.map((sessionProfile) => sessionProfile.toMinimalUser()).firstWhere(
-        isSearchedProfile,
-        orElse: () =>
-            state.profiles[currentSession]!.firstWhere(isSearchedProfile),
-      );
+      return state.sessionProfiles.values
+          .map((sessionProfile) => sessionProfile.toMinimalUser())
+          .firstWhere(
+            isSearchedProfile,
+            orElse: () =>
+                state.profiles[currentSession]!.firstWhere(isSearchedProfile),
+          );
     } catch (_) {
       add(ProfileLoadById(sessionSearching: currentSession, id: id));
       return null;

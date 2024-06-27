@@ -12,7 +12,6 @@ import '../../profile/bloc/profile_repository.dart';
 import 'auth_session_repository.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -36,12 +35,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignup>(_onSignup);
   }
 
-  void _onAuthSessionsLoaded(AuthPersistentSessionsLoaded event, Emitter<AuthState> emit) {
+  void _onAuthSessionsLoaded(
+      AuthPersistentSessionsLoaded event, Emitter<AuthState> emit) {
     authSessionRepository.setCurrentSession(event.sessionsJson.firstOrNull);
     emit(AuthPersistentSessions(event.sessionsJson));
   }
 
-  void _onStoreCurrentSession(AuthStoreCurrentSession event, Emitter<AuthState> emit) {
+  void _onStoreCurrentSession(
+      AuthStoreCurrentSession event, Emitter<AuthState> emit) {
     emit(AuthStoredSession(state));
   }
 
