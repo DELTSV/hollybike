@@ -12,13 +12,16 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
     <application
             android:requestLegacyExternalStorage="true"
             android:label="HollyBike"
             android:usesCleartextTraffic="true"
             android:name="${applicationName}"
-            android:icon="@mipmap/ic_launcher">
+            android:icon="@mipmap/ic_launcher"
+    >
         <activity
                 android:name=".MainActivity"
                 android:exported="true"
@@ -26,7 +29,8 @@
                 android:theme="@style/LaunchTheme"
                 android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
                 android:hardwareAccelerated="true"
-                android:windowSoftInputMode="adjustResize">
+                android:windowSoftInputMode="adjustResize"
+        >
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -48,24 +52,28 @@
                 <data android:scheme="https"/>
             </intent-filter>
         </activity>
+
+        <service
+                android:name="yukams.app.background_locator_2.IsolateHolderService"
+                android:permission="android.permission.FOREGROUND_SERVICE"
+                android:exported="true"
+                android:foregroundServiceType="location"
+                android:stopWithTask="true"
+        />
+
+        <service
+                android:name="yukams.app.background_locator_2.LocatorService"
+                android:permission="android.permission.BIND_JOB_SERVICE"
+                android:exported="true"
+                android:stopWithTask="true"
+        />
+
         <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
-
-        <service android:name="yukams.app.background_locator_2.IsolateHolderService"
-                 android:permission="android.permission.FOREGROUND_SERVICE"
-                 android:exported="true"
-                 android:foregroundServiceType="location"
-                 android:stopWithTask="true"
-        />
-
-        <service android:name="yukams.app.background_locator_2.LocatorService"
-                 android:permission="android.permission.BIND_JOB_SERVICE"
-                 android:exported="true"
-                 android:stopWithTask="true"
-        />
+     This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
 
         <meta-data
                 android:name="flutterEmbedding"
-                android:value="2"/>
+                android:value="2"
+        />
     </application>
 </manifest>
