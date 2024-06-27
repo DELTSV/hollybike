@@ -71,11 +71,7 @@ class EventScheduledStatus extends StatelessWidget {
     }
 
     if (calendarId == null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erreur lors de la création du calendrier'),
-        ),
-      );
+      Toast.showErrorToast(context, 'Erreur lors de la création du calendrier');
 
       return;
     }
@@ -100,13 +96,6 @@ class EventScheduledStatus extends StatelessWidget {
     final createdEvent = await deviceCalendarPlugin.createOrUpdateEvent(event);
 
     if (createdEvent?.hasErrors == true && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content:
-              Text('Erreur lors de l\'ajout de l\'événement au calendrier'),
-        ),
-      );
-
       Toast.showErrorToast(context, 'Erreur lors de l\'ajout de l\'événement au calendrier');
 
       return;
