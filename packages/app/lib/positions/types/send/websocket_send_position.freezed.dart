@@ -34,6 +34,9 @@ mixin _$WebsocketSendPosition {
   double get accelerationZ => throw _privateConstructorUsedError;
   DateTime get time => throw _privateConstructorUsedError;
   double get speed => throw _privateConstructorUsedError;
+  @JsonKey(name: "speed_accuracy")
+  double get speedAccuracy => throw _privateConstructorUsedError;
+  double get accuracy => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -57,7 +60,9 @@ abstract class $WebsocketSendPositionCopyWith<$Res> {
       @JsonKey(name: "acceleration_y") double accelerationY,
       @JsonKey(name: "acceleration_z") double accelerationZ,
       DateTime time,
-      double speed});
+      double speed,
+      @JsonKey(name: "speed_accuracy") double speedAccuracy,
+      double accuracy});
 }
 
 /// @nodoc
@@ -84,6 +89,8 @@ class _$WebsocketSendPositionCopyWithImpl<$Res,
     Object? accelerationZ = null,
     Object? time = null,
     Object? speed = null,
+    Object? speedAccuracy = null,
+    Object? accuracy = null,
   }) {
     return _then(_value.copyWith(
       type: null == type
@@ -126,6 +133,14 @@ class _$WebsocketSendPositionCopyWithImpl<$Res,
           ? _value.speed
           : speed // ignore: cast_nullable_to_non_nullable
               as double,
+      speedAccuracy: null == speedAccuracy
+          ? _value.speedAccuracy
+          : speedAccuracy // ignore: cast_nullable_to_non_nullable
+              as double,
+      accuracy: null == accuracy
+          ? _value.accuracy
+          : accuracy // ignore: cast_nullable_to_non_nullable
+              as double,
     ) as $Val);
   }
 }
@@ -149,7 +164,9 @@ abstract class _$$WebsocketSendPositionImplCopyWith<$Res>
       @JsonKey(name: "acceleration_y") double accelerationY,
       @JsonKey(name: "acceleration_z") double accelerationZ,
       DateTime time,
-      double speed});
+      double speed,
+      @JsonKey(name: "speed_accuracy") double speedAccuracy,
+      double accuracy});
 }
 
 /// @nodoc
@@ -174,6 +191,8 @@ class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
     Object? accelerationZ = null,
     Object? time = null,
     Object? speed = null,
+    Object? speedAccuracy = null,
+    Object? accuracy = null,
   }) {
     return _then(_$WebsocketSendPositionImpl(
       type: null == type
@@ -216,6 +235,14 @@ class __$$WebsocketSendPositionImplCopyWithImpl<$Res>
           ? _value.speed
           : speed // ignore: cast_nullable_to_non_nullable
               as double,
+      speedAccuracy: null == speedAccuracy
+          ? _value.speedAccuracy
+          : speedAccuracy // ignore: cast_nullable_to_non_nullable
+              as double,
+      accuracy: null == accuracy
+          ? _value.accuracy
+          : accuracy // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -233,7 +260,9 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
       @JsonKey(name: "acceleration_y") required this.accelerationY,
       @JsonKey(name: "acceleration_z") required this.accelerationZ,
       required this.time,
-      required this.speed});
+      required this.speed,
+      @JsonKey(name: "speed_accuracy") required this.speedAccuracy,
+      required this.accuracy});
 
   factory _$WebsocketSendPositionImpl.fromJson(Map<String, dynamic> json) =>
       _$$WebsocketSendPositionImplFromJson(json);
@@ -262,10 +291,15 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
   final DateTime time;
   @override
   final double speed;
+  @override
+  @JsonKey(name: "speed_accuracy")
+  final double speedAccuracy;
+  @override
+  final double accuracy;
 
   @override
   String toString() {
-    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, heading: $heading, accelerationX: $accelerationX, accelerationY: $accelerationY, accelerationZ: $accelerationZ, time: $time, speed: $speed)';
+    return 'WebsocketSendPosition(type: $type, latitude: $latitude, longitude: $longitude, altitude: $altitude, heading: $heading, accelerationX: $accelerationX, accelerationY: $accelerationY, accelerationZ: $accelerationZ, time: $time, speed: $speed, speedAccuracy: $speedAccuracy, accuracy: $accuracy)';
   }
 
   @override
@@ -288,7 +322,11 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
             (identical(other.accelerationZ, accelerationZ) ||
                 other.accelerationZ == accelerationZ) &&
             (identical(other.time, time) || other.time == time) &&
-            (identical(other.speed, speed) || other.speed == speed));
+            (identical(other.speed, speed) || other.speed == speed) &&
+            (identical(other.speedAccuracy, speedAccuracy) ||
+                other.speedAccuracy == speedAccuracy) &&
+            (identical(other.accuracy, accuracy) ||
+                other.accuracy == accuracy));
   }
 
   @JsonKey(ignore: true)
@@ -304,7 +342,9 @@ class _$WebsocketSendPositionImpl implements _WebsocketSendPosition {
       accelerationY,
       accelerationZ,
       time,
-      speed);
+      speed,
+      speedAccuracy,
+      accuracy);
 
   @JsonKey(ignore: true)
   @override
@@ -332,7 +372,9 @@ abstract class _WebsocketSendPosition implements WebsocketSendPosition {
       @JsonKey(name: "acceleration_y") required final double accelerationY,
       @JsonKey(name: "acceleration_z") required final double accelerationZ,
       required final DateTime time,
-      required final double speed}) = _$WebsocketSendPositionImpl;
+      required final double speed,
+      @JsonKey(name: "speed_accuracy") required final double speedAccuracy,
+      required final double accuracy}) = _$WebsocketSendPositionImpl;
 
   factory _WebsocketSendPosition.fromJson(Map<String, dynamic> json) =
       _$WebsocketSendPositionImpl.fromJson;
@@ -360,6 +402,11 @@ abstract class _WebsocketSendPosition implements WebsocketSendPosition {
   DateTime get time;
   @override
   double get speed;
+  @override
+  @JsonKey(name: "speed_accuracy")
+  double get speedAccuracy;
+  @override
+  double get accuracy;
   @override
   @JsonKey(ignore: true)
   _$$WebsocketSendPositionImplCopyWith<_$WebsocketSendPositionImpl>

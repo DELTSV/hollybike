@@ -161,6 +161,8 @@ class MyPositionServiceRepository {
         accelerationX: keepFiveDigits(accelerationX),
         accelerationY: keepFiveDigits(accelerationY),
         accelerationZ: keepFiveDigits(accelerationZ),
+        speedAccuracy: keepFiveDigits(location.speedAccuracy),
+        accuracy: keepFiveDigits(location.accuracy),
       ),
     );
   }
