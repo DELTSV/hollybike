@@ -1,10 +1,21 @@
 part of 'auth_bloc.dart';
 
 @immutable
-class AuthState {}
+class AuthState {
+  final AuthSession? authSession;
 
-class AuthInitial extends AuthState {}
+  const AuthState({required this.authSession});
+}
 
-class AuthConnected extends AuthState {}
+class AuthInitial extends AuthState {
+  const AuthInitial() : super(authSession: null);
+}
 
-class AuthDisconnected extends AuthState {}
+class AuthConnected extends AuthState {
+  const AuthConnected({required AuthSession authSession})
+      : super(authSession: authSession);
+}
+
+class AuthDisconnected extends AuthState {
+  const AuthDisconnected() : super(authSession: null);
+}

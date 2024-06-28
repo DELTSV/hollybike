@@ -1,9 +1,5 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
@@ -62,14 +58,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     SubscribeToCurrentSessionChange event,
     Emitter<ProfileState> emit,
   ) async {
-    final currentSession = await authRepository.currentSession;
-
-    await emit.forEach<AuthState>(
+    await emit.forEach<AuthSession?>(
       authSessionRepository.authSessionStream,
-      onData: (_) => CurrentSessionChange(
-        oldState: state,
-        session: currentSession,
-      ),
+      onData: (session) =>
+        CurrentSessionChange(
+          oldState: state,
+          session: session,
+        ),
     );
   }
 

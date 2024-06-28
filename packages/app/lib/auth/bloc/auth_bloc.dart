@@ -27,7 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.authSessionRepository,
     required this.profileRepository,
     required this.notificationRepository,
-  }) : super(AuthInitial()) {
+  }) : super(const AuthInitial()) {
     _init();
     on<AuthPersistentSessionsLoaded>(_onAuthSessionsLoaded);
     on<AuthChangeCurrentSession>(_onCurrentSessionChange);
@@ -35,19 +35,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthSignup>(_onSignup);
   }
 
-  void _onAuthSessionsLoaded(AuthPersistentSessionsLoaded event, Emitter<AuthState> emit) {
-    authSessionRepository.setCurrentSession(event.sessionsJson.firstOrNull);
-    emit(AuthPersistentSessions(event.sessionsJson));
-  }
-
-  void _onStoreCurrentSession(AuthStoreCurrentSession event, Emitter<AuthState> emit) {
-    emit(AuthStoredSession(state));
+  void _init() async {
+    final persistedSessions = await authRepository.retrievePersistedSessions();
+    add(AuthPersistentSessionsLoaded(persistedSessions: persistedSessions));
   }
 
   @override
   void onChange(Change<AuthState> change) {
     super.onChange(change);
-    authSessionRepository.authSessionState = change.nextState;
+    authSessionRepository.authSessionState = change.nextState.authSession;
+  }
+
+  void _init() async {
+    final persistedSessions = await authRepository.retrievePersistedSessions();
+    add(AuthPersistentSessionsLoaded(persistedSessions: persistedSessions));
   }
 
   void _onAuthSessionsLoaded(
@@ -55,7 +56,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) {
     emit(
-      event.persistedSessions.isEmpty ? AuthDisconnected() : AuthConnected(),
+      event.persistedSessions.isEmpty
+          ? const AuthDisconnected()
+          : AuthConnected(authSession: event.persistedSessions[0]),
     );
   }
 
@@ -64,7 +67,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) {
     authRepository.currentSession = event.newCurrentSession;
-    emit(AuthConnected());
+    emit(AuthConnected(authSession: event.newCurrentSession));
   }
 
   void _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
@@ -75,7 +78,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       authRepository.currentSession = session;
-      emit(AuthConnected());
+      emit(AuthConnected(authSession: session));
     } on NotificationException catch (exception) {
       notificationRepository.push(
         exception.message,
@@ -100,7 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       authRepository.currentSession = session;
-      emit(AuthConnected());
+      emit(AuthConnected(authSession: session));
     } on NotificationException catch (exception) {
       notificationRepository.push(
         exception.message,

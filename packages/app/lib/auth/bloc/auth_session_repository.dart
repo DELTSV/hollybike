@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:rxdart/rxdart.dart';
 
 class AuthSessionRepository {
-  final StreamController<AuthState> _authSessionChangeStream =
-      StreamController();
+  final Subject<AuthSession?> _authSessionChangeStream = BehaviorSubject();
+  Stream<AuthSession?> get authSessionStream => _authSessionChangeStream.stream;
 
-  Stream<AuthState> get authSessionStream => _authSessionChangeStream.stream;
-
-  set authSessionState(AuthState session) =>
+  set authSessionState(AuthSession? session) =>
       _authSessionChangeStream.add(session);
 }
