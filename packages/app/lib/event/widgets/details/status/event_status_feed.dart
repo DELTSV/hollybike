@@ -5,6 +5,7 @@ import 'package:hollybike/event/types/event_status_state.dart';
 
 import '../../../../positions/bloc/my_position_bloc.dart';
 import '../../../../positions/bloc/my_position_state.dart';
+import '../position/event_position_switch.dart';
 import 'event_cancelled_status.dart';
 import 'event_finished_status.dart';
 import 'event_now_status.dart';
@@ -35,11 +36,18 @@ class EventStatusFeed extends StatelessWidget {
       case EventStatusState.now:
         return BlocBuilder<MyPositionBloc, MyPositionState>(
           builder: (context, state) {
-            return EventNowStatus(
-              isLoading: state is MyPositionLoading,
-              eventDetails: eventDetails,
-              isShared:
-                  state.isRunning && state.eventId == eventDetails.event.id,
+            return Column(
+              children: [
+                EventNowStatus(
+                  isLoading: state is MyPositionLoading,
+                  eventDetails: eventDetails,
+                  isShared:
+                      state.isRunning && state.eventId == eventDetails.event.id,
+                ),
+                EventPositionSwitch(
+                  eventDetails: eventDetails,
+                ),
+              ],
             );
           },
         );

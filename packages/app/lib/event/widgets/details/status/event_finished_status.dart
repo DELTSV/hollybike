@@ -14,7 +14,7 @@ class EventFinishedStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EventDetailsStatus(
+    return EventDetailsStatusBadge(
       status: EventStatusState.finished,
       message: 'Terminé ${formatPastTime(endDate)}',
     );
