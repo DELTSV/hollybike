@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
+import 'package:hollybike/profile/bloc/profile_bloc.dart';
+import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
+import 'package:provider/provider.dart';
 
 import '../../shared/utils/with_current_session.dart';
 import '../bloc/events_bloc/events_event.dart';
@@ -10,21 +13,26 @@ import 'events_list_fragment.dart';
 
 class UserEvents extends StatelessWidget {
   final void Function(MinimalEvent) navigateToEventDetails;
-  final int? userId;
 
   const UserEvents({
     super.key,
-    required this.userId,
     required this.navigateToEventDetails,
   });
 
   @override
   Widget build(BuildContext context) {
-    return EventsListFragment<UserEventsBloc>(
-      navigateToEventDetails: navigateToEventDetails,
-      onNextPageRequested: () => _loadNextPage(context),
-      onRefreshRequested: () => _refreshEvents(context, userId),
-      placeholderText: 'Vous ne participez à aucun événement',
+    return BlocProvidedBuilder<ProfileBloc, ProfileState>(
+      builder: (context, bloc, state) {
+        if (bloc.currentProfile == null) return const Text("loading");
+
+        return EventsListFragment<UserEventsBloc>(
+          navigateToEventDetails: navigateToEventDetails,
+          onNextPageRequested: () => _loadNextPage(context),
+          onRefreshRequested: () =>
+              _refreshEvents(context, bloc.currentProfile!.id),
+          placeholderText: 'Vous ne participez à aucun événement',
+        );
+      },
     );
   }
 

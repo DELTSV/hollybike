@@ -3,14 +3,10 @@ part of 'auth_bloc.dart';
 @immutable
 abstract class AuthEvent {}
 
-final class SubscribeToAuthSessionExpiration extends AuthEvent {
-  SubscribeToAuthSessionExpiration();
-}
-
 final class AuthPersistentSessionsLoaded extends AuthEvent {
-  final List<AuthSession> sessionsJson;
+  final List<AuthSession> persistedSessions;
 
-  AuthPersistentSessionsLoaded({required this.sessionsJson});
+  AuthPersistentSessionsLoaded({required this.persistedSessions});
 }
 
 final class AuthSessionExpired extends AuthEvent {
@@ -19,14 +15,10 @@ final class AuthSessionExpired extends AuthEvent {
   AuthSessionExpired({required this.expiredSession});
 }
 
-final class AuthSessionSwitch extends AuthEvent {
-  final AuthSession newSession;
+final class AuthChangeCurrentSession extends AuthEvent {
+  final AuthSession newCurrentSession;
 
-  AuthSessionSwitch({required this.newSession});
-}
-
-final class AuthStoreCurrentSession extends AuthEvent {
-  AuthStoreCurrentSession();
+  AuthChangeCurrentSession({required this.newCurrentSession});
 }
 
 final class AuthLogin extends AuthEvent {

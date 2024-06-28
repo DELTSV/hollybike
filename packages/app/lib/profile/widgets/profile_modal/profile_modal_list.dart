@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
-import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:hollybike/shared/widgets/profile_card/loading_profile_card.dart';
 import 'package:hollybike/shared/widgets/profile_card/profile_card.dart';
+import 'package:hollybike/shared/widgets/async_renderer.dart';
+import 'package:provider/provider.dart';
 
+import '../../../auth/bloc/auth_persistence.dart';
 import '../../bloc/profile_repository.dart';
 
 class ProfileModalList extends StatelessWidget {
@@ -28,18 +29,16 @@ class ProfileModalList extends StatelessWidget {
         ),
         clipBehavior: Clip.hardEdge,
         constraints: const BoxConstraints.tightFor(width: double.infinity),
-        child: BlocBuilder<AuthBloc, AuthState>(
-          builder: _buildList,
+        child: AsyncRenderer(
+          future: Provider.of<AuthPersistence>(context, listen: false).sessions,
+          placeholder: const Text("placeholder"),
+          builder: (sessions) => ListWheelScrollView(
+            itemExtent: 80,
+            diameterRatio: 3,
+            children: _populateList(context, sessions),
+          ),
         ),
       ),
-    );
-  }
-
-  Widget _buildList(BuildContext context, AuthState state) {
-    return ListWheelScrollView(
-      itemExtent: 80,
-      diameterRatio: 3,
-      children: _populateList(context, state.storedSessions),
     );
   }
 
@@ -74,8 +73,9 @@ class ProfileModalList extends StatelessWidget {
   }
 
   void _handleCardTap(BuildContext context, AuthSession session, Profile _) {
-    BlocProvider.of<AuthBloc>(context)
-        .add(AuthSessionSwitch(newSession: session));
+    BlocProvider.of<AuthBloc>(context).add(
+      AuthChangeCurrentSession(newCurrentSession: session),
+    );
   }
 
   Widget? _buildDeleteButton(
@@ -90,8 +90,8 @@ class ProfileModalList extends StatelessWidget {
 
     return IconButton(
       onPressed: () {
-        RepositoryProvider.of<AuthSessionRepository>(context)
-            .sessionExpired(session);
+        BlocProvider.of<AuthBloc>(context)
+            .add(AuthSessionExpired(expiredSession: session));
       },
       style: IconButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:hollybike/association/types/association.dart';
+import 'package:hollybike/shared/utils/verify_object_attributes_not_null.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 import 'package:hollybike/user/types/user_scope.dart';
 import 'package:hollybike/user/types/user_status.dart';
@@ -39,7 +40,18 @@ class Profile {
   }
 
   factory Profile.fromJson(Map<String, dynamic> json) {
-    _verifyObjectAttributeNotNull(json);
+    verifyObjectAttributesNotNull(
+      json,
+      [
+        "id",
+        "email",
+        "username",
+        "scope",
+        "status",
+        "last_login",
+        "association",
+      ],
+    );
     return Profile(
       id: json["id"],
       email: json["email"],
@@ -50,23 +62,5 @@ class Profile {
       association: Association.fromJsonObject(json["association"]),
       profilePicture: json["profile_picture"],
     );
-  }
-
-  static void _verifyObjectAttributeNotNull(Map<String, dynamic> json) {
-    verifyAttribute(String attribute) {
-      if (json[attribute] == null) {
-        throw FormatException("Missing $attribute inside server response");
-      }
-    }
-
-    [
-      "id",
-      "email",
-      "username",
-      "scope",
-      "status",
-      "last_login",
-      "association",
-    ].forEach(verifyAttribute);
   }
 }

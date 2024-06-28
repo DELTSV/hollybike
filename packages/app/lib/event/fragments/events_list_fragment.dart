@@ -46,7 +46,7 @@ class _EventsListFragmentState<T extends EventsBloc>
       listeners: [
         BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
-            if (state is AuthSessionSwitched) {
+            if (state is AuthConnected) {
               widget.onRefreshRequested();
             }
           },

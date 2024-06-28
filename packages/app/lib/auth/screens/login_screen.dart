@@ -33,7 +33,7 @@ class LoginScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state.currentSession != null) onAuthSuccess.call();
+          if (state is AuthConnected) onAuthSuccess.call();
         },
         child: BannerDialog(
           body: FormBuilder(

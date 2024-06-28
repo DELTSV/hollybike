@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hollybike/app/app_router.dart';
+import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/guards/auth_stream.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -10,13 +11,18 @@ import 'package:intl/intl.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class App extends StatefulWidget {
-  const App({super.key});
+  final AuthPersistence authPersistence;
+
+  const App({super.key, required this.authPersistence});
 
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
+  late final AppRouter appRouter;
+  late final AuthStream authChangeNotifier;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +33,9 @@ class _AppState extends State<App> {
     MapboxOptions.setAccessToken(
       const String.fromEnvironment('PUBLIC_ACCESS_TOKEN'),
     );
+
+    appRouter= AppRouter(authPersistence: widget.authPersistence);
+    authChangeNotifier = AuthStream(context);
   }
 
   @override
@@ -35,9 +44,6 @@ class _AppState extends State<App> {
       SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top],
     );
-
-    final appRouter = AppRouter(context: context);
-    final authChangeNotifier = AuthStream(context);
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) {

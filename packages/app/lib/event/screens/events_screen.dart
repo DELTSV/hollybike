@@ -81,7 +81,6 @@ class _EventsScreenState extends State<EventsScreen>
               title: "Vos évènements",
               icon: Icons.event_available,
               fragment: UserEvents(
-                userId: bloc.currentProfile?.id,
                 navigateToEventDetails: _onNavigateToEventDetails,
               ),
             ),

@@ -5,13 +5,18 @@ import '../../types/participation/event_candidate.dart';
 import '../../types/participation/event_participation.dart';
 
 class EventParticipationsApi {
+  final DioClient _dioClient;
+
+  EventParticipationsApi({required authPersistence})
+      : _dioClient = DioClient(authPersistence: authPersistence);
+
   Future<PaginatedList<EventParticipation>> getParticipations(
     int eventId,
     AuthSession session,
     int page,
     int eventsPerPage,
   ) async {
-    final response = await DioClient(session).dio.get(
+    final response = await _dioClient.dio.get(
       '/events/$eventId/participations',
       queryParameters: {
         'page': page,
@@ -46,10 +51,10 @@ class EventParticipationsApi {
       queryParams['joined_date_time'] = 'isnull';
     }
 
-    final response = await DioClient(session).dio.get(
-          '/events/$eventId/participations/candidates',
-          queryParameters: queryParams,
-        );
+    final response = await _dioClient.dio.get(
+      '/events/$eventId/participations/candidates',
+      queryParameters: queryParams,
+    );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch candidates");
@@ -63,9 +68,9 @@ class EventParticipationsApi {
     int userId,
     AuthSession session,
   ) async {
-    final response = await DioClient(session).dio.patch(
-          '/events/$eventId/participations/$userId/promote',
-        );
+    final response = await _dioClient.dio.patch(
+      '/events/$eventId/participations/$userId/promote',
+    );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to promote participation");
@@ -77,9 +82,9 @@ class EventParticipationsApi {
     int userId,
     AuthSession session,
   ) async {
-    final response = await DioClient(session).dio.patch(
-          '/events/$eventId/participations/$userId/demote',
-        );
+    final response = await _dioClient.dio.patch(
+      '/events/$eventId/participations/$userId/demote',
+    );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to demote participation");
@@ -91,9 +96,9 @@ class EventParticipationsApi {
     int userId,
     AuthSession session,
   ) async {
-    final response = await DioClient(session).dio.delete(
-          '/events/$eventId/participations/$userId',
-        );
+    final response = await _dioClient.dio.delete(
+      '/events/$eventId/participations/$userId',
+    );
 
     if (response.statusCode != 200) {
       throw Exception("Failed to remove participation");
@@ -105,7 +110,7 @@ class EventParticipationsApi {
     AuthSession session,
     List<int> userIds,
   ) async {
-    final response = await DioClient(session).dio.post(
+    final response = await _dioClient.dio.post(
       '/events/$eventId/participations/add-users',
       data: {
         'userIds': userIds,

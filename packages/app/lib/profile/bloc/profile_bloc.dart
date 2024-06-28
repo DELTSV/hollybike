@@ -1,20 +1,19 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
-import '../../auth/types/expired_token_exception.dart';
-
 part 'profile_event.dart';
+
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository;
+  final AuthRepository authRepository;
   final AuthSessionRepository authSessionRepository;
 
   Profile? get currentProfile {
@@ -47,6 +46,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   ProfileBloc({
     required this.profileRepository,
+    required this.authRepository,
     required this.authSessionRepository,
   }) : super(ProfileInitial()) {
     on<SubscribeToCurrentSessionChange>(_onSubscribeToCurrentSessionChange);
@@ -59,10 +59,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     await emit.forEach<AuthSession?>(
-      authSessionRepository.currentSessionStream,
-      onData: (session) {
-        return CurrentSessionChange(oldState: state, session: session);
-      },
+      authSessionRepository.authSessionStream,
+      onData: (session) =>
+        CurrentSessionChange(
+          oldState: state,
+          session: session,
+        ),
     );
   }
 
@@ -78,10 +80,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         session: session,
         profile: profile,
       ));
-    } on ExpiredTokenException catch (_) {
-      log('ProfileBloc: session expired');
-      authSessionRepository.sessionExpired(event.session);
-    }
+    } catch (_) {}
   }
 
   void _onProfileLoadById(

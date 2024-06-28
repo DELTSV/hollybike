@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
@@ -6,12 +8,12 @@ import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../profile/bloc/profile_repository.dart';
 import 'auth_session_repository.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -25,63 +27,61 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.authSessionRepository,
     required this.profileRepository,
     required this.notificationRepository,
-  }) : super(AuthInitial()) {
+  }) : super(const AuthInitial()) {
     _init();
-    on<SubscribeToAuthSessionExpiration>(_onSubscribeToAuthSessionExpiration);
     on<AuthPersistentSessionsLoaded>(_onAuthSessionsLoaded);
-    on<AuthSessionSwitch>(_onSessionSwitch);
-    on<AuthStoreCurrentSession>(_onStoreCurrentSession);
+    on<AuthChangeCurrentSession>(_onCurrentSessionChange);
     on<AuthLogin>(_onLogin);
     on<AuthSignup>(_onSignup);
   }
 
+  void _init() async {
+    final persistedSessions = await authRepository.retrievePersistedSessions();
+    add(AuthPersistentSessionsLoaded(persistedSessions: persistedSessions));
+  }
+
+  @override
+  void onChange(Change<AuthState> change) {
+    super.onChange(change);
+    authSessionRepository.authSessionState = change.nextState.authSession;
+  }
+
   void _onAuthSessionsLoaded(
-      AuthPersistentSessionsLoaded event, Emitter<AuthState> emit) {
-    authSessionRepository.setCurrentSession(event.sessionsJson.firstOrNull);
-    emit(AuthPersistentSessions(event.sessionsJson));
-  }
-
-  void _onStoreCurrentSession(
-      AuthStoreCurrentSession event, Emitter<AuthState> emit) {
-    emit(AuthStoredSession(state));
-  }
-
-  void _onSessionSwitch(AuthSessionSwitch event, Emitter<AuthState> emit) {
-    authSessionRepository.setCurrentSession(event.newSession);
-    emit(AuthSessionSwitched(state, event.newSession));
-  }
-
-  void _onSubscribeToAuthSessionExpiration(
-    SubscribeToAuthSessionExpiration event,
+    AuthPersistentSessionsLoaded event,
     Emitter<AuthState> emit,
-  ) async {
-    await emit.forEach<AuthSession>(
-      authSessionRepository.expirationStream,
-      onData: (session) => AuthSessionRemove(state, session),
+  ) {
+    emit(
+      event.persistedSessions.isEmpty
+          ? const AuthDisconnected()
+          : AuthConnected(authSession: event.persistedSessions[0]),
     );
+  }
+
+  void _onCurrentSessionChange(
+    AuthChangeCurrentSession event,
+    Emitter<AuthState> emit,
+  ) {
+    authRepository.currentSession = event.newCurrentSession;
+    emit(AuthConnected(authSession: event.newCurrentSession));
   }
 
   void _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
     try {
-      final response = await authRepository.login(
+      final session = await authRepository.login(
         event.host,
         event.loginDto,
       );
 
-      if (response.statusCode != 200) {
-        throw NotificationException(response.body);
-      }
-
-      final session = AuthSession.fromResponseJson(event.host, response.body);
-      authSessionRepository.setCurrentSession(session);
-      emit(AuthNewSession(session, state));
+      authRepository.currentSession = session;
+      emit(AuthConnected(authSession: session));
     } on NotificationException catch (exception) {
       notificationRepository.push(
         exception.message,
         isError: true,
         consumerId: "loginForm",
       );
-    } catch (_) {
+    } catch (e) {
+      log(e.toString());
       notificationRepository.push(
         "Oups! Il semble y avoir une erreur. Veuillez vérifier l'adresse du serveur et réessayer.",
         isError: true,
@@ -92,19 +92,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onSignup(AuthSignup event, Emitter<AuthState> emit) async {
     try {
-      final response = await authRepository.signup(
+      final session = await authRepository.signup(
         event.host,
         event.signupDto,
       );
 
-      if (response.statusCode != 200) {
-        throw NotificationException(response.body);
-      }
-
-      final session = AuthSession.fromResponseJson(event.host, response.body);
-
-      authSessionRepository.setCurrentSession(session);
-      emit(AuthNewSession(session, state));
+      authRepository.currentSession = session;
+      emit(AuthConnected(authSession: session));
     } on NotificationException catch (exception) {
       notificationRepository.push(
         exception.message,
@@ -118,21 +112,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         consumerId: "signupForm",
       );
     }
-  }
-
-  @override
-  void onChange(Change<AuthState> change) {
-    super.onChange(change);
-    _saveState(change.nextState);
-  }
-
-  void _init() async {
-    final persistedSessions = await authRepository.retrievePersistedSessions();
-    add(AuthPersistentSessionsLoaded(sessionsJson: persistedSessions));
-  }
-
-  void _saveState(AuthState state) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList("sessions", state.toJsonList());
   }
 }

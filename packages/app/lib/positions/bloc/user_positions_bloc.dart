@@ -59,6 +59,8 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
       session: AuthSession(
         token: accessToken,
         host: host,
+        deviceId: '',
+        refreshToken: '',
       ),
     ).connect();
 

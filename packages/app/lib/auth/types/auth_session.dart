@@ -1,20 +1,40 @@
 import 'dart:convert';
 
+import 'package:hollybike/shared/utils/verify_object_attributes_not_null.dart';
+
 class AuthSession {
   String token;
+  String refreshToken;
+  String deviceId;
   String host;
 
-  AuthSession({required this.token, required this.host});
+  AuthSession({
+    required this.token,
+    required this.host,
+    required this.refreshToken,
+    required this.deviceId,
+  });
 
   String toJson() {
     return json.encode({
       "token": token,
+      "refresh_token": refreshToken,
+      "device_id": deviceId,
       "host": host,
     });
   }
 
-  bool equal(AuthSession other) {
-    return host == other.host && token == other.token;
+  @override
+  int get hashCode {
+    return Object.hash(token, refreshToken, deviceId, host);
+  }
+
+  @override
+  bool operator ==(covariant AuthSession other) {
+    return host == other.host &&
+        token == other.token &&
+        refreshToken == other.refreshToken &&
+        deviceId == other.deviceId;
   }
 
   int? getIndexInList(List<AuthSession> list) {
@@ -22,7 +42,7 @@ class AuthSession {
       int index;
       for (index = 0; index < list.length; index++) {
         final sessionFromIndex = list[index];
-        if (sessionFromIndex.token == token && sessionFromIndex.host == host) {
+        if (this == sessionFromIndex) {
           return index;
         }
       }
@@ -30,30 +50,43 @@ class AuthSession {
     return null;
   }
 
-  static AuthSession fromJson(String json) {
+  factory AuthSession.fromJson(String json) {
     final object = jsonDecode(json);
 
-    if (object["token"] == null) {
-      throw const FormatException("Missing token inside json");
-    }
-
-    if (object["host"] == null) {
-      throw const FormatException("Missing host inside json");
-    }
+    verifyObjectAttributesNotNull(
+      object,
+      [
+        "token",
+        "refresh_token",
+        "device_id",
+        "host",
+      ],
+    );
 
     return AuthSession(
       token: object["token"] as String,
+      refreshToken: object["refresh_token"] as String,
+      deviceId: object["device_id"] as String,
       host: object["host"] as String,
     );
   }
 
-  static AuthSession fromResponseJson(String hostSource, String response) {
-    final object = jsonDecode(response);
+  factory AuthSession.fromResponseJson(
+      String hostSource, Map<String, dynamic> json) {
+    verifyObjectAttributesNotNull(
+      json,
+      [
+        "token",
+        "refresh_token",
+        "deviceId",
+      ],
+    );
 
-    if (object["token"] == null) {
-      throw const FormatException("Missing token inside server response");
-    }
-
-    return AuthSession(token: object["token"] as String, host: hostSource);
+    return AuthSession(
+      token: json["token"] as String,
+      refreshToken: json["refresh_token"] as String,
+      deviceId: json["deviceId"] as String,
+      host: hostSource,
+    );
   }
 }

@@ -1,22 +1,24 @@
 import 'package:dio/dio.dart';
-import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/auth/bloc/auth_persistence.dart';
 
-import 'interceptors/auth_interceptor.dart';
+import 'auth_interceptor.dart';
 
 class DioClient {
-  final AuthSession session;
-  late final Dio dio;
+  final Dio dio;
+  final AuthPersistence? authPersistence;
+  final String? host;
 
-  DioClient(this.session) {
-    dio = Dio(
-      BaseOptions(baseUrl: '${session.host}/api'),
-    );
-
+  DioClient({this.authPersistence, this.host}) : dio = Dio() {
     addInterceptor(LogInterceptor());
   }
 
   void addInterceptor(Interceptor interceptor) {
-    dio.interceptors.add(AuthInterceptor(dio: dio, token: session.token));
     dio.interceptors.add(interceptor);
+    if (authPersistence is AuthPersistence) {
+      dio.interceptors.add(AuthInterceptor(
+        dio: dio,
+        authPersistence: authPersistence as AuthPersistence,
+      ));
+    }
   }
 }
