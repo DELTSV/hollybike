@@ -46,11 +46,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     authSessionRepository.authSessionState = change.nextState.authSession;
   }
 
-  void _init() async {
-    final persistedSessions = await authRepository.retrievePersistedSessions();
-    add(AuthPersistentSessionsLoaded(persistedSessions: persistedSessions));
-  }
-
   void _onAuthSessionsLoaded(
     AuthPersistentSessionsLoaded event,
     Emitter<AuthState> emit,

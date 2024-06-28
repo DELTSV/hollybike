@@ -93,6 +93,8 @@ class MyPositionServiceRepository {
       session: AuthSession(
         token: _accessToken,
         host: _host,
+        deviceId: '',
+        refreshToken: '',
       ),
     ).connect();
 

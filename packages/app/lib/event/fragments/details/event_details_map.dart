@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/event/widgets/map/journey_map.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
 import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
 import 'package:hollybike/positions/bloc/user_positions_state.dart';
 import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
+import 'package:hollybike/shared/widgets/async_renderer.dart';
+import 'package:provider/provider.dart';
 
 import '../../../auth/bloc/auth_bloc.dart';
 import '../../../positions/bloc/user_positions_event.dart';
@@ -33,33 +39,37 @@ class EventDetailsMap extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final currentSession =
-        BlocProvider.of<AuthBloc>(context).state.currentSession;
+        Provider.of<AuthPersistence>(context).currentSession;
 
     if (journey == null || currentSession == null) {
       return const EmptyJourneyMap();
     }
 
-    return BlocProvider(
-      create: (context) => UserPositionsBloc()
-        ..add(
-          SubscribeToUserPositions(
-            eventId: eventId,
-            session: currentSession,
+    return AsyncRenderer(
+      future: currentSession as FutureOr<AuthSession>,
+      placeholder: const Text("placeholder"),
+      builder: (session) => BlocProvider(
+        create: (context) => UserPositionsBloc()
+          ..add(
+            SubscribeToUserPositions(
+              eventId: eventId,
+              session: session,
+            ),
           ),
+        child: BlocBuilder<UserPositionsBloc, UserPositionsState>(
+          builder: (context, state) {
+            return Column(
+              children: [
+                if (state.status == UserPositionsStatus.success)
+                  ..._buildUserPositions(state.userPositions),
+                JourneyMap(
+                  journey: journey!,
+                  onMapLoaded: onMapLoaded,
+                ),
+              ],
+            );
+          },
         ),
-      child: BlocBuilder<UserPositionsBloc, UserPositionsState>(
-        builder: (context, state) {
-          return Column(
-            children: [
-              if (state.status == UserPositionsStatus.success)
-                ..._buildUserPositions(state.userPositions),
-              JourneyMap(
-                journey: journey!,
-                onMapLoaded: onMapLoaded,
-              ),
-            ],
-          );
-        },
       ),
     );
   }
