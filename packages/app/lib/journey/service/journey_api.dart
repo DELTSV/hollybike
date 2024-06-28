@@ -8,12 +8,16 @@ import '../../shared/http/dio_client.dart';
 import '../../shared/types/paginated_list.dart';
 
 class JourneyApi {
+  final DioClient _dioClient;
+
+  JourneyApi({required authPersistence}) : _dioClient = DioClient(authPersistence: authPersistence);
+
   Future<PaginatedList<Journey>> getJourneys(
     AuthSession session,
     int page,
     int journeysPerPage,
   ) async {
-    final response = await DioClient(session).dio.get(
+    final response = await _dioClient.dio.get(
       '/journeys',
       queryParameters: {
         'page': page,
@@ -30,7 +34,7 @@ class JourneyApi {
   }
 
   Future<Journey> createJourney(AuthSession session, String name) async {
-    final response = await DioClient(session).dio.post('/journeys', data: {
+    final response = await _dioClient.dio.post('/journeys', data: {
       'name': name,
     });
 
@@ -46,7 +50,7 @@ class JourneyApi {
     int journeyId,
     File file,
   ) async {
-    final response = await DioClient(session).dio.post(
+    final response = await _dioClient.dio.post(
           '/journeys/$journeyId/file',
           data: FormData.fromMap({
             'file': await MultipartFile.fromFile(file.path),
@@ -61,8 +65,7 @@ class JourneyApi {
   }
 
   Future<Journey> getPositions(AuthSession session, int journeyId) async {
-    final response =
-        await DioClient(session).dio.get('/journeys/$journeyId/positions');
+    final response = await _dioClient.dio.get('/journeys/$journeyId/positions');
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch journey positions");

@@ -39,7 +39,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is AuthSessionSwitched) {
+              if (state is AuthConnected) {
                 _refreshEvents(context, widget.userId);
               }
             },

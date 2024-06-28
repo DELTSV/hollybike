@@ -7,10 +7,9 @@ import '../../notification/types/notification_exception.dart';
 
 class AuthApi {
   Future<AuthSession> login(String host, LoginDto dto) async {
-    final response = await DioClient(
-      null,
-      host: host,
-    ).dio.post("$host/api/auth/login", data: dto.asJson());
+    final response = await DioClient(host: host)
+        .dio
+        .post("$host/api/auth/login", data: dto.asJson());
 
     if (response.statusCode != 200) {
       throw NotificationException(response.data);
@@ -20,10 +19,9 @@ class AuthApi {
   }
 
   Future<AuthSession> signup(String host, SignupDto dto) async {
-    final response = await DioClient(
-      null,
-      host: host,
-    ).dio.post("$host/api/auth/signin", data: dto.asJson());
+    final response = await DioClient(host: host)
+        .dio
+        .post("$host/api/auth/signin", data: dto.asJson());
 
     if (response.statusCode != 200) {
       throw NotificationException(response.data);

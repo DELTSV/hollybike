@@ -24,7 +24,8 @@ class AuthSession {
     });
   }
 
-  bool equal(AuthSession other) {
+  @override
+  bool operator ==(covariant AuthSession other) {
     return host == other.host &&
         token == other.token &&
         refreshToken == other.refreshToken &&
@@ -36,7 +37,7 @@ class AuthSession {
       int index;
       for (index = 0; index < list.length; index++) {
         final sessionFromIndex = list[index];
-        if (equal(sessionFromIndex)) {
+        if (this == sessionFromIndex) {
           return index;
         }
       }

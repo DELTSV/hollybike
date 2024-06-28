@@ -1,23 +1,13 @@
-import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:rxdart/rxdart.dart';
+import 'dart:async';
+
+import 'package:hollybike/auth/bloc/auth_bloc.dart';
 
 class AuthSessionRepository {
-  final Subject<AuthSession> _expirationSubject = BehaviorSubject();
+  final StreamController<AuthState> _authSessionChangeStream =
+      StreamController();
 
-  Stream<AuthSession> get expirationStream => _expirationSubject.stream;
+  Stream<AuthState> get authSessionStream => _authSessionChangeStream.stream;
 
-  final Subject<AuthSession?> _currentSessionSubject = BehaviorSubject();
-
-  Stream<AuthSession?> get currentSessionStream =>
-      _currentSessionSubject.stream;
-
-  AuthSessionRepository();
-
-  void sessionExpired(AuthSession session) {
-    _expirationSubject.add(session);
-  }
-
-  void setCurrentSession(AuthSession? session) {
-    _currentSessionSubject.add(session);
-  }
+  set authSessionState(AuthState session) =>
+      _authSessionChangeStream.add(session);
 }

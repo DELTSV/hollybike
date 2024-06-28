@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app.dart';
@@ -24,8 +22,9 @@ import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_bloc.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
+import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-
+import 'package:provider/provider.dart';
 import 'event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'event/bloc/event_details_bloc/event_details_event.dart';
 import 'event/bloc/event_images_bloc/event_image_details_bloc.dart';
@@ -70,182 +69,205 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NotificationBloc(),
-      child: MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider(
-            create: (context) => NotificationRepository(
-              notificationBloc: BlocProvider.of<NotificationBloc>(context),
-            ),
-          ),
-          RepositoryProvider(
-            create: (context) => AuthRepository(
-              authApi: AuthApi(),
-              authPersistence: AuthPersistence(),
-            ),
-          ),
-          RepositoryProvider(
-            create: (context) => EventRepository(
-              eventApi: EventApi(),
-            ),
-          ),
-          RepositoryProvider(
-            create: (context) => EventParticipationRepository(
-              eventParticipationsApi: EventParticipationsApi(),
-            ),
-          ),
-          RepositoryProvider(
-            create: (context) => AuthSessionRepository(),
-          ),
-          RepositoryProvider(
-            create: (context) => ProfileRepository(
-              profileApi: ProfileApi(),
-            ),
-          ),
-          RepositoryProvider(
-            create: (context) => ImageRepository(
-              imageApi: ImageApi(),
-            ),
-          ),
-          RepositoryProvider(
-            create: (context) => JourneyRepository(
-              journeyApi: JourneyApi(),
-            ),
-          ),
-        ],
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<AuthBloc>(
-              create: (context) => AuthBloc(
-                authRepository: RepositoryProvider.of<AuthRepository>(context),
-                authSessionRepository:
-                    RepositoryProvider.of<AuthSessionRepository>(context),
-                profileRepository:
-                    RepositoryProvider.of<ProfileRepository>(context),
-                notificationRepository:
-                    RepositoryProvider.of<NotificationRepository>(context),
-              )..add(SubscribeToAuthSessionExpiration()),
-            ),
-            BlocProvider<ThemeBloc>(
-              create: (context) => ThemeBloc(),
-            ),
-            BlocProvider<ProfileBloc>(
-              create: (context) => ProfileBloc(
-                authSessionRepository:
-                    RepositoryProvider.of<AuthSessionRepository>(
-                  context,
-                ),
-                profileRepository: RepositoryProvider.of<ProfileRepository>(
-                  context,
-                ),
-              )..add(SubscribeToCurrentSessionChange()),
-            ),
-            BlocProvider<FutureEventsBloc>(
-              create: (context) => FutureEventsBloc(
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEvents()),
-            ),
-            BlocProvider<ArchivedEventsBloc>(
-              create: (context) => ArchivedEventsBloc(
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEvents()),
-            ),
-            BlocProvider<UserEventsBloc>(
-              create: (context) => UserEventsBloc(
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEvents()),
-            ),
-            BlocProvider<EventDetailsBloc>(
-              create: (context) => EventDetailsBloc(
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEvent()),
-            ),
-            BlocProvider<EventParticipationBloc>(
-              create: (context) => EventParticipationBloc(
-                eventParticipationsRepository:
-                    RepositoryProvider.of<EventParticipationRepository>(
-                  context,
-                ),
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEventParticipations()),
-            ),
-            BlocProvider<EventCandidatesBloc>(
-              create: (context) => EventCandidatesBloc(
-                eventParticipationsRepository:
-                    RepositoryProvider.of<EventParticipationRepository>(
-                  context,
-                ),
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEventCandidates()),
-            ),
-            BlocProvider<EventImagesBloc>(
-              create: (context) => EventImagesBloc(
-                imageRepository: RepositoryProvider.of<ImageRepository>(
-                  context,
+    return Provider(
+      create: (context) => AuthPersistence(),
+      child: Builder(builder: (context) {
+        return BlocProvider(
+          create: (context) => NotificationBloc(),
+          child: MultiRepositoryProvider(
+            providers: [
+              RepositoryProvider(
+                create: (context) => NotificationRepository(
+                  notificationBloc: BlocProvider.of<NotificationBloc>(context),
                 ),
               ),
-            ),
-            BlocProvider<EventMyImagesBloc>(
-              create: (context) => EventMyImagesBloc(
-                imageRepository: RepositoryProvider.of<ImageRepository>(
-                  context,
-                ),
-                eventRepository: RepositoryProvider.of<EventRepository>(
-                  context,
+              RepositoryProvider(
+                create: (context) => AuthRepository(
+                  authApi: AuthApi(),
+                  authPersistence: AuthPersistence(),
                 ),
               ),
-            ),
-            BlocProvider<EventImageDetailsBloc>(
-              create: (context) => EventImageDetailsBloc(
-                imageRepository: RepositoryProvider.of<ImageRepository>(
-                  context,
+              RepositoryProvider(
+                create: (context) => EventRepository(
+                  eventApi: EventApi(
+                    authPersistence:
+                        Provider.of<AuthPersistence>(context, listen: false),
+                  ),
                 ),
               ),
-            ),
-            BlocProvider<EventJourneyBloc>(
-              create: (context) => EventJourneyBloc(
-                journeyRepository: RepositoryProvider.of<JourneyRepository>(
-                  context,
-                ),
-                eventRepository: RepositoryProvider.of<EventRepository>(
-                  context,
+              RepositoryProvider(
+                create: (context) => EventParticipationRepository(
+                  eventParticipationsApi: EventParticipationsApi(
+                    authPersistence:
+                        Provider.of<AuthPersistence>(context, listen: false),
+                  ),
                 ),
               ),
-            ),
-            BlocProvider<JourneysLibraryBloc>(
-              create: (context) => JourneysLibraryBloc(
-                journeyRepository: RepositoryProvider.of<JourneyRepository>(
-                  context,
+              RepositoryProvider(
+                create: (context) => AuthSessionRepository(),
+              ),
+              RepositoryProvider(
+                create: (context) => ProfileRepository(
+                  profileApi: ProfileApi(
+                    authPersistence:
+                        Provider.of<AuthPersistence>(context, listen: false),
+                  ),
                 ),
               ),
-            ),
-            BlocProvider<SearchBloc>(
-              create: (context) => SearchBloc(
-                eventRepository: RepositoryProvider.of<EventRepository>(
-                  context,
+              RepositoryProvider(
+                create: (context) => ImageRepository(
+                  imageApi: ImageApi(
+                    authPersistence:
+                        Provider.of<AuthPersistence>(context, listen: false),
+                  ),
                 ),
-                profileRepository: RepositoryProvider.of<ProfileRepository>(
-                  context,
+              ),
+              RepositoryProvider(
+                create: (context) => JourneyRepository(
+                  journeyApi: JourneyApi(
+                    authPersistence:
+                        Provider.of<AuthPersistence>(context, listen: false),
+                  ),
                 ),
-              )..add(SubscribeToEventsSearch()),
-            ),
-            BlocProvider<MyPositionBloc>(
-              create: (context) => MyPositionBloc()
-                ..add(
-                  SubscribeToMyPositionUpdates(),
+              ),
+            ],
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider<AuthBloc>(
+                  create: (context) => AuthBloc(
+                    authRepository:
+                        RepositoryProvider.of<AuthRepository>(context),
+                    authSessionRepository:
+                        RepositoryProvider.of<AuthSessionRepository>(context),
+                    profileRepository:
+                        RepositoryProvider.of<ProfileRepository>(context),
+                    notificationRepository:
+                        RepositoryProvider.of<NotificationRepository>(context),
+                  ),
                 ),
+                BlocProvider<ThemeBloc>(
+                  create: (context) => ThemeBloc(),
+                ),
+                BlocProvider<ProfileBloc>(
+                  create: (context) => ProfileBloc(
+                    authRepository:
+                        RepositoryProvider.of<AuthRepository>(context),
+                    authSessionRepository:
+                        RepositoryProvider.of<AuthSessionRepository>(context),
+                    profileRepository:
+                        RepositoryProvider.of<ProfileRepository>(context),
+                  )..add(SubscribeToCurrentSessionChange()),
+                ),
+                BlocProvider<FutureEventsBloc>(
+                  create: (context) => FutureEventsBloc(
+                    eventRepository:
+                        RepositoryProvider.of<EventRepository>(context),
+                  )..add(SubscribeToEvents()),
+                ),
+                BlocProvider<ArchivedEventsBloc>(
+                  create: (context) => ArchivedEventsBloc(
+                    eventRepository:
+                        RepositoryProvider.of<EventRepository>(context),
+                  )..add(SubscribeToEvents()),
+                ),
+                BlocProvider<UserEventsBloc>(
+                  create: (context) => UserEventsBloc(
+                    eventRepository:
+                        RepositoryProvider.of<EventRepository>(context),
+                  )..add(SubscribeToEvents()),
+                ),
+                BlocProvider<EventDetailsBloc>(
+                  create: (context) => EventDetailsBloc(
+                    eventRepository:
+                        RepositoryProvider.of<EventRepository>(context),
+                  )..add(SubscribeToEvent()),
+                ),
+                BlocProvider<EventParticipationBloc>(
+                  create: (context) => EventParticipationBloc(
+                    eventParticipationsRepository:
+                        RepositoryProvider.of<EventParticipationRepository>(
+                      context,
+                    ),
+                    eventRepository:
+                        RepositoryProvider.of<EventRepository>(context),
+                  )..add(SubscribeToEventParticipations()),
+                ),
+                BlocProvider<EventCandidatesBloc>(
+                  create: (context) => EventCandidatesBloc(
+                    eventParticipationsRepository:
+                        RepositoryProvider.of<EventParticipationRepository>(
+                      context,
+                    ),
+                    eventRepository:
+                        RepositoryProvider.of<EventRepository>(context),
+                  )..add(SubscribeToEventCandidates()),
+                ),
+                BlocProvider<EventImagesBloc>(
+                  create: (context) => EventImagesBloc(
+                    imageRepository: RepositoryProvider.of<ImageRepository>(
+                      context,
+                    ),
+                  ),
+                ),
+                BlocProvider<EventMyImagesBloc>(
+                  create: (context) => EventMyImagesBloc(
+                    imageRepository: RepositoryProvider.of<ImageRepository>(
+                      context,
+                    ),
+                    eventRepository: RepositoryProvider.of<EventRepository>(
+                      context,
+                    ),
+                  ),
+                ),
+                BlocProvider<EventImageDetailsBloc>(
+                  create: (context) => EventImageDetailsBloc(
+                    imageRepository: RepositoryProvider.of<ImageRepository>(
+                      context,
+                    ),
+                  ),
+                ),
+                BlocProvider<EventJourneyBloc>(
+                  create: (context) => EventJourneyBloc(
+                    journeyRepository: RepositoryProvider.of<JourneyRepository>(
+                      context,
+                    ),
+                    eventRepository: RepositoryProvider.of<EventRepository>(
+                      context,
+                    ),
+                  ),
+                ),
+                BlocProvider<JourneysLibraryBloc>(
+                  create: (context) => JourneysLibraryBloc(
+                    journeyRepository: RepositoryProvider.of<JourneyRepository>(
+                      context,
+                    ),
+                  ),
+                ),
+                BlocProvider<SearchBloc>(
+                  create: (context) => SearchBloc(
+                    eventRepository: RepositoryProvider.of<EventRepository>(
+                      context,
+                    ),
+                    profileRepository: RepositoryProvider.of<ProfileRepository>(
+                      context,
+                    ),
+                  )..add(SubscribeToEventsSearch()),
+                ),
+                BlocProvider<MyPositionBloc>(
+                  create: (context) => MyPositionBloc()
+                    ..add(
+                      SubscribeToMyPositionUpdates(),
+                    ),
+                ),
+              ],
+              child: App(
+                authPersistence:
+                    Provider.of<AuthPersistence>(context, listen: false),
+              ),
             ),
-          ],
-          child: const App(),
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 }

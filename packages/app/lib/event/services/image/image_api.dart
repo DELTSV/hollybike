@@ -12,13 +12,17 @@ import '../../types/image/event_image.dart';
 import '../../types/image/event_image_details.dart';
 
 class ImageApi {
+  final DioClient _dioClient;
+
+ ImageApi({required authPersistence}) : _dioClient = DioClient(authPersistence: authPersistence);
+
   Future<PaginatedList<EventImage>> getEventImages(
     AuthSession session,
     int eventId,
     int page,
     int imagesPerPage,
   ) async {
-    final response = await DioClient(session).dio.get(
+    final response = await _dioClient.dio.get(
       '/events/images',
       queryParameters: {
         'page': page,
@@ -41,7 +45,7 @@ class ImageApi {
     int page,
     int imagesPerPage,
   ) async {
-    final response = await DioClient(session).dio.get(
+    final response = await _dioClient.dio.get(
       '/events/images/me',
       queryParameters: {
         'page': page,
@@ -81,7 +85,7 @@ class ImageApi {
       );
     }).toList());
 
-    final response = await DioClient(session).dio.post(
+    final response = await _dioClient.dio.post(
           '/events/$eventId/images',
           data: FormData.fromMap(
             {'images': imageParts},
@@ -98,7 +102,7 @@ class ImageApi {
     int eventId,
     bool isPublic,
   ) async {
-    final response = await DioClient(session).dio.patch(
+    final response = await _dioClient.dio.patch(
       '/events/$eventId/participations/images-visibility',
       data: {
         'is_images_public': isPublic,
@@ -114,7 +118,7 @@ class ImageApi {
     AuthSession session,
     int imageId,
   ) async {
-    final response = await DioClient(session).dio.get(
+    final response = await _dioClient.dio.get(
           '/events/images/$imageId',
         );
 
@@ -129,7 +133,7 @@ class ImageApi {
     AuthSession session,
     int imageId,
   ) async {
-    final response = await DioClient(session).dio.delete(
+    final response = await _dioClient.dio.delete(
           '/events/images/$imageId',
         );
 
