@@ -31,7 +31,7 @@ class ProfileModalList extends StatelessWidget {
         constraints: const BoxConstraints.tightFor(width: double.infinity),
         child: AsyncRenderer(
           future: Provider.of<AuthPersistence>(context, listen: false).sessions,
-          placeholder: Text("chargement..."),
+          placeholder: const Text("placeholder"),
           builder: (sessions) => ListWheelScrollView(
             itemExtent: 80,
             diameterRatio: 3,

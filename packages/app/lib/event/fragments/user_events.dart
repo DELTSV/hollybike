@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
-import 'package:hollybike/profile/types/profile.dart';
-import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 import 'package:provider/provider.dart';
 

@@ -15,7 +15,6 @@ class DioClient {
   void addInterceptor(Interceptor interceptor) {
     dio.interceptors.add(interceptor);
     if (authPersistence is AuthPersistence) {
-      print("authPersistence detected");
       dio.interceptors.add(AuthInterceptor(
         dio: dio,
         authPersistence: authPersistence as AuthPersistence,

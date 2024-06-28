@@ -13,7 +13,6 @@ import 'package:hollybike/positions/types/recieve/websocket_receive_position.dar
 import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:provider/provider.dart';
 
-import '../../../auth/bloc/auth_bloc.dart';
 import '../../../positions/bloc/user_positions_event.dart';
 import '../../widgets/map/empty_journey_map.dart';
 

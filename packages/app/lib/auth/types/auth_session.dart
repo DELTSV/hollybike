@@ -25,6 +25,11 @@ class AuthSession {
   }
 
   @override
+  int get hashCode {
+    return Object.hash(token, refreshToken, deviceId, host);
+  }
+
+  @override
   bool operator ==(covariant AuthSession other) {
     return host == other.host &&
         token == other.token &&
@@ -66,7 +71,8 @@ class AuthSession {
     );
   }
 
-  factory AuthSession.fromResponseJson(String hostSource, Map<String, dynamic> json) {
+  factory AuthSession.fromResponseJson(
+      String hostSource, Map<String, dynamic> json) {
     verifyObjectAttributesNotNull(
       json,
       [

@@ -17,7 +17,6 @@ class AuthInterceptor extends Interceptor {
   ) async {
     final currentSession = await authPersistence.currentSession;
     if (currentSession is AuthSession) {
-      print("host ${currentSession.host}");
       options.baseUrl = "${currentSession.host}/api";
       options.headers['Authorization'] = 'Bearer ${currentSession.token}';
     }
