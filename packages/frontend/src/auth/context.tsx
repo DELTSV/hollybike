@@ -60,8 +60,10 @@ export const AuthContextProvider = ({ children }: Props) => {
 			method: "POST",
 			body: data,
 		}).then((res) => {
-			if (res.status === 200) {
-				localStorage.setItem("token", res.data!.token);
+			if (res.status === 200 && res.data) {
+				localStorage.setItem("token", res.data.token);
+				localStorage.setItem("refreshToken", res.data.refresh_token);
+				localStorage.setItem("deviceId", res.data.deviceId);
 				setToken(res.data!.token);
 				user.fetchUser();
 			} else if (res.status === 404) {
@@ -74,6 +76,8 @@ export const AuthContextProvider = ({ children }: Props) => {
 
 	const disconnect = useCallback(() => {
 		localStorage.removeItem("token");
+		localStorage.removeItem("refreshToken");
+		localStorage.removeItem("deviceId");
 		setToken(undefined);
 		user.clean();
 	}, []);

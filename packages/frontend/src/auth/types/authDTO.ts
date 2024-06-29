@@ -4,5 +4,7 @@ export interface TLogin {
 }
 
 export interface TAuthInfo {
-	token: string
+	token: string,
+	refresh_token: string,
+	deviceId: string
 }
