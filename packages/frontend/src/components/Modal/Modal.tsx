@@ -18,6 +18,7 @@ export function Modal(props: ModalProps) {
 				onClick={() => props.setVisible(false)}
 				className={"fixed top-0 left-0 w-screen h-screen bg-slate-100/60" +
 					" dark:bg-slate-800/60 flex items-center justify-center"}
+				style={{ zIndex: 10_000 }}
 			>
 				<Card
 					className={clsx("relative", props.width ?? "w-3/5")} onClick={(e) => {

@@ -23,16 +23,20 @@ export function EventGallery(props: EventGalleryProps) {
 	const [images, setImages] = useState<Record<number, TEventImage>>({});
 	const [page, setPage] = useState(0);
 	const [file, setFile] = useState<File | null>(null);
+	const [done, setDone] = useState(false);
 	useEffect(() => {
 		api<TList<TEventImage>>(
 			`/events/images?per_page=20&page=${page}&sort=upload_date_time.desc&id_event=eq:${props.eventId}`,
-			{ if: props.eventId !== -1 },
+			{ if: props.eventId !== -1 && !done },
 		).then((res) => {
 			if (res.status === 200 && res.data) {
 				const tmp = { ...images };
 				res.data.data.forEach((i) => {
 					tmp[i.id] = i;
 				});
+				if (res.data.data.length === 0) {
+					setDone(true);
+				}
 				setImages(tmp);
 			}
 		});
@@ -52,7 +56,6 @@ export function EventGallery(props: EventGalleryProps) {
 					<Button
 						disabled={file === null} onClick={() => {
 							if (file !== null) {
-								console.log("not null");
 								const fd = new FormData();
 								fd.append("file", file);
 								apiRaw(`/events/${props.eventId}/images`, undefined, {
@@ -62,6 +65,8 @@ export function EventGallery(props: EventGalleryProps) {
 								}).then((res) => {
 									if (res.status === 201) {
 										toast("Image ajoutée", { type: "success" });
+										setPage(0);
+										setDone(false);
 										doReload();
 									}
 								});
@@ -71,7 +76,14 @@ export function EventGallery(props: EventGalleryProps) {
 					</Button>
 				</div>
 			</div>
-			<div className={"overflow-y-auto grow grid grid-cols-3"}>
+			<div
+				className={"overflow-y-auto grow grid grid-cols-3"} onScroll={(e) => {
+					const bottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight;
+					if (bottom && ! done) {
+						setPage(prev => prev + 1);
+					}
+				}}
+			>
 				<div>
 					{ Object.values(images).filter((_image, i) => i % 3 === 0).map(i =>
 						<img src={i.url}/>) }

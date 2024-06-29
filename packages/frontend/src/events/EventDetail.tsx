@@ -29,13 +29,13 @@ export function EventDetail() {
 	return (
 		<div
 			className={clsx(
-				"grid grid-cols-1 gap-2 mx-2 w-full mb-2 overflow-y-auto",
-				"xl:grid-flow-col xl:grid-cols-[700px_1fr] xl:grid-rows-2",
+				"grid grid-cols-1 gap-2 mx-2 w-full mb-2 overflow-y-auto overflow-x-hidden",
+				"2xl:grid-flow-col 2xl:grid-cols-[700px_1fr] 2xl:grid-rows-2",
 			)}
 		>
 			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")}/>
 			<EventJourney eventDetail={eventDetail.data} doReload={doReload}/>
-			<EventParticipant eventId={eventDetail.data?.event?.id ?? -1}/>
+			<EventParticipant event={eventDetail.data?.event ?? dummyEvent}/>
 			<EventGallery eventId={eventDetail.data?.event?.id ?? -1}/>
 		</div>
 	);
