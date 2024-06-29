@@ -18,6 +18,7 @@ import {
 	DoReload, useReload,
 } from "../utils/useReload.ts";
 import { ModalAddParticipants } from "./ModalAddParticipants.tsx";
+import { Link } from "react-router-dom";
 
 interface EventParticipantsProps {
 	event: TEvent
@@ -85,7 +86,11 @@ export function EventParticipant(props: EventParticipantsProps) {
 						<Cell><EventRole role={p.role} eventId={props.event.id} userId={p.user.id} doReload={doReload}/></Cell>,
 						<Cell>{ dateTimeToFrenchString(p.joinedDateTime, false) }</Cell>,
 						<Cell>{ p.isImagePublic ? "Publiques" : "Privées" }</Cell>,
-						<Cell>{ p.journey !== undefined ? <OpenInNew/> : undefined }</Cell>,
+						<Cell>
+							{ p.journey !== undefined ?
+								<Link to={`/events/${props.event.id}/participants/${p.user.id}/journey`}><OpenInNew/></Link> :
+								undefined }
+						</Cell>,
 						<Cell>
 							{ p.user.id !== props.event.owner.id ?
 								<DeleteOutlined className={"cursor-pointer"} onClick={() => removeParticipant(p.user.id)}/> :

@@ -30,6 +30,7 @@ import { NewJourney } from "./journey/NewJourney.tsx";
 import { useConfMode } from "./utils/useConfMode.tsx";
 import { CGU } from "./page/CGU.tsx";
 import { Invite } from "./page/Invite.tsx";
+import { EventParticipantJourney } from "./events/EventParticipantJourney.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -96,6 +97,10 @@ export function App() {
 		{
 			path: "events/:id",
 			element: <EventDetail/>,
+		},
+		{
+			path: "events/:id/participants/:idparticipant/journey",
+			element: <EventParticipantJourney/>,
 		},
 		{
 			path: "journeys",
