@@ -21,7 +21,8 @@ interface ListProps<T> {
 	line: (data: T) => ComponentChildren[]
 	perPage?: number,
 	reload?: Reload,
-	filter?: string
+	filter?: string,
+	action?: ComponentChildren
 }
 
 export function List<T>(props: ListProps<T>) {
@@ -95,10 +96,13 @@ export function List<T>(props: ListProps<T>) {
 
 	return (
 		<div className={"flex flex-col grow gap-2"}>
-			<Input
-				value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
-				placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
-			/>
+			<div className={"flex justify-between"}>
+				<Input
+					value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
+					placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
+				/>
+				{ props.action }
+			</div>
 			<table className={"rounded bg-slate-100 dark:bg-slate-800 table-fixed"}>
 				<thead>
 					<tr>

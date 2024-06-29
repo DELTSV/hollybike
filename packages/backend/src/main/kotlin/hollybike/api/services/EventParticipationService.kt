@@ -102,7 +102,9 @@ class EventParticipationService(
 
 			Result.success(
 				EventParticipation.wrapRows(
-					EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+					EventParticipations
+						.innerJoin(Events, { this.event }, { Events.id })
+						.innerJoin(Users, { EventParticipations.user }, { Users.id} )
 						.selectAll()
 						.applyParam(searchParam)
 						.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
@@ -116,7 +118,9 @@ class EventParticipationService(
 				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 			Result.success(
-				EventParticipations.innerJoin(Events, { this.event }, { Events.id })
+				EventParticipations
+					.innerJoin(Events, { this.event }, { Events.id })
+					.innerJoin(Users, { EventParticipations.user }, { Users.id} )
 					.selectAll()
 					.applyParam(searchParam, false)
 					.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }

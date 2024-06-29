@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TJourneyPartial(
 	val id: Int,
+	val name: String,
 	val file: String? = null,
 	@SerialName("preview_image")
 	val previewImage: String? = null,
@@ -22,6 +23,7 @@ data class TJourneyPartial(
 ) {
 	constructor(journey: Journey) : this(
 		journey.id.value,
+		journey.name,
 		journey.signedFile,
 		journey.signedPreviewImage,
 		journey.start?.let { TPosition(it) },

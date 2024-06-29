@@ -12,9 +12,8 @@ interface DropDownProps {
 }
 
 export function DropDown({
-							 text,
-							 children,
-						 }: DropDownProps) {
+	text, children,
+}: DropDownProps) {
 	const [visible, setVisible] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 	const dropdown = useRef<HTMLDivElement>(null);
@@ -48,6 +47,7 @@ export function DropDown({
 		<section
 			ref={dropdown}
 			className={style.dropdown}
+			style={{ zIndex: 7_500 }}
 			onClick={() => visible ? close() : setVisible(true)}
 		>
 			<header className={style.button}>

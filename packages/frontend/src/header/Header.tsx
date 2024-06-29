@@ -8,9 +8,10 @@ import { useAuth } from "../auth/context.tsx";
 import { Link } from "react-router-dom";
 import { useMemo } from "preact/hooks";
 import {
-	WbSunny, NightsStay, BrightnessAuto,
+	WbSunny, NightsStay, BrightnessAuto, Menu,
 } from "@material-ui/icons";
 import { ReactElement } from "react";
+import { useSideBar } from "../sidebar/useSideBar.tsx";
 
 interface HeaderProps {
 	setTheme: (theme: Theme) => void
@@ -20,6 +21,7 @@ export function Header(props: HeaderProps) {
 	const { setTheme } = props;
 	const { user } = useUser();
 	const { disconnect } = useAuth();
+	const { setVisible } = useSideBar();
 
 	const dropdownOptions = useMemo<[Theme, ReactElement, string][]>(
 		() => [
@@ -43,8 +45,15 @@ export function Header(props: HeaderProps) {
 	);
 
 	return (
-		<header className={"flex justify-between"}>
-			<Link to={"/"}><p className={"w-48 bg-black text-white h-full"}>LOGO</p></Link>
+		<header className={"flex justify-between items-center"}>
+			<Menu className={"visible md:!hidden !w-8 !h-8 cursor-pointer"} onClick={() => setVisible(prev => !prev)}/>
+			<Link
+				className={"self-stretch"} to={"/"}
+			>
+				<p className={"w-48 bg-black text-white h-full hidden md:block"}>
+					LOGO
+				</p>
+			</Link>
 			<div className={"flex items-center gap-2 px-3 py-2"}>
 				<DropDown text={"Theme"}>
 					{ dropdownOptions.map(([

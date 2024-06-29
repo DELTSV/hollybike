@@ -10,7 +10,7 @@ interface CheckBoxProps {
 
 export function CheckBox(props: CheckBoxProps) {
 	return (
-		<div onClick={props.toggle}>
+		<div className={"cursor-pointer"} onClick={props.toggle}>
 			{ props.checked === true ?
 				<CheckBoxOutlined/>:
 				<CheckBoxOutlineBlank/> }
