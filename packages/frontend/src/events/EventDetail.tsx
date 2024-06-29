@@ -10,6 +10,9 @@ import { EventInfo } from "./EventInfo.tsx";
 import { EventJourney } from "./EventJourney.tsx";
 import { useReload } from "../utils/useReload.ts";
 import { TEventDetail } from "../types/TEventDetail.ts";
+import { EventParticipant } from "./EventParticipants.tsx";
+import { EventGallery } from "./EventGallery.tsx";
+import { clsx } from "clsx";
 
 export function EventDetail() {
 	const {
@@ -24,10 +27,16 @@ export function EventDetail() {
 		if (event.status === 200 && event.data !== undefined) { setEventData(event.data); }
 	}, [event, setEventData]);
 	return (
-		<div className={"grid grid-cols-[700px_1fr] grid-rows-2 gap-2 mx-2 w-full mb-2"}>
+		<div
+			className={clsx(
+				"grid grid-cols-1 gap-2 mx-2 w-full mb-2 overflow-y-auto",
+				"xl:grid-flow-col xl:grid-cols-[700px_1fr] xl:grid-rows-2",
+			)}
+		>
 			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")}/>
-			<p/>
 			<EventJourney eventDetail={eventDetail.data} doReload={doReload}/>
+			<EventParticipant eventId={eventDetail.data?.event?.id ?? -1}/>
+			<EventGallery eventId={eventDetail.data?.event?.id ?? -1}/>
 		</div>
 	);
 }

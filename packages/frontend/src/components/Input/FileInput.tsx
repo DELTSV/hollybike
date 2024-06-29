@@ -1,5 +1,5 @@
 import {
-	Dispatch, StateUpdater,
+	Dispatch, StateUpdater, useEffect,
 	useMemo, useState,
 } from "preact/hooks";
 import { v4 } from "uuid";
@@ -10,7 +10,8 @@ interface FileInputProps {
 	accept?: string,
 	id?: string,
 	value: File | null
-	setValue: Dispatch<StateUpdater<File | null>>
+	setValue: Dispatch<StateUpdater<File | null>>,
+	className?: string
 }
 
 export function FileInput(props: FileInputProps) {
@@ -33,6 +34,12 @@ export function FileInput(props: FileInputProps) {
 			return "";
 		}
 	}, [props.placeholder, text]);
+
+	useEffect(() => {
+		if (props.value === null && props.placeholder) {
+			setText(props.placeholder);
+		}
+	}, [props.placeholder, setText]);
 
 	return (
 		<label
