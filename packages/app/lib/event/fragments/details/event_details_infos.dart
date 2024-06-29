@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/widgets/details/event_my_journey.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 
@@ -49,7 +50,7 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           EventStatusFeed(eventDetails: widget.eventDetails),
-          const SizedBox(height: 16),
+          const SizedBox(height: 13),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
@@ -86,6 +87,7 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
                     eventDetails: widget.eventDetails,
                     onViewOnMap: widget.onViewOnMap,
                   ),
+                  EventMyJourney()
                 ],
                 const SizedBox(height: 16),
               ),
