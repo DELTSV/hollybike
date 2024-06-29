@@ -15,6 +15,7 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
+import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
@@ -216,16 +217,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
             eventDetails.callerParticipation?.isImagesPublic ?? false,
         eventId: eventDetails.event.id,
       ),
-      EventDetailsMap(
-        eventId: eventDetails.event.id,
-        journey: eventDetails.journey,
-        onMapLoaded: () {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        },
+      BlocProvider(
+        create: (context) => UserPositionsBloc(),
+        child: EventDetailsMap(
+          eventId: eventDetails.event.id,
+          journey: eventDetails.journey,
+          onMapLoaded: () {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
+        ),
       ),
     ];
   }
