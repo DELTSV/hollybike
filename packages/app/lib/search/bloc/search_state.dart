@@ -3,7 +3,7 @@ import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
-enum SearchStatus { loading, success, error, initial }
+enum SearchStatus { loading, searching, success, error, initial }
 
 @immutable
 class SearchState {
@@ -62,16 +62,31 @@ class SearchInitial extends SearchState {}
 class SearchLoadInProgress extends SearchState {
   SearchLoadInProgress(SearchState state)
       : super(
-          lastSearchQuery: state.lastSearchQuery,
-          lastSearchSession: state.lastSearchSession,
-          events: state.events,
-          hasMoreEvents: state.hasMoreEvents,
-          eventsNextPage: state.eventsNextPage,
-          profiles: state.profiles,
-          hasMoreProfiles: state.hasMoreProfiles,
-          profilesNextPage: state.profilesNextPage,
-          status: SearchStatus.loading,
-        );
+    lastSearchQuery: state.lastSearchQuery,
+    lastSearchSession: state.lastSearchSession,
+    events: state.events,
+    hasMoreEvents: state.hasMoreEvents,
+    eventsNextPage: state.eventsNextPage,
+    profiles: state.profiles,
+    hasMoreProfiles: state.hasMoreProfiles,
+    profilesNextPage: state.profilesNextPage,
+    status: SearchStatus.searching,
+  );
+}
+
+class SearchPaginationLoadInProgress extends SearchState {
+  SearchPaginationLoadInProgress(SearchState state)
+      : super(
+    lastSearchQuery: state.lastSearchQuery,
+    lastSearchSession: state.lastSearchSession,
+    events: state.events,
+    hasMoreEvents: state.hasMoreEvents,
+    eventsNextPage: state.eventsNextPage,
+    profiles: state.profiles,
+    hasMoreProfiles: state.hasMoreProfiles,
+    profilesNextPage: state.profilesNextPage,
+    status: SearchStatus.loading,
+  );
 }
 
 class SearchLoadSuccess extends SearchState {

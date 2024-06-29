@@ -51,7 +51,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       return;
     }
 
-    emit(SearchLoadInProgress(state));
+    emit(SearchPaginationLoadInProgress(state));
 
     try {
       final page = await eventRepository.fetchEvents(
@@ -86,7 +86,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       return;
     }
 
-    emit(SearchLoadInProgress(state));
+    emit(SearchPaginationLoadInProgress(state));
 
     try {
       final page = await profileRepository.searchProfiles(

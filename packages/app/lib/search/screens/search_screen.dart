@@ -61,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   focusNode.requestFocus();
                 },
               );
-            } else if (state.status == SearchStatus.loading) {
+            } else if (state.status == SearchStatus.searching) {
               return const LoadingSearchPlaceholder();
             } else if (state.events.isEmpty && state.profiles.isEmpty) {
               return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
