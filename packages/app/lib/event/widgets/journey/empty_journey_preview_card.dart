@@ -20,7 +20,7 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
       radius: const Radius.circular(14),
       dashPattern: const [5, 5],
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(14),
@@ -50,7 +50,13 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Text('Sélectionner un parcours'),
+            const Flexible(
+              child: Text(
+                'Sélectionner un parcours',
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            ),
           ],
         ),
       ),

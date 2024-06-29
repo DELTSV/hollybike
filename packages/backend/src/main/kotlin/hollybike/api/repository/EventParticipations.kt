@@ -19,6 +19,11 @@ class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	var leftDateTime by EventParticipations.leftDateTime
 	var journey by UserJourney optionalReferencedOn EventParticipations.journey
 
+	val recordedPositions by UserEventPosition referrersOn UsersEventsPositions.participation
+
+	val hasRecordedPositions: Boolean
+		get() = !recordedPositions.empty()
+
 	companion object : IntEntityClass<EventParticipation>(EventParticipations)
 }
 

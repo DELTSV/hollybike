@@ -255,8 +255,11 @@ class MyApp extends StatelessWidget {
                   )..add(SubscribeToEventsSearch()),
                 ),
                 BlocProvider<MyPositionBloc>(
-                  create: (context) => MyPositionBloc()
-                    ..add(
+                  create: (context) => MyPositionBloc(
+                    eventRepository: RepositoryProvider.of<EventRepository>(
+                      context,
+                    ),
+                  )..add(
                       SubscribeToMyPositionUpdates(),
                     ),
                 ),

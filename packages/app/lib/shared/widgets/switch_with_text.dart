@@ -20,13 +20,6 @@ class SwitchWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     final switchWidget = Switch(
       value: value,
-      activeColor: Theme.of(context).colorScheme.onPrimary,
-      inactiveTrackColor: Theme.of(context).colorScheme.primaryContainer,
-      trackOutlineColor: WidgetStateProperty.all(Theme.of(context)
-          .colorScheme
-          .primaryContainer
-          .withOpacity(0.5)),
-      inactiveThumbColor: Theme.of(context).colorScheme.primary,
       onChanged: onChange != null
           ? (value) {
               onChange?.call();

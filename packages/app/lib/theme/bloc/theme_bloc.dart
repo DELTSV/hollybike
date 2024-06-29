@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
 part 'theme_event.dart';
+
 part 'theme_state.dart';
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
@@ -64,6 +65,70 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     }
 
     return _brightColorScheme;
+  }
+
+  SwitchThemeData get _switchTheme {
+    if (state.isDark) {
+      return SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return _darkColorScheme.onPrimary;
+            }
+
+            return _darkColorScheme.onPrimary.withOpacity(0.7);
+          },
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return _darkColorScheme.onPrimary.withOpacity(0.7);
+            }
+
+            return _darkColorScheme.primaryContainer;
+          },
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return Colors.transparent;
+            }
+
+            return _darkColorScheme.onPrimary.withOpacity(0.7);
+          },
+        ),
+      );
+    }
+
+    return SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return _brightColorScheme.onPrimary;
+          }
+
+          return _brightColorScheme.onPrimary.withOpacity(0.7);
+        },
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return _brightColorScheme.onPrimary.withOpacity(0.7);
+          }
+
+          return _brightColorScheme.primaryContainer;
+        },
+      ),
+      trackOutlineColor: WidgetStateProperty.resolveWith(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return Colors.transparent;
+          }
+
+          return _brightColorScheme.onPrimary.withOpacity(0.7);
+        },
+      ),
+    );
   }
 
   InputDecorationTheme get _inputDecorationTheme {
@@ -210,6 +275,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       textButtonTheme: _textButtonTheme,
       cardColor: _colorScheme.primaryContainer,
       textSelectionTheme: _textSelectionTheme,
+      switchTheme: _switchTheme,
     );
   }
 }

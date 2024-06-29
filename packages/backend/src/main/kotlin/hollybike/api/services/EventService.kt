@@ -257,7 +257,11 @@ class EventService(
 			Journey::end,
 			Journey::destination
 		) to try {
-			EventParticipation.wrapRow(eventRow).load(EventParticipation::user)
+			EventParticipation.wrapRow(eventRow).load(
+				EventParticipation::user,
+				EventParticipation::journey,
+				EventParticipation::recordedPositions
+			)
 		} catch (e: Throwable) {
 			null
 		}

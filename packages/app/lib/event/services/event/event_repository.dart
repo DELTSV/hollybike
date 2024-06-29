@@ -6,6 +6,7 @@ import 'package:hollybike/journey/type/journey.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
 import '../../types/participation/event_participation.dart';
@@ -382,5 +383,44 @@ class EventRepository {
       previewParticipants: details.previewParticipants,
       previewParticipantsCount: details.previewParticipantsCount,
     ));
+  }
+
+  Future<UserJourney> terminateUserJourney(
+    AuthSession session,
+    int eventId,
+  ) async {
+    final userJourney = await eventApi.terminateUserJourney(session, eventId);
+
+    final details = _eventDetailsStreamController.value;
+
+    if (details == null) {
+      return userJourney;
+    }
+
+    _eventDetailsStreamController.add(
+      details.copyWith(
+        callerParticipation: details.callerParticipation?.copyWith(
+          journey: userJourney,
+        ),
+      ),
+    );
+
+    return userJourney;
+  }
+
+  onUserPositionSent() {
+    final caller = _eventDetailsStreamController.value?.callerParticipation;
+
+    if (caller?.hasRecordedPositions != false) {
+      return;
+    }
+
+    _eventDetailsStreamController.add(
+      _eventDetailsStreamController.value!.copyWith(
+        callerParticipation: _eventDetailsStreamController.value!.callerParticipation!.copyWith(
+          hasRecordedPositions: true,
+        ),
+      ),
+    );
   }
 }

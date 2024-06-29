@@ -56,6 +56,15 @@ class Events(val api: API = API()) {
 			@Resource("add-users")
 			class AddUsers(val participations: Participations)
 
+			@Resource("me")
+			class Me(val participations: Participations) {
+				@Resource("journey")
+				class Journey(val me: Me) {
+					@Resource("terminate")
+					class Terminate(val journey: Journey)
+				}
+			}
+
 			@Resource("{userId}")
 			class User(val user: Participations, val userId: Int) {
 				@Resource("promote")

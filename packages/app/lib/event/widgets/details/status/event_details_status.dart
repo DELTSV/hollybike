@@ -60,9 +60,7 @@ class EventDetailsStatusBadge extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Flexible(
-                      child: _buildAction(context, isLoading(state)),
-                    )
+                    _buildAction(context, isLoading(state)),
                   ],
                 ),
               ),
@@ -80,31 +78,31 @@ class EventDetailsStatusBadge extends StatelessWidget {
 
   Widget _buildAction(BuildContext context, bool isLoading) {
     if (actionText == null || onAction == null) {
-      return const SizedBox();
+      return const SizedBox(
+        height: 43,
+      );
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(width: 16),
-        Flexible(
-          child: TextButton(
-            onPressed: !isLoading ? onAction : null,
-            child: Text(
-              actionText!,
-              textAlign: TextAlign.right,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: !isLoading
-                        ? Event.getStatusColor(status)
-                        : Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.5),
-                  ),
-            ),
+    return Container(
+      constraints: const BoxConstraints(
+        minWidth: 100,
+        maxWidth: 150,
+      ),
+      child: TextButton(
+        onPressed: !isLoading ? onAction : null,
+        child: Text(
+          actionText!,
+          textAlign: TextAlign.right,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: !isLoading
+                ? Event.getStatusColor(status)
+                : Theme.of(context)
+                .colorScheme
+                .onSurface
+                .withOpacity(0.5),
           ),
         ),
-      ],
+      ),
     );
   }
 }

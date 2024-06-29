@@ -23,6 +23,10 @@ class EventPositionSwitch extends StatelessWidget {
       builder: (context, state) {
         final isLoading = state is MyPositionLoading;
 
+        if (eventDetails.callerParticipation?.journey != null && !state.isRunning) {
+          return const SizedBox();
+        }
+
         return Container(
           width: double.infinity,
           color: Theme.of(context).colorScheme.primary,
@@ -33,9 +37,11 @@ class EventPositionSwitch extends StatelessWidget {
                 alignment: SwitchAlignment.right,
                 text: getSwitchLabel(state.isRunning),
                 value: state.isRunning,
-                onChange: isLoading == false
-                    ? () => _onSelected(context, state.isRunning)
-                    : null,
+                onChange: () => _onSelected(
+                  context,
+                  state.isRunning,
+                  isLoading,
+                ),
               ),
             ),
           ),
@@ -47,12 +53,16 @@ class EventPositionSwitch extends StatelessWidget {
   String getSwitchLabel(bool isRunning) {
     return isRunning
         ? 'Votre position est partagée avec les autres participants'
-        : 'Partage de votre position désactivé';
+        : 'Le partage de votre position désactivé';
   }
 
-  void _onSelected(BuildContext context, bool isRunning) {
+  void _onSelected(BuildContext context, bool isRunning, bool isLoading) {
+    if (isLoading) {
+      return;
+    }
+
     if (isRunning) {
-      _cancelPostions(context);
+      _cancelPositions(context);
     } else {
       _onStart(context);
     }
@@ -79,7 +89,7 @@ class EventPositionSwitch extends StatelessWidget {
     return perm.isGranted;
   }
 
-  void _cancelPostions(BuildContext context) {
+  void _cancelPositions(BuildContext context) {
     context.read<MyPositionBloc>().add(
           DisableSendPositions(),
         );

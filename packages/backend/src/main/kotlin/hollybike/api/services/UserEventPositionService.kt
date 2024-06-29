@@ -18,7 +18,9 @@ import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserEventPositionService(
@@ -68,12 +70,18 @@ class UserEventPositionService(
 	private suspend fun Channel<UserSendPosition>.listenChannel(eventId: Int, userId: Int) {
 		val event = transaction(db) { Event.findById(eventId) } ?: return
 		val user = transaction(db) { User.findById(userId) } ?: return
+		val participation = transaction(db) {
+			EventParticipation.find {
+				(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id) and (EventParticipations.isJoined eq true)
+			}.firstOrNull()
+		} ?: return
 		for (message in this) {
 			val entity = transaction(db) {
 				transaction(db) {
 					UserEventPosition.new {
 						this.user = user
 						this.event = event
+						this.participation = participation
 						this.latitude = message.latitude
 						this.longitude = message.longitude
 						this.altitude = message.altitude
@@ -100,7 +108,7 @@ class UserEventPositionService(
 		participation.journey
 	}
 
-	suspend fun retrieveUserJourney(user: User, event: Event): UserJourney {
+	suspend fun terminateUserJourney(user: User, event: Event): UserJourney {
 		val coord = mutableListOf<GeoJsonCoordinates>()
 		val times = mutableListOf<JsonPrimitive>()
 		val speed = mutableListOf<JsonPrimitive>()
@@ -142,9 +150,13 @@ class UserEventPositionService(
 				}
 				totalSpeed += pos.speed
 				totalSpeedCount++
-				pos.delete()
+			}
+
+			UsersEventsPositions.deleteWhere {
+				(UsersEventsPositions.user eq user.id) and (UsersEventsPositions.event eq event.id)
 			}
 		}
+
 		val avgSpeed = totalSpeed / totalSpeedCount
 		val totalTime = (Instant.parse(times.last().content) - Instant.parse(times.first().content)).inWholeSeconds
 		val geojson = Feature(
@@ -156,7 +168,9 @@ class UserEventPositionService(
 				)
 			)
 		)
+
 		val file = uploadUserJourney(geojson, event.id.value, user.id.value)
+
 		return transaction(db) {
 			val participation = EventParticipation.find {
 				(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
