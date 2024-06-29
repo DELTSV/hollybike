@@ -59,6 +59,7 @@ class EventController(
 				pendEvent()
 				getMetaData()
 				getParticipantJourney()
+				terminateEventJourney()
 			}
 		}
 	}
@@ -286,6 +287,22 @@ class EventController(
 		}
 	}
 
+	private fun Route.terminateEventJourney() {
+		post<Events.Id.Participations.Me.Journey.Terminate> {
+			val event = eventService.getEvent(call.user, it.journey.me.participations.eventId.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
+				return@post
+			}
+
+			userEventPositionService.getUserJourney(call.user, event)?.let {
+				call.respond(HttpStatusCode.Conflict, "Trajet déjà terminé")
+			} ?: run {
+				val journey = userEventPositionService.terminateUserJourney(call.user, event)
+				call.respond(HttpStatusCode.Created, TUserJourney(journey))
+			}
+		}
+	}
+
 	private fun Route.getParticipantJourney() {
 		get<Events.Id.Participations.User.Journey> {
 			val event = eventService.getEvent(call.user, it.user.user.eventId.id) ?: run {
@@ -296,7 +313,12 @@ class EventController(
 				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 				return@get
 			}
-			val journey = userEventPositionService.getUserJourney(user, event) ?: userEventPositionService.retrieveUserJourney(user, event)
+
+			val journey = userEventPositionService.getUserJourney(user, event) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
+				return@get
+			}
+
 			call.respond(TUserJourney(journey))
 		}
 	}

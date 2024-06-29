@@ -22,6 +22,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<EditEvent>(_onEditEvent);
     on<DeleteEvent>(_onDeleteEvent);
     on<CancelEvent>(_onCancelEvent);
+    on<TerminateUserJourney>(_onTerminateUserJourney);
   }
 
   @override
@@ -211,6 +212,31 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
       emit(EventOperationFailure(
         state,
         errorMessage: 'Impossible d\'annuler l\'évènement',
+      ));
+    }
+  }
+
+  Future<void> _onTerminateUserJourney(
+    TerminateUserJourney event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    emit(EventOperationInProgress(state));
+
+    try {
+      await _eventRepository.terminateUserJourney(
+        event.session,
+        event.eventId,
+      );
+
+      emit(EventOperationSuccess(
+        state,
+        successMessage: 'Trajet terminé',
+      ));
+    } catch (e) {
+      log('Error while terminating user journey', error: e);
+      emit(EventOperationFailure(
+        state,
+        errorMessage: 'Impossible de terminer le trajet',
       ));
     }
   }

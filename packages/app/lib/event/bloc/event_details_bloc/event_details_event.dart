@@ -73,3 +73,13 @@ class EditEvent extends EventDetailsEvent {
     required this.formData,
   });
 }
+
+class TerminateUserJourney extends EventDetailsEvent {
+  final AuthSession session;
+  final int eventId;
+
+  TerminateUserJourney({
+    required this.session,
+    required this.eventId,
+  });
+}

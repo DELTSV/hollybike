@@ -25,24 +25,25 @@ class EventParticipationsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
+    return Stack(
+      children: [
+        Container(
           padding: EdgeInsets.only(
-            left: 8 - borderSize,
-            right: 8,
+            left: 14 - borderSize,
+            right: 14,
             top: 8,
             bottom: 8,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
             children: [
               SizedBox(
                 height: avatarSize,
                 width:
-                    (previewParticipants.length * avatarRadius) + avatarRadius,
+                (previewParticipants.length * avatarRadius) + avatarRadius,
                 child: Stack(
                   alignment: Alignment.topLeft,
                   children: previewParticipants.asMap().entries.map((entry) {
@@ -51,7 +52,7 @@ class EventParticipationsPreview extends StatelessWidget {
 
                     final avatar = Hero(
                       tag:
-                          "profile_picture_participation_${participation.user.id}",
+                      "profile_picture_participation_${participation.user.id}",
                       child: Container(
                         width: avatarSize,
                         decoration: BoxDecoration(
@@ -90,7 +91,16 @@ class EventParticipationsPreview extends StatelessWidget {
             ],
           ),
         ),
-      ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

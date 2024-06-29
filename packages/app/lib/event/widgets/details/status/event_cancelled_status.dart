@@ -17,7 +17,7 @@ class EventCancelledStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EventDetailsStatus(
+    return EventDetailsStatusBadge(
       status: EventStatusState.canceled,
       message: 'Evénement annulé',
       actionText: 'Publier',

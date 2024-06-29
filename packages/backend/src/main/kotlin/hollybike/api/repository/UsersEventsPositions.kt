@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 object UsersEventsPositions: IntIdTable("users_events_positions", "id_user_event_position") {
 	val user = reference("user", Users)
 	val event = reference("event", Events)
+	val participation = reference("participation", EventParticipations)
 	val latitude = double("latitude")
 	val longitude = double("longitude")
 	val altitude = double("altitude")
@@ -25,6 +26,7 @@ object UsersEventsPositions: IntIdTable("users_events_positions", "id_user_event
 class UserEventPosition(id: EntityID<Int>) : IntEntity(id) {
 	var user by User referencedOn UsersEventsPositions.user
 	var event by Event referencedOn UsersEventsPositions.event
+	var participation by EventParticipation referencedOn UsersEventsPositions.participation
 	var latitude by UsersEventsPositions.latitude
 	var longitude by UsersEventsPositions.longitude
 	var altitude by UsersEventsPositions.altitude

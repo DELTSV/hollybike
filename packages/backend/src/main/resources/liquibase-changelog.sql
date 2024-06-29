@@ -421,3 +421,8 @@ ALTER TABLE users_events_positions
 ALTER TABLE users_events_positions
     ADD COLUMN IF NOT EXISTS accuracy DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     ADD COLUMN IF NOT EXISTS speed_accuracy DOUBLE PRECISION NOT NULL DEFAULT 0.0;
+
+--changeset loic:13
+
+ALTER TABLE users_events_positions
+    ADD COLUMN IF NOT EXISTS participation INTEGER NOT NULL REFERENCES event_participations(id_participation);

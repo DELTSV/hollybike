@@ -4,6 +4,7 @@ import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 import '../../../auth/types/auth_session.dart';
+import '../../../journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
@@ -157,5 +158,20 @@ class EventApi {
     if (response.statusCode != 200) {
       throw Exception("Failed to remove journey from event");
     }
+  }
+
+  Future<UserJourney> terminateUserJourney(
+    AuthSession session,
+    int eventId,
+  ) async {
+    final response = await _dioClient.dio.post(
+      '/events/$eventId/participations/me/journey/terminate',
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception("Failed to terminate user journey");
+    }
+
+    return UserJourney.fromJson(response.data);
   }
 }

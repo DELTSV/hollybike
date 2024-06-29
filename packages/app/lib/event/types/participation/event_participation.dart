@@ -30,6 +30,8 @@ class EventParticipation with _$EventParticipation {
       isImagesPublic: isImagesPublic,
       role: role,
       joinedDateTime: joinedDateTime,
+      journey: journey,
+      hasRecordedPositions: false,
     );
   }
 

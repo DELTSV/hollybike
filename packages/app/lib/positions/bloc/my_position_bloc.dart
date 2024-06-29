@@ -9,6 +9,7 @@ import 'package:background_locator_2/settings/ios_settings.dart';
 import 'package:background_locator_2/settings/locator_settings.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/positions/bloc/my_position_event.dart';
 import 'package:hollybike/positions/bloc/my_position_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,9 +18,13 @@ import '../service/my_position_handler.dart';
 import '../service/my_position_repository.dart';
 
 class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
+  final EventRepository eventRepository;
+
   ReceivePort port = ReceivePort();
 
-  MyPositionBloc() : super(MyPositionInitial()) {
+  MyPositionBloc({
+    required this.eventRepository,
+  }) : super(MyPositionInitial()) {
     on<SubscribeToMyPositionUpdates>(_onSubscribeToPositionUpdates);
     on<EnableSendPosition>(_onListenAndSendUserPosition);
     on<DisableSendPositions>(_onDisableSendPositions);
@@ -56,15 +61,7 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       eventId: isRunning ? eventId : null,
     )));
 
-    // await emit.forEach(
-    //   port.asBroadcastStream(),
-    //   onData: (data) {
-    //     return MyPositionUpdated(
-    //       state,
-    //       data != null ? LocationDto.fromJson(data) : null,
-    //     );
-    //   },
-    // );
+    port.listen((dynamic data) => eventRepository.onUserPositionSent());
   }
 
   Future<void> initPlatformState() async {

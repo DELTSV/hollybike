@@ -68,9 +68,16 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
       try {
         emit(EventJourneyGetPositionsInProgress(state));
 
-        final journeyWithPositions =
-            await journeyRepository.getPositions(session, journeyWithFile.id);
-        eventRepository.onEventJourneyUpdated(journeyWithPositions);
+        final journeyWithPositions = await journeyRepository.getPositions(
+          session,
+          journeyWithFile.id,
+        );
+
+        eventRepository.onEventJourneyUpdated(journeyWithFile.copyWith(
+          start: journeyWithPositions.start,
+          end: journeyWithPositions.end,
+          destination: journeyWithPositions.destination,
+        ));
 
         emit(EventJourneyGetPositionsSuccess(state));
       } catch (e) {

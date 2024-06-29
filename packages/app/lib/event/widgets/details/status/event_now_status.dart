@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/details/status/event_details_status.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../../../positions/bloc/my_position_bloc.dart';
 import '../../../../positions/bloc/my_position_event.dart';
-import '../../../../shared/utils/with_current_session.dart';
+import '../../../bloc/event_details_bloc/event_details_event.dart';
 import '../../../types/event_status_state.dart';
 
 class EventNowStatus extends StatelessWidget {
@@ -21,58 +22,69 @@ class EventNowStatus extends StatelessWidget {
     this.isLoading = false,
   });
 
+  get canTerminateJourney =>
+      eventDetails.callerParticipation?.journey == null &&
+      eventDetails.callerParticipation?.hasRecordedPositions == true;
+
   @override
   Widget build(BuildContext context) {
-    if (isShared) {
-      return EventDetailsStatus(
-        loading: isLoading,
-        status: EventStatusState.now,
-        message: 'Votre position est partagée',
-        actionText: 'Désactiver',
-        onAction: () => _cancelPostions(context),
-      );
-    }
-
-    if (eventDetails.isParticipating && eventDetails.journey != null) {
-      return EventDetailsStatus(
-        loading: isLoading,
-        status: EventStatusState.now,
-        message: 'Partagez votre position',
-        actionText: 'Activer',
-        onAction: () => _onStart(context),
-      );
-    }
-
-    return const EventDetailsStatus(
+    return EventDetailsStatusBadge(
+      loading: isLoading,
       status: EventStatusState.now,
       message: 'L\'événement est en cours',
+      actionText: _getActionText(),
+      onAction: _getOnAction(context),
     );
   }
 
-  void _onStart(BuildContext context) async {
-    if (await _checkLocationPermission() && context.mounted) {
-      withCurrentSession(context, (session) {
-        context.read<MyPositionBloc>().add(
-              EnableSendPosition(
-                session: session,
-                eventId: eventDetails.event.id,
-                eventName: eventDetails.event.name,
-              ),
-            );
-      });
+  String? _getActionText() {
+    return canTerminateJourney ? 'Terminer le parcours' : null;
+  }
+
+  Function()? _getOnAction(BuildContext context) {
+    if (!canTerminateJourney) {
+      return null;
     }
-  }
 
-  Future<bool> _checkLocationPermission() async {
-    final perm = await Permission.location.request();
-    await Permission.notification.request();
+    return () => {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Terminer le parcours"),
+                content: const Text(
+                  "Êtes-vous sûr de vouloir terminer le parcours ? Vous ne pourrez plus partager votre position en temps réel.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Annuler"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
 
-    return perm.isGranted;
-  }
+                      withCurrentSession(context, (session) {
+                        context.read<EventDetailsBloc>().add(
+                              TerminateUserJourney(
+                                session: session,
+                                eventId: eventDetails.event.id,
+                              ),
+                            );
+                      });
 
-  void _cancelPostions(BuildContext context) {
-    context.read<MyPositionBloc>().add(
-          DisableSendPositions(),
-        );
+                      context.read<MyPositionBloc>().add(
+                            DisableSendPositions(),
+                          );
+                    },
+                    child: const Text("Terminer"),
+                  ),
+                ],
+              );
+            },
+          ),
+        };
   }
 }

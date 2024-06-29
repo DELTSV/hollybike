@@ -76,7 +76,7 @@ class EventParticipationModal extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    "Inscrit le ${_getJoinedDate()}",
+                    "Inscrit ${_getJoinedDate()}",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -109,15 +109,17 @@ class EventParticipationModal extends StatelessWidget {
     final difference = now.difference(date).inDays;
 
     String formattedDate;
+
     if (difference == 0) {
-      formattedDate = "Aujourd'hui";
+      formattedDate = "aujourd'hui";
     } else if (difference == 1) {
-      formattedDate = "Hier";
+      formattedDate = "hier";
     } else {
-      formattedDate = DateFormat.yMMMMd('fr_FR').format(date);
+      formattedDate = "le ${DateFormat.yMMMMd('fr_FR').format(date)}";
     }
 
     final time = "${date.hour}h${date.minute.toString().padLeft(2, '0')}";
+
     return "$formattedDate à $time";
   }
 
