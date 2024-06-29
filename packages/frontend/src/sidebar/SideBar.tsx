@@ -5,10 +5,13 @@ import { useSideBar } from "./useSideBar.tsx";
 import { TAssociation } from "../types/TAssociation.ts";
 import { useApi } from "../utils/useApi.ts";
 import { TOnPremise } from "../types/TOnPremise.ts";
+import { clsx } from "clsx";
 
 export function SideBar() {
 	const { user } = useUser();
-	const { association } = useSideBar();
+	const {
+		association, visible, setVisible,
+	} = useSideBar();
 	const onPremise = useApi<TOnPremise>("/on-premise");
 
 	const content = useMemo(() => {
@@ -20,12 +23,25 @@ export function SideBar() {
 	}, [user, association]);
 
 	return (
-		<aside
-			className={"w-48 min-w-48 bg-gradient-to-b from-slate-50/50 dark:from-slate-800/50" +
-			" bg-opacity-50 flex flex-col"}
+		<div
+			className={
+				clsx(
+					"w-screen md:w-48 fixed md:static left-0 h-screen bg-black/80 md:block",
+					visible ? "block" : "hidden",
+				)
+			} style={{ zIndex: 5_000 }}
+			onClick={() => setVisible(false)}
 		>
-			{ content }
-		</aside>
+			<aside
+				className={clsx(
+					"w-48 min-w-48 bg-gradient-to-b from-slate-50 dark:from-slate-800 dark:to-black h-full",
+					"flex-col md:flex",
+					visible && "flex" || "hidden",
+				)}
+			>
+				{ content }
+			</aside>
+		</div>
 	);
 }
 
