@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
+import 'package:hollybike/event/widgets/events_list/events_list_loading_placeholder.dart';
 import 'package:hollybike/event/widgets/events_list/events_list_placeholder.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
@@ -90,9 +91,7 @@ class _EventsListFragmentState<T extends EventsBloc>
   Widget _buildPlaceholder(BuildContext context, EventsState state) {
     switch (state.status) {
       case EventStatus.loading:
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const EventsListLoadingPlaceholder();
       case EventStatus.error:
         return EventsListPlaceholder(
           padding: MediaQuery.of(context).size.width * 0.1,
