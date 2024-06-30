@@ -6,9 +6,12 @@ import { Card } from "../components/Card/Card.tsx";
 import { distanceToHumanReadable } from "../utils/distanceToHumanReadable.ts";
 import { TUserJourney } from "../types/TUserJourney.ts";
 import Map, {
-	Layer, LineLayer, Source,
+	Layer, LineLayer, MapRef, Source,
 } from "react-map-gl";
-import { useState } from "preact/hooks";
+import {
+	useCallback, useState,
+} from "preact/hooks";
+import { useRef } from "react";
 
 const accessToken = import.meta.env.VITE_MAPBOX_KEY;
 
@@ -33,11 +36,22 @@ export function EventParticipantJourney() {
 	const user = useApi<TUser>(`/users/${idparticipant}`);
 	const event = useApi<TEvent>(`/events/${id}`);
 	const journey = useApi<TUserJourney>(`/events/${id}/participations/${idparticipant}/journey`);
+	const mapRef = useRef<MapRef>(null);
 	const [viewState, setViewState] = useState({
 		longitude: 1.2084545,
 		latitude: 44.3392763,
 		zoom: 4,
 	});
+
+	const onLoad = useCallback(() => {
+		if (mapRef.current !== null) {
+			mapRef.current.resize();
+			mapRef.current.getMap().getStyle().layers.filter(l => l.id.includes("label")).forEach((l) => {
+				mapRef.current?.getMap().setLayoutProperty(l.id, "text-field", ["get", "name_fr"]);
+			});
+		}
+	}, [mapRef]);
+
 	return (
 		<div className={"mx-2 flex flex-col gap-2"}>
 			<h1>Trajet de { user.data?.username } lors de l'évènement { event.data?.name }</h1>
@@ -58,15 +72,18 @@ export function EventParticipantJourney() {
 			</Card>
 			<Card className={"grow mb-2"}>
 				<Map
+					ref={mapRef}
 					{...viewState}
 					onMove={evt => setViewState(evt.viewState)}
 					style={{
 						height: "calc(100% - 48px)",
 						width: "100%",
 					}}
+
 					mapLib={import("mapbox-gl")}
 					mapStyle={"mapbox://styles/mapbox/navigation-night-v1"}
 					mapboxAccessToken={accessToken}
+					onLoad={onLoad}
 				>
 					<Source id="tracks" type="geojson" data={journey.data?.file}>
 						<Layer {...layerStyle}/>
