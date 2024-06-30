@@ -26,7 +26,7 @@ export function SideBar() {
 		<div
 			className={
 				clsx(
-					"w-screen md:w-48 fixed md:static left-0 h-screen bg-black/80 md:block",
+					"w-screen md:w-48 fixed md:static left-0 h-screen bg-mantle/80 md:block",
 					visible ? "block" : "hidden",
 				)
 			} style={{ zIndex: 5_000 }}
@@ -34,7 +34,7 @@ export function SideBar() {
 		>
 			<aside
 				className={clsx(
-					"w-48 min-w-48 bg-gradient-to-b from-slate-50 dark:from-slate-800 dark:to-black h-full",
+					"w-48 min-w-48 bg-gradient-to-b from-crust to-mantle h-full",
 					"flex-col md:flex",
 					visible && "flex" || "hidden",
 				)}

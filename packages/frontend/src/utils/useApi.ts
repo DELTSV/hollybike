@@ -4,6 +4,7 @@ import {
 } from "preact/hooks";
 import { backendBaseUrl } from "../config";
 import { TAuthInfo } from "../auth/types";
+import { externalDisconnect } from "../auth/context.tsx";
 
 interface UseApiOptions {
 	method?: string,
@@ -118,6 +119,8 @@ export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOpti
 					localStorage.setItem("deviceId", res.data.deviceId);
 					localStorage.setItem("token", res.data.token);
 					return apiRaw<T>(url, type, options);
+				} else if (res.status === 403) {
+					externalDisconnect();
 				} else {
 					return {
 						status: response.status,

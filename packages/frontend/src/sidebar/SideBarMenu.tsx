@@ -16,9 +16,8 @@ export function SideBarMenu(props: SideBarMenuProps) {
 	return (
 		<Link
 			className={clsx(
-				"m-2 rounded py-1 px-2 transition-colors cursor-pointer" +
-				" hover:bg-slate-300 dark:hover:bg-slate-800",
-				location.pathname === props.to && "bg-slate-300 dark:bg-slate-800",
+				"m-2 rounded py-1 px-2 transition-colors cursor-pointer hover:bg-surface-0",
+				location.pathname === props.to && "bg-surface-1",
 			)}
 			to={props.to}
 		>

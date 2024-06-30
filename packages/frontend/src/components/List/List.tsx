@@ -103,7 +103,7 @@ export function List<T>(props: ListProps<T>) {
 				/>
 				{ props.action }
 			</div>
-			<table className={"rounded bg-slate-100 dark:bg-slate-800 table-fixed"}>
+			<table className={"rounded bg-surface-1 table-fixed"}>
 				<thead>
 					<tr>
 						{ props.columns.map((c) => {
@@ -127,7 +127,7 @@ export function List<T>(props: ListProps<T>) {
 				</thead>
 				<tbody>
 					{ data.data?.data?.map(d =>
-						<tr className={"border-t-2 border-slate-600"}>
+						<tr className={"border-t-2 border-surface-2"}>
 							{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }
 						</tr>) }
 				</tbody>

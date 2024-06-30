@@ -80,6 +80,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 		localStorage.removeItem("deviceId");
 		setToken(undefined);
 		user.clean();
+		document.location.assign("/login");
 	}, []);
 
 	externalDisconnect = disconnect;
