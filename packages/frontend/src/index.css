@@ -9,6 +9,9 @@
 * {
 	font-family: Inter, sans-serif;
 	font-weight: 600;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
+	scrollbar-color: rgb(var(--color-base)) transparent;
 }
 
 @layer base {
