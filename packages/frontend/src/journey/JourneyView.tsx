@@ -29,6 +29,7 @@ const layerStyle: LineLayer = {
 		"line-opacity": 1,
 	},
 };
+
 export function JourneyView() {
 	const { id } = useParams();
 	const journey = useApi<TJourney>(`/journeys/${id}`);

@@ -1,0 +1,6 @@
+.bg-logo {
+	background-position: center;
+	background-repeat: repeat-x;
+	background-size: 20%;
+	background-image: url('../wallpaper.jpg');
+}
