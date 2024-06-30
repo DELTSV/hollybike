@@ -42,6 +42,7 @@ class AssociationController(
 		application.routing {
 			authenticate {
 				getMyAssociation()
+				getAssociationData()
 				updateMyAssociation()
 				updateMyAssociationPicture()
 				getMyOnboarding()
@@ -66,6 +67,32 @@ class AssociationController(
 	private fun Route.getMyAssociation() {
 		get<Associations.Me<API>>(EUserScope.Admin) {
 			call.respond(TAssociation(call.user.association))
+		}
+	}
+
+	private fun Route.getAssociationData() {
+		get<Associations.Id.Data<API>>(EUserScope.Admin) {
+			val association = associationService.getById(call.user, it.id.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'association n'existe pas")
+				return@get
+			}
+			val totalUser = associationService.getAssociationUsersCount(call.user, association) ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'association n'existe pas")
+				return@get
+			}
+			val totalEvent = associationService.getAssociationTotalEvent(call.user, association) ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'association n'existe pas")
+				return@get
+			}
+			val totalEventWithJourney = associationService.getAssociationTotalEventWithJourney(call.user, association) ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'association n'existe pas")
+				return@get
+			}
+			val totalJourney = associationService.getAssociationTotalJourney(call.user, association) ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'association n'existe pas")
+				return@get
+			}
+			call.respond(TAssociationData(totalUser, totalEvent, totalEventWithJourney, totalJourney))
 		}
 	}
 

@@ -1,10 +1,7 @@
 package hollybike.api.services
 
 import hollybike.api.exceptions.*
-import hollybike.api.repository.Association
-import hollybike.api.repository.Associations
-import hollybike.api.repository.User
-import hollybike.api.repository.Users
+import hollybike.api.repository.*
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.EAssociationsStatus
 import hollybike.api.types.association.TOnboardingUpdate
@@ -14,6 +11,10 @@ import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
@@ -171,5 +172,37 @@ class AssociationService(
 		association.delete()
 
 		return@transaction Result.success(Unit)
+	}
+
+	fun getAssociationUsersCount(caller: User, association: Association): Long? = transaction(db) {
+		if(!authorizeGet(caller, association)) {
+			null
+		} else {
+			User.count(Users.association eq association.id)
+		}
+	}
+
+	fun getAssociationTotalEvent(caller: User, association: Association): Long? = transaction(db) {
+		if(!authorizeGet(caller, association)) {
+			null
+		} else {
+			Event.count(Events.association eq association.id)
+		}
+	}
+
+	fun getAssociationTotalEventWithJourney(caller: User, association: Association): Long? = transaction(db) {
+		if(!authorizeGet(caller, association)) {
+			null
+		} else {
+			Event.count((Events.association eq association.id) and (Events.journey.isNotNull()))
+		}
+	}
+
+	fun getAssociationTotalJourney(caller: User, association: Association): Long? = transaction(db) {
+		if(!authorizeGet(caller, association)) {
+			null
+		} else {
+			Journey.count(Journeys.association eq association.id)
+		}
 	}
 }

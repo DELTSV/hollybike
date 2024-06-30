@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import {
-	api, useApi,
+	api, apiRaw, useApi,
 } from "../utils/useApi.ts";
 import {
 	dummyAssociation, TAssociation,
@@ -15,17 +15,26 @@ import { Select } from "../components/Select/Select.tsx";
 import { Button } from "../components/Button/Button.tsx";
 import { useUser } from "../user/useUser.tsx";
 import { toast } from "react-toastify";
+import { FileInput } from "../components/Input/FileInput.tsx";
+import { useReload } from "../utils/useReload.ts";
+import { AssociationData } from "./AssociationData.tsx";
 
 export function Association() {
 	const { user } = useUser();
 
 	const { id } = useParams();
 
-	const association = useApi<TAssociation>(`/associations/${id}`);
+	const {
+		reload, doReload,
+	} = useReload();
+
+	const association = useApi<TAssociation>(`/associations/${id}`, [reload]);
 
 	const [associationData, setAssociationData] = useState(dummyAssociation);
 
 	const { setAssociation } = useSideBar();
+
+	const [file, setFile] = useState<File|null>(null);
 
 	useEffect(() => {
 		if (association.data) {
@@ -61,8 +70,12 @@ export function Association() {
 					]}
 					default={associationData?.status}
 				/>
+				<p>Nouvelle image:</p>
+				<FileInput value={file} setValue={setFile} placeholder={"Nouvelle image"}/>
 				<p>Image :</p>
-				{ associationData.picture ? <img alt={"Logo de l'association"} src={""}/> : "Aucune image" }
+				{ associationData.picture ?
+					<img className={"max-h-40"} alt={"Logo de l'association"} src={association.data?.picture}/> :
+					"Aucune image" }
 				<Button
 					type={"submit"}
 					className={"justify-self-center col-span-2"}
@@ -74,7 +87,24 @@ export function Association() {
 						}).then((res) => {
 							if (res.status === 200 && res.data) {
 								setAssociationData(res.data);
-								toast("Association mise à jour", { type: "success" });
+								if (file !== null) {
+									const fd = new FormData();
+									fd.append("file", file);
+									apiRaw("/associations/me/picture", undefined, {
+										method: "PATCH",
+										body: fd,
+									}).then((res) => {
+										if (res.status === 200) {
+											toast("Association mise à jour", { type: "success" });
+											doReload();
+										} else {
+											toast(`Erreur à la mise à jour de l'image, ${res.message}`, { type: "warning" });
+											doReload();
+										}
+									});
+								} else {
+									toast("Association mise à jour", { type: "success" });
+								}
 							} else if (res.status === 409) {
 								toast("Ce nom d'association est déjà utilisé", { type: "warning" });
 							} else {
@@ -86,12 +116,7 @@ export function Association() {
 					Sauvegarder
 				</Button>
 			</Card>
-			<Card>
-				<p>Nombre d'utilisateur : TODO</p>
-				<p>Nombre d'évènements : TODO</p>
-				<p>Nombre de balade : TODO</p>
-				…
-			</Card>
+			<AssociationData association={association.data}/>
 		</form>
 	);
 }
