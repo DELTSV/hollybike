@@ -4,7 +4,7 @@ export function QRCodeScanner(props: IconProps) {
 	return (
 		<svg
 			onClick={props.onClick} className={props.className}
-			 xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"
+			 xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"
 		>
 			<path
 				d={"M80-680v-200h200v80H160v120H80Zm0 " +

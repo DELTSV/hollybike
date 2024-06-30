@@ -173,8 +173,7 @@ export function App() {
 
 	return (
 		<main
-			className={clsx(themeDark && "dark", "bg-slate-200 dark:bg-gray-900 w-screen h-screen" +
-				" text-slate-950 dark:text-slate-100")}
+			className={clsx(themeDark && "dark", "bg-base w-screen h-screen text-text")}
 		>
 			<ToastContainer
 				pauseOnHover={false}

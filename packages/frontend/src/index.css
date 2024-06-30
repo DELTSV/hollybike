@@ -11,7 +11,7 @@
 	font-weight: 600;
 	scroll-behavior: smooth;
 	scrollbar-width: thin;
-	scrollbar-color: rgb(var(--color-base)) transparent;
+	scrollbar-color: rgb(var(--color-overlay-0)) transparent;
 }
 
 @layer base {
@@ -34,14 +34,14 @@
 		--color-subtext-1: 92, 95, 119;
 		--color-subtext-0: 108, 111, 133;
 		--color-overlay-2: 124, 127, 147;
-		--color-sverlay-1: 140, 143, 161;
-		--color-sverlay-0: 156, 160, 176;
+		--color-overlay-1: 140, 143, 161;
+		--color-overlay-0: 156, 160, 176;
 		--color-surface-2: 172, 176, 190;
 		--color-surface-1: 188, 192, 204;
 		--color-surface-0: 204, 208, 218;
 		--color-base: 239, 241, 245;
-		--color-Mantle: 230, 233, 239;
-		--color-Crust: 220, 224, 232;
+		--color-mantle: 230, 233, 239;
+		--color-crust: 220, 224, 232;
 	}
 
 	main.dark {
