@@ -37,13 +37,14 @@ class ProfileBottomBarButton extends StatelessWidget {
   Widget _renderProfilePicture() {
     return BlocProvidedBuilder<ProfileBloc, ProfileState>(
       builder: (context, bloc, state) {
+        final currentProfile = bloc.currentProfile;
         return GestureDetector(
           onLongPress: () => _handleLongPress(context),
-          child: EventLoadingProfilePicture(
-            url: bloc.currentProfile?.profilePicture,
+          child: UserProfilePicture(
+            url: currentProfile?.profilePicture,
             radius: 12,
-            isLoading: bloc.currentProfile == null,
-            userId: bloc.currentProfile?.id,
+            isLoading: currentProfile == null,
+            userId: currentProfile?.id,
           ),
         );
       },

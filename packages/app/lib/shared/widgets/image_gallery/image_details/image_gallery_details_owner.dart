@@ -25,7 +25,7 @@ class ImageGalleryDetailsOwner extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            EventLoadingProfilePicture(
+            UserProfilePicture(
               url: owner.profilePicture,
               radius: 18,
               userId: owner.id,

@@ -27,17 +27,23 @@ class ProfileCardContainer extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    profilePicture,
-                    const SizedBox(width: 16),
-                    profileTitle,
-                  ],
+                Flexible(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      profilePicture,
+                      const SizedBox(width: 16),
+                      Expanded(child: profileTitle),
+                    ],
+                  ),
                 ),
               ] +
-              (endChild != null ? [endChild as Widget] : []),
+              (endChild != null ? [const SizedBox(width: 16), endChild as Widget] : []),
         ),
       ),
     );

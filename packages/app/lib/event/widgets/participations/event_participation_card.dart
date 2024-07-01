@@ -38,7 +38,7 @@ class EventParticipationCard extends StatelessWidget {
         dense: true,
         leading: Hero(
           tag: "profile_picture_participation_${participation.user.id}",
-          child: EventLoadingProfilePicture(
+          child: UserProfilePicture(
             url: participation.user.profilePicture,
             radius: 20,
             userId: participation.user.id,

@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
               RepositoryProvider(
                 create: (context) => AuthRepository(
                   authApi: AuthApi(),
-                  authPersistence: AuthPersistence(),
+                  authPersistence: Provider.of<AuthPersistence>(context, listen: false),
                 ),
               ),
               RepositoryProvider(
@@ -150,6 +150,7 @@ class MyApp extends StatelessWidget {
                   create: (context) => ThemeBloc(),
                 ),
                 BlocProvider<ProfileBloc>(
+                  lazy: false,
                   create: (context) => ProfileBloc(
                     authRepository:
                         RepositoryProvider.of<AuthRepository>(context),

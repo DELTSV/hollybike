@@ -16,9 +16,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthRepository authRepository;
   final AuthSessionRepository authSessionRepository;
 
+  bool _loading = false;
+
   Profile? get currentProfile {
     final profile = state.currentProfile;
-    if (profile == null && state.currentSession != null) {
+    if (profile == null && state.currentSession != null && !_loading) {
+      _loading = true;
       add(ProfileLoadBySession(session: state.currentSession as AuthSession));
     }
     return profile;
@@ -60,11 +63,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     await emit.forEach<AuthSession?>(
       authSessionRepository.authSessionStream,
-      onData: (session) =>
-        CurrentSessionChange(
+      onData: (session) {
+        print("Session updated: $session");
+        return CurrentSessionChange(
           oldState: state,
           session: session,
-        ),
+        );
+      },
     );
   }
 
@@ -80,6 +85,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         session: session,
         profile: profile,
       ));
+
+      _loading = false;
     } catch (_) {}
   }
 

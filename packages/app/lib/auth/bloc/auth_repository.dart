@@ -35,4 +35,8 @@ class AuthRepository {
   Future<AuthSession> signup(String host, SignupDto dto) {
     return _authApi.signup(host, dto);
   }
+
+  Future<void> removeSession(AuthSession session) {
+    return _authPersistence.removeSession(session);
+  }
 }

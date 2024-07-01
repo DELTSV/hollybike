@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:hollybike/auth/types/expired_session_exception.dart';
+import 'package:http/http.dart';
 
 import '../../auth/bloc/auth_persistence.dart';
 import '../../auth/types/auth_session.dart';
@@ -17,34 +18,113 @@ class AuthInterceptor extends Interceptor {
   ) async {
     final currentSession = await authPersistence.currentSession;
     if (currentSession is AuthSession) {
-      options.baseUrl = "${currentSession.host}/api";
-      options.headers['Authorization'] = 'Bearer ${currentSession.token}';
+      if (options.baseUrl.isEmpty) {
+        options.baseUrl = "${currentSession.host}/api";
+      }
+
+      if (options.headers['Authorization'] == null) {
+        options.headers['Authorization'] = 'Bearer ${currentSession.token}';
+      }
     }
     handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    final currentSession = await authPersistence.currentSession;
-
-    if (err.response?.statusCode == 401 && currentSession is AuthSession) {
-      final newSession = await _renewSession(currentSession);
-
-      return handler.resolve(
-        await dio.fetch(
-          err.requestOptions.copyWith(
-            headers: {'Authorization': 'Bearer ${newSession.token}'},
-          ),
+    void reject() {
+      return handler.reject(
+        DioException(
+          requestOptions: err.requestOptions,
+          error: err.response,
         ),
       );
     }
 
-    return handler.reject(
-      DioException(
-        requestOptions: err.requestOptions,
-        error: err.response,
-      ),
-    );
+    final authHeader = err.requestOptions.headers['Authorization'];
+    final token = authHeader?.replaceFirst('Bearer ', '');
+
+    if (token == null) {
+      return reject();
+    }
+
+    final requestSession = await authPersistence.getSessionByToken(token);
+
+    if (requestSession == null) {
+      return reject();
+    }
+
+    if (err.response?.statusCode == 401) {
+      AuthSession? newSession;
+
+      try {
+        if (authPersistence.refreshing) {
+          await authPersistence.waitIfRefreshing();
+          newSession = authPersistence.getNewSession(requestSession);
+        } else {
+          authPersistence.refreshing = true;
+          newSession = await _renewSession(requestSession).then(
+            (value) {
+              return authPersistence.replaceSession(requestSession, value).then(
+                (_) => value,
+              );
+            },
+          ).onError(
+            (error, stackTrace) {
+              authPersistence.removeCorrespondence(requestSession);
+              return Future.error(error!);
+            },
+          ).whenComplete(() {
+            authPersistence.refreshing = false;
+          });
+        }
+
+        if (newSession == null) {
+          return reject();
+        }
+
+        try {
+          final response = await dio.fetch(
+            err.requestOptions.copyWith(
+              headers: {'Authorization': 'Bearer ${newSession.token}'},
+            ),
+          );
+
+          return handler.resolve(response);
+        } on DioException catch (e) {
+          if (e.response?.statusCode == 401) {
+            await onSessionExpired(requestSession);
+          }
+
+          return handler.reject(
+            DioException(
+              requestOptions: e.requestOptions,
+              error: e.response,
+            ),
+          );
+        }
+      } on DioException catch (e) {
+        await onSessionExpired(requestSession);
+
+        return handler.reject(
+          DioException(
+            requestOptions: e.requestOptions,
+            error: e.response,
+          ),
+        );
+      }
+    }
+
+    return reject();
+  }
+
+  Future<void> onSessionExpired(AuthSession session) async {
+    final currentSession = await authPersistence.currentSession;
+
+    if (currentSession == session) {
+      authPersistence.expiredCurrentSession = session;
+    }
+
+    await authPersistence.removeSession(session);
   }
 
   Future<AuthSession> _renewSession(AuthSession oldSession) async {
@@ -55,10 +135,6 @@ class AuthInterceptor extends Interceptor {
         "token": oldSession.refreshToken,
       },
     );
-
-    if (newSessionResponse.statusCode != 200) {
-      throw ExpiredSessionException(oldSession);
-    }
 
     return AuthSession.fromResponseJson(
       oldSession.host,

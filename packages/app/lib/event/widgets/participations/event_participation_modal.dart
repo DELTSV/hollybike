@@ -38,7 +38,7 @@ class EventParticipationModal extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    EventLoadingProfilePicture(
+                    UserProfilePicture(
                       url: participation.user.profilePicture,
                       radius: 20,
                       userId: participation.user.id,

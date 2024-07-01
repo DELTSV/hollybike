@@ -1,8 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
-import 'package:http/http.dart';
 
 import '../types/profile.dart';
 
@@ -13,22 +13,16 @@ class ProfileApi {
 
   Future<Profile> getSessionProfile(AuthSession session) async {
     final AuthSession(:host, :token) = session;
-    final uri = Uri.parse("$host/api/users/me");
 
-    final response = await get(
-      uri,
+    final response = await _dioClient.dio.get("$host/api/users/me", options: Options(
       headers: {'Authorization': "Bearer $token"},
-    );
+    ));
 
-    if (response.statusCode != 200) throw Exception("Failed to fetch user");
-
-    return Profile.fromResponseJson(response.bodyBytes);
+    return Profile.fromJson(response.data);
   }
 
   Future<MinimalUser> getIdProfile(AuthSession session, int id) async {
     final response = await _dioClient.dio.get("/profiles/$id");
-
-    if (response.statusCode != 200) throw Exception("Failed to fetch user");
 
     return MinimalUser.fromJson(response.data);
   }
@@ -48,8 +42,6 @@ class ProfileApi {
         "query": query,
       },
     );
-
-    if (response.statusCode != 200) throw Exception("Failed to fetch users");
 
     return PaginatedList.fromJson(response.data, MinimalUser.fromJson);
   }
