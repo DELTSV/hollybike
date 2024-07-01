@@ -10,10 +10,9 @@ import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
 
 class EventApi {
-  final DioClient _dioClient;
+  final DioClient client;
 
-  EventApi({required authPersistence})
-      : _dioClient = DioClient(authPersistence: authPersistence);
+  EventApi({required this.client});
 
   Future<PaginatedList<MinimalEvent>> getEvents(
     AuthSession session,
@@ -23,7 +22,7 @@ class EventApi {
     int? userId,
     String? query,
   }) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       '/events${requestType == null ? "" : "/$requestType"}',
       queryParameters: {
         'page': page,
@@ -42,7 +41,7 @@ class EventApi {
   }
 
   Future<EventDetails> getEventDetails(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.get('/events/$eventId/details');
+    final response = await client.dio.get('/events/$eventId/details');
 
     if (response.statusCode != 200) {
       throw Exception("Failed to fetch event details");
@@ -52,7 +51,7 @@ class EventApi {
   }
 
   Future<Event> createEvent(AuthSession session, EventFormData event) async {
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
       '/events',
       data: event.toJson(),
     );
@@ -66,7 +65,7 @@ class EventApi {
 
   Future<Event> editEvent(
       AuthSession session, int eventId, EventFormData event) async {
-    final response = await _dioClient.dio.put(
+    final response = await client.dio.put(
       '/events/$eventId',
       data: event.toJson(),
     );
@@ -79,7 +78,7 @@ class EventApi {
   }
 
   Future<void> publishEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.patch(
+    final response = await client.dio.patch(
       '/events/$eventId/schedule',
     );
 
@@ -89,7 +88,7 @@ class EventApi {
   }
 
   Future<EventParticipation> joinEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
       '/events/$eventId/participations',
     );
 
@@ -101,7 +100,7 @@ class EventApi {
   }
 
   Future<void> deleteEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.delete(
+    final response = await client.dio.delete(
       '/events/$eventId',
     );
 
@@ -111,7 +110,7 @@ class EventApi {
   }
 
   Future<void> leaveEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.delete(
+    final response = await client.dio.delete(
       '/events/$eventId/participations',
     );
 
@@ -121,7 +120,7 @@ class EventApi {
   }
 
   Future<void> cancelEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.patch(
+    final response = await client.dio.patch(
       '/events/$eventId/cancel',
     );
 
@@ -135,7 +134,7 @@ class EventApi {
     int eventId,
     int journeyId,
   ) async {
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
       '/events/$eventId/journey',
       data: {
         'journey_id': journeyId,
@@ -151,7 +150,7 @@ class EventApi {
     AuthSession session,
     int eventId,
   ) async {
-    final response = await _dioClient.dio.delete(
+    final response = await client.dio.delete(
       '/events/$eventId/journey',
     );
 
@@ -164,7 +163,7 @@ class EventApi {
     AuthSession session,
     int eventId,
   ) async {
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
       '/events/$eventId/participations/me/journey/terminate',
     );
 

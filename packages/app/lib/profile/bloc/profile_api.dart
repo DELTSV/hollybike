@@ -7,14 +7,14 @@ import 'package:hollybike/user/types/minimal_user.dart';
 import '../types/profile.dart';
 
 class ProfileApi {
-  final DioClient _dioClient;
+  final DioClient client;
 
-  ProfileApi({required authPersistence}) : _dioClient = DioClient(authPersistence: authPersistence);
+  ProfileApi({required this.client});
 
   Future<Profile> getSessionProfile(AuthSession session) async {
     final AuthSession(:host, :token) = session;
 
-    final response = await _dioClient.dio.get("$host/api/users/me", options: Options(
+    final response = await client.dio.get("$host/api/users/me", options: Options(
       headers: {'Authorization': "Bearer $token"},
     ));
 
@@ -22,7 +22,7 @@ class ProfileApi {
   }
 
   Future<MinimalUser> getIdProfile(AuthSession session, int id) async {
-    final response = await _dioClient.dio.get("/profiles/$id");
+    final response = await client.dio.get("/profiles/$id");
 
     return MinimalUser.fromJson(response.data);
   }
@@ -33,7 +33,7 @@ class ProfileApi {
     int eventsPerPage,
     String query,
   ) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       "/profiles",
       queryParameters: {
         'page': page,

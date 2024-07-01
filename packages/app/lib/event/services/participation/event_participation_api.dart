@@ -5,10 +5,9 @@ import '../../types/participation/event_candidate.dart';
 import '../../types/participation/event_participation.dart';
 
 class EventParticipationsApi {
-  final DioClient _dioClient;
+  final DioClient client;
 
-  EventParticipationsApi({required authPersistence})
-      : _dioClient = DioClient(authPersistence: authPersistence);
+  EventParticipationsApi({required this.client});
 
   Future<PaginatedList<EventParticipation>> getParticipations(
     int eventId,
@@ -16,7 +15,7 @@ class EventParticipationsApi {
     int page,
     int eventsPerPage,
   ) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       '/events/$eventId/participations',
       queryParameters: {
         'page': page,
@@ -51,7 +50,7 @@ class EventParticipationsApi {
       queryParams['joined_date_time'] = 'isnull';
     }
 
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       '/events/$eventId/participations/candidates',
       queryParameters: queryParams,
     );
@@ -68,7 +67,7 @@ class EventParticipationsApi {
     int userId,
     AuthSession session,
   ) async {
-    final response = await _dioClient.dio.patch(
+    final response = await client.dio.patch(
       '/events/$eventId/participations/$userId/promote',
     );
 
@@ -82,7 +81,7 @@ class EventParticipationsApi {
     int userId,
     AuthSession session,
   ) async {
-    final response = await _dioClient.dio.patch(
+    final response = await client.dio.patch(
       '/events/$eventId/participations/$userId/demote',
     );
 
@@ -96,7 +95,7 @@ class EventParticipationsApi {
     int userId,
     AuthSession session,
   ) async {
-    final response = await _dioClient.dio.delete(
+    final response = await client.dio.delete(
       '/events/$eventId/participations/$userId',
     );
 
@@ -110,7 +109,7 @@ class EventParticipationsApi {
     AuthSession session,
     List<int> userIds,
   ) async {
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
       '/events/$eventId/participations/add-users',
       data: {
         'userIds': userIds,
