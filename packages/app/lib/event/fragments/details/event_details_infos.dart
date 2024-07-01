@@ -8,7 +8,6 @@ import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
 import '../../types/event_details.dart';
@@ -87,7 +86,7 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
                     eventDetails: widget.eventDetails,
                     onViewOnMap: widget.onViewOnMap,
                   ),
-                  EventMyJourney()
+                  const EventMyJourney()
                 ],
                 const SizedBox(height: 16),
               ),
@@ -99,16 +98,10 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
   }
 
   void _onJoin(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventDetailsBloc>().add(
-              JoinEvent(
-                eventId: widget.eventDetails.event.id,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventDetailsBloc>().add(
+      JoinEvent(
+        eventId: widget.eventDetails.event.id,
+      ),
     );
   }
 }

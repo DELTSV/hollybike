@@ -216,16 +216,10 @@ class EventDetailsMyImages extends StatelessWidget {
   }
 
   void _onJoin(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventDetailsBloc>().add(
-              JoinEvent(
-                eventId: eventId,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventDetailsBloc>().add(
+      JoinEvent(
+        eventId: eventId,
+      ),
     );
   }
 }

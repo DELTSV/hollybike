@@ -21,13 +21,11 @@ class ProfileRepository {
   }
 
   Future<PaginatedList<MinimalUser>> searchProfiles(
-    AuthSession currentSession,
     int? page,
     int eventsPerPage,
     String query,
   ) async {
     return profileApi.searchUsers(
-      currentSession,
       page ?? 0,
       eventsPerPage,
       query,

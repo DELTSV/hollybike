@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:hollybike/journey/type/journey.dart';
 
-import '../../auth/types/auth_session.dart';
 import '../../shared/http/dio_client.dart';
 import '../../shared/types/paginated_list.dart';
 
@@ -13,7 +12,6 @@ class JourneyApi {
   JourneyApi({required this.client});
 
   Future<PaginatedList<Journey>> getJourneys(
-    AuthSession session,
     int page,
     int journeysPerPage,
   ) async {
@@ -33,7 +31,7 @@ class JourneyApi {
     return PaginatedList.fromJson(response.data, Journey.fromJson);
   }
 
-  Future<Journey> createJourney(AuthSession session, String name) async {
+  Future<Journey> createJourney(String name) async {
     final response = await client.dio.post('/journeys', data: {
       'name': name,
     });
@@ -46,7 +44,6 @@ class JourneyApi {
   }
 
   Future<Journey> uploadJourneyFile(
-    AuthSession session,
     int journeyId,
     File file,
   ) async {
@@ -64,7 +61,7 @@ class JourneyApi {
     return Journey.fromJson(response.data);
   }
 
-  Future<Journey> getPositions(AuthSession session, int journeyId) async {
+  Future<Journey> getPositions(int journeyId) async {
     final response = await client.dio.get('/journeys/$journeyId/positions');
 
     if (response.statusCode != 200) {

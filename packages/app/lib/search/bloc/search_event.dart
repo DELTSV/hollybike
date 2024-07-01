@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../auth/types/auth_session.dart';
-
 @immutable
 abstract class SearchEvent {}
 
@@ -18,8 +16,7 @@ class LoadProfilesSearchNextPage extends SearchEvent {
 }
 
 class RefreshSearch extends SearchEvent {
-  final AuthSession session;
   final String query;
 
-  RefreshSearch({required this.session, required this.query});
+  RefreshSearch({required this.query});
 }

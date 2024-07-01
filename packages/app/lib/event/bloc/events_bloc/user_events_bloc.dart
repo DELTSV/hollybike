@@ -36,7 +36,6 @@ class UserEventsBloc extends EventsBloc {
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
-        event.session,
         requestType,
         numberOfEventsPerRequest,
         userId: userId,
@@ -68,7 +67,6 @@ class UserEventsBloc extends EventsBloc {
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
-        event.session,
         requestType,
         state.nextPage,
         numberOfEventsPerRequest,

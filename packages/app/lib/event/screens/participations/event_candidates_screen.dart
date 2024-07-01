@@ -9,7 +9,6 @@ import 'package:hollybike/event/bloc/event_candidates_bloc/event_candidates_stat
 import 'package:hollybike/event/widgets/candidates/event_candidate_card.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 
-import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/bar/top_bar.dart';
 import '../../../shared/widgets/bar/top_bar_title.dart';
@@ -195,17 +194,11 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
   }
 
   void _addCandidates() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventCandidatesBloc>().add(
-              AddCandidates(
-                eventId: widget.eventId,
-                session: session,
-                userIds: _selectedCandidates,
-              ),
-            );
-      },
+    context.read<EventCandidatesBloc>().add(
+      AddCandidates(
+        eventId: widget.eventId,
+        userIds: _selectedCandidates,
+      ),
     );
   }
 
@@ -220,45 +213,27 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
   }
 
   void _refreshCandidates() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventCandidatesBloc>().add(
-              RefreshEventCandidates(
-                eventId: widget.eventId,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventCandidatesBloc>().add(
+      RefreshEventCandidates(
+        eventId: widget.eventId,
+      ),
     );
   }
 
   void _loadNextPage() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventCandidatesBloc>().add(
-              LoadEventCandidatesNextPage(
-                eventId: widget.eventId,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventCandidatesBloc>().add(
+      LoadEventCandidatesNextPage(
+        eventId: widget.eventId,
+      ),
     );
   }
 
   void _searchCandidates(String query) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventCandidatesBloc>().add(
-              SearchCandidates(
-                eventId: widget.eventId,
-                session: session,
-                search: query,
-              ),
-            );
-      },
+    context.read<EventCandidatesBloc>().add(
+      SearchCandidates(
+        eventId: widget.eventId,
+        search: query,
+      ),
     );
   }
 }

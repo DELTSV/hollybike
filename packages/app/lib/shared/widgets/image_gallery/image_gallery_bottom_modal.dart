@@ -6,7 +6,6 @@ import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_bloc.
 import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_event.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_state.dart';
 import 'package:hollybike/event/types/image/event_image_details.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
 import 'package:hollybike/shared/widgets/image_gallery/image_details/image_gallery_details.dart';
 import 'package:http/http.dart';
@@ -40,14 +39,11 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
   void initState() {
     super.initState();
 
-    withCurrentSession(context, (session) {
-      BlocProvider.of<EventImageDetailsBloc>(context).add(
-        GetEventImageDetails(
-          session: session,
-          imageId: widget.image.id,
-        ),
-      );
-    });
+    BlocProvider.of<EventImageDetailsBloc>(context).add(
+      GetEventImageDetails(
+        imageId: widget.image.id,
+      ),
+    );
   }
 
   @override
@@ -202,14 +198,11 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
             ),
             TextButton(
               onPressed: () {
-                withCurrentSession(context, (session) {
-                  context.read<EventImageDetailsBloc>().add(
-                        DeleteImage(
-                          session: session,
-                          imageId: widget.image.id,
-                        ),
-                      );
-                });
+                context.read<EventImageDetailsBloc>().add(
+                  DeleteImage(
+                    imageId: widget.image.id,
+                  ),
+                );
 
                 Navigator.of(context).pop();
               },

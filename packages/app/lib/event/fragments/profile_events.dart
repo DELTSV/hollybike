@@ -8,7 +8,6 @@ import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
-import '../../shared/utils/with_current_session.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
@@ -114,22 +113,17 @@ class _ProfileEventsState extends State<ProfileEvents> {
   }
 
   void _loadNextPage(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context.read<UserEventsBloc>().add(LoadEventsNextPage(session: session));
-    });
+    context.read<UserEventsBloc>().add(LoadEventsNextPage());
   }
 
   Future<void> _refreshEvents(BuildContext context, int? userId) {
     if (userId == null) return Future.value();
 
-    withCurrentSession(context, (session) {
-      context.read<UserEventsBloc>().add(
-            RefreshUserEvents(
-              session: session,
-              userId: userId,
-            ),
-          );
-    });
+    context.read<UserEventsBloc>().add(
+          RefreshUserEvents(
+            userId: userId,
+          ),
+        );
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;
   }

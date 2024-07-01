@@ -59,7 +59,6 @@ class EventCandidatesBloc
       PaginatedList<EventCandidate> page =
           await eventParticipationsRepository.fetchCandidates(
         event.eventId,
-        event.session,
         state.nextPage,
         numberOfCandidatesPerRequest,
         state.search,
@@ -89,7 +88,6 @@ class EventCandidatesBloc
       PaginatedList<EventCandidate> page =
           await eventParticipationsRepository.refreshCandidates(
         event.eventId,
-        event.session,
         numberOfCandidatesPerRequest,
         "",
       );
@@ -120,7 +118,6 @@ class EventCandidatesBloc
       PaginatedList<EventCandidate> page =
           await eventParticipationsRepository.refreshCandidates(
         event.eventId,
-        event.session,
         numberOfCandidatesPerRequest,
         event.search,
       );
@@ -149,7 +146,6 @@ class EventCandidatesBloc
       final addedParticipants =
           await eventParticipationsRepository.addParticipants(
         event.eventId,
-        event.session,
         event.userIds,
         numberOfCandidatesPerRequest,
       );

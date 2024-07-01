@@ -1,4 +1,3 @@
-import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';
 import '../../types/participation/event_candidate.dart';
@@ -11,7 +10,6 @@ class EventParticipationsApi {
 
   Future<PaginatedList<EventParticipation>> getParticipations(
     int eventId,
-    AuthSession session,
     int page,
     int eventsPerPage,
   ) async {
@@ -33,7 +31,6 @@ class EventParticipationsApi {
 
   Future<PaginatedList<EventCandidate>> getCandidates(
     int eventId,
-    AuthSession session,
     int page,
     int eventsPerPage,
     String? search,
@@ -65,7 +62,6 @@ class EventParticipationsApi {
   Future<void> promoteParticipant(
     int eventId,
     int userId,
-    AuthSession session,
   ) async {
     final response = await client.dio.patch(
       '/events/$eventId/participations/$userId/promote',
@@ -79,7 +75,6 @@ class EventParticipationsApi {
   Future<void> demoteParticipant(
     int eventId,
     int userId,
-    AuthSession session,
   ) async {
     final response = await client.dio.patch(
       '/events/$eventId/participations/$userId/demote',
@@ -93,7 +88,6 @@ class EventParticipationsApi {
   Future<void> removeParticipant(
     int eventId,
     int userId,
-    AuthSession session,
   ) async {
     final response = await client.dio.delete(
       '/events/$eventId/participations/$userId',
@@ -106,7 +100,6 @@ class EventParticipationsApi {
 
   Future<List<EventParticipation>> addParticipants(
     int eventId,
-    AuthSession session,
     List<int> userIds,
   ) async {
     final response = await client.dio.post(

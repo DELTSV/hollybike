@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:hollybike/auth/types/expired_session_exception.dart';
-import 'package:http/http.dart';
 
 import '../../auth/bloc/auth_persistence.dart';
 import '../../auth/types/auth_session.dart';

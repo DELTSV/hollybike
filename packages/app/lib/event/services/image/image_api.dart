@@ -5,7 +5,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
-import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';
 import '../../types/image/event_image.dart';
@@ -17,7 +16,6 @@ class ImageApi {
  ImageApi({required this.client});
 
   Future<PaginatedList<EventImage>> getEventImages(
-    AuthSession session,
     int eventId,
     int page,
     int imagesPerPage,
@@ -40,7 +38,6 @@ class ImageApi {
   }
 
   Future<PaginatedList<EventImage>> getMyEventImages(
-    AuthSession session,
     int eventId,
     int page,
     int imagesPerPage,
@@ -63,7 +60,6 @@ class ImageApi {
   }
 
   Future<void> uploadEventImages(
-    AuthSession session,
     int eventId,
     List<File> images,
   ) async {
@@ -98,7 +94,6 @@ class ImageApi {
   }
 
   Future<void> updateImagesVisibility(
-    AuthSession session,
     int eventId,
     bool isPublic,
   ) async {
@@ -115,7 +110,6 @@ class ImageApi {
   }
 
   Future<EventImageDetails> getImageDetails(
-    AuthSession session,
     int imageId,
   ) async {
     final response = await client.dio.get(
@@ -130,7 +124,6 @@ class ImageApi {
   }
 
   Future<void> deleteImage(
-    AuthSession session,
     int imageId,
   ) async {
     final response = await client.dio.delete(

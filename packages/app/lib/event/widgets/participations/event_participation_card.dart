@@ -4,7 +4,6 @@ import 'package:hollybike/event/bloc/event_participations_bloc/event_participati
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 import 'package:hollybike/event/widgets/participations/event_participation_actions_menu.dart';
 import 'package:hollybike/event/widgets/participations/event_participation_modal.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../bloc/event_participations_bloc/event_participations_bloc.dart';
 import '../../types/participation/event_participation.dart';
@@ -64,39 +63,30 @@ class EventParticipationCard extends StatelessWidget {
   }
 
   void _onPromote(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context.read<EventParticipationBloc>().add(
-            PromoteEventParticipant(
-              eventId: eventId,
-              userId: participation.user.id,
-              session: session,
-            ),
-          );
-    });
+    context.read<EventParticipationBloc>().add(
+      PromoteEventParticipant(
+        eventId: eventId,
+        userId: participation.user.id,
+      ),
+    );
   }
 
   void _onDemote(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context.read<EventParticipationBloc>().add(
-            DemoteEventParticipant(
-              eventId: eventId,
-              userId: participation.user.id,
-              session: session,
-            ),
-          );
-    });
+    context.read<EventParticipationBloc>().add(
+      DemoteEventParticipant(
+        eventId: eventId,
+        userId: participation.user.id,
+      ),
+    );
   }
 
   void _onRemove(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context.read<EventParticipationBloc>().add(
-            RemoveEventParticipant(
-              eventId: eventId,
-              userId: participation.user.id,
-              session: session,
-            ),
-          );
-    });
+    context.read<EventParticipationBloc>().add(
+      RemoveEventParticipant(
+        eventId: eventId,
+        userId: participation.user.id,
+      ),
+    );
   }
 
   void _onOpenParticipationModal(BuildContext context) {

@@ -28,7 +28,6 @@ class ProfileApi {
   }
 
   Future<PaginatedList<MinimalUser>> searchUsers(
-    AuthSession session,
     int page,
     int eventsPerPage,
     String query,
