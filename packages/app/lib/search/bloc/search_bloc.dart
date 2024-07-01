@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
-import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 
 import '../../event/types/minimal_event.dart';
+import '../../profile/services/profile_repository.dart';
 import 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {

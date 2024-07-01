@@ -30,10 +30,6 @@ class ImageApi {
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch event images");
-    }
-
     return PaginatedList.fromJson(response.data, EventImage.fromJson);
   }
 
@@ -51,10 +47,6 @@ class ImageApi {
         'sort': 'upload_date_time.desc'
       },
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch my event images");
-    }
 
     return PaginatedList.fromJson(response.data, EventImage.fromJson);
   }
@@ -115,10 +107,6 @@ class ImageApi {
     final response = await client.dio.get(
           '/events/images/$imageId',
         );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch event image details");
-    }
 
     return EventImageDetails.fromJson(response.data);
   }

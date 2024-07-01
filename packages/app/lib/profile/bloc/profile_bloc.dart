@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
+
+import '../services/profile_repository.dart';
 
 part 'profile_event.dart';
 

@@ -9,7 +9,7 @@ import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/bloc/auth_persistence.dart';
-import '../../bloc/profile_repository.dart';
+import '../../services/profile_repository.dart';
 
 class ProfileModalList extends StatelessWidget {
   final bool inEditMode;

@@ -24,10 +24,6 @@ class JourneyApi {
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch journeys");
-    }
-
     return PaginatedList.fromJson(response.data, Journey.fromJson);
   }
 
@@ -35,10 +31,6 @@ class JourneyApi {
     final response = await client.dio.post('/journeys', data: {
       'name': name,
     });
-
-    if (response.statusCode != 201) {
-      throw Exception("Failed to create journey");
-    }
 
     return Journey.fromJson(response.data);
   }
@@ -54,19 +46,11 @@ class JourneyApi {
           }),
         );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to upload journey file");
-    }
-
     return Journey.fromJson(response.data);
   }
 
   Future<Journey> getPositions(int journeyId) async {
     final response = await client.dio.get('/journeys/$journeyId/positions');
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch journey positions");
-    }
 
     return Journey.fromJson(response.data);
   }

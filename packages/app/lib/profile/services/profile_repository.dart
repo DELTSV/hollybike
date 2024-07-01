@@ -1,5 +1,5 @@
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/profile/bloc/profile_api.dart';
+import 'package:hollybike/profile/services/profile_api.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 

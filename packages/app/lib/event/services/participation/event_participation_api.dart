@@ -22,10 +22,6 @@ class EventParticipationsApi {
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch participations");
-    }
-
     return PaginatedList.fromJson(response.data, EventParticipation.fromJson);
   }
 
@@ -52,10 +48,6 @@ class EventParticipationsApi {
       queryParameters: queryParams,
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch candidates");
-    }
-
     return PaginatedList.fromJson(response.data, EventCandidate.fromJson);
   }
 
@@ -63,39 +55,27 @@ class EventParticipationsApi {
     int eventId,
     int userId,
   ) async {
-    final response = await client.dio.patch(
+    await client.dio.patch(
       '/events/$eventId/participations/$userId/promote',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to promote participation");
-    }
   }
 
   Future<void> demoteParticipant(
     int eventId,
     int userId,
   ) async {
-    final response = await client.dio.patch(
+    await client.dio.patch(
       '/events/$eventId/participations/$userId/demote',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to demote participation");
-    }
   }
 
   Future<void> removeParticipant(
     int eventId,
     int userId,
   ) async {
-    final response = await client.dio.delete(
+    await client.dio.delete(
       '/events/$eventId/participations/$userId',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to remove participation");
-    }
   }
 
   Future<List<EventParticipation>> addParticipants(
@@ -108,10 +88,6 @@ class EventParticipationsApi {
         'userIds': userIds,
       },
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to add participants");
-    }
 
     return List<EventParticipation>.from(
       response.data

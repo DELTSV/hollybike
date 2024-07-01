@@ -9,7 +9,7 @@ import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
 
-import '../../profile/bloc/profile_repository.dart';
+import '../../profile/services/profile_repository.dart';
 import 'auth_session_repository.dart';
 
 part 'auth_event.dart';
