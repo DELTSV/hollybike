@@ -1,51 +1,46 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:hollybike/event/types/event_details.dart';
+import 'package:hollybike/event/widgets/participations/event_participation_journey_content.dart';
+
+import 'event_my_empty_journey.dart';
 
 class EventMyJourney extends StatelessWidget {
-  const EventMyJourney({super.key});
+  final EventDetails eventDetails;
+
+  const EventMyJourney({super.key, required this.eventDetails});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 80,
-      child: _buildMyJourney(context),
+    if (eventDetails.callerParticipation == null ||
+        (eventDetails.callerParticipation?.hasRecordedPositions == false &&
+            eventDetails.callerParticipation?.journey == null)) {
+      return const SizedBox();
+    }
+
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        _buildMyJourney(context),
+      ],
     );
   }
 
   Widget _buildMyJourney(BuildContext context) {
-    return DottedBorder(
-      strokeWidth: 2,
-      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
-      borderType: BorderType.RRect,
-      radius: const Radius.circular(14),
-      dashPattern: const [5, 5],
-      child: Container(
-        height: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Lottie.asset(
-              'assets/lottie/lottie_journey.json',
-              repeat: false,
-            ),
-            Flexible(
-              child: Text(
-                'Une fois terminé, votre trajet sera disponible ici',
-                softWrap: true,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
+    if (eventDetails.callerParticipation?.journey == null) {
+      return const SizedBox(
+        height: 70,
+        child: EventMyEmptyJourney(),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: EventParticipationJourneyContent(
+        existingJourney: eventDetails.callerParticipation!.journey!,
       ),
     );
   }
