@@ -13,10 +13,12 @@ class ProfileTitle extends StatelessWidget {
       Text(
         "${profile.username} - ${profile.association.name}",
         style: Theme.of(context).textTheme.titleSmall,
+        overflow: TextOverflow.ellipsis,
       ),
       Text(
         profile.email,
         style: Theme.of(context).textTheme.bodySmall,
+        overflow: TextOverflow.ellipsis,
       ),
     ]);
   }

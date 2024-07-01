@@ -4,26 +4,24 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:background_locator_2/background_locator.dart';
-import 'package:background_locator_2/settings/android_settings.dart';
-import 'package:background_locator_2/settings/ios_settings.dart';
-import 'package:background_locator_2/settings/locator_settings.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/positions/bloc/my_position_event.dart';
 import 'package:hollybike/positions/bloc/my_position_state.dart';
+import 'package:hollybike/positions/service/my_position_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../service/my_position_handler.dart';
 import '../service/my_position_repository.dart';
 
 class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
   final EventRepository eventRepository;
+  final MyPositionLocator myPositionLocator;
 
   ReceivePort port = ReceivePort();
 
   MyPositionBloc({
     required this.eventRepository,
+    required this.myPositionLocator,
   }) : super(MyPositionInitial()) {
     on<SubscribeToMyPositionUpdates>(_onSubscribeToPositionUpdates);
     on<EnableSendPosition>(_onListenAndSendUserPosition);
@@ -70,49 +68,11 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
     log('Background Locator initialization done');
   }
 
-  Future<void> _startLocator(
-      Map<String, dynamic> data, String eventName) async {
-    return await BackgroundLocator.registerLocationUpdate(
-      MyPositionCallbackHandler.callback,
-      initCallback: MyPositionCallbackHandler.initCallback,
-      initDataCallback: data,
-      disposeCallback: MyPositionCallbackHandler.disposeCallback,
-      iosSettings: const IOSSettings(
-        accuracy: LocationAccuracy.NAVIGATION,
-        distanceFilter: 0,
-        stopWithTerminate: true,
-      ),
-      autoStop: false,
-      androidSettings: AndroidSettings(
-        accuracy: LocationAccuracy.NAVIGATION,
-        interval: 1,
-        distanceFilter: 1,
-        client: LocationClient.google,
-        androidNotificationSettings: AndroidNotificationSettings(
-          notificationChannelName: 'location_tracking_channel',
-          notificationTitle: 'Suivi de votre position',
-          notificationMsg: 'Suivi de votre position en arrière-plan',
-          notificationBigMsg:
-              'Le suivi de votre position est activé afin de partager votre position en temps réel avec les autres participants de l\'événement "$eventName" ',
-          notificationIconColor: Colors.grey,
-          notificationTapCallback:
-              MyPositionCallbackHandler.notificationCallback,
-        ),
-      ),
-    );
-  }
-
   void _onListenAndSendUserPosition(
     EnableSendPosition event,
     Emitter<MyPositionState> emit,
   ) async {
     emit(MyPositionLoading(state));
-
-    Map<String, dynamic> data = {
-      'accessToken': event.session.token,
-      'host': event.session.host,
-      'eventId': event.eventId,
-    };
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -122,7 +82,19 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       await BackgroundLocator.unRegisterLocationUpdate();
     }
 
-    await _startLocator(data, event.eventName);
+    try {
+      await myPositionLocator.start(event.eventId, event.eventName);
+    } catch (e) {
+      emit(MyPositionFailure(
+        state.copyWith(
+          isRunning: false,
+          status: MyPositionStatus.error,
+          eventId: event.eventId,
+        ),
+        "Impossible de démarrer le suivi de la position",
+      ));
+      return;
+    }
 
     final running = await BackgroundLocator.isServiceRunning();
 

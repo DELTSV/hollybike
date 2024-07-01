@@ -28,7 +28,7 @@ class EventCandidateCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         onChanged: (_) => onTap(),
-        secondary: EventLoadingProfilePicture(
+        secondary: UserProfilePicture(
           url: candidate.profilePicture,
           radius: 20,
           userId: candidate.id,

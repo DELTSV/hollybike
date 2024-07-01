@@ -9,7 +9,6 @@ import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 
-import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/bar/top_bar.dart';
 import '../../../shared/widgets/bar/top_bar_title.dart';
@@ -172,31 +171,19 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
   }
 
   void _loadNextPage() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventParticipationBloc>().add(
-              LoadEventParticipationsNextPage(
-                eventId: widget.eventDetails.event.id,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventParticipationBloc>().add(
+      LoadEventParticipationsNextPage(
+        eventId: widget.eventDetails.event.id,
+      ),
     );
   }
 
   Future<void> _refreshParticipants() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventParticipationBloc>().add(
-              RefreshEventParticipations(
-                eventId: widget.eventDetails.event.id,
-                participationPreview: widget.participationPreview,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventParticipationBloc>().add(
+      RefreshEventParticipations(
+        eventId: widget.eventDetails.event.id,
+        participationPreview: widget.participationPreview,
+      ),
     );
 
     return context.read<EventParticipationBloc>().firstWhenNotLoading;

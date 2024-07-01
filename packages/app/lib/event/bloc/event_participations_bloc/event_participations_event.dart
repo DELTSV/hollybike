@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../auth/types/auth_session.dart';
 import '../../types/participation/event_participation.dart';
 
 @immutable
@@ -12,10 +11,8 @@ class SubscribeToEventParticipations extends EventParticipationsEvent {
 
 class LoadEventParticipationsNextPage extends EventParticipationsEvent {
   final int eventId;
-  final AuthSession session;
 
   LoadEventParticipationsNextPage({
-    required this.session,
     required this.eventId,
   });
 }
@@ -23,10 +20,8 @@ class LoadEventParticipationsNextPage extends EventParticipationsEvent {
 class RefreshEventParticipations extends EventParticipationsEvent {
   final int eventId;
   final List<EventParticipation> participationPreview;
-  final AuthSession session;
 
   RefreshEventParticipations({
-    required this.session,
     required this.eventId,
     required this.participationPreview,
   });
@@ -35,10 +30,8 @@ class RefreshEventParticipations extends EventParticipationsEvent {
 class DemoteEventParticipant extends EventParticipationsEvent {
   final int eventId;
   final int userId;
-  final AuthSession session;
 
   DemoteEventParticipant({
-    required this.session,
     required this.eventId,
     required this.userId,
   });
@@ -47,10 +40,8 @@ class DemoteEventParticipant extends EventParticipationsEvent {
 class PromoteEventParticipant extends EventParticipationsEvent {
   final int eventId;
   final int userId;
-  final AuthSession session;
 
   PromoteEventParticipant({
-    required this.session,
     required this.eventId,
     required this.userId,
   });
@@ -59,10 +50,8 @@ class PromoteEventParticipant extends EventParticipationsEvent {
 class RemoveEventParticipant extends EventParticipationsEvent {
   final int eventId;
   final int userId;
-  final AuthSession session;
 
   RemoveEventParticipant({
-    required this.session,
     required this.eventId,
     required this.userId,
   });

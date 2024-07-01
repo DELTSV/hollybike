@@ -34,7 +34,6 @@ class JourneysLibraryBloc
 
     try {
       PaginatedList<Journey> page = await journeyRepository.fetchJourneys(
-        event.session,
         state.nextPage,
         numberOfJourneysPerRequest,
       );
@@ -62,7 +61,6 @@ class JourneysLibraryBloc
 
     try {
       PaginatedList<Journey> page = await journeyRepository.refreshJourneys(
-        event.session,
         numberOfJourneysPerRequest,
       );
 

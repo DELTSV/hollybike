@@ -7,7 +7,6 @@ import 'package:hollybike/journey/type/minimal_journey.dart';
 import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
 import 'package:hollybike/positions/bloc/user_positions_state.dart';
 import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:provider/provider.dart';
 
 import '../../../positions/bloc/user_positions_event.dart';
@@ -35,14 +34,11 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
   void initState() {
     super.initState();
 
-    withCurrentSession(context, (session) {
-      context.read<UserPositionsBloc>().add(
-        SubscribeToUserPositions(
-          eventId: widget.eventId,
-          session: session,
-        ),
-      );
-    });
+    context.read<UserPositionsBloc>().add(
+      SubscribeToUserPositions(
+        eventId: widget.eventId,
+      ),
+    );
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'package:rxdart/rxdart.dart';
 
-import '../../../auth/types/auth_session.dart';
 import '../../../shared/types/paginated_list.dart';
 import '../../types/participation/event_candidate.dart';
 import '../../types/participation/event_participation.dart';
@@ -26,14 +25,12 @@ class EventParticipationRepository {
 
   Future<PaginatedList<EventCandidate>> fetchCandidates(
     int eventId,
-    AuthSession session,
     int page,
     int candidatesPerPage,
     String? search,
   ) async {
     final pageResult = await eventParticipationsApi.getCandidates(
       eventId,
-      session,
       page,
       candidatesPerPage,
       search,
@@ -48,13 +45,11 @@ class EventParticipationRepository {
 
   Future<PaginatedList<EventCandidate>> refreshCandidates(
     int eventId,
-    AuthSession session,
     int candidatesPerPage,
     String? search,
   ) async {
     final pageResult = await eventParticipationsApi.getCandidates(
       eventId,
-      session,
       0,
       candidatesPerPage,
       search,
@@ -69,13 +64,11 @@ class EventParticipationRepository {
 
   Future<PaginatedList<EventParticipation>> fetchParticipations(
     int eventId,
-    AuthSession session,
     int page,
     int participationsPerPage,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,
-      session,
       page,
       participationsPerPage,
     );
@@ -89,12 +82,10 @@ class EventParticipationRepository {
 
   Future<PaginatedList<EventParticipation>> refreshParticipations(
     int eventId,
-    AuthSession session,
     int participationsPerPage,
   ) async {
     final pageResult = await eventParticipationsApi.getParticipations(
       eventId,
-      session,
       0,
       participationsPerPage,
     );
@@ -109,12 +100,10 @@ class EventParticipationRepository {
   Future<void> promoteParticipant(
     int eventId,
     int userId,
-    AuthSession session,
   ) async {
     await eventParticipationsApi.promoteParticipant(
       eventId,
       userId,
-      session,
     );
 
     _eventParticipationsStreamController.add(
@@ -129,12 +118,10 @@ class EventParticipationRepository {
   Future<void> demoteParticipant(
     int eventId,
     int userId,
-    AuthSession session,
   ) async {
     await eventParticipationsApi.demoteParticipant(
       eventId,
       userId,
-      session,
     );
 
     _eventParticipationsStreamController.add(
@@ -149,12 +136,10 @@ class EventParticipationRepository {
   Future<void> removeParticipant(
     int eventId,
     int userId,
-    AuthSession session,
   ) async {
     await eventParticipationsApi.removeParticipant(
       eventId,
       userId,
-      session,
     );
 
     _eventParticipationsStreamController.add(
@@ -171,19 +156,16 @@ class EventParticipationRepository {
 
   Future<List<EventParticipation>> addParticipants(
     int eventId,
-    AuthSession session,
     List<int> userIds,
     int participationsPerPage,
   ) async {
     final participations = await eventParticipationsApi.addParticipants(
       eventId,
-      session,
       userIds,
     );
 
     await refreshParticipations(
       eventId,
-      session,
       participationsPerPage,
     );
 

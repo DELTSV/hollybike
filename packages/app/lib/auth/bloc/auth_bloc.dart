@@ -9,7 +9,7 @@ import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
 
-import '../../profile/bloc/profile_repository.dart';
+import '../../profile/services/profile_repository.dart';
 import 'auth_session_repository.dart';
 
 part 'auth_event.dart';
@@ -33,6 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthChangeCurrentSession>(_onCurrentSessionChange);
     on<AuthLogin>(_onLogin);
     on<AuthSignup>(_onSignup);
+    on<AuthSessionExpired>(_onSessionExpired);
   }
 
   void _init() async {
@@ -62,6 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) {
     authRepository.currentSession = event.newCurrentSession;
+    authSessionRepository.authSessionSwitch = event.newCurrentSession;
     emit(AuthConnected(authSession: event.newCurrentSession));
   }
 
@@ -112,5 +114,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         consumerId: "signupForm",
       );
     }
+  }
+
+  void _onSessionExpired(AuthSessionExpired event, Emitter<AuthState> emit) async {
+    await authRepository.removeSession(event.expiredSession);
+
+    final currentSession = await authRepository.currentSession;
+
+    if (currentSession == null) {
+      emit(const AuthDisconnected());
+      return;
+    }
+
+    emit(AuthConnected(authSession: currentSession));
   }
 }

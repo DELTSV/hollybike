@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/shared/widgets/profile_card/profile_card_container.dart';
-import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
 import 'package:hollybike/shared/widgets/profile_titles/profile_title.dart';
+
+import '../../../event/widgets/event_loading_profile_picture.dart';
 
 class ProfileCard extends StatelessWidget {
   final AuthSession session;
@@ -30,7 +31,11 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ProfileCardContainer(
       onTap: onTap == null ? null : () => _handleCardTap(context),
-      profilePicture: ProfilePicture(profile: profile.toMinimalUser()),
+      profilePicture: UserProfilePicture(
+        url: profile.profilePicture,
+        radius: 20,
+        userId: profile.id,
+      ),
       profileTitle: ProfileTitle(profile: profile),
       endChild: endChild,
     );

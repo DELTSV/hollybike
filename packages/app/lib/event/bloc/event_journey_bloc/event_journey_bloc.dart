@@ -27,13 +27,10 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
   ) async {
     emit(EventJourneyCreationInProgress(state));
 
-    final session = event.session;
-
     Journey journey;
 
     try {
       journey = await journeyRepository.createJourney(
-        session,
         event.name,
       );
     } catch (e) {
@@ -48,7 +45,6 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
     try {
       final journeyWithFile = await journeyRepository.uploadJourneyFile(
-        session,
         journey.id,
         event.file,
       );
@@ -56,7 +52,6 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
       emit(EventJourneyUploadSuccess(state));
 
       await eventRepository.addJourneyToEvent(
-        session,
         event.eventId,
         journey,
       );
@@ -69,7 +64,6 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
         emit(EventJourneyGetPositionsInProgress(state));
 
         final journeyWithPositions = await journeyRepository.getPositions(
-          session,
           journeyWithFile.id,
         );
 
@@ -99,7 +93,6 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
     try {
       await eventRepository.addJourneyToEvent(
-        event.session,
         event.eventId,
         event.journey,
       );
@@ -125,7 +118,6 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
 
     try {
       await eventRepository.removeJourneyFromEvent(
-        event.session,
         event.eventId,
       );
 

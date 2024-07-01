@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../shared/utils/image_picker/show_image_picker.dart';
-import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/image_picker/image_picker_modal.dart';
 import '../../bloc/event_images_bloc/event_images_state.dart';
 import '../../bloc/event_images_bloc/event_my_images_bloc.dart';
@@ -12,17 +11,11 @@ import '../../bloc/event_images_bloc/event_my_images_event.dart';
 
 void showEventImagesPicker(BuildContext context, int eventId) {
   void onSubmit(BuildContext context, List<File> images) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventMyImagesBloc>().add(
-              UploadEventImages(
-                session: session,
-                eventId: eventId,
-                images: images,
-              ),
-            );
-      },
+    context.read<EventMyImagesBloc>().add(
+      UploadEventImages(
+        eventId: eventId,
+        images: images,
+      ),
     );
   }
 

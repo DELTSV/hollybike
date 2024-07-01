@@ -9,7 +9,7 @@ import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/bloc/auth_persistence.dart';
-import '../../bloc/profile_repository.dart';
+import '../../services/profile_repository.dart';
 
 class ProfileModalList extends StatelessWidget {
   final bool inEditMode;
@@ -29,14 +29,19 @@ class ProfileModalList extends StatelessWidget {
         ),
         clipBehavior: Clip.hardEdge,
         constraints: const BoxConstraints.tightFor(width: double.infinity),
-        child: AsyncRenderer(
-          future: Provider.of<AuthPersistence>(context, listen: false).sessions,
-          placeholder: const Text("placeholder"),
-          builder: (sessions) => ListWheelScrollView(
-            itemExtent: 80,
-            diameterRatio: 3,
-            children: _populateList(context, sessions),
-          ),
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            return AsyncRenderer(
+              future:
+                  Provider.of<AuthPersistence>(context, listen: false).sessions,
+              placeholder: const Text("placeholder"),
+              builder: (sessions) => ListWheelScrollView(
+                itemExtent: 80,
+                diameterRatio: 3,
+                children: _populateList(context, sessions),
+              ),
+            );
+          },
         ),
       ),
     );

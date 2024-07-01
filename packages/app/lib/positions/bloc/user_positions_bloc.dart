@@ -6,12 +6,17 @@ import 'package:hollybike/positions/bloc/user_positions_state.dart';
 import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
 import 'package:hollybike/positions/types/websocket_message.dart';
 
+import '../../auth/bloc/auth_persistence.dart';
 import '../../auth/types/auth_session.dart';
 import '../types/recieve/websocket_subscribed.dart';
 import '../types/websocket_client.dart';
 
 class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
-  UserPositionsBloc() : super(UserPositionsInitial()) {
+  final AuthPersistence authPersistence;
+
+  UserPositionsBloc({
+    required this.authPersistence,
+  }) : super(UserPositionsInitial()) {
     on<SubscribeToUserPositions>(_onSubscribeToUserPositions);
   }
 
@@ -21,9 +26,16 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
   ) async {
     emit(UserPositionsLoading(state));
 
+    final currentSession = await authPersistence.currentSession;
+
+    if (currentSession == null) {
+      emit(UserPositionsError(state, 'Error: No session'));
+      return;
+    }
+
     final stream = await _listenAndSubscribe(
-      event.session.host,
-      event.session.token,
+      currentSession.host,
+      currentSession.token,
       event.eventId,
     );
 

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 import '../../shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
 
-class EventLoadingProfilePicture extends StatelessWidget {
+class UserProfilePicture extends StatelessWidget {
   final String? url;
   final double radius;
   final int? userId;
   final bool isLoading;
 
-  const EventLoadingProfilePicture({
+  const UserProfilePicture({
     super.key,
     this.url,
     required this.radius,

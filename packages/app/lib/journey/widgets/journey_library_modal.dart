@@ -5,7 +5,6 @@ import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_state.dart';
 import 'package:hollybike/journey/widgets/journey_library.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../bloc/journeys_library_bloc/journeys_library_bloc.dart';
@@ -31,11 +30,9 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
   void initState() {
     super.initState();
 
-    withCurrentSession(context, (session) {
-      BlocProvider.of<JourneysLibraryBloc>(context).add(
-        RefreshJourneysLibrary(session: session),
-      );
-    });
+    BlocProvider.of<JourneysLibraryBloc>(context).add(
+      RefreshJourneysLibrary(),
+    );
   }
 
   @override
@@ -124,15 +121,12 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
       widget.onAddJourney!();
     }
 
-    withCurrentSession(context, (session) {
-      BlocProvider.of<EventJourneyBloc>(context).add(
-        AttachJourneyToEvent(
-          session: session,
-          journey: journey,
-          eventId: widget.event.id,
-        ),
-      );
-    });
+    BlocProvider.of<EventJourneyBloc>(context).add(
+      AttachJourneyToEvent(
+        journey: journey,
+        eventId: widget.event.id,
+      ),
+    );
 
     Navigator.of(context).pop();
   }

@@ -37,7 +37,6 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
     try {
       PaginatedList<EventImage> page = await imageRepository.fetchMyEventImages(
-        event.session,
         event.eventId,
         state.nextPage,
         numberOfImagesPerRequest,
@@ -67,7 +66,6 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
     try {
       PaginatedList<EventImage> page =
           await imageRepository.refreshMyEventImages(
-        event.session,
         event.eventId,
         numberOfImagesPerRequest,
       );
@@ -95,7 +93,6 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
     try {
       await imageRepository.uploadEventImages(
-        event.session,
         event.eventId,
         event.images,
       );
@@ -123,7 +120,6 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
     try {
       await imageRepository.updateImagesVisibility(
-        event.session,
         event.eventId,
         event.isPublic,
       );

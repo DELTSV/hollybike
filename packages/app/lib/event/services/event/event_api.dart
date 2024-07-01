@@ -3,27 +3,24 @@ import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
-import '../../../auth/types/auth_session.dart';
 import '../../../journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
 
 class EventApi {
-  final DioClient _dioClient;
+  final DioClient client;
 
-  EventApi({required authPersistence})
-      : _dioClient = DioClient(authPersistence: authPersistence);
+  EventApi({required this.client});
 
   Future<PaginatedList<MinimalEvent>> getEvents(
-    AuthSession session,
     String? requestType,
     int page,
     int eventsPerPage, {
     int? userId,
     String? query,
   }) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       '/events${requestType == null ? "" : "/$requestType"}',
       queryParameters: {
         'page': page,
@@ -34,143 +31,92 @@ class EventApi {
         ..addAll(query == null ? {} : {"query": query}),
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch events");
-    }
-
     return PaginatedList.fromJson(response.data, MinimalEvent.fromJson);
   }
 
-  Future<EventDetails> getEventDetails(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.get('/events/$eventId/details');
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch event details");
-    }
+  Future<EventDetails> getEventDetails(int eventId) async {
+    final response = await client.dio.get('/events/$eventId/details');
 
     return EventDetails.fromJson(response.data);
   }
 
-  Future<Event> createEvent(AuthSession session, EventFormData event) async {
-    final response = await _dioClient.dio.post(
+  Future<Event> createEvent(EventFormData event) async {
+    final response = await client.dio.post(
       '/events',
       data: event.toJson(),
     );
-
-    if (response.statusCode != 201) {
-      throw Exception("Failed to create event");
-    }
 
     return Event.fromJson(response.data);
   }
 
   Future<Event> editEvent(
-      AuthSession session, int eventId, EventFormData event) async {
-    final response = await _dioClient.dio.put(
+      int eventId, EventFormData event) async {
+    final response = await client.dio.put(
       '/events/$eventId',
       data: event.toJson(),
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to edit event");
-    }
-
     return Event.fromJson(response.data);
   }
 
-  Future<void> publishEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.patch(
+  Future<void> publishEvent(int eventId) async {
+    await client.dio.patch(
       '/events/$eventId/schedule',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to publish event");
-    }
   }
 
-  Future<EventParticipation> joinEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.post(
+  Future<EventParticipation> joinEvent(int eventId) async {
+    final response = await client.dio.post(
       '/events/$eventId/participations',
     );
-
-    if (response.statusCode != 201) {
-      throw Exception("Failed to join event");
-    }
 
     return EventParticipation.fromJson(response.data);
   }
 
-  Future<void> deleteEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.delete(
+  Future<void> deleteEvent(int eventId) async {
+   await client.dio.delete(
       '/events/$eventId',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to delete event");
-    }
   }
 
-  Future<void> leaveEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.delete(
+  Future<void> leaveEvent(int eventId) async {
+    await client.dio.delete(
       '/events/$eventId/participations',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to leave event");
-    }
   }
 
-  Future<void> cancelEvent(AuthSession session, int eventId) async {
-    final response = await _dioClient.dio.patch(
+  Future<void> cancelEvent(int eventId) async {
+    await client.dio.patch(
       '/events/$eventId/cancel',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to cancel event");
-    }
   }
 
   Future<void> addJourneyToEvent(
-    AuthSession session,
     int eventId,
     int journeyId,
   ) async {
-    final response = await _dioClient.dio.post(
+    await client.dio.post(
       '/events/$eventId/journey',
       data: {
         'journey_id': journeyId,
       },
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to add journey to event");
-    }
   }
 
   Future<void> removeJourneyFromEvent(
-    AuthSession session,
     int eventId,
   ) async {
-    final response = await _dioClient.dio.delete(
+    await client.dio.delete(
       '/events/$eventId/journey',
     );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to remove journey from event");
-    }
   }
 
   Future<UserJourney> terminateUserJourney(
-    AuthSession session,
     int eventId,
   ) async {
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
       '/events/$eventId/participations/me/journey/terminate',
     );
-
-    if (response.statusCode != 201) {
-      throw Exception("Failed to terminate user journey");
-    }
 
     return UserJourney.fromJson(response.data);
   }

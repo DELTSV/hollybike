@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 
-import '../../../shared/utils/with_current_session.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
 
@@ -120,14 +119,11 @@ class EventDetailsActionsMenu extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                withCurrentSession(context, (session) {
-                  context.read<EventDetailsBloc>().add(
-                        CancelEvent(
-                          eventId: eventId,
-                          session: session,
-                        ),
-                      );
-                });
+                context.read<EventDetailsBloc>().add(
+                  CancelEvent(
+                    eventId: eventId,
+                  ),
+                );
 
                 Navigator.of(context).pop();
               },
@@ -156,14 +152,11 @@ class EventDetailsActionsMenu extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                withCurrentSession(context, (session) {
-                  context.read<EventDetailsBloc>().add(
-                        DeleteEvent(
-                          eventId: eventId,
-                          session: session,
-                        ),
-                      );
-                });
+                context.read<EventDetailsBloc>().add(
+                  DeleteEvent(
+                    eventId: eventId,
+                  ),
+                );
 
                 Navigator.of(context).pop();
               },
@@ -176,13 +169,10 @@ class EventDetailsActionsMenu extends StatelessWidget {
   }
 
   void _onLeave(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context.read<EventDetailsBloc>().add(
-            LeaveEvent(
-              eventId: eventId,
-              session: session,
-            ),
-          );
-    });
+    context.read<EventDetailsBloc>().add(
+      LeaveEvent(
+        eventId: eventId,
+      ),
+    );
   }
 }

@@ -38,7 +38,7 @@ class EventParticipationModal extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    EventLoadingProfilePicture(
+                    UserProfilePicture(
                       url: participation.user.profilePicture,
                       radius: 20,
                       userId: participation.user.id,
@@ -97,9 +97,11 @@ class EventParticipationModal extends StatelessWidget {
       );
     }
 
-    return const SizedBox(
+    return SizedBox(
       height: 105,
-      child: EventParticipationJourneyEmpty(),
+      child: EventParticipationJourneyEmpty(
+        username: participation.user.username,
+      ),
     );
   }
 

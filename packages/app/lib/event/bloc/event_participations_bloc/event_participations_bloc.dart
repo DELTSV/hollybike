@@ -60,7 +60,6 @@ class EventParticipationBloc
       PaginatedList<EventParticipation> page =
           await eventParticipationsRepository.fetchParticipations(
         event.eventId,
-        event.session,
         state.nextPage,
         numberOfParticipationsPerRequest,
       );
@@ -92,7 +91,6 @@ class EventParticipationBloc
       PaginatedList<EventParticipation> page =
           await eventParticipationsRepository.refreshParticipations(
         event.eventId,
-        event.session,
         numberOfParticipationsPerRequest,
       );
 
@@ -120,7 +118,6 @@ class EventParticipationBloc
       await eventParticipationsRepository.promoteParticipant(
         event.eventId,
         event.userId,
-        event.session,
       );
 
       emit(EventParticipationsOperationSuccess(state,
@@ -145,7 +142,6 @@ class EventParticipationBloc
       await eventParticipationsRepository.demoteParticipant(
         event.eventId,
         event.userId,
-        event.session,
       );
 
       emit(EventParticipationsOperationSuccess(state,
@@ -170,7 +166,6 @@ class EventParticipationBloc
       await eventParticipationsRepository.removeParticipant(
         event.eventId,
         event.userId,
-        event.session,
       );
 
       eventRepository.onParticipantRemoved(event.userId);

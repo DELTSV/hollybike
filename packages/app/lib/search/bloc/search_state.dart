@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
@@ -8,7 +7,6 @@ enum SearchStatus { loading, success, error, initial }
 @immutable
 class SearchState {
   final String? lastSearchQuery;
-  final AuthSession? lastSearchSession;
 
   final List<MinimalEvent> events;
   final bool hasMoreEvents;
@@ -22,7 +20,6 @@ class SearchState {
 
   const SearchState({
     this.lastSearchQuery,
-    this.lastSearchSession,
     this.events = const [],
     this.hasMoreEvents = true,
     this.eventsNextPage = 0,
@@ -34,7 +31,6 @@ class SearchState {
 
   SearchState copyWith({
     String? lastSearchQuery,
-    AuthSession? lastSearchSession,
     List<MinimalEvent>? events,
     List<MinimalUser>? profiles,
     bool? hasMoreEvents,
@@ -45,7 +41,6 @@ class SearchState {
   }) {
     return SearchState(
       lastSearchQuery: lastSearchQuery ?? this.lastSearchQuery,
-      lastSearchSession: lastSearchSession ?? this.lastSearchSession,
       events: events ?? this.events,
       profiles: profiles ?? this.profiles,
       hasMoreEvents: hasMoreEvents ?? this.hasMoreEvents,
@@ -63,7 +58,6 @@ class SearchLoadInProgress extends SearchState {
   SearchLoadInProgress(SearchState state)
       : super(
           lastSearchQuery: state.lastSearchQuery,
-          lastSearchSession: state.lastSearchSession,
           events: state.events,
           hasMoreEvents: state.hasMoreEvents,
           eventsNextPage: state.eventsNextPage,
@@ -78,7 +72,6 @@ class SearchLoadSuccess extends SearchState {
   SearchLoadSuccess(SearchState state)
       : super(
           lastSearchQuery: state.lastSearchQuery,
-          lastSearchSession: state.lastSearchSession,
           events: state.events,
           hasMoreEvents: state.hasMoreEvents,
           eventsNextPage: state.eventsNextPage,
@@ -95,7 +88,6 @@ class SearchLoadFailure extends SearchState {
   SearchLoadFailure(SearchState state, {required this.errorMessage})
       : super(
           lastSearchQuery: state.lastSearchQuery,
-          lastSearchSession: state.lastSearchSession,
           events: state.events,
           hasMoreEvents: state.hasMoreEvents,
           eventsNextPage: state.eventsNextPage,

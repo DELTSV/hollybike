@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/details/status/event_details_status.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 
 import '../../../../positions/bloc/my_position_bloc.dart';
 import '../../../../positions/bloc/my_position_event.dart';
@@ -66,14 +65,11 @@ class EventNowStatus extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
 
-                      withCurrentSession(context, (session) {
-                        context.read<EventDetailsBloc>().add(
-                              TerminateUserJourney(
-                                session: session,
-                                eventId: eventDetails.event.id,
-                              ),
-                            );
-                      });
+                      context.read<EventDetailsBloc>().add(
+                        TerminateUserJourney(
+                          eventId: eventDetails.event.id,
+                        ),
+                      );
 
                       context.read<MyPositionBloc>().add(
                             DisableSendPositions(),

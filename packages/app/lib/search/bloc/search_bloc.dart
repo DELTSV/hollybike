@@ -1,12 +1,11 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
-import 'package:hollybike/profile/bloc/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 
 import '../../event/types/minimal_event.dart';
+import '../../profile/services/profile_repository.dart';
 import 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -46,8 +45,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async {
     if (state.hasMoreEvents == false ||
         state.status == SearchStatus.loading ||
-        state.lastSearchQuery == null ||
-        state.lastSearchSession == null) {
+        state.lastSearchQuery == null) {
       return;
     }
 
@@ -55,7 +53,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final page = await eventRepository.fetchEvents(
-        state.lastSearchSession as AuthSession,
         null,
         state.eventsNextPage,
         numberOfEventsPerRequest,
@@ -81,8 +78,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async {
     if (state.hasMoreProfiles == false ||
         state.status == SearchStatus.loading ||
-        state.lastSearchQuery == null ||
-        state.lastSearchSession == null) {
+        state.lastSearchQuery == null) {
       return;
     }
 
@@ -90,7 +86,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final page = await profileRepository.searchProfiles(
-        state.lastSearchSession as AuthSession,
         state.profilesNextPage,
         state.eventsNextPage,
         state.lastSearchQuery as String,
@@ -118,14 +113,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     try {
       final eventsPage = await eventRepository.refreshEvents(
-        event.session,
         null,
         numberOfEventsPerRequest,
         query: event.query,
       );
 
       final profilesPage = await profileRepository.searchProfiles(
-        event.session,
         null,
         numberOfEventsPerRequest,
         event.query,
@@ -135,7 +128,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoadSuccess(
           state.copyWith(
             lastSearchQuery: event.query,
-            lastSearchSession: event.session,
             hasMoreEvents: eventsPage.items.length == numberOfEventsPerRequest,
             eventsNextPage: 1,
             profiles: profilesPage.items,

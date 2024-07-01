@@ -5,24 +5,22 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
-import '../../../auth/types/auth_session.dart';
 import '../../../shared/http/dio_client.dart';
 import '../../../shared/types/paginated_list.dart';
 import '../../types/image/event_image.dart';
 import '../../types/image/event_image_details.dart';
 
 class ImageApi {
-  final DioClient _dioClient;
+  final DioClient client;
 
- ImageApi({required authPersistence}) : _dioClient = DioClient(authPersistence: authPersistence);
+ ImageApi({required this.client});
 
   Future<PaginatedList<EventImage>> getEventImages(
-    AuthSession session,
     int eventId,
     int page,
     int imagesPerPage,
   ) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       '/events/images',
       queryParameters: {
         'page': page,
@@ -32,20 +30,15 @@ class ImageApi {
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch event images");
-    }
-
     return PaginatedList.fromJson(response.data, EventImage.fromJson);
   }
 
   Future<PaginatedList<EventImage>> getMyEventImages(
-    AuthSession session,
     int eventId,
     int page,
     int imagesPerPage,
   ) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
       '/events/images/me',
       queryParameters: {
         'page': page,
@@ -55,15 +48,10 @@ class ImageApi {
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch my event images");
-    }
-
     return PaginatedList.fromJson(response.data, EventImage.fromJson);
   }
 
   Future<void> uploadEventImages(
-    AuthSession session,
     int eventId,
     List<File> images,
   ) async {
@@ -85,7 +73,7 @@ class ImageApi {
       );
     }).toList());
 
-    final response = await _dioClient.dio.post(
+    final response = await client.dio.post(
           '/events/$eventId/images',
           data: FormData.fromMap(
             {'images': imageParts},
@@ -98,11 +86,10 @@ class ImageApi {
   }
 
   Future<void> updateImagesVisibility(
-    AuthSession session,
     int eventId,
     bool isPublic,
   ) async {
-    final response = await _dioClient.dio.patch(
+    final response = await client.dio.patch(
       '/events/$eventId/participations/images-visibility',
       data: {
         'is_images_public': isPublic,
@@ -115,25 +102,19 @@ class ImageApi {
   }
 
   Future<EventImageDetails> getImageDetails(
-    AuthSession session,
     int imageId,
   ) async {
-    final response = await _dioClient.dio.get(
+    final response = await client.dio.get(
           '/events/images/$imageId',
         );
-
-    if (response.statusCode != 200) {
-      throw Exception("Failed to fetch event image details");
-    }
 
     return EventImageDetails.fromJson(response.data);
   }
 
   Future<void> deleteImage(
-    AuthSession session,
     int imageId,
   ) async {
-    final response = await _dioClient.dio.delete(
+    final response = await client.dio.delete(
           '/events/images/$imageId',
         );
 

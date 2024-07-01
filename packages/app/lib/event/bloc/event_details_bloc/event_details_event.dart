@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../auth/types/auth_session.dart';
 import '../../types/event_form_data.dart';
 
 @immutable
@@ -11,75 +10,63 @@ class SubscribeToEvent extends EventDetailsEvent {
 }
 
 class LoadEventDetails extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
-  LoadEventDetails({required this.session, required this.eventId});
+  LoadEventDetails({required this.eventId});
 }
 
 class PublishEvent extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
-  PublishEvent({required this.session, required this.eventId});
+  PublishEvent({required this.eventId});
 }
 
 class GetEventParticipationsPreviewData extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
   GetEventParticipationsPreviewData({
-    required this.session,
     required this.eventId,
   });
 }
 
 class JoinEvent extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
-  JoinEvent({required this.session, required this.eventId});
+  JoinEvent({required this.eventId});
 }
 
 class LeaveEvent extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
-  LeaveEvent({required this.session, required this.eventId});
+  LeaveEvent({required this.eventId});
 }
 
 class CancelEvent extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
-  CancelEvent({required this.session, required this.eventId});
+  CancelEvent({required this.eventId});
 }
 
 class DeleteEvent extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
-  DeleteEvent({required this.session, required this.eventId});
+  DeleteEvent({required this.eventId});
 }
 
 class EditEvent extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
   final EventFormData formData;
 
   EditEvent({
-    required this.session,
     required this.eventId,
     required this.formData,
   });
 }
 
 class TerminateUserJourney extends EventDetailsEvent {
-  final AuthSession session;
   final int eventId;
 
   TerminateUserJourney({
-    required this.session,
     required this.eventId,
   });
 }
