@@ -64,7 +64,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     await emit.forEach<AuthSession?>(
       authSessionRepository.authSessionStream,
       onData: (session) {
-        print("Session updated: $session");
         return CurrentSessionChange(
           oldState: state,
           session: session,

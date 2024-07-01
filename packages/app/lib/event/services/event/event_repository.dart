@@ -98,7 +98,6 @@ class EventRepository {
     int? userId,
     String? query,
   }) async {
-    print("fetchEvents, $requestType");
     final pageResult = await eventApi.getEvents(
       session,
       requestType,
