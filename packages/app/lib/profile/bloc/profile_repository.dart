@@ -16,8 +16,8 @@ class ProfileRepository {
     return profileApi.getSessionProfile(session);
   }
 
-  Future<MinimalUser> getIdProfile(AuthSession currentSession, int id) async {
-    return profileApi.getIdProfile(currentSession, id);
+  Future<MinimalUser> getIdProfile(int id) async {
+    return profileApi.getIdProfile(id);
   }
 
   Future<PaginatedList<MinimalUser>> searchProfiles(

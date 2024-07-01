@@ -21,7 +21,7 @@ class ProfileApi {
     return Profile.fromJson(response.data);
   }
 
-  Future<MinimalUser> getIdProfile(AuthSession session, int id) async {
+  Future<MinimalUser> getIdProfile(int id) async {
     final response = await client.dio.get("/profiles/$id");
 
     return MinimalUser.fromJson(response.data);

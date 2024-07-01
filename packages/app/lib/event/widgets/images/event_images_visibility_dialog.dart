@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/dialog/closable_dialog.dart';
 import 'package:hollybike/shared/widgets/switch_with_text.dart';
 
@@ -84,14 +83,11 @@ class _EventImagesVisibilityDialogState
   }
 
   void _updateImagesVisibility() {
-    withCurrentSession(context, (session) {
-      BlocProvider.of<EventMyImagesBloc>(context).add(
-        UpdateImagesVisibility(
-          session: session,
-          eventId: widget.eventId,
-          isPublic: isPublic,
-        ),
-      );
-    });
+    BlocProvider.of<EventMyImagesBloc>(context).add(
+      UpdateImagesVisibility(
+        eventId: widget.eventId,
+        isPublic: isPublic,
+      ),
+    );
   }
 }

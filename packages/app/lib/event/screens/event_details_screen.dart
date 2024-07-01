@@ -13,7 +13,9 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
+import 'package:provider/provider.dart';
 
+import '../../auth/bloc/auth_persistence.dart';
 import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
@@ -217,7 +219,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         eventId: eventDetails.event.id,
       ),
       BlocProvider(
-        create: (context) => UserPositionsBloc(),
+        create: (context) => UserPositionsBloc(
+          authPersistence: Provider.of<AuthPersistence>(
+            context,
+            listen: false,
+          ),
+        ),
         child: EventDetailsMap(
           eventId: eventDetails.event.id,
           journey: eventDetails.journey,

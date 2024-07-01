@@ -94,7 +94,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     final profile = await profileRepository.getIdProfile(
-      event.sessionSearching,
       event.id,
     );
 

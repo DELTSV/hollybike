@@ -19,6 +19,7 @@ import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/positions/bloc/my_position_bloc.dart';
 import 'package:hollybike/positions/bloc/my_position_event.dart';
+import 'package:hollybike/positions/service/my_position_locator.dart';
 import 'package:hollybike/profile/bloc/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_repository.dart';
@@ -264,6 +265,12 @@ class MyApp extends StatelessWidget {
                     create: (context) => MyPositionBloc(
                       eventRepository: RepositoryProvider.of<EventRepository>(
                         context,
+                      ),
+                      myPositionLocator: MyPositionLocator(
+                        authPersistence: Provider.of<AuthPersistence>(
+                          context,
+                          listen: false,
+                        ),
                       ),
                     )..add(
                         SubscribeToMyPositionUpdates(),
