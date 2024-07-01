@@ -41,13 +41,10 @@ class JourneyPreviewCard extends StatelessWidget {
       },
       child: BlocBuilder<EventJourneyBloc, EventJourneyState>(
         builder: (context, state) {
-          return SizedBox(
-            height: 140,
-            child: _buildJourneyPreview(
-              context,
-              state is EventJourneyGetPositionsInProgress,
-              state is EventJourneyOperationInProgress,
-            ),
+          return _buildJourneyPreview(
+            context,
+            state is EventJourneyGetPositionsInProgress,
+            state is EventJourneyOperationInProgress,
           );
         },
       ),
@@ -64,58 +61,74 @@ class JourneyPreviewCard extends StatelessWidget {
         return const SizedBox();
       }
 
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: UploadJourneyMenu(
-          event: eventDetails.event,
-          onSelection: (type) {
-            journeyImportModalFromType(context, type, eventDetails.event);
-          },
-          child: EmptyJourneyPreviewCard(
+      return _buildContainer(
+        ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: UploadJourneyMenu(
             event: eventDetails.event,
+            onSelection: (type) {
+              journeyImportModalFromType(context, type, eventDetails.event);
+            },
+            child: EmptyJourneyPreviewCard(
+              event: eventDetails.event,
+            ),
           ),
         ),
       );
     }
 
-    return AnimatedCrossFade(
-      duration: const Duration(milliseconds: 500),
-      crossFadeState: loadingOperation
-          ? CrossFadeState.showSecond
-          : CrossFadeState.showFirst,
-      firstChild: SizedBox(
-        height: 140,
-        child: JourneyPreviewCardContainer(
-          onTap: () {
-            showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              context: context,
-              builder: (context) => JourneyModal(
-                journey: journey!,
-                eventDetails: eventDetails,
-                onViewOnMap: onViewOnMap,
-              ),
-            );
-          },
-          child: JourneyPreviewCardContent(
-            journey: journey,
-            loadingPositions: loadingPositions,
+    return _buildContainer(
+      AnimatedCrossFade(
+        duration: const Duration(milliseconds: 500),
+        crossFadeState: loadingOperation
+            ? CrossFadeState.showSecond
+            : CrossFadeState.showFirst,
+        firstChild: SizedBox(
+          height: 140,
+          child: JourneyPreviewCardContainer(
+            onTap: () {
+              showModalBottomSheet(
+                backgroundColor: Colors.transparent,
+                isScrollControlled: true,
+                context: context,
+                builder: (context) => JourneyModal(
+                  journey: journey!,
+                  eventDetails: eventDetails,
+                  onViewOnMap: onViewOnMap,
+                ),
+              );
+            },
+            child: JourneyPreviewCardContent(
+              journey: journey,
+              loadingPositions: loadingPositions,
+            ),
+          ),
+        ),
+        secondChild: SizedBox(
+          height: 140,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
         ),
       ),
-      secondChild: SizedBox(
-        height: 140,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainer,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+    );
+  }
+
+  Widget _buildContainer(Widget child) {
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 140,
+          child: child,
         ),
-      ),
+      ],
     );
   }
 }

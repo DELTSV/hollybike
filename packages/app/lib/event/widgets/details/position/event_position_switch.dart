@@ -22,7 +22,9 @@ class EventPositionSwitch extends StatelessWidget {
       builder: (context, state) {
         final isLoading = state is MyPositionLoading;
 
-        if (eventDetails.callerParticipation?.journey != null && !state.isRunning) {
+        if (eventDetails.callerParticipation == null ||
+            (eventDetails.callerParticipation?.journey != null &&
+                !state.isRunning)) {
           return const SizedBox();
         }
 
@@ -70,11 +72,11 @@ class EventPositionSwitch extends StatelessWidget {
   void _onStart(BuildContext context) async {
     if (await _checkLocationPermission() && context.mounted) {
       context.read<MyPositionBloc>().add(
-        EnableSendPosition(
-          eventId: eventDetails.event.id,
-          eventName: eventDetails.event.name,
-        ),
-      );
+            EnableSendPosition(
+              eventId: eventDetails.event.id,
+              eventName: eventDetails.event.name,
+            ),
+          );
     }
   }
 

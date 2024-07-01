@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/details/event_my_journey.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
-import 'package:hollybike/shared/utils/add_separators.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
@@ -16,7 +15,7 @@ import '../../widgets/details/event_join_button.dart';
 import '../../widgets/details/event_participations_preview.dart';
 import '../../widgets/details/status/event_status_feed.dart';
 
-class EventDetailsInfos extends StatefulWidget {
+class EventDetailsInfos extends StatelessWidget {
   final EventDetails eventDetails;
   final void Function() onViewOnMap;
 
@@ -27,69 +26,57 @@ class EventDetailsInfos extends StatefulWidget {
   });
 
   @override
-  State<EventDetailsInfos> createState() => _EventDetailsInfosState();
-}
-
-class _EventDetailsInfosState extends State<EventDetailsInfos> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final event = widget.eventDetails.event;
-    final previewParticipants = widget.eventDetails.previewParticipants;
-    final previewParticipantsCount =
-        widget.eventDetails.previewParticipantsCount;
+    final event = eventDetails.event;
+    final previewParticipants = eventDetails.previewParticipants;
+    final previewParticipantsCount = eventDetails.previewParticipantsCount;
 
     return EventDetailsTabScrollWrapper(
       scrollViewKey: 'event_details_infos_${event.id}',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          EventStatusFeed(eventDetails: widget.eventDetails),
+          EventStatusFeed(eventDetails: eventDetails),
           const SizedBox(height: 13),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
-              children: addSeparators(
-                [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      EventParticipationsPreview(
-                        event: event,
-                        previewParticipants: previewParticipants,
-                        previewParticipantsCount: previewParticipantsCount,
-                        onTap: () {
-                          Timer(const Duration(milliseconds: 100), () {
-                            context.router.push(
-                              EventParticipationsRoute(
-                                eventDetails: widget.eventDetails,
-                                participationPreview: previewParticipants,
-                              ),
-                            );
-                          });
-                        },
-                      ),
-                      EventJoinButton(
-                        isJoined: widget.eventDetails.isParticipating,
-                        canJoin: widget.eventDetails.canJoin,
-                        onJoin: _onJoin,
-                      ),
-                    ],
-                  ),
-                  JourneyPreviewCard(
-                    canAddJourney: widget.eventDetails.canEditJourney,
-                    journey: widget.eventDetails.journey,
-                    eventDetails: widget.eventDetails,
-                    onViewOnMap: widget.onViewOnMap,
-                  ),
-                  const EventMyJourney()
-                ],
-                const SizedBox(height: 16),
-              ),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    EventParticipationsPreview(
+                      event: event,
+                      previewParticipants: previewParticipants,
+                      previewParticipantsCount: previewParticipantsCount,
+                      onTap: () {
+                        Timer(const Duration(milliseconds: 100), () {
+                          context.router.push(
+                            EventParticipationsRoute(
+                              eventDetails: eventDetails,
+                              participationPreview: previewParticipants,
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                    EventJoinButton(
+                      isJoined: eventDetails.isParticipating,
+                      canJoin: eventDetails.canJoin,
+                      onJoin: _onJoin,
+                    ),
+                  ],
+                ),
+                JourneyPreviewCard(
+                  canAddJourney: eventDetails.canEditJourney,
+                  journey: eventDetails.journey,
+                  eventDetails: eventDetails,
+                  onViewOnMap: onViewOnMap,
+                ),
+                EventMyJourney(
+                  eventDetails: eventDetails,
+                )
+              ],
             ),
           )
         ],
@@ -99,9 +86,9 @@ class _EventDetailsInfosState extends State<EventDetailsInfos> {
 
   void _onJoin(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-      JoinEvent(
-        eventId: widget.eventDetails.event.id,
-      ),
-    );
+          JoinEvent(
+            eventId: eventDetails.event.id,
+          ),
+        );
   }
 }

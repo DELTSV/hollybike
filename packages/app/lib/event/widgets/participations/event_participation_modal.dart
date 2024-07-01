@@ -92,7 +92,7 @@ class EventParticipationModal extends StatelessWidget {
 
   Widget _buildParticipationJourney() {
     if (participation.journey != null) {
-      return EventParticipationJourneyContent(
+      return EventParticipationJourney(
         existingJourney: participation.journey!,
       );
     }
