@@ -60,9 +60,12 @@ Future<File?> getJourneyFileAndUploadToEvent(
   await showDialog(
     barrierDismissible: false,
     context: context,
-    builder: (context) {
-      return UploadJourneyModal(
-        isGpx: extension == 'gpx',
+    builder: (_) {
+      return BlocProvider.value(
+        value: BlocProvider.of<EventJourneyBloc>(context),
+        child: UploadJourneyModal(
+          isGpx: extension == 'gpx',
+        ),
       );
     },
   );
