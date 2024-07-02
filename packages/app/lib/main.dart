@@ -163,24 +163,6 @@ class MyApp extends StatelessWidget {
                           RepositoryProvider.of<ProfileRepository>(context),
                     )..add(SubscribeToCurrentSessionChange()),
                   ),
-                  BlocProvider<FutureEventsBloc>(
-                    create: (context) => FutureEventsBloc(
-                      eventRepository:
-                          RepositoryProvider.of<EventRepository>(context),
-                    )..add(SubscribeToEvents()),
-                  ),
-                  BlocProvider<ArchivedEventsBloc>(
-                    create: (context) => ArchivedEventsBloc(
-                      eventRepository:
-                          RepositoryProvider.of<EventRepository>(context),
-                    )..add(SubscribeToEvents()),
-                  ),
-                  BlocProvider<UserEventsBloc>(
-                    create: (context) => UserEventsBloc(
-                      eventRepository:
-                          RepositoryProvider.of<EventRepository>(context),
-                    )..add(SubscribeToEvents()),
-                  ),
                   BlocProvider<EventImagesBloc>(
                     create: (context) => EventImagesBloc(
                       imageRepository: RepositoryProvider.of<ImageRepository>(
@@ -198,13 +180,6 @@ class MyApp extends StatelessWidget {
                       ),
                     ),
                   ),
-                  BlocProvider<EventImageDetailsBloc>(
-                    create: (context) => EventImageDetailsBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
                   BlocProvider<EventJourneyBloc>(
                     create: (context) => EventJourneyBloc(
                       journeyRepository:
@@ -212,14 +187,6 @@ class MyApp extends StatelessWidget {
                         context,
                       ),
                       eventRepository: RepositoryProvider.of<EventRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
-                  BlocProvider<JourneysLibraryBloc>(
-                    create: (context) => JourneysLibraryBloc(
-                      journeyRepository:
-                          RepositoryProvider.of<JourneyRepository>(
                         context,
                       ),
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/association/types/association.dart';
 import 'package:hollybike/event/fragments/profile_events.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
@@ -6,6 +7,10 @@ import 'package:hollybike/profile/widgets/profile_description/profile_descriptio
 import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
 import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
+
+import '../../../event/bloc/events_bloc/events_event.dart';
+import '../../../event/bloc/events_bloc/user_events_bloc.dart';
+import '../../../event/services/event/event_repository.dart';
 
 class ProfilePage extends StatefulWidget {
   final int? id;
@@ -71,9 +76,15 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.only(top: 50),
           child: TabBarView(
             children: [
-              ProfileEvents(
-                userId: widget.profile!.id,
-                scrollView: scrollViewKey,
+              BlocProvider<UserEventsBloc>(
+                create: (context) => UserEventsBloc(
+                  eventRepository:
+                      RepositoryProvider.of<EventRepository>(context),
+                )..add(SubscribeToEvents()),
+                child: ProfileEvents(
+                  userId: widget.profile!.id,
+                  scrollView: scrollViewKey,
+                ),
               ),
             ],
           ),

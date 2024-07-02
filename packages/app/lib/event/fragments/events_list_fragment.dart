@@ -6,8 +6,6 @@ import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
-import '../bloc/event_details_bloc/event_details_bloc.dart';
-import '../bloc/event_details_bloc/event_details_state.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
@@ -53,9 +51,10 @@ class _EventsListFragmentState<T extends EventsBloc>
         ),
         BlocListener<FutureEventsBloc, EventsState>(listener: (context, state) {
           if (state is EventCreationSuccess) {
-            Future.delayed(const Duration(milliseconds: 200), () {
-              widget.onRefreshRequested();
-            });
+            Future.delayed(
+              const Duration(milliseconds: 200),
+              widget.onRefreshRequested,
+            );
           }
         }),
         // BlocListener<EventDetailsBloc, EventDetailsState>(

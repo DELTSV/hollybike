@@ -4,6 +4,7 @@ import 'package:hollybike/event/bloc/events_bloc/archived_events_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 
 import '../bloc/events_bloc/events_event.dart';
+import '../services/event/event_repository.dart';
 import '../types/minimal_event.dart';
 import 'events_list_fragment.dart';
 
@@ -17,11 +18,21 @@ class ArchivedEvents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EventsListFragment<ArchivedEventsBloc>(
-      navigateToEventDetails: navigateToEventDetails,
-      onNextPageRequested: () => _loadNextPage(context),
-      onRefreshRequested: () => _refreshEvents(context),
-      placeholderText: 'Aucun événement archivé',
+    return BlocProvider<ArchivedEventsBloc>(
+      create: (context) => ArchivedEventsBloc(
+        eventRepository:
+        RepositoryProvider.of<EventRepository>(context),
+      )..add(SubscribeToEvents()),
+      child: Builder(
+        builder: (context) {
+          return EventsListFragment<ArchivedEventsBloc>(
+            navigateToEventDetails: navigateToEventDetails,
+            onNextPageRequested: () => _loadNextPage(context),
+            onRefreshRequested: () => _refreshEvents(context),
+            placeholderText: 'Aucun événement archivé',
+          );
+        },
+      )
     );
   }
 
