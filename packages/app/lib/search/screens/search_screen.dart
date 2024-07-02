@@ -220,7 +220,6 @@ class _SearchScreenState extends State<SearchScreen> {
     MinimalEvent event,
     bool animate,
   ) {
-    // delay 200 ms to allow the animation to finish
     Future.delayed(const Duration(milliseconds: 200), () {
       context.router.push(EventDetailsRoute(
         event: event,

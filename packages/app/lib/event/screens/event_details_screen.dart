@@ -109,6 +109,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         }
 
         if (state is DeleteEventSuccess) {
+          Toast.showSuccessToast(context, "Événement supprimé");
           context.router.maybePop();
         }
       },
