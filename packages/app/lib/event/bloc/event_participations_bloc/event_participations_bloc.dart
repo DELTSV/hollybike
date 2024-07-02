@@ -27,12 +27,6 @@ class EventParticipationBloc
     on<RemoveEventParticipant>(_onRemoveEventParticipant);
   }
 
-  @override
-  Future<void> close() async {
-    await eventParticipationsRepository.close();
-    return super.close();
-  }
-
   Future<void> _onSubscribeToEventParticipations(
     SubscribeToEventParticipations event,
     Emitter<EventParticipationsState> emit,

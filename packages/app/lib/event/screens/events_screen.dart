@@ -59,13 +59,13 @@ class _EventsScreenState extends State<EventsScreen>
             }
           },
         ),
-        BlocListener<EventDetailsBloc, EventDetailsState>(
-          listener: (context, state) {
-            if (state is DeleteEventSuccess) {
-              Toast.showSuccessToast(context, "Événement supprimé");
-            }
-          },
-        ),
+        // BlocListener<EventDetailsBloc, EventDetailsState>(
+        //   listener: (context, state) {
+        //     if (state is DeleteEventSuccess) {
+        //       Toast.showSuccessToast(context, "Événement supprimé");
+        //     }
+        //   },
+        // ),
       ],
       child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
         builder: (context, bloc, state) {

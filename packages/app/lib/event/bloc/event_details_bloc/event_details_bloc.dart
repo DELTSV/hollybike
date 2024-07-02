@@ -9,9 +9,11 @@ import 'event_details_state.dart';
 
 class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   final EventRepository _eventRepository;
+  final int eventId;
 
   EventDetailsBloc({
     required EventRepository eventRepository,
+    required this.eventId,
   })  : _eventRepository = eventRepository,
         super(const EventDetailsState()) {
     on<SubscribeToEvent>(_onSubscribeToEvent);
@@ -27,7 +29,8 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
   @override
   Future<void> close() async {
-    await _eventRepository.close();
+    // await _eventRepository.close();
+    print("close event details bloc $eventId");
     return super.close();
   }
 

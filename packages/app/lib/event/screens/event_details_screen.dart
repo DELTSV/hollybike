@@ -23,6 +23,7 @@ import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../fragments/details/event_details_my_images.dart';
+import '../services/event/event_repository.dart';
 import '../types/event_details.dart';
 import '../widgets/details/event_details_actions_menu.dart';
 import '../widgets/images/show_event_images_picker.dart';
@@ -30,7 +31,7 @@ import '../widgets/images/show_event_images_picker.dart';
 enum EventDetailsTab { info, photos, myPhotos, map }
 
 @RoutePage()
-class EventDetailsScreen extends StatefulWidget {
+class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
   final MinimalEvent event;
   final bool animate;
 
@@ -42,6 +43,25 @@ class EventDetailsScreen extends StatefulWidget {
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
+
+  @override
+  Widget wrappedRoute(context){
+
+    try {
+      print(BlocProvider.of<EventDetailsBloc>(context).eventId);
+    } catch (e) {
+      print(e);
+    }
+
+    return BlocProvider(
+      create: (context) => EventDetailsBloc(
+        eventRepository:
+        RepositoryProvider.of<EventRepository>(context),
+        eventId: event.id,
+      )..add(SubscribeToEvent()),
+      child: this,
+    );
+  }
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen>
@@ -152,7 +172,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                           controller: _tabController,
                           labelColor: Theme.of(context).colorScheme.secondary,
                           indicatorColor:
-                              Theme.of(context).colorScheme.secondary,
+                          Theme.of(context).colorScheme.secondary,
                           tabs: const [
                             Tab(icon: Icon(Icons.info)),
                             Tab(icon: Icon(Icons.photo_library)),
