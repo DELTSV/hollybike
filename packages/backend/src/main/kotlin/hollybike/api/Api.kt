@@ -44,7 +44,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val invitationService = InvitationService(db)
 	val authService = AuthService(db, conf.security, invitationService, userService)
 	val eventService = EventService(db, storageService, notificationService)
-	val eventParticipationService = EventParticipationService(db, eventService)
+	val eventParticipationService = EventParticipationService(db, eventService, notificationService)
 	val imageMetadataService = ImageMetadataService()
 	val eventImageService = EventImageService(db, eventService, storageService, imageMetadataService, positionService)
 	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
