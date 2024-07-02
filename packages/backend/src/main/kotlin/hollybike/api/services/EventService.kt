@@ -10,7 +10,10 @@ import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
+import hollybike.api.types.websocket.DeleteEventNotification
+import hollybike.api.types.websocket.EventStatusUpdateNotification
 import hollybike.api.types.websocket.NewEventNotification
+import hollybike.api.types.websocket.UpdateEventNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
 import io.ktor.http.*
@@ -26,6 +29,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.time.Duration.Companion.hours
 
@@ -347,7 +351,7 @@ class EventService(
 		Result.success(Unit)
 	}
 
-	fun updateEvent(
+	suspend fun updateEvent(
 		caller: User,
 		eventId: Int,
 		name: String,
@@ -370,43 +374,47 @@ class EventService(
 
 					Result.success(event)
 				}
+		}.apply {
+			onSuccess { event ->
+				notificationService.send(event.participants.map { it.user }.toList(), UpdateEventNotification(event))
+			}
 		}
 	}
 
-	fun updateEventStatus(caller: User, eventId: Int, status: EEventStatus): Result<Unit> = transaction(db) {
+	suspend fun updateEventStatus(caller: User, eventId: Int, status: EEventStatus): Result<Unit> = newSuspendedTransaction(db = db) {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+		}.firstOrNull() ?: return@newSuspendedTransaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val participation = EventParticipation.find {
 			(EventParticipations.user eq caller.id) and (EventParticipations.event eq eventId)
 		}.firstOrNull()
-			?: return@transaction Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
+			?: return@newSuspendedTransaction Result.failure(EventActionDeniedException("Vous ne participez pas à cet événement"))
 
 		if (participation.role != EEventRole.Organizer) {
-			return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut modifier le statut de l'événement"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul l'organisateur peut modifier le statut de l'événement"))
 		}
 
 		if (status == event.status) {
-			return@transaction Result.failure(EventActionDeniedException("Event déjà ${status.name.lowercase()}"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Event déjà ${status.name.lowercase()}"))
 		}
 
 		when (status) {
 			EEventStatus.Pending -> {
 				if (event.owner.id != caller.id) {
-					return@transaction Result.failure(EventActionDeniedException("Seul le propriétaire peut mettre l'événement en attente"))
+					return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul le propriétaire peut mettre l'événement en attente"))
 				}
 			}
 
 			EEventStatus.Cancelled -> {
 				if (event.status != EEventStatus.Scheduled) {
-					return@transaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être annulé"))
+					return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être annulé"))
 				}
 			}
 
 			EEventStatus.Finished -> {
 				if (event.status != EEventStatus.Scheduled) {
-					return@transaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être terminé"))
+					return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul un événement planifié peut être terminé"))
 				}
 			}
 
@@ -415,6 +423,8 @@ class EventService(
 		}
 
 		event.status = status
+
+		notificationService.send(event.participants.map { it.user }.toList(), EventStatusUpdateNotification(event))
 
 		Result.success(Unit)
 	}
@@ -434,14 +444,16 @@ class EventService(
 			}
 		}
 
-	fun deleteEvent(caller: User, eventId: Int): Result<Unit> = transaction(db) {
+	suspend fun deleteEvent(caller: User, eventId: Int): Result<Unit> = newSuspendedTransaction(db = db) {
 		val event = Event.find {
 			Events.id eq eventId and eventUserCondition(caller)
-		}.firstOrNull() ?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+		}.firstOrNull() ?: return@newSuspendedTransaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		if (event.owner.id != caller.id) {
-			return@transaction Result.failure(EventActionDeniedException("Seul le propriétaire peut supprimer l'événement"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul le propriétaire peut supprimer l'événement"))
 		}
+
+		notificationService.send(event.participants.map { it.user }.toList(), DeleteEventNotification(event))
 
 		Result.success(event.delete())
 	}

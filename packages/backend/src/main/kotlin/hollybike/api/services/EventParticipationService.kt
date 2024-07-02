@@ -6,6 +6,8 @@ import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
 import hollybike.api.types.event.participation.EEventRole
+import hollybike.api.types.websocket.AddedToEventNotification
+import hollybike.api.types.websocket.RemovedFromEventNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.Sort
 import hollybike.api.utils.search.applyParam
@@ -15,11 +17,13 @@ import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class EventParticipationService(
 	private val db: Database,
-	private val eventService: EventService
+	private val eventService: EventService,
+	private val notificationService: NotificationService
 ) {
 	suspend fun handleEventExceptions(exception: Throwable, call: ApplicationCall) =
 		eventService.handleEventExceptions(exception, call)
@@ -155,16 +159,16 @@ class EventParticipationService(
 		}
 	}
 
-	fun removeUserFromEvent(caller: User, eventId: Int, userId: Int): Result<Unit> = transaction(db) {
+	suspend fun removeUserFromEvent(caller: User, eventId: Int, userId: Int): Result<Unit> = newSuspendedTransaction(db = db) {
 		val event = findEvent(caller, eventId)
-			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+			?: return@newSuspendedTransaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		if (caller.id.value == userId) {
-			return@transaction Result.failure(EventActionDeniedException("Vous ne pouvez pas vous retirer de l'événement"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Vous ne pouvez pas vous retirer de l'événement"))
 		}
 
 		if (event.owner.id.value == userId) {
-			return@transaction Result.failure(EventActionDeniedException("Vous ne pouvez pas retirer le propriétaire de l'événement"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Vous ne pouvez pas retirer le propriétaire de l'événement"))
 		}
 
 		val participation = EventParticipation.find {
@@ -172,51 +176,55 @@ class EventParticipationService(
 		}.firstOrNull()
 
 		if (participation == null) {
-			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+			return@newSuspendedTransaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 		}
 
 		if (participation.role != EEventRole.Organizer) {
-			return@transaction Result.failure(EventActionDeniedException("Seul un organisateur peut retirer un participant"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul un organisateur peut retirer un participant"))
 		}
 
 		val user = User.findById(userId)
-			?: return@transaction Result.failure(EventNotFoundException("User $userId introuvable"))
+			?: return@newSuspendedTransaction Result.failure(EventNotFoundException("User $userId introuvable"))
 
 		val userParticipation = EventParticipation.find {
 			eventParticipationUserEventCondition(user, eventId)
 		}.firstOrNull()
 
 		if (userParticipation == null) {
-			return@transaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
+			return@newSuspendedTransaction Result.failure(NotParticipatingToEventException("L'utilisateur ne participe pas à cet événement"))
 		}
 
 		userParticipation.isJoined = false
 		userParticipation.leftDateTime = Clock.System.now()
 
+		notificationService.send(user, RemovedFromEventNotification(event.id.value, event.name))
+
 		Result.success(Unit)
 	}
 
-	fun addParticipantsToEvent(
+	suspend fun addParticipantsToEvent(
 		caller: User,
 		eventId: Int,
 		userIds: List<Int>
-	): Result<List<EventParticipation>> = transaction(db) {
+	): Result<List<EventParticipation>> = newSuspendedTransaction(db = db) {
 		val event = findEvent(caller, eventId)
-			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+			?: return@newSuspendedTransaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val participation = EventParticipation.find {
 			eventParticipationUserEventCondition(caller, eventId)
 		}.firstOrNull()
 
 		if (participation == null) {
-			return@transaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+			return@newSuspendedTransaction Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
 		}
 
 		if (participation.role != EEventRole.Organizer) {
-			return@transaction Result.failure(EventActionDeniedException("Seul l'organisateur peut ajouter des participants"))
+			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul l'organisateur peut ajouter des participants"))
 		}
 
 		val users = User.find { Users.id inList userIds }
+
+		notificationService.send(users.toList(), AddedToEventNotification(event.id.value, event.name))
 
 		Result.success(
 			users.map { user ->
@@ -236,7 +244,7 @@ class EventParticipationService(
 
 					userParticipation
 				} else {
-					return@transaction Result.failure(AlreadyParticipatingToEventException("L'utilisateur ${user.id} participe déjà à cet événement"))
+					return@newSuspendedTransaction Result.failure(AlreadyParticipatingToEventException("L'utilisateur ${user.id} participe déjà à cet événement"))
 				}
 			}
 		)
