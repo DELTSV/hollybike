@@ -162,7 +162,7 @@ class EventParticipationBloc
         event.userId,
       );
 
-      eventRepository.onParticipantRemoved(event.userId);
+      eventRepository.onParticipantRemoved(event.userId, event.eventId);
 
       emit(EventParticipationsDeleted(state));
     } catch (e) {

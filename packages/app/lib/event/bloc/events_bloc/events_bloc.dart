@@ -22,12 +22,6 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<RefreshEvents>(_onRefreshEvents);
   }
 
-  @override
-  Future<void> close() async {
-    await eventRepository.close();
-    return super.close();
-  }
-
   Stream<List<MinimalEvent>> _getStream() {
     if (requestType == "future") {
       return eventRepository.futureStream;

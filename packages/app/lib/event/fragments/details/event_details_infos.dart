@@ -91,9 +91,7 @@ class EventDetailsInfos extends StatelessWidget {
 
   void _onJoin(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-          JoinEvent(
-            eventId: eventDetails.event.id,
-          ),
+          JoinEvent(),
         );
   }
 }

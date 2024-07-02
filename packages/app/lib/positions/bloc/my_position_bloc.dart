@@ -59,7 +59,11 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       eventId: isRunning ? eventId : null,
     )));
 
-    port.listen((dynamic data) => eventRepository.onUserPositionSent());
+    if (state.eventId != null) {
+      port.listen(
+        (dynamic data) => eventRepository.onUserPositionSent(state.eventId!),
+      );
+    }
   }
 
   Future<void> initPlatformState() async {

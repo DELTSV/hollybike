@@ -66,9 +66,7 @@ class EventNowStatus extends StatelessWidget {
                       Navigator.of(context).pop();
 
                       context.read<EventDetailsBloc>().add(
-                        TerminateUserJourney(
-                          eventId: eventDetails.event.id,
-                        ),
+                        TerminateUserJourney(),
                       );
 
                       context.read<MyPositionBloc>().add(

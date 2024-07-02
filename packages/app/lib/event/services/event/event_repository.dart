@@ -13,25 +13,28 @@ import 'event_api.dart';
 
 class EventRepository {
   final EventApi eventApi;
-  late final _eventDetailsStreamController =
-      BehaviorSubject<EventDetails?>.seeded(null);
 
-  late final _futureStreamController =
+  final _eventDetailsStreamControllerMap = <int, BehaviorSubject<EventDetails?>>{};
+
+  final _futureStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
-  late final _userStreamController =
+  final _userStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
-  late final _archivedStreamController =
+  final _archivedStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
-  late final _searchStreamController =
+  final _searchStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
   EventRepository({required this.eventApi});
 
-  Stream<EventDetails?> get eventDetailsStream =>
-      _eventDetailsStreamController.stream;
+  Stream<EventDetails?> getEventDetailsStream(int eventId) =>
+      _eventDetailsStreamControllerMap.putIfAbsent(
+        eventId,
+        () => BehaviorSubject<EventDetails?>.seeded(null),
+      ).stream;
 
   Stream<List<MinimalEvent>> get futureStream => _futureStreamController.stream;
 
@@ -136,7 +139,7 @@ class EventRepository {
   ) async {
     final eventDetails = await eventApi.getEventDetails(eventId);
 
-    _eventDetailsStreamController.add(eventDetails);
+    _eventDetailsStreamControllerMap[eventId]?.add(eventDetails);
 
     return eventDetails;
   }
@@ -151,13 +154,13 @@ class EventRepository {
   ) async {
     final editedEvent = await eventApi.editEvent(eventId, event);
 
-    final details = _eventDetailsStreamController.value;
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamController.add(
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         event: editedEvent,
       ),
@@ -178,11 +181,15 @@ class EventRepository {
   }
 
   Future<void> publishEvent(int eventId) async {
-    final details = _eventDetailsStreamController.value!;
-
     await eventApi.publishEvent(eventId);
 
-    _eventDetailsStreamController.add(
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         event: details.event.copyWith(status: EventStatusState.scheduled),
       ),
@@ -205,7 +212,7 @@ class EventRepository {
   }
 
   Future<void> joinEvent(int eventId) async {
-    final details = _eventDetailsStreamController.value;
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     final participation = await eventApi.joinEvent(eventId);
 
@@ -213,11 +220,11 @@ class EventRepository {
       return;
     }
 
-    onParticipantsAdded([participation], firstAsCaller: true);
+    onParticipantsAdded([participation], eventId, firstAsCaller: true);
   }
 
   Future<void> leaveEvent(int eventId) async {
-    final details = _eventDetailsStreamController.value;
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     await eventApi.leaveEvent(eventId);
 
@@ -225,7 +232,7 @@ class EventRepository {
       return;
     }
 
-    _eventDetailsStreamController.add(EventDetails(
+    _eventDetailsStreamControllerMap[eventId]?.add(EventDetails(
       event: details.event,
       journey: details.journey,
       callerParticipation: null,
@@ -233,7 +240,7 @@ class EventRepository {
       previewParticipantsCount: details.previewParticipantsCount,
     ));
 
-    onParticipantRemoved(details.callerParticipation!.userId);
+    onParticipantRemoved(details.callerParticipation!.userId, eventId);
   }
 
   Future<void> deleteEvent(int eventId) async {
@@ -241,11 +248,15 @@ class EventRepository {
   }
 
   Future<void> cancelEvent(int eventId) async {
-    final details = _eventDetailsStreamController.value!;
-
     await eventApi.cancelEvent(eventId);
 
-    _eventDetailsStreamController.add(
+    final details = _eventDetailsStreamControllerMap[eventId]?.value!;
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         event: details.event.copyWith(status: EventStatusState.canceled),
       ),
@@ -267,14 +278,14 @@ class EventRepository {
     }
   }
 
-  void onParticipantRemoved(int userId) {
-    final details = _eventDetailsStreamController.value;
+  void onParticipantRemoved(int userId, int eventId) {
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamController.add(
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         previewParticipants: details.previewParticipants
             .where((p) => p.user.id != userId)
@@ -284,9 +295,9 @@ class EventRepository {
     );
   }
 
-  void onParticipantsAdded(List<EventParticipation> participants,
+  void onParticipantsAdded(List<EventParticipation> participants, int eventId,
       {bool firstAsCaller = false}) {
-    final details = _eventDetailsStreamController.value;
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return;
@@ -297,7 +308,7 @@ class EventRepository {
       ...participants,
     ].take(5).toList();
 
-    _eventDetailsStreamController.add(
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         previewParticipants: updatedPreviewParticipants,
         previewParticipantsCount:
@@ -309,14 +320,14 @@ class EventRepository {
     );
   }
 
-  void onImagesVisibilityUpdated(bool isPublic) {
-    final details = _eventDetailsStreamController.value;
+  void onImagesVisibilityUpdated(bool isPublic, int eventId) {
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamController.add(
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         callerParticipation: details.callerParticipation?.copyWith(
           isImagesPublic: isPublic,
@@ -325,12 +336,9 @@ class EventRepository {
     );
   }
 
-  Future<void> close() async {
-    _eventDetailsStreamController.close();
-    _futureStreamController.close();
-    _userStreamController.close();
-    _archivedStreamController.close();
-    _searchStreamController.close();
+  void close(int eventId) async {
+    _eventDetailsStreamControllerMap[eventId]?.close();
+    _eventDetailsStreamControllerMap.remove(eventId);
   }
 
   Future<void> addJourneyToEvent(
@@ -339,17 +347,17 @@ class EventRepository {
   ) async {
     await eventApi.addJourneyToEvent(eventId, journey.id);
 
-    onEventJourneyUpdated(journey);
+    onEventJourneyUpdated(journey, eventId);
   }
 
-  void onEventJourneyUpdated(Journey journey) {
-    final details = _eventDetailsStreamController.value;
+  void onEventJourneyUpdated(Journey journey, int eventId) {
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamController.add(
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         journey: journey.toMinimalJourney(),
       ),
@@ -361,13 +369,13 @@ class EventRepository {
   ) async {
     await eventApi.removeJourneyFromEvent(eventId);
 
-    final details = _eventDetailsStreamController.value;
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamController.add(EventDetails(
+    _eventDetailsStreamControllerMap[eventId]?.add(EventDetails(
       event: details.event,
       journey: null,
       callerParticipation: details.callerParticipation,
@@ -381,13 +389,13 @@ class EventRepository {
   ) async {
     final userJourney = await eventApi.terminateUserJourney(eventId);
 
-    final details = _eventDetailsStreamController.value;
+    final details = _eventDetailsStreamControllerMap[eventId]?.value;
 
     if (details == null) {
       return userJourney;
     }
 
-    _eventDetailsStreamController.add(
+    _eventDetailsStreamControllerMap[eventId]?.add(
       details.copyWith(
         callerParticipation: details.callerParticipation?.copyWith(
           journey: userJourney,
@@ -398,16 +406,16 @@ class EventRepository {
     return userJourney;
   }
 
-  onUserPositionSent() {
-    final caller = _eventDetailsStreamController.value?.callerParticipation;
+  onUserPositionSent(int eventId) {
+    final caller = _eventDetailsStreamControllerMap[eventId]?.value?.callerParticipation;
 
     if (caller?.hasRecordedPositions != false) {
       return;
     }
 
-    _eventDetailsStreamController.add(
-      _eventDetailsStreamController.value!.copyWith(
-        callerParticipation: _eventDetailsStreamController.value!.callerParticipation!.copyWith(
+    _eventDetailsStreamControllerMap[eventId]?.add(
+      _eventDetailsStreamControllerMap[eventId]?.value!.copyWith(
+        callerParticipation: _eventDetailsStreamControllerMap[eventId]?.value!.callerParticipation!.copyWith(
           hasRecordedPositions: true,
         ),
       ),

@@ -45,8 +45,7 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
 
   @override
-  Widget wrappedRoute(context){
-
+  Widget wrappedRoute(context) {
     try {
       print(BlocProvider.of<EventDetailsBloc>(context).eventId);
     } catch (e) {
@@ -55,8 +54,7 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
 
     return BlocProvider(
       create: (context) => EventDetailsBloc(
-        eventRepository:
-        RepositoryProvider.of<EventRepository>(context),
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
         eventId: event.id,
       )..add(SubscribeToEvent()),
       child: this,
@@ -172,7 +170,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                           controller: _tabController,
                           labelColor: Theme.of(context).colorScheme.secondary,
                           indicatorColor:
-                          Theme.of(context).colorScheme.secondary,
+                              Theme.of(context).colorScheme.secondary,
                           tabs: const [
                             Tab(icon: Icon(Icons.info)),
                             Tab(icon: Icon(Icons.photo_library)),
@@ -345,19 +343,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
   void _loadEventDetails() {
     context.read<EventDetailsBloc>().add(
-      LoadEventDetails(
-        eventId: widget.event.id,
-      ),
-    );
+          LoadEventDetails(),
+        );
   }
 
   void _onEdit(EventFormData formData) {
     context.read<EventDetailsBloc>().add(
-      EditEvent(
-        eventId: widget.event.id,
-        formData: formData,
-      ),
-    );
+          EditEvent(formData: formData),
+        );
 
     Navigator.of(context).pop();
   }

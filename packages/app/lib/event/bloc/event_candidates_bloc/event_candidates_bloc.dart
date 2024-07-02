@@ -150,7 +150,7 @@ class EventCandidatesBloc
         numberOfCandidatesPerRequest,
       );
 
-      eventRepository.onParticipantsAdded(addedParticipants);
+      eventRepository.onParticipantsAdded(addedParticipants, event.eventId);
 
       emit(EventAddCandidatesSuccess(state));
     } catch (e) {

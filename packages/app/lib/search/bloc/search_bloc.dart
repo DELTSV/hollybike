@@ -23,12 +23,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<RefreshSearch>(_onRefreshSearch);
   }
 
-  @override
-  Future<void> close() async {
-    await eventRepository.close();
-    return super.close();
-  }
-
   Future<void> _onSubscribeToEventsSearch(
     SubscribeToEventsSearch event,
     Emitter<SearchState> emit,

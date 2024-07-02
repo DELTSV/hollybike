@@ -10,63 +10,42 @@ class SubscribeToEvent extends EventDetailsEvent {
 }
 
 class LoadEventDetails extends EventDetailsEvent {
-  final int eventId;
-
-  LoadEventDetails({required this.eventId});
+  LoadEventDetails();
 }
 
 class PublishEvent extends EventDetailsEvent {
-  final int eventId;
-
-  PublishEvent({required this.eventId});
+  PublishEvent();
 }
 
 class GetEventParticipationsPreviewData extends EventDetailsEvent {
-  final int eventId;
 
-  GetEventParticipationsPreviewData({
-    required this.eventId,
-  });
+  GetEventParticipationsPreviewData();
 }
 
 class JoinEvent extends EventDetailsEvent {
-  final int eventId;
-
-  JoinEvent({required this.eventId});
+  JoinEvent();
 }
 
 class LeaveEvent extends EventDetailsEvent {
-  final int eventId;
-
-  LeaveEvent({required this.eventId});
+  LeaveEvent();
 }
 
 class CancelEvent extends EventDetailsEvent {
-  final int eventId;
-
-  CancelEvent({required this.eventId});
+  CancelEvent();
 }
 
 class DeleteEvent extends EventDetailsEvent {
-  final int eventId;
-
-  DeleteEvent({required this.eventId});
+  DeleteEvent();
 }
 
 class EditEvent extends EventDetailsEvent {
-  final int eventId;
   final EventFormData formData;
 
   EditEvent({
-    required this.eventId,
     required this.formData,
   });
 }
 
 class TerminateUserJourney extends EventDetailsEvent {
-  final int eventId;
-
-  TerminateUserJourney({
-    required this.eventId,
-  });
+  TerminateUserJourney();
 }

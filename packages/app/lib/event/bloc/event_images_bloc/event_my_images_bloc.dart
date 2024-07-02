@@ -124,7 +124,7 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
         event.isPublic,
       );
 
-      eventRepository.onImagesVisibilityUpdated(event.isPublic);
+      eventRepository.onImagesVisibilityUpdated(event.isPublic, event.eventId);
 
       emit(EventImagesOperationSuccess(state));
     } catch (e) {

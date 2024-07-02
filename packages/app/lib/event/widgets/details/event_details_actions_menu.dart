@@ -120,9 +120,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
             TextButton(
               onPressed: () {
                 context.read<EventDetailsBloc>().add(
-                  CancelEvent(
-                    eventId: eventId,
-                  ),
+                  CancelEvent(),
                 );
 
                 Navigator.of(context).pop();
@@ -153,9 +151,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
             TextButton(
               onPressed: () {
                 context.read<EventDetailsBloc>().add(
-                  DeleteEvent(
-                    eventId: eventId,
-                  ),
+                  DeleteEvent(),
                 );
 
                 Navigator.of(context).pop();
@@ -170,9 +166,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
 
   void _onLeave(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-      LeaveEvent(
-        eventId: eventId,
-      ),
+      LeaveEvent(),
     );
   }
 }

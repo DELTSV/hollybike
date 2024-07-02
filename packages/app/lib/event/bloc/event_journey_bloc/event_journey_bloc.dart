@@ -56,7 +56,7 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
         journey,
       );
 
-      eventRepository.onEventJourneyUpdated(journeyWithFile);
+      eventRepository.onEventJourneyUpdated(journeyWithFile, event.eventId);
 
       emit(EventJourneyCreationSuccess(state));
 
@@ -67,11 +67,14 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
           journeyWithFile.id,
         );
 
-        eventRepository.onEventJourneyUpdated(journeyWithFile.copyWith(
-          start: journeyWithPositions.start,
-          end: journeyWithPositions.end,
-          destination: journeyWithPositions.destination,
-        ));
+        eventRepository.onEventJourneyUpdated(
+          journeyWithFile.copyWith(
+            start: journeyWithPositions.start,
+            end: journeyWithPositions.end,
+            destination: journeyWithPositions.destination,
+          ),
+          event.eventId,
+        );
 
         emit(EventJourneyGetPositionsSuccess(state));
       } catch (e) {
