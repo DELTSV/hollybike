@@ -12,8 +12,6 @@ import '../../app/app_router.gr.dart';
 import '../../shared/types/tab_description.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/bar/top_bar_tab_dropdown.dart';
-import '../bloc/event_details_bloc/event_details_bloc.dart';
-import '../bloc/event_details_bloc/event_details_state.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';

@@ -1,5 +1,3 @@
-import 'package:rxdart/rxdart.dart';
-
 import '../../../shared/types/paginated_list.dart';
 import '../../../shared/utils/stream_mapper.dart';
 import '../../types/participation/event_candidate.dart';

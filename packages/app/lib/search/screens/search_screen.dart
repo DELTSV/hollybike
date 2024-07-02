@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
 import 'package:hollybike/event/widgets/event_preview_card/event_preview_card.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/search/widgets/search_placeholder/empty_search_placeholder.dart';
@@ -15,7 +14,6 @@ import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../app/app_router.gr.dart';
-import '../../event/bloc/event_details_bloc/event_details_bloc.dart';
 import '../../event/types/minimal_event.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/search_bloc.dart';

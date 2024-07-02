@@ -184,7 +184,7 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
   void _onDeleteImage() {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (modalContext) {
         return AlertDialog(
           title: const Text("Suppression de l'image"),
           content:
@@ -192,7 +192,7 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(modalContext).pop();
               },
               child: const Text("Annuler"),
             ),
@@ -204,7 +204,7 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
                   ),
                 );
 
-                Navigator.of(context).pop();
+                Navigator.of(modalContext).pop();
               },
               child: const Text("Confirmer"),
             ),

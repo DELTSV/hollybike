@@ -8,8 +8,11 @@ import 'package:hollybike/event/widgets/details/event_my_journey.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
 
 import '../../../app/app_router.gr.dart';
+import '../../../journey/service/journey_repository.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
+import '../../bloc/event_journey_bloc/event_journey_bloc.dart';
+import '../../services/event/event_repository.dart';
 import '../../types/event_details.dart';
 import '../../widgets/details/event_details_scroll_wrapper.dart';
 import '../../widgets/details/event_join_button.dart';
@@ -71,11 +74,22 @@ class EventDetailsInfos extends StatelessWidget {
                 EventDetailsDescription(
                   description: event.description,
                 ),
-                JourneyPreviewCard(
-                  canAddJourney: eventDetails.canEditJourney,
-                  journey: eventDetails.journey,
-                  eventDetails: eventDetails,
-                  onViewOnMap: onViewOnMap,
+                BlocProvider<EventJourneyBloc>(
+                  create: (context) => EventJourneyBloc(
+                    journeyRepository:
+                    RepositoryProvider.of<JourneyRepository>(
+                      context,
+                    ),
+                    eventRepository: RepositoryProvider.of<EventRepository>(
+                      context,
+                    ),
+                  ),
+                  child: JourneyPreviewCard(
+                    canAddJourney: eventDetails.canEditJourney,
+                    journey: eventDetails.journey,
+                    eventDetails: eventDetails,
+                    onViewOnMap: onViewOnMap,
+                  ),
                 ),
                 EventMyJourney(
                   eventDetails: eventDetails,
