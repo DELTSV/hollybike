@@ -29,12 +29,6 @@ class EventCandidatesBloc
     on<AddCandidates>(_onAddCandidates);
   }
 
-  @override
-  Future<void> close() async {
-    await eventParticipationsRepository.closeCandidates(eventId);
-    return super.close();
-  }
-
   Future<void> _onSubscribeToEventCandidates(
     SubscribeToEventCandidates event,
     Emitter<EventCandidatesState> emit,

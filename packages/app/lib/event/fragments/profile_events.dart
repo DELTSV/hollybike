@@ -33,13 +33,13 @@ class _ProfileEventsState extends State<ProfileEvents> {
   @override
   Widget build(BuildContext context) {
     return ThemedRefreshIndicator(
-      onRefresh: () => _refreshEvents(context, widget.userId),
+      onRefresh: () => _refreshEvents(context),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthConnected) {
-                _refreshEvents(context, widget.userId);
+                _refreshEvents(context);
               }
             },
           ),
@@ -100,7 +100,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
   @override
   void initState() {
     super.initState();
-    _refreshEvents(context, widget.userId);
+    _refreshEvents(context);
 
     final scrollController = widget.scrollView.currentState!.innerController;
     scrollController.addListener(() {
@@ -116,14 +116,8 @@ class _ProfileEventsState extends State<ProfileEvents> {
     context.read<UserEventsBloc>().add(LoadEventsNextPage());
   }
 
-  Future<void> _refreshEvents(BuildContext context, int? userId) {
-    if (userId == null) return Future.value();
-
-    context.read<UserEventsBloc>().add(
-          RefreshUserEvents(
-            userId: userId,
-          ),
-        );
+  Future<void> _refreshEvents(BuildContext context) {
+    context.read<UserEventsBloc>().add(RefreshUserEvents());
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;
   }

@@ -7,9 +7,9 @@ import 'events_event.dart';
 import 'events_state.dart';
 
 class UserEventsBloc extends EventsBloc {
-  late int userId;
+  final int userId;
 
-  UserEventsBloc({required super.eventRepository})
+  UserEventsBloc({required super.eventRepository, required this.userId})
       : super(requestType: "future") {
     on<RefreshUserEvents>(_onRefreshUserEvents);
   }
@@ -20,7 +20,7 @@ class UserEventsBloc extends EventsBloc {
     Emitter<EventsState> emit,
   ) async {
     await emit.forEach<List<MinimalEvent>>(
-      eventRepository.userEventsStream,
+      eventRepository.userEventsStream(userId),
       onData: (events) => state.copyWith(
         events: events,
       ),
@@ -31,7 +31,6 @@ class UserEventsBloc extends EventsBloc {
     RefreshUserEvents event,
     Emitter<EventsState> emit,
   ) async {
-    userId = event.userId;
     emit(EventPageLoadInProgress(state));
 
     try {

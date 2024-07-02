@@ -36,6 +36,7 @@ class _EventDetailsDescriptionState extends State<EventDetailsDescription> {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: AnimatedContainer(
+                width: double.infinity,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 padding: const EdgeInsets.all(16),

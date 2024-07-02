@@ -58,8 +58,6 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
 
 class _EventDetailsScreenState extends State<EventDetailsScreen>
     with SingleTickerProviderStateMixin {
-  var eventName = "";
-
   late final TabController _tabController = TabController(
     length: 4,
     vsync: this,
@@ -83,10 +81,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           currentTab = newTab;
         });
       }
-    });
-
-    setState(() {
-      eventName = widget.event.name;
     });
 
     _loadEventDetails();
@@ -117,92 +111,90 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         if (state is DeleteEventSuccess) {
           context.router.maybePop();
         }
-
-        setState(() {
-          eventName = state.eventDetails?.event.name ?? widget.event.name;
-        });
       },
-      child: Hud(
-        appBar: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-          builder: (context, state) {
-            return TopBar(
+      child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+        builder: (context, state) {
+          return Hud(
+            appBar: TopBar(
               prefix: TopBarActionIcon(
                 onPressed: () => context.router.maybePop(),
                 icon: Icons.arrow_back,
               ),
               title: const TopBarTitle("Détails"),
               suffix: _renderActions(state),
-            );
-          },
-        ),
-        floatingActionButton: _getFloatingButton(),
-        body: DefaultTabController(
-          length: 4,
-          child: NestedScrollView(
-            controller: _scrollController,
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              // These are the slivers that show up in the "outer" scroll view.
-              return <Widget>[
-                SliverToBoxAdapter(
-                  child: EventDetailsHeader(
-                    event: widget.event,
-                    animate: widget.animate,
-                  ),
-                ),
-                SliverOverlapAbsorber(
-                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                    context,
-                  ),
-                  sliver: SliverPersistentHeader(
-                    pinned: true,
-                    delegate: PinnedHeaderDelegate(
-                      height: 50,
-                      child: Container(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        child: TabBar(
-                          controller: _tabController,
-                          labelColor: Theme.of(context).colorScheme.secondary,
-                          indicatorColor:
-                              Theme.of(context).colorScheme.secondary,
-                          tabs: const [
-                            Tab(icon: Icon(Icons.info)),
-                            Tab(icon: Icon(Icons.photo_library)),
-                            Tab(icon: Icon(Icons.image)),
-                            Tab(icon: Icon(Icons.map)),
-                          ],
+            ),
+            floatingActionButton: _getFloatingButton(),
+            body: DefaultTabController(
+              length: 4,
+              child: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  // These are the slivers that show up in the "outer" scroll view.
+                  return <Widget>[
+                    SliverToBoxAdapter(
+                      child: EventDetailsHeader(
+                        event: state.eventDetails?.event.toMinimalEvent() ??
+                            widget.event,
+                        animate: widget.animate,
+                      ),
+                    ),
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context,
+                      ),
+                      sliver: SliverPersistentHeader(
+                        pinned: true,
+                        delegate: PinnedHeaderDelegate(
+                          height: 50,
+                          child: Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            child: TabBar(
+                              controller: _tabController,
+                              labelColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              indicatorColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              tabs: const [
+                                Tab(icon: Icon(Icons.info)),
+                                Tab(icon: Icon(Icons.photo_library)),
+                                Tab(icon: Icon(Icons.image)),
+                                Tab(icon: Icon(Icons.map)),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ];
+                },
+                body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+                  builder: (context, state) {
+                    if (state is EventDetailsLoadInProgress) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (state.eventDetails == null ||
+                        state is EventDetailsLoadFailure) {
+                      return const Center(
+                        child: Text(
+                          "Impossible de charger les détails de l'événement",
+                        ),
+                      );
+                    }
+
+                    return TabBarView(
+                      controller: _tabController,
+                      children: _getTabs(state.eventDetails!),
+                    );
+                  },
                 ),
-              ];
-            },
-            body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-              builder: (context, state) {
-                if (state is EventDetailsLoadInProgress) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (state.eventDetails == null ||
-                    state is EventDetailsLoadFailure) {
-                  return const Center(
-                    child: Text(
-                      "Impossible de charger les détails de l'événement",
-                    ),
-                  );
-                }
-
-                return TabBarView(
-                  controller: _tabController,
-                  children: _getTabs(state.eventDetails!),
-                );
-              },
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

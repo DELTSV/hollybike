@@ -18,11 +18,7 @@ class RefreshEvents extends EventsEvent {
 }
 
 class RefreshUserEvents extends EventsEvent {
-  final int userId;
-
-  RefreshUserEvents({
-    required this.userId,
-  });
+  RefreshUserEvents();
 }
 
 class CreateEvent extends EventsEvent {

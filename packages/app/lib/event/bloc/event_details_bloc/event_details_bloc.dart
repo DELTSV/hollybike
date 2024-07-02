@@ -27,19 +27,12 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<TerminateUserJourney>(_onTerminateUserJourney);
   }
 
-  @override
-  Future<void> close() async {
-    _eventRepository.close(eventId);
-    print("close event details bloc $eventId");
-    return super.close();
-  }
-
   Future<void> _onSubscribeToEvent(
     SubscribeToEvent event,
     Emitter<EventDetailsState> emit,
   ) async {
     await emit.forEach<EventDetails?>(
-      _eventRepository.getEventDetailsStream(eventId),
+      _eventRepository.eventDetailsStream(eventId),
       onData: (event) => state.copyWith(
         event: event,
       ),

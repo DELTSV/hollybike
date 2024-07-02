@@ -6,6 +6,7 @@ import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../journey/type/user_journey.dart';
+import '../../../shared/utils/stream_mapper.dart';
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
 import '../../types/participation/event_participation.dart';
@@ -14,12 +15,19 @@ import 'event_api.dart';
 class EventRepository {
   final EventApi eventApi;
 
-  final _eventDetailsStreamControllerMap = <int, BehaviorSubject<EventDetails?>>{};
+  final _eventDetailsStreamMapper = StreamMapper<EventDetails?>(seedValue: null);
+
+  Stream<EventDetails?> eventDetailsStream(int eventId) =>
+      _eventDetailsStreamMapper.stream(eventId);
+
+
+  final _userStreamMapper = StreamMapper<List<MinimalEvent>>(seedValue: []);
+
+  Stream<List<MinimalEvent>> userEventsStream(int userId) =>
+      _userStreamMapper.stream(userId);
+
 
   final _futureStreamController =
-      BehaviorSubject<List<MinimalEvent>>.seeded([]);
-
-  final _userStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
   final _archivedStreamController =
@@ -28,24 +36,15 @@ class EventRepository {
   final _searchStreamController =
       BehaviorSubject<List<MinimalEvent>>.seeded([]);
 
-  EventRepository({required this.eventApi});
-
-  Stream<EventDetails?> getEventDetailsStream(int eventId) =>
-      _eventDetailsStreamControllerMap.putIfAbsent(
-        eventId,
-        () => BehaviorSubject<EventDetails?>.seeded(null),
-      ).stream;
-
   Stream<List<MinimalEvent>> get futureStream => _futureStreamController.stream;
-
-  Stream<List<MinimalEvent>> get userEventsStream =>
-      _userStreamController.stream;
 
   Stream<List<MinimalEvent>> get archivedEventsStream =>
       _archivedStreamController.stream;
 
   Stream<List<MinimalEvent>> get searchEventsStream =>
       _searchStreamController.stream;
+
+  EventRepository({required this.eventApi});
 
   Future<PaginatedList<MinimalEvent>> fetchEvents(
     String? requestType,
@@ -62,9 +61,10 @@ class EventRepository {
       query: query,
     );
 
-    if (userId != null) {
-      _userStreamController.add(
-        _userStreamController.value + pageResult.items,
+    if (userId != null && _userStreamMapper.containsKey(userId)) {
+      _userStreamMapper.add(
+        userId,
+        _userStreamMapper.get(userId)! + pageResult.items,
       );
 
       return pageResult;
@@ -106,7 +106,8 @@ class EventRepository {
     );
 
     if (userId != null) {
-      _userStreamController.add(
+      _userStreamMapper.add(
+        userId,
         pageResult.items,
       );
 
@@ -139,7 +140,7 @@ class EventRepository {
   ) async {
     final eventDetails = await eventApi.getEventDetails(eventId);
 
-    _eventDetailsStreamControllerMap[eventId]?.add(eventDetails);
+    _eventDetailsStreamMapper.add(eventId, eventDetails);
 
     return eventDetails;
   }
@@ -154,24 +155,20 @@ class EventRepository {
   ) async {
     final editedEvent = await eventApi.editEvent(eventId, event);
 
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
-      details.copyWith(
-        event: editedEvent,
-      ),
-    );
+    _eventDetailsStreamMapper.add(eventId, details.copyWith(event: editedEvent));
 
     for (var controller in [
-      _futureStreamController,
-      _userStreamController,
-      _archivedStreamController,
-      _searchStreamController,
-    ]) {
+          _futureStreamController,
+          _archivedStreamController,
+          _searchStreamController,
+        ] +
+        _userStreamMapper.values) {
       controller.add(
         controller.value
             .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
@@ -183,24 +180,25 @@ class EventRepository {
   Future<void> publishEvent(int eventId) async {
     await eventApi.publishEvent(eventId);
 
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         event: details.event.copyWith(status: EventStatusState.scheduled),
       ),
     );
 
     for (var controller in [
-      _futureStreamController,
-      _userStreamController,
-      _archivedStreamController,
-      _searchStreamController,
-    ]) {
+          _futureStreamController,
+          _archivedStreamController,
+          _searchStreamController,
+        ] +
+        _userStreamMapper.values) {
       controller.add(
         controller.value
             .map((e) => e.id == eventId
@@ -212,7 +210,7 @@ class EventRepository {
   }
 
   Future<void> joinEvent(int eventId) async {
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     final participation = await eventApi.joinEvent(eventId);
 
@@ -224,7 +222,7 @@ class EventRepository {
   }
 
   Future<void> leaveEvent(int eventId) async {
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     await eventApi.leaveEvent(eventId);
 
@@ -232,13 +230,16 @@ class EventRepository {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(EventDetails(
-      event: details.event,
-      journey: details.journey,
-      callerParticipation: null,
-      previewParticipants: details.previewParticipants,
-      previewParticipantsCount: details.previewParticipantsCount,
-    ));
+    _eventDetailsStreamMapper.add(
+      eventId,
+      EventDetails(
+        event: details.event,
+        journey: details.journey,
+        callerParticipation: null,
+        previewParticipants: details.previewParticipants,
+        previewParticipantsCount: details.previewParticipantsCount,
+      ),
+    );
 
     onParticipantRemoved(details.callerParticipation!.userId, eventId);
   }
@@ -250,24 +251,25 @@ class EventRepository {
   Future<void> cancelEvent(int eventId) async {
     await eventApi.cancelEvent(eventId);
 
-    final details = _eventDetailsStreamControllerMap[eventId]?.value!;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         event: details.event.copyWith(status: EventStatusState.canceled),
       ),
     );
 
     for (var controller in [
-      _futureStreamController,
-      _userStreamController,
-      _archivedStreamController,
-      _searchStreamController,
-    ]) {
+          _futureStreamController,
+          _archivedStreamController,
+          _searchStreamController,
+        ] +
+        _userStreamMapper.values) {
       controller.add(
         controller.value
             .map((e) => e.id == eventId
@@ -279,13 +281,14 @@ class EventRepository {
   }
 
   void onParticipantRemoved(int userId, int eventId) {
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         previewParticipants: details.previewParticipants
             .where((p) => p.user.id != userId)
@@ -297,7 +300,7 @@ class EventRepository {
 
   void onParticipantsAdded(List<EventParticipation> participants, int eventId,
       {bool firstAsCaller = false}) {
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
@@ -308,7 +311,8 @@ class EventRepository {
       ...participants,
     ].take(5).toList();
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         previewParticipants: updatedPreviewParticipants,
         previewParticipantsCount:
@@ -321,24 +325,20 @@ class EventRepository {
   }
 
   void onImagesVisibilityUpdated(bool isPublic, int eventId) {
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         callerParticipation: details.callerParticipation?.copyWith(
           isImagesPublic: isPublic,
         ),
       ),
     );
-  }
-
-  void close(int eventId) async {
-    _eventDetailsStreamControllerMap[eventId]?.close();
-    _eventDetailsStreamControllerMap.remove(eventId);
   }
 
   Future<void> addJourneyToEvent(
@@ -351,13 +351,14 @@ class EventRepository {
   }
 
   void onEventJourneyUpdated(Journey journey, int eventId) {
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         journey: journey.toMinimalJourney(),
       ),
@@ -369,19 +370,22 @@ class EventRepository {
   ) async {
     await eventApi.removeJourneyFromEvent(eventId);
 
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(EventDetails(
-      event: details.event,
-      journey: null,
-      callerParticipation: details.callerParticipation,
-      previewParticipants: details.previewParticipants,
-      previewParticipantsCount: details.previewParticipantsCount,
-    ));
+    _eventDetailsStreamMapper.add(
+      eventId,
+      EventDetails(
+        event: details.event,
+        journey: null,
+        callerParticipation: details.callerParticipation,
+        previewParticipants: details.previewParticipants,
+        previewParticipantsCount: details.previewParticipantsCount,
+      ),
+    );
   }
 
   Future<UserJourney> terminateUserJourney(
@@ -389,13 +393,14 @@ class EventRepository {
   ) async {
     final userJourney = await eventApi.terminateUserJourney(eventId);
 
-    final details = _eventDetailsStreamControllerMap[eventId]?.value;
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return userJourney;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
+    _eventDetailsStreamMapper.add(
+      eventId,
       details.copyWith(
         callerParticipation: details.callerParticipation?.copyWith(
           journey: userJourney,
@@ -407,18 +412,19 @@ class EventRepository {
   }
 
   onUserPositionSent(int eventId) {
-    final caller = _eventDetailsStreamControllerMap[eventId]?.value?.callerParticipation;
+    final caller = _eventDetailsStreamMapper.get(eventId)?.callerParticipation;
 
     if (caller?.hasRecordedPositions != false) {
       return;
     }
 
-    _eventDetailsStreamControllerMap[eventId]?.add(
-      _eventDetailsStreamControllerMap[eventId]?.value!.copyWith(
-        callerParticipation: _eventDetailsStreamControllerMap[eventId]?.value!.callerParticipation!.copyWith(
-          hasRecordedPositions: true,
-        ),
-      ),
+    _eventDetailsStreamMapper.add(
+      eventId,
+      _eventDetailsStreamMapper.get(eventId)?.copyWith(
+            callerParticipation: caller?.copyWith(
+              hasRecordedPositions: true,
+            ),
+          ),
     );
   }
 }

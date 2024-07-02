@@ -78,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               BlocProvider<UserEventsBloc>(
                 create: (context) => UserEventsBloc(
+                  userId: widget.profile!.id,
                   eventRepository:
                       RepositoryProvider.of<EventRepository>(context),
                 )..add(SubscribeToEvents()),

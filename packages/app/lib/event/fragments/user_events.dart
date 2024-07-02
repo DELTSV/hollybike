@@ -26,41 +26,34 @@ class UserEvents extends StatelessWidget {
 
         return BlocProvider<UserEventsBloc>(
           create: (context) => UserEventsBloc(
-            eventRepository:
-            RepositoryProvider.of<EventRepository>(context),
+            eventRepository: RepositoryProvider.of<EventRepository>(context),
+            userId: bloc.currentProfile!.id,
           )..add(SubscribeToEvents()),
           child: Builder(
             builder: (context) {
               return EventsListFragment<UserEventsBloc>(
                 navigateToEventDetails: navigateToEventDetails,
                 onNextPageRequested: () => _loadNextPage(context),
-                onRefreshRequested: () =>
-                    _refreshEvents(context, bloc.currentProfile!.id),
+                onRefreshRequested: () => _refreshEvents(context),
                 placeholderText: 'Vous ne participez à aucun événement',
               );
             },
           ),
         );
-
-
       },
     );
   }
 
   void _loadNextPage(BuildContext context) {
     context.read<UserEventsBloc>().add(
-      LoadEventsNextPage(),
-    );
+          LoadEventsNextPage(),
+        );
   }
 
-  Future<void> _refreshEvents(BuildContext context, int? userId) {
-    if (userId == null) return Future.value();
-
+  Future<void> _refreshEvents(BuildContext context) {
     context.read<UserEventsBloc>().add(
-      RefreshUserEvents(
-        userId: userId,
-      ),
-    );
+          RefreshUserEvents(),
+        );
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;
   }
