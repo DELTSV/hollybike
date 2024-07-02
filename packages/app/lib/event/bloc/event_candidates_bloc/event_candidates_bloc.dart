@@ -11,11 +11,14 @@ import 'event_candidates_state.dart';
 
 class EventCandidatesBloc
     extends Bloc<EventCandidatesEvent, EventCandidatesState> {
+  final int eventId;
+
   final EventParticipationRepository eventParticipationsRepository;
   final EventRepository eventRepository;
   final int numberOfCandidatesPerRequest = 15;
 
   EventCandidatesBloc({
+    required this.eventId,
     required this.eventParticipationsRepository,
     required this.eventRepository,
   }) : super(EventCandidatesInitial()) {
@@ -28,7 +31,7 @@ class EventCandidatesBloc
 
   @override
   Future<void> close() async {
-    await eventParticipationsRepository.close();
+    await eventParticipationsRepository.closeCandidates(eventId);
     return super.close();
   }
 
@@ -37,7 +40,7 @@ class EventCandidatesBloc
     Emitter<EventCandidatesState> emit,
   ) async {
     await emit.forEach<List<EventCandidate>>(
-      eventParticipationsRepository.candidatesStream,
+      eventParticipationsRepository.candidatesStream(eventId),
       onData: (candidates) => state.copyWith(
         candidates: candidates,
       ),

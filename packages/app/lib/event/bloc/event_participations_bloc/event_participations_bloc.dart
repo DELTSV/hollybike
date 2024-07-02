@@ -11,11 +11,14 @@ import 'event_participations_state.dart';
 
 class EventParticipationBloc
     extends Bloc<EventParticipationsEvent, EventParticipationsState> {
+  final int eventId;
+
   final EventParticipationRepository eventParticipationsRepository;
   final EventRepository eventRepository;
   final int numberOfParticipationsPerRequest = 15;
 
   EventParticipationBloc({
+    required this.eventId,
     required this.eventParticipationsRepository,
     required this.eventRepository,
   }) : super(EventParticipationsInitial()) {
@@ -32,7 +35,7 @@ class EventParticipationBloc
     Emitter<EventParticipationsState> emit,
   ) async {
     await emit.forEach<List<EventParticipation>>(
-      eventParticipationsRepository.participationsStream,
+      eventParticipationsRepository.participationsStream(eventId),
       onData: (participants) => state.copyWith(
         participants: participants,
       ),
@@ -53,7 +56,7 @@ class EventParticipationBloc
     try {
       PaginatedList<EventParticipation> page =
           await eventParticipationsRepository.fetchParticipations(
-        event.eventId,
+        eventId,
         state.nextPage,
         numberOfParticipationsPerRequest,
       );
@@ -84,7 +87,7 @@ class EventParticipationBloc
     try {
       PaginatedList<EventParticipation> page =
           await eventParticipationsRepository.refreshParticipations(
-        event.eventId,
+        eventId,
         numberOfParticipationsPerRequest,
       );
 
@@ -110,7 +113,7 @@ class EventParticipationBloc
 
     try {
       await eventParticipationsRepository.promoteParticipant(
-        event.eventId,
+        eventId,
         event.userId,
       );
 
@@ -134,7 +137,7 @@ class EventParticipationBloc
 
     try {
       await eventParticipationsRepository.demoteParticipant(
-        event.eventId,
+        eventId,
         event.userId,
       );
 
@@ -158,11 +161,11 @@ class EventParticipationBloc
 
     try {
       await eventParticipationsRepository.removeParticipant(
-        event.eventId,
+        eventId,
         event.userId,
       );
 
-      eventRepository.onParticipantRemoved(event.userId, event.eventId);
+      eventRepository.onParticipantRemoved(event.userId, eventId);
 
       emit(EventParticipationsDeleted(state));
     } catch (e) {

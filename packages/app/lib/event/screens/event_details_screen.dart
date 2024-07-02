@@ -46,12 +46,6 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
 
   @override
   Widget wrappedRoute(context) {
-    try {
-      print(BlocProvider.of<EventDetailsBloc>(context).eventId);
-    } catch (e) {
-      print(e);
-    }
-
     return BlocProvider(
       create: (context) => EventDetailsBloc(
         eventRepository: RepositoryProvider.of<EventRepository>(context),

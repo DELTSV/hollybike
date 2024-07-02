@@ -9,19 +9,24 @@ import 'event_participation_api.dart';
 class EventParticipationRepository {
   final EventParticipationsApi eventParticipationsApi;
 
-  late final _eventParticipationsStreamController =
-      BehaviorSubject<List<EventParticipation>>.seeded([]);
-
-  late final _eventCandidatesStreamController =
-      BehaviorSubject<List<EventCandidate>>.seeded([]);
-
-  Stream<List<EventCandidate>> get candidatesStream =>
-      _eventCandidatesStreamController.stream;
-
-  Stream<List<EventParticipation>> get participationsStream =>
-      _eventParticipationsStreamController.stream;
+  final _eventParticipationsStreamControllerMap = <int, BehaviorSubject<List<EventParticipation>>>{};
+  final _eventCandidatesStreamControllerMap = <int, BehaviorSubject<List<EventCandidate>>>{};
 
   EventParticipationRepository({required this.eventParticipationsApi});
+
+  Stream<List<EventCandidate>> candidatesStream(int eventId) {
+    return _eventCandidatesStreamControllerMap.putIfAbsent(
+      eventId,
+      () => BehaviorSubject<List<EventCandidate>>(),
+    ).stream;
+  }
+
+  Stream<List<EventParticipation>> participationsStream(int eventId) {
+    return _eventParticipationsStreamControllerMap.putIfAbsent(
+      eventId,
+      () => BehaviorSubject<List<EventParticipation>>(),
+    ).stream;
+  }
 
   Future<PaginatedList<EventCandidate>> fetchCandidates(
     int eventId,
@@ -36,9 +41,11 @@ class EventParticipationRepository {
       search,
     );
 
-    _eventCandidatesStreamController.add(
-      _eventCandidatesStreamController.value + pageResult.items,
-    );
+    if (_eventCandidatesStreamControllerMap[eventId] != null) {
+      _eventCandidatesStreamControllerMap[eventId]!.add(
+        _eventCandidatesStreamControllerMap[eventId]!.value + pageResult.items,
+      );
+    }
 
     return pageResult;
   }
@@ -55,7 +62,7 @@ class EventParticipationRepository {
       search,
     );
 
-    _eventCandidatesStreamController.add(
+    _eventCandidatesStreamControllerMap[eventId]?.add(
       pageResult.items,
     );
 
@@ -73,9 +80,11 @@ class EventParticipationRepository {
       participationsPerPage,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value + pageResult.items,
-    );
+    if (_eventParticipationsStreamControllerMap[eventId] != null) {
+      _eventParticipationsStreamControllerMap[eventId]!.add(
+        _eventParticipationsStreamControllerMap[eventId]!.value + pageResult.items,
+      );
+    }
 
     return pageResult;
   }
@@ -90,7 +99,7 @@ class EventParticipationRepository {
       participationsPerPage,
     );
 
-    _eventParticipationsStreamController.add(
+    _eventParticipationsStreamControllerMap[eventId]?.add(
       pageResult.items,
     );
 
@@ -106,8 +115,12 @@ class EventParticipationRepository {
       userId,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value
+    if (_eventParticipationsStreamControllerMap[eventId] == null) {
+      return;
+    }
+
+    _eventParticipationsStreamControllerMap[eventId]?.add(
+      _eventParticipationsStreamControllerMap[eventId]!.value
           .map((participation) => participation.user.id == userId
               ? participation.copyWith(role: EventRole.organizer)
               : participation)
@@ -124,8 +137,12 @@ class EventParticipationRepository {
       userId,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value
+    if (_eventParticipationsStreamControllerMap[eventId] == null) {
+      return;
+    }
+
+    _eventParticipationsStreamControllerMap[eventId]?.add(
+      _eventParticipationsStreamControllerMap[eventId]!.value
           .map((participation) => participation.user.id == userId
               ? participation.copyWith(role: EventRole.member)
               : participation)
@@ -142,16 +159,25 @@ class EventParticipationRepository {
       userId,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value
+    if (_eventParticipationsStreamControllerMap[eventId] == null) {
+      return;
+    }
+
+    _eventParticipationsStreamControllerMap[eventId]?.add(
+      _eventParticipationsStreamControllerMap[eventId]!.value
           .where((participation) => participation.user.id != userId)
           .toList(),
     );
   }
 
-  Future<void> close() async {
-    _eventParticipationsStreamController.close();
-    _eventCandidatesStreamController.close();
+  Future<void> closeParticipations(int eventId) async {
+    await _eventParticipationsStreamControllerMap[eventId]?.close();
+    _eventParticipationsStreamControllerMap.remove(eventId);
+  }
+
+  Future<void> closeCandidates(int eventId) async {
+    await _eventCandidatesStreamControllerMap[eventId]?.close();
+    _eventCandidatesStreamControllerMap.remove(eventId);
   }
 
   Future<List<EventParticipation>> addParticipants(

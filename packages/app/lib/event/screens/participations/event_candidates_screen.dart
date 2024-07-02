@@ -13,15 +13,33 @@ import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/bar/top_bar.dart';
 import '../../../shared/widgets/bar/top_bar_title.dart';
 import '../../../shared/widgets/hud/hud.dart';
+import '../../services/event/event_repository.dart';
+import '../../services/participation/event_participation_repository.dart';
 
 @RoutePage()
-class EventCandidatesScreen extends StatefulWidget {
+class EventCandidatesScreen extends StatefulWidget implements AutoRouteWrapper {
   final int eventId;
 
   const EventCandidatesScreen({super.key, required this.eventId});
 
   @override
   State<EventCandidatesScreen> createState() => _EventCandidatesScreenState();
+
+  @override
+  Widget wrappedRoute(context) {
+    return BlocProvider<EventCandidatesBloc>(
+      create: (context) => EventCandidatesBloc(
+        eventId: eventId,
+        eventParticipationsRepository:
+        RepositoryProvider.of<EventParticipationRepository>(
+          context,
+        ),
+        eventRepository:
+        RepositoryProvider.of<EventRepository>(context),
+      )..add(SubscribeToEventCandidates()),
+      child: this,
+    );
+  }
 }
 
 class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
