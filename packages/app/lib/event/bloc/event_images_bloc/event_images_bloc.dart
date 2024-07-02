@@ -32,7 +32,6 @@ class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
 
     try {
       PaginatedList<EventImage> page = await imageRepository.fetchEventImages(
-        event.session,
         event.eventId,
         state.nextPage,
         numberOfImagesPerRequest,
@@ -61,7 +60,6 @@ class EventImagesBloc extends Bloc<EventImagesEvent, EventImagesState> {
 
     try {
       PaginatedList<EventImage> page = await imageRepository.refreshEventImages(
-        event.session,
         event.eventId,
         numberOfImagesPerRequest,
       );

@@ -7,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../positions/bloc/my_position_bloc.dart';
 import '../../../../positions/bloc/my_position_event.dart';
 import '../../../../positions/bloc/my_position_state.dart';
-import '../../../../shared/utils/with_current_session.dart';
 
 class EventPositionSwitch extends StatelessWidget {
   final EventDetails eventDetails;
@@ -23,7 +22,9 @@ class EventPositionSwitch extends StatelessWidget {
       builder: (context, state) {
         final isLoading = state is MyPositionLoading;
 
-        if (eventDetails.callerParticipation?.journey != null && !state.isRunning) {
+        if (eventDetails.callerParticipation == null ||
+            (eventDetails.callerParticipation?.journey != null &&
+                !state.isRunning)) {
           return const SizedBox();
         }
 
@@ -70,15 +71,12 @@ class EventPositionSwitch extends StatelessWidget {
 
   void _onStart(BuildContext context) async {
     if (await _checkLocationPermission() && context.mounted) {
-      withCurrentSession(context, (session) {
-        context.read<MyPositionBloc>().add(
-              EnableSendPosition(
-                session: session,
-                eventId: eventDetails.event.id,
-                eventName: eventDetails.event.name,
-              ),
-            );
-      });
+      context.read<MyPositionBloc>().add(
+            EnableSendPosition(
+              eventId: eventDetails.event.id,
+              eventName: eventDetails.event.name,
+            ),
+          );
     }
   }
 

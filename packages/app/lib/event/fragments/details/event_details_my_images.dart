@@ -6,7 +6,6 @@ import 'package:hollybike/event/widgets/images/event_images_visibility_dialog.da
 import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/image_gallery/image_gallery.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
@@ -188,44 +187,26 @@ class EventDetailsMyImages extends StatelessWidget {
   }
 
   void _refreshImages(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventMyImagesBloc>().add(
-              RefreshMyEventImages(
-                session: session,
-                eventId: eventId,
-              ),
-            );
-      },
+    context.read<EventMyImagesBloc>().add(
+      RefreshMyEventImages(
+        eventId: eventId,
+      ),
     );
   }
 
   void _loadNextPage(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventMyImagesBloc>().add(
-              LoadMyEventImagesNextPage(
-                session: session,
-                eventId: eventId,
-              ),
-            );
-      },
+    context.read<EventMyImagesBloc>().add(
+      LoadMyEventImagesNextPage(
+        eventId: eventId,
+      ),
     );
   }
 
   void _onJoin(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventDetailsBloc>().add(
-              JoinEvent(
-                eventId: eventId,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventDetailsBloc>().add(
+      JoinEvent(
+        eventId: eventId,
+      ),
     );
   }
 }

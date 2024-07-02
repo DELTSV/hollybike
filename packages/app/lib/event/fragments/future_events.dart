@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
 
-import '../../shared/utils/with_current_session.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../types/minimal_event.dart';
@@ -27,17 +26,13 @@ class FutureEvents extends StatelessWidget {
   }
 
   void _loadNextPage(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context
-          .read<FutureEventsBloc>()
-          .add(LoadEventsNextPage(session: session));
-    });
+    context
+        .read<FutureEventsBloc>()
+        .add(LoadEventsNextPage());
   }
 
   Future<void> _refreshEvents(BuildContext context) {
-    withCurrentSession(context, (session) {
-      context.read<FutureEventsBloc>().add(RefreshEvents(session: session));
-    });
+    context.read<FutureEventsBloc>().add(RefreshEvents());
 
     return context.read<FutureEventsBloc>().firstWhenNotLoading;
   }

@@ -60,7 +60,6 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
-        event.session,
         requestType,
         state.nextPage,
         numberOfEventsPerRequest,
@@ -87,7 +86,6 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
-        event.session,
         requestType,
         numberOfEventsPerRequest,
       );

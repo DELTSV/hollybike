@@ -6,7 +6,6 @@ import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 import 'package:provider/provider.dart';
 
-import '../../shared/utils/with_current_session.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../types/minimal_event.dart';
 import 'events_list_fragment.dart';
@@ -37,31 +36,18 @@ class UserEvents extends StatelessWidget {
   }
 
   void _loadNextPage(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<UserEventsBloc>().add(
-              LoadEventsNextPage(
-                session: session,
-              ),
-            );
-      },
+    context.read<UserEventsBloc>().add(
+      LoadEventsNextPage(),
     );
   }
 
   Future<void> _refreshEvents(BuildContext context, int? userId) {
     if (userId == null) return Future.value();
 
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<UserEventsBloc>().add(
-              RefreshUserEvents(
-                session: session,
-                userId: userId,
-              ),
-            );
-      },
+    context.read<UserEventsBloc>().add(
+      RefreshUserEvents(
+        userId: userId,
+      ),
     );
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;

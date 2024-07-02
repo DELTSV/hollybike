@@ -8,7 +8,6 @@ import '../../event/bloc/event_journey_bloc/event_journey_bloc.dart';
 import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../../event/types/event.dart';
 import '../../event/widgets/journey/upload_journey_modal.dart';
-import '../../shared/utils/with_current_session.dart';
 
 Future<File?> getJourneyFileAndUploadToEvent(
     BuildContext context, Event event) async {
@@ -50,16 +49,13 @@ Future<File?> getJourneyFileAndUploadToEvent(
 
   File file = File(result.files.single.path!);
 
-  withCurrentSession(context, (session) async {
-    BlocProvider.of<EventJourneyBloc>(context).add(
-      UploadJourneyFileToEvent(
-        session: session,
-        eventId: event.id,
-        name: event.name,
-        file: file,
-      ),
-    );
-  });
+  BlocProvider.of<EventJourneyBloc>(context).add(
+    UploadJourneyFileToEvent(
+      eventId: event.id,
+      name: event.name,
+      file: file,
+    ),
+  );
 
   await showDialog(
     barrierDismissible: false,

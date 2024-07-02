@@ -25,7 +25,6 @@ class EventImageDetailsBloc
 
     try {
       final imageDetails = await imageRepository.getImageDetails(
-        event.session,
         event.imageId,
       );
 
@@ -50,7 +49,6 @@ class EventImageDetailsBloc
 
     try {
       await imageRepository.deleteImage(
-        event.session,
         event.imageId,
       );
 

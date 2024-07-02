@@ -8,7 +8,6 @@ import 'package:hollybike/event/bloc/event_journey_bloc/event_journey_state.dart
 import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/event/widgets/journey/journey_import_modal_from_type.dart';
 import 'package:hollybike/event/widgets/journey/upload_journey_menu.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 
 enum JourneyModalAction {
   update,
@@ -115,14 +114,11 @@ class JourneyModalHeader extends StatelessWidget {
   void _onDeleteJourney(BuildContext context) {
     _returnToDetails(context);
 
-    withCurrentSession(context, (session) {
-      context.read<EventJourneyBloc>().add(
-            RemoveJourneyFromEvent(
-              eventId: event.id,
-              session: session,
-            ),
-          );
-    });
+    context.read<EventJourneyBloc>().add(
+      RemoveJourneyFromEvent(
+        eventId: event.id,
+      ),
+    );
   }
 
   void _onActionsSelected(BuildContext context, JourneyModalAction action) {

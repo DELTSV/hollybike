@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
 
-import '../../shared/utils/with_current_session.dart';
 import '../bloc/events_bloc/events_event.dart';
 import 'event_form/event_form_modal.dart';
 
@@ -23,14 +22,11 @@ class AddEventFloatingButton extends StatelessWidget {
             builder: (BuildContext context) {
               return EventFormModal(
                 onSubmit: (formData) {
-                  withCurrentSession(context, (session) {
-                    context.read<FutureEventsBloc>().add(
-                          CreateEvent(
-                            session: session,
-                            formData: formData,
-                          ),
-                        );
-                  });
+                  context.read<FutureEventsBloc>().add(
+                    CreateEvent(
+                      formData: formData,
+                    ),
+                  );
 
                   Navigator.of(context).pop();
                 },

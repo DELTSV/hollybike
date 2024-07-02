@@ -5,7 +5,6 @@ import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../shared/utils/with_current_session.dart';
 import '../../../shared/widgets/image_gallery/image_gallery.dart';
 import '../../bloc/event_images_bloc/event_images_event.dart';
 import '../../bloc/event_images_bloc/event_images_state.dart';
@@ -87,30 +86,18 @@ class EventDetailsImages extends StatelessWidget {
   }
 
   void _refreshImages(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventImagesBloc>().add(
-              RefreshEventImages(
-                session: session,
-                eventId: eventId,
-              ),
-            );
-      },
+    context.read<EventImagesBloc>().add(
+      RefreshEventImages(
+        eventId: eventId,
+      ),
     );
   }
 
   void _loadNextPage(BuildContext context) {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventImagesBloc>().add(
-              LoadEventImagesNextPage(
-                session: session,
-                eventId: eventId,
-              ),
-            );
-      },
+    context.read<EventImagesBloc>().add(
+      LoadEventImagesNextPage(
+        eventId: eventId,
+      ),
     );
   }
 }

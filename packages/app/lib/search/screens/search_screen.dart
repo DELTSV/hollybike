@@ -9,7 +9,6 @@ import 'package:hollybike/search/widgets/search_placeholder/initial_search_place
 import 'package:hollybike/search/widgets/search_placeholder/loading_search_placeholder.dart';
 import 'package:hollybike/search/widgets/search_profile_card/search_profile_card.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_search_input.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
@@ -238,13 +237,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _refreshSearch(BuildContext context, String query) {
-    withCurrentSession(
-      context,
-      (session) {
-        BlocProvider.of<SearchBloc>(context).add(
-          RefreshSearch(session: session, query: query),
-        );
-      },
+    BlocProvider.of<SearchBloc>(context).add(
+      RefreshSearch(query: query),
     );
   }
 }

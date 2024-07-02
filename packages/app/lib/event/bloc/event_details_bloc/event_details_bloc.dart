@@ -51,7 +51,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.fetchEventDetails(
-        event.session,
         event.eventId,
       );
     } catch (e) {
@@ -71,7 +70,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.publishEvent(
-        event.session,
         event.eventId,
       );
 
@@ -96,7 +94,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.editEvent(
-        event.session,
         event.eventId,
         event.formData.copyWith(
           startDate: event.formData.startDate.toUtc(),
@@ -125,7 +122,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.joinEvent(
-        event.session,
         event.eventId,
       );
 
@@ -150,7 +146,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.leaveEvent(
-        event.session,
         event.eventId,
       );
 
@@ -177,7 +172,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.deleteEvent(
-        event.session,
         event.eventId,
       );
 
@@ -199,7 +193,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.cancelEvent(
-        event.session,
         event.eventId,
       );
 
@@ -224,7 +217,6 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.terminateUserJourney(
-        event.session,
         event.eventId,
       );
 

@@ -34,8 +34,11 @@ class _AppState extends State<App> {
       const String.fromEnvironment('PUBLIC_ACCESS_TOKEN'),
     );
 
-    appRouter= AppRouter(authPersistence: widget.authPersistence);
-    authChangeNotifier = AuthStream(context);
+    appRouter = AppRouter(authPersistence: widget.authPersistence);
+    authChangeNotifier = AuthStream(
+      context,
+      authPersistence: widget.authPersistence,
+    );
   }
 
   @override

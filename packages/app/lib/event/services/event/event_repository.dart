@@ -1,4 +1,3 @@
-import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
@@ -46,7 +45,6 @@ class EventRepository {
       _searchStreamController.stream;
 
   Future<PaginatedList<MinimalEvent>> fetchEvents(
-    AuthSession session,
     String? requestType,
     int page,
     int eventsPerPage, {
@@ -54,7 +52,6 @@ class EventRepository {
     String? query,
   }) async {
     final pageResult = await eventApi.getEvents(
-      session,
       requestType,
       page,
       eventsPerPage,
@@ -92,14 +89,12 @@ class EventRepository {
   }
 
   Future<PaginatedList<MinimalEvent>> refreshEvents(
-    AuthSession session,
     String? requestType,
     int eventsPerPage, {
     int? userId,
     String? query,
   }) async {
     final pageResult = await eventApi.getEvents(
-      session,
       requestType,
       0,
       eventsPerPage,
@@ -137,26 +132,24 @@ class EventRepository {
   }
 
   Future<EventDetails> fetchEventDetails(
-    AuthSession session,
     int eventId,
   ) async {
-    final eventDetails = await eventApi.getEventDetails(session, eventId);
+    final eventDetails = await eventApi.getEventDetails(eventId);
 
     _eventDetailsStreamController.add(eventDetails);
 
     return eventDetails;
   }
 
-  Future<Event> createEvent(AuthSession session, EventFormData event) async {
-    return eventApi.createEvent(session, event);
+  Future<Event> createEvent(EventFormData event) async {
+    return eventApi.createEvent(event);
   }
 
   Future<void> editEvent(
-    AuthSession session,
     int eventId,
     EventFormData event,
   ) async {
-    final editedEvent = await eventApi.editEvent(session, eventId, event);
+    final editedEvent = await eventApi.editEvent(eventId, event);
 
     final details = _eventDetailsStreamController.value;
 
@@ -184,10 +177,10 @@ class EventRepository {
     }
   }
 
-  Future<void> publishEvent(AuthSession session, int eventId) async {
+  Future<void> publishEvent(int eventId) async {
     final details = _eventDetailsStreamController.value!;
 
-    await eventApi.publishEvent(session, eventId);
+    await eventApi.publishEvent(eventId);
 
     _eventDetailsStreamController.add(
       details.copyWith(
@@ -211,10 +204,10 @@ class EventRepository {
     }
   }
 
-  Future<void> joinEvent(AuthSession session, int eventId) async {
+  Future<void> joinEvent(int eventId) async {
     final details = _eventDetailsStreamController.value;
 
-    final participation = await eventApi.joinEvent(session, eventId);
+    final participation = await eventApi.joinEvent(eventId);
 
     if (details == null) {
       return;
@@ -223,10 +216,10 @@ class EventRepository {
     onParticipantsAdded([participation], firstAsCaller: true);
   }
 
-  Future<void> leaveEvent(AuthSession session, int eventId) async {
+  Future<void> leaveEvent(int eventId) async {
     final details = _eventDetailsStreamController.value;
 
-    await eventApi.leaveEvent(session, eventId);
+    await eventApi.leaveEvent(eventId);
 
     if (details == null || details.callerParticipation == null) {
       return;
@@ -243,14 +236,14 @@ class EventRepository {
     onParticipantRemoved(details.callerParticipation!.userId);
   }
 
-  Future<void> deleteEvent(AuthSession session, int eventId) async {
-    return eventApi.deleteEvent(session, eventId);
+  Future<void> deleteEvent(int eventId) async {
+    return eventApi.deleteEvent(eventId);
   }
 
-  Future<void> cancelEvent(AuthSession session, int eventId) async {
+  Future<void> cancelEvent(int eventId) async {
     final details = _eventDetailsStreamController.value!;
 
-    await eventApi.cancelEvent(session, eventId);
+    await eventApi.cancelEvent(eventId);
 
     _eventDetailsStreamController.add(
       details.copyWith(
@@ -341,11 +334,10 @@ class EventRepository {
   }
 
   Future<void> addJourneyToEvent(
-    AuthSession session,
     int eventId,
     Journey journey,
   ) async {
-    await eventApi.addJourneyToEvent(session, eventId, journey.id);
+    await eventApi.addJourneyToEvent(eventId, journey.id);
 
     onEventJourneyUpdated(journey);
   }
@@ -365,10 +357,9 @@ class EventRepository {
   }
 
   Future<void> removeJourneyFromEvent(
-    AuthSession session,
     int eventId,
   ) async {
-    await eventApi.removeJourneyFromEvent(session, eventId);
+    await eventApi.removeJourneyFromEvent(eventId);
 
     final details = _eventDetailsStreamController.value;
 
@@ -386,10 +377,9 @@ class EventRepository {
   }
 
   Future<UserJourney> terminateUserJourney(
-    AuthSession session,
     int eventId,
   ) async {
-    final userJourney = await eventApi.terminateUserJourney(session, eventId);
+    final userJourney = await eventApi.terminateUserJourney(eventId);
 
     final details = _eventDetailsStreamController.value;
 

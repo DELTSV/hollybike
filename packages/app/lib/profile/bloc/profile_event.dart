@@ -11,12 +11,6 @@ class ProfileLoadBySession extends ProfileEvent {
   });
 }
 
-class ProfileCurrentSessionChange extends ProfileEvent {
-  final AuthSession? session;
-
-  ProfileCurrentSessionChange({required this.session});
-}
-
 class ProfileLoadById extends ProfileEvent {
   final AuthSession sessionSearching;
   final int id;

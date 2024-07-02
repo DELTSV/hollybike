@@ -8,13 +8,14 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
-import 'package:hollybike/shared/utils/with_current_session.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
+import 'package:provider/provider.dart';
 
+import '../../auth/bloc/auth_persistence.dart';
 import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
@@ -218,7 +219,12 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         eventId: eventDetails.event.id,
       ),
       BlocProvider(
-        create: (context) => UserPositionsBloc(),
+        create: (context) => UserPositionsBloc(
+          authPersistence: Provider.of<AuthPersistence>(
+            context,
+            listen: false,
+          ),
+        ),
         child: EventDetailsMap(
           eventId: eventDetails.event.id,
           journey: eventDetails.journey,
@@ -318,29 +324,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
   }
 
   void _loadEventDetails() {
-    withCurrentSession(
-      context,
-      (session) {
-        context.read<EventDetailsBloc>().add(
-              LoadEventDetails(
-                eventId: widget.event.id,
-                session: session,
-              ),
-            );
-      },
+    context.read<EventDetailsBloc>().add(
+      LoadEventDetails(
+        eventId: widget.event.id,
+      ),
     );
   }
 
   void _onEdit(EventFormData formData) {
-    withCurrentSession(context, (session) {
-      context.read<EventDetailsBloc>().add(
-            EditEvent(
-              session: session,
-              eventId: widget.event.id,
-              formData: formData,
-            ),
-          );
-    });
+    context.read<EventDetailsBloc>().add(
+      EditEvent(
+        eventId: widget.event.id,
+        formData: formData,
+      ),
+    );
 
     Navigator.of(context).pop();
   }
