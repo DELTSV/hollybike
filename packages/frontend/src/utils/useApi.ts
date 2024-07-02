@@ -153,6 +153,7 @@ export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOpti
 	if (response.status === 204) {
 		return { status: response.status };
 	}
+
 	try {
 		return {
 			status: response.status,
