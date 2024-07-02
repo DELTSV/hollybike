@@ -2909,6 +2909,9 @@
 			},
 			{
 				"name": "association$delegate"
+			},
+			{
+				"name": "journey$delegate"
 			}
 		],
 		"methods": [
@@ -2941,6 +2944,16 @@
 				"parameterTypes": [
 					"hollybike.api.repository.Association"
 				]
+			},
+			{
+				"name": "getJourney",
+				"parameterTypes": []
+			},
+			{
+				"name": "setJourney",
+				"parameterTypes": [
+					"hollybike.api.repository.Journey"
+				]
 			}
 		]
 	},
@@ -2955,6 +2968,12 @@
 			},
 			{
 				"name": "user$delegate"
+			},
+			{
+				"name": "journey$delegate"
+			},
+			{
+				"name": "recordedPositions$delegate"
 			}
 		],
 		"methods": [
@@ -2982,6 +3001,20 @@
 				"name": "setUser",
 				"parameterTypes": [
 					"hollybike.api.repository.User"
+				]
+			},
+			{
+				"name": "getJourney",
+				"parameterTypes": []
+			},
+			{
+				"name": "getRecordedPositions",
+				"parameterTypes": []
+			},
+			{
+				"name": "setJourney",
+				"parameterTypes": [
+					"hollybike.api.repository.UserJourney"
 				]
 			}
 		]
@@ -3142,5 +3175,134 @@
 	},
 	{
 		"name": "kotlinx.coroutines.internal.StackTraceRecoveryKt"
+	},
+	{
+		"name": "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.repository.Journey",
+		"fields": [
+			{
+				"name": "destination$delegate"
+			},
+			{
+				"name": "end$delegate"
+			},
+			{
+				"name": "start$delegate"
+			}
+		],
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.jetbrains.exposed.dao.id.EntityID"
+				]
+			},
+			{
+				"name": "getDestination",
+				"parameterTypes": []
+			},
+			{
+				"name": "getEnd",
+				"parameterTypes": []
+			},
+			{
+				"name": "getStart",
+				"parameterTypes": []
+			},
+			{
+				"name": "setDestination",
+				"parameterTypes": [
+					"hollybike.api.repository.Position"
+				]
+			},
+			{
+				"name": "setEnd",
+				"parameterTypes": [
+					"hollybike.api.repository.Position"
+				]
+			},
+			{
+				"name": "setStart",
+				"parameterTypes": [
+					"hollybike.api.repository.Position"
+				]
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.repository.Journey$Companion"
+	},
+	{
+		"name": "hollybike.api.repository.Position",
+		"methods": [
+			{
+				"name": "<init>",
+				"parameterTypes": [
+					"org.jetbrains.exposed.dao.id.EntityID"
+				]
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.repository.UserEventPosition"
+	},
+	{
+		"name": "hollybike.api.repository.UserJourney"
+	},
+	{
+		"name": "hollybike.api.services.storage.StorageService"
+	},
+	{
+		"name": "hollybike.api.services.storage.signature.StorageSignatureService"
+	},
+	{
+		"name": "hollybike.api.types.event.participation.TEventParticipation",
+		"fields": [
+			{
+				"name": "Companion"
+			}
+		]
+	},
+	{
+		"name": "hollybike.api.types.event.participation.TEventParticipation$Companion",
+		"methods": [
+			{
+				"name": "serializer",
+				"parameterTypes": []
+			}
+		]
+	},
+	{
+		"name": "io.ktor.client.HttpClient",
+		"fields": [
+			{
+				"name": "closed"
+			}
+		]
+	},
+	{
+		"name": "io.ktor.client.engine.HttpClientEngineBase",
+		"fields": [
+			{
+				"name": "closed"
+			}
+		]
+	},
+	{
+		"name": "io.ktor.util.logging.Logger"
+	},
+	{
+		"name": "kotlin.Double"
+	},
+	{
+		"name": "org.slf4j.Logger"
 	}
 ]
