@@ -7,14 +7,16 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthPersistence {
-  final String key = "sessions";
+  final String key = "sessions-store";
 
-  FutureOr<List<AuthSession>> get sessions async =>
-      (await SharedPreferences.getInstance())
-          .getStringList(key)
-          ?.map(AuthSession.fromJson)
-          .toList() ??
-      <AuthSession>[];
+  FutureOr<List<AuthSession>> get sessions async {
+    final sessions = (await SharedPreferences.getInstance())
+        .getStringList(key);
+
+    return sessions?.map(AuthSession.fromJson)
+        .toList() ??
+        <AuthSession>[];
+  }
 
   Future<bool> get isConnected async => (await sessions).isNotEmpty;
 
