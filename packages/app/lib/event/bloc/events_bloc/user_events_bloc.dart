@@ -36,14 +36,13 @@ class UserEventsBloc extends EventsBloc {
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
         requestType,
-        numberOfEventsPerRequest,
         userId: userId,
       );
 
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
+            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: 1,
           ),
         ),
@@ -68,14 +67,13 @@ class UserEventsBloc extends EventsBloc {
       PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
         requestType,
         state.nextPage,
-        numberOfEventsPerRequest,
         userId: userId,
       );
 
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
+            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: state.nextPage + 1,
           ),
         ),

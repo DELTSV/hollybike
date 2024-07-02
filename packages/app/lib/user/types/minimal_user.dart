@@ -18,4 +18,12 @@ class MinimalUser with _$MinimalUser {
 
   factory MinimalUser.fromJson(Map<String, dynamic> json) =>
       _$MinimalUserFromJson(json);
+
+  factory MinimalUser.empty() => const MinimalUser(
+        id: 0,
+        username: '',
+        scope: UserScope.user,
+        status: UserStatus.enabled,
+        profilePicture: null,
+      );
 }

@@ -43,14 +43,6 @@ class _ProfileEventsState extends State<ProfileEvents> {
               }
             },
           ),
-          // BlocListener<EventDetailsBloc, EventDetailsState>(
-          //   listener: (context, state) {
-          //     if (state is DeleteEventSuccess) {
-          //       Toast.showSuccessToast(context, "Événement supprimé");
-          //       _refreshEvents(context, widget.userId);
-          //     }
-          //   },
-          // ),
         ],
         child: BlocBuilder<UserEventsBloc, EventsState>(
           builder: (context, state) {

@@ -3,7 +3,6 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/journey/type/journey.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
-import 'package:rxdart/rxdart.dart';
 
 import '../../../journey/type/user_journey.dart';
 import '../../../shared/utils/stream_mapper.dart';
@@ -15,48 +14,48 @@ import 'event_api.dart';
 class EventRepository {
   final EventApi eventApi;
 
-  final _eventDetailsStreamMapper = StreamMapper<EventDetails?>(seedValue: null);
+  final int numberOfEventsPerRequest = 10;
+
+  final _eventDetailsStreamMapper =
+      StreamMapper<EventDetails?>(seedValue: null);
 
   Stream<EventDetails?> eventDetailsStream(int eventId) =>
       _eventDetailsStreamMapper.stream(eventId);
-
 
   final _userStreamMapper = StreamMapper<List<MinimalEvent>>(seedValue: []);
 
   Stream<List<MinimalEvent>> userEventsStream(int userId) =>
       _userStreamMapper.stream(userId);
 
+  final _futureEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
 
-  final _futureStreamController =
-      BehaviorSubject<List<MinimalEvent>>.seeded([]);
+  final _archivedEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
 
-  final _archivedStreamController =
-      BehaviorSubject<List<MinimalEvent>>.seeded([]);
+  final _searchEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
 
-  final _searchStreamController =
-      BehaviorSubject<List<MinimalEvent>>.seeded([]);
-
-  Stream<List<MinimalEvent>> get futureStream => _futureStreamController.stream;
+  Stream<List<MinimalEvent>> get futureStream =>
+      _futureEventsStreamCounter.stream;
 
   Stream<List<MinimalEvent>> get archivedEventsStream =>
-      _archivedStreamController.stream;
+      _archivedEventsStreamCounter.stream;
 
   Stream<List<MinimalEvent>> get searchEventsStream =>
-      _searchStreamController.stream;
+      _searchEventsStreamCounter.stream;
+
+  String _lastQuery = "";
 
   EventRepository({required this.eventApi});
 
   Future<PaginatedList<MinimalEvent>> fetchEvents(
     String? requestType,
-    int page,
-    int eventsPerPage, {
+    int page, {
     int? userId,
     String? query,
   }) async {
     final pageResult = await eventApi.getEvents(
       requestType,
       page,
-      eventsPerPage,
+      numberOfEventsPerRequest,
       userId: userId,
       query: query,
     );
@@ -72,18 +71,18 @@ class EventRepository {
 
     switch (requestType) {
       case "future":
-        _futureStreamController.add(
-          _futureStreamController.value + pageResult.items,
+        _futureEventsStreamCounter.add(
+          _futureEventsStreamCounter.value + pageResult.items,
         );
         break;
       case "archived":
-        _archivedStreamController.add(
-          _archivedStreamController.value + pageResult.items,
+        _archivedEventsStreamCounter.add(
+          _archivedEventsStreamCounter.value + pageResult.items,
         );
         break;
       default:
-        _searchStreamController.add(
-          _searchStreamController.value + pageResult.items,
+        _searchEventsStreamCounter.add(
+          _searchEventsStreamCounter.value + pageResult.items,
         );
         break;
     }
@@ -92,15 +91,18 @@ class EventRepository {
   }
 
   Future<PaginatedList<MinimalEvent>> refreshEvents(
-    String? requestType,
-    int eventsPerPage, {
+    String? requestType, {
     int? userId,
     String? query,
   }) async {
+    if (query != null) {
+      _lastQuery = query;
+    }
+
     final pageResult = await eventApi.getEvents(
       requestType,
       0,
-      eventsPerPage,
+      numberOfEventsPerRequest,
       userId: userId,
       query: query,
     );
@@ -116,17 +118,17 @@ class EventRepository {
 
     switch (requestType) {
       case "future":
-        _futureStreamController.add(
+        _futureEventsStreamCounter.add(
           pageResult.items,
         );
         break;
       case "archived":
-        _archivedStreamController.add(
+        _archivedEventsStreamCounter.add(
           pageResult.items,
         );
         break;
       default:
-        _searchStreamController.add(
+        _searchEventsStreamCounter.add(
           pageResult.items,
         );
         break;
@@ -161,14 +163,15 @@ class EventRepository {
       return;
     }
 
-    _eventDetailsStreamMapper.add(eventId, details.copyWith(event: editedEvent));
+    _eventDetailsStreamMapper.add(
+        eventId, details.copyWith(event: editedEvent));
 
     for (var controller in [
-          _futureStreamController,
-          _archivedStreamController,
-          _searchStreamController,
+          _futureEventsStreamCounter.subject,
+          _archivedEventsStreamCounter.subject,
+          _searchEventsStreamCounter.subject,
         ] +
-        _userStreamMapper.values) {
+        _userStreamMapper.subjects) {
       controller.add(
         controller.value
             .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
@@ -194,11 +197,11 @@ class EventRepository {
     );
 
     for (var controller in [
-          _futureStreamController,
-          _archivedStreamController,
-          _searchStreamController,
+          _futureEventsStreamCounter.subject,
+          _archivedEventsStreamCounter.subject,
+          _searchEventsStreamCounter.subject,
         ] +
-        _userStreamMapper.values) {
+        _userStreamMapper.subjects) {
       controller.add(
         controller.value
             .map((e) => e.id == eventId
@@ -245,7 +248,23 @@ class EventRepository {
   }
 
   Future<void> deleteEvent(int eventId) async {
-    return eventApi.deleteEvent(eventId);
+    await eventApi.deleteEvent(eventId);
+
+    for (var userId in _userStreamMapper.keys) {
+      refreshEvents("future", userId: userId);
+    }
+
+    if (_futureEventsStreamCounter.isListening) {
+      refreshEvents("future");
+    }
+
+    if (_archivedEventsStreamCounter.isListening) {
+      refreshEvents("archived");
+    }
+
+    if (_searchEventsStreamCounter.isListening) {
+      refreshEvents(null, query: _lastQuery);
+    }
   }
 
   Future<void> cancelEvent(int eventId) async {
@@ -265,11 +284,11 @@ class EventRepository {
     );
 
     for (var controller in [
-          _futureStreamController,
-          _archivedStreamController,
-          _searchStreamController,
+          _futureEventsStreamCounter.subject,
+          _archivedEventsStreamCounter.subject,
+          _searchEventsStreamCounter.subject,
         ] +
-        _userStreamMapper.values) {
+        _userStreamMapper.subjects) {
       controller.add(
         controller.value
             .map((e) => e.id == eventId

@@ -33,8 +33,9 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   ) async {
     await emit.forEach<EventDetails?>(
       _eventRepository.eventDetailsStream(eventId),
-      onData: (event) => state.copyWith(
-        event: event,
+      onData: (event) => EventDetailsState(
+        eventDetails: event,
+        status: state.status,
       ),
     );
   }

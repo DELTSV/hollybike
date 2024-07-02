@@ -15,6 +15,7 @@ import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:provider/provider.dart';
 
+import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_persistence.dart';
 import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
@@ -29,6 +30,16 @@ import '../widgets/details/event_details_actions_menu.dart';
 import '../widgets/images/show_event_images_picker.dart';
 
 enum EventDetailsTab { info, photos, myPhotos, map }
+
+class Args {
+  final MinimalEvent? event;
+  final bool animate;
+
+  Args({
+    required this.event,
+    this.animate = true,
+  });
+}
 
 @RoutePage()
 class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
@@ -110,7 +121,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
         if (state is DeleteEventSuccess) {
           Toast.showSuccessToast(context, "Événement supprimé");
-          context.router.maybePop();
+          context.router.removeWhere((route) {
+            if (route.path == "/event-details") {
+              final eventId = route
+                  .argsAs(
+                  orElse: () =>
+                      EventDetailsRouteArgs(event: MinimalEvent.empty()))
+                  .event
+                  .id;
+
+              return eventId == widget.event.id;
+            }
+
+            return false;
+          });
         }
       },
       child: BlocBuilder<EventDetailsBloc, EventDetailsState>(

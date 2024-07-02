@@ -46,79 +46,72 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         noPadding: true,
       ),
-      body: BlocListener<EventDetailsBloc, EventDetailsState>(
-        listener: (context, state) {
-          if (state is DeleteEventSuccess && _lastSearch is String) {
-            _refreshSearch(context, _lastSearch as String);
+      body: BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          if (state.status == SearchStatus.initial) {
+            return InitialSearchPlaceholder(
+              onButtonTap: () {
+                focusNode.requestFocus();
+              },
+            );
+          } else if (state.status == SearchStatus.loading) {
+            return const LoadingSearchPlaceholder();
+          } else if (state.events.isEmpty && state.profiles.isEmpty) {
+            return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
           }
-        },
-        child: BlocBuilder<SearchBloc, SearchState>(
-          builder: (context, state) {
-            if (state.status == SearchStatus.initial) {
-              return InitialSearchPlaceholder(
-                onButtonTap: () {
-                  focusNode.requestFocus();
-                },
-              );
-            } else if (state.status == SearchStatus.loading) {
-              return const LoadingSearchPlaceholder();
-            } else if (state.events.isEmpty && state.profiles.isEmpty) {
-              return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
-            }
 
-            return CustomScrollView(
-              controller: _verticalScrollController,
-              slivers: _renderProfilesList(state.profiles) +
-                  [
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverMainAxisGroup(
-                        slivers: [
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: PinnedHeaderDelegate(
-                              height: 50,
-                              animationDuration: 300,
-                              child: Container(
-                                width: double.infinity,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  child: Text(
-                                    "Évènements",
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
+          return CustomScrollView(
+            controller: _verticalScrollController,
+            slivers: _renderProfilesList(state.profiles) +
+                [
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverMainAxisGroup(
+                      slivers: [
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: PinnedHeaderDelegate(
+                            height: 50,
+                            animationDuration: 300,
+                            child: Container(
+                              width: double.infinity,
+                              color:
+                                  Theme.of(context).scaffoldBackgroundColor,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                child: Text(
+                                  "Évènements",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                               ),
                             ),
                           ),
-                          SliverList.list(
-                            children: state.events
-                                .map(
-                                  (event) => EventPreviewCard(
-                                    event: event,
-                                    onTap: () {
-                                      _navigateToEventDetails(
-                                        context,
-                                        event,
-                                        true,
-                                      );
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ],
-                      ),
+                        ),
+                        SliverList.list(
+                          children: state.events
+                              .map(
+                                (event) => EventPreviewCard(
+                                  event: event,
+                                  onTap: () {
+                                    _navigateToEventDetails(
+                                      context,
+                                      event,
+                                      true,
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
                     ),
-                  ],
-            );
-          },
-        ),
+                  ),
+                ],
+          );
+        },
       ),
       displayNavBar: true,
     );

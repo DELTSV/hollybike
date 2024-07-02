@@ -57,13 +57,6 @@ class _EventsListFragmentState<T extends EventsBloc>
             );
           }
         }),
-        // BlocListener<EventDetailsBloc, EventDetailsState>(
-        //   listener: (context, state) {
-        //     if (state is DeleteEventSuccess || state is LeaveEventSuccess) {
-        //       widget.onRefreshRequested();
-        //     }
-        //   },
-        // ),
       ],
       child: ThemedRefreshIndicator(
         onRefresh: widget.onRefreshRequested,
