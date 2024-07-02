@@ -122,6 +122,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         if (state is DeleteEventSuccess) {
           Toast.showSuccessToast(context, "Événement supprimé");
           context.router.removeWhere((route) {
+            if (route.path == '/event-participations') {
+              final eventId = route
+                  .argsAs(
+                  orElse: () =>
+                      EventParticipationsRouteArgs(eventDetails: EventDetails.empty(), participationPreview: []))
+                  .eventDetails
+                  .event
+                  .id;
+
+              return eventId == widget.event.id;
+            }
+
             if (route.path == "/event-details") {
               final eventId = route
                   .argsAs(

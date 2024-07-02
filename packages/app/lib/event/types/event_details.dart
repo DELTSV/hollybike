@@ -25,6 +25,14 @@ class EventDetails with _$EventDetails {
 
   factory EventDetails.fromJson(JsonMap json) => _$EventDetailsFromJson(json);
 
+  factory EventDetails.empty() => EventDetails(
+        event: Event.empty(),
+        journey: null,
+        callerParticipation: null,
+        previewParticipants: [],
+        previewParticipantsCount: 0,
+      );
+
   bool get isOwner =>
       callerParticipation != null &&
       callerParticipation!.userId == event.owner.id;
