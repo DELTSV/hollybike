@@ -9,9 +9,11 @@ import 'event_details_state.dart';
 
 class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   final EventRepository _eventRepository;
+  final int eventId;
 
   EventDetailsBloc({
     required EventRepository eventRepository,
+    required this.eventId,
   })  : _eventRepository = eventRepository,
         super(const EventDetailsState()) {
     on<SubscribeToEvent>(_onSubscribeToEvent);
@@ -25,20 +27,15 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<TerminateUserJourney>(_onTerminateUserJourney);
   }
 
-  @override
-  Future<void> close() async {
-    await _eventRepository.close();
-    return super.close();
-  }
-
   Future<void> _onSubscribeToEvent(
     SubscribeToEvent event,
     Emitter<EventDetailsState> emit,
   ) async {
     await emit.forEach<EventDetails?>(
-      _eventRepository.eventDetailsStream,
-      onData: (event) => state.copyWith(
-        event: event,
+      _eventRepository.eventDetailsStream(eventId),
+      onData: (event) => EventDetailsState(
+        eventDetails: event,
+        status: state.status,
       ),
     );
   }
@@ -50,9 +47,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventDetailsLoadInProgress(state));
 
     try {
-      await _eventRepository.fetchEventDetails(
-        event.eventId,
-      );
+      await _eventRepository.fetchEventDetails(eventId);
     } catch (e) {
       log('Error while loading event details', error: e);
       emit(EventDetailsLoadFailure(
@@ -69,9 +64,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventOperationInProgress(state));
 
     try {
-      await _eventRepository.publishEvent(
-        event.eventId,
-      );
+      await _eventRepository.publishEvent(eventId);
 
       emit(EventOperationSuccess(
         state,
@@ -94,7 +87,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
 
     try {
       await _eventRepository.editEvent(
-        event.eventId,
+        eventId,
         event.formData.copyWith(
           startDate: event.formData.startDate.toUtc(),
           endDate: event.formData.endDate?.toUtc(),
@@ -121,9 +114,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventOperationInProgress(state));
 
     try {
-      await _eventRepository.joinEvent(
-        event.eventId,
-      );
+      await _eventRepository.joinEvent(eventId);
 
       emit(EventOperationSuccess(
         state,
@@ -145,9 +136,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventOperationInProgress(state));
 
     try {
-      await _eventRepository.leaveEvent(
-        event.eventId,
-      );
+      await _eventRepository.leaveEvent(eventId);
 
       emit(EventOperationSuccess(
         state,
@@ -171,9 +160,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(DeleteEventInProgress(state));
 
     try {
-      await _eventRepository.deleteEvent(
-        event.eventId,
-      );
+      await _eventRepository.deleteEvent(eventId);
 
       emit(DeleteEventSuccess(state));
     } catch (e) {
@@ -192,9 +179,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventOperationInProgress(state));
 
     try {
-      await _eventRepository.cancelEvent(
-        event.eventId,
-      );
+      await _eventRepository.cancelEvent(eventId);
 
       emit(EventOperationSuccess(
         state,
@@ -216,9 +201,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventOperationInProgress(state));
 
     try {
-      await _eventRepository.terminateUserJourney(
-        event.eventId,
-      );
+      await _eventRepository.terminateUserJourney(eventId);
 
       emit(EventOperationSuccess(
         state,

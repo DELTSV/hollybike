@@ -91,10 +91,13 @@ class JourneyPreviewCard extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 context: context,
-                builder: (context) => JourneyModal(
-                  journey: journey!,
-                  eventDetails: eventDetails,
-                  onViewOnMap: onViewOnMap,
+                builder: (_) => BlocProvider.value(
+                  value: context.read<EventJourneyBloc>(),
+                  child: JourneyModal(
+                    journey: journey!,
+                    eventDetails: eventDetails,
+                    onViewOnMap: onViewOnMap,
+                  ),
                 ),
               );
             },

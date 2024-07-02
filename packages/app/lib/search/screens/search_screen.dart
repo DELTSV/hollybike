@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
 import 'package:hollybike/event/widgets/event_preview_card/event_preview_card.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/search/widgets/search_placeholder/empty_search_placeholder.dart';
@@ -15,7 +14,6 @@ import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../app/app_router.gr.dart';
-import '../../event/bloc/event_details_bloc/event_details_bloc.dart';
 import '../../event/types/minimal_event.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/search_bloc.dart';
@@ -46,79 +44,72 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         noPadding: true,
       ),
-      body: BlocListener<EventDetailsBloc, EventDetailsState>(
-        listener: (context, state) {
-          if (state is DeleteEventSuccess && _lastSearch is String) {
-            _refreshSearch(context, _lastSearch as String);
+      body: BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          if (state.status == SearchStatus.initial) {
+            return InitialSearchPlaceholder(
+              onButtonTap: () {
+                focusNode.requestFocus();
+              },
+            );
+          } else if (state.status == SearchStatus.loading) {
+            return const LoadingSearchPlaceholder();
+          } else if (state.events.isEmpty && state.profiles.isEmpty) {
+            return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
           }
-        },
-        child: BlocBuilder<SearchBloc, SearchState>(
-          builder: (context, state) {
-            if (state.status == SearchStatus.initial) {
-              return InitialSearchPlaceholder(
-                onButtonTap: () {
-                  focusNode.requestFocus();
-                },
-              );
-            } else if (state.status == SearchStatus.loading) {
-              return const LoadingSearchPlaceholder();
-            } else if (state.events.isEmpty && state.profiles.isEmpty) {
-              return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
-            }
 
-            return CustomScrollView(
-              controller: _verticalScrollController,
-              slivers: _renderProfilesList(state.profiles) +
-                  [
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverMainAxisGroup(
-                        slivers: [
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: PinnedHeaderDelegate(
-                              height: 50,
-                              animationDuration: 300,
-                              child: Container(
-                                width: double.infinity,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  child: Text(
-                                    "Évènements",
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
+          return CustomScrollView(
+            controller: _verticalScrollController,
+            slivers: _renderProfilesList(state.profiles) +
+                [
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverMainAxisGroup(
+                      slivers: [
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: PinnedHeaderDelegate(
+                            height: 50,
+                            animationDuration: 300,
+                            child: Container(
+                              width: double.infinity,
+                              color:
+                                  Theme.of(context).scaffoldBackgroundColor,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                child: Text(
+                                  "Évènements",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                               ),
                             ),
                           ),
-                          SliverList.list(
-                            children: state.events
-                                .map(
-                                  (event) => EventPreviewCard(
-                                    event: event,
-                                    onTap: () {
-                                      _navigateToEventDetails(
-                                        context,
-                                        event,
-                                        true,
-                                      );
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ],
-                      ),
+                        ),
+                        SliverList.list(
+                          children: state.events
+                              .map(
+                                (event) => EventPreviewCard(
+                                  event: event,
+                                  onTap: () {
+                                    _navigateToEventDetails(
+                                      context,
+                                      event,
+                                      true,
+                                    );
+                                  },
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ],
                     ),
-                  ],
-            );
-          },
-        ),
+                  ),
+                ],
+          );
+        },
       ),
       displayNavBar: true,
     );
@@ -220,7 +211,6 @@ class _SearchScreenState extends State<SearchScreen> {
     MinimalEvent event,
     bool animate,
   ) {
-    // delay 200 ms to allow the animation to finish
     Future.delayed(const Duration(milliseconds: 200), () {
       context.router.push(EventDetailsRoute(
         event: event,

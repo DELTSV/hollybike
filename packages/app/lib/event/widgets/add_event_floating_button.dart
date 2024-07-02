@@ -19,16 +19,16 @@ class AddEventFloatingButton extends StatelessWidget {
             isScrollControlled: true,
             context: context,
             enableDrag: false,
-            builder: (BuildContext context) {
+            builder: (BuildContext modalContext) {
               return EventFormModal(
                 onSubmit: (formData) {
                   context.read<FutureEventsBloc>().add(
-                    CreateEvent(
-                      formData: formData,
-                    ),
-                  );
+                        CreateEvent(
+                          formData: formData,
+                        ),
+                      );
 
-                  Navigator.of(context).pop();
+                  Navigator.of(modalContext).pop();
                 },
                 submitButtonText: 'Créer',
               );

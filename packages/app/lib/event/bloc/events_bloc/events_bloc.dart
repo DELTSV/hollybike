@@ -10,7 +10,6 @@ import 'events_state.dart';
 
 abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
   final EventRepository eventRepository;
-  final int numberOfEventsPerRequest = 10;
   final String requestType;
 
   EventsBloc({
@@ -20,12 +19,6 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<SubscribeToEvents>(onSubscribeToEvents);
     on<LoadEventsNextPage>(onLoadEventsNextPage);
     on<RefreshEvents>(_onRefreshEvents);
-  }
-
-  @override
-  Future<void> close() async {
-    await eventRepository.close();
-    return super.close();
   }
 
   Stream<List<MinimalEvent>> _getStream() {
@@ -62,13 +55,12 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
       PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
         requestType,
         state.nextPage,
-        numberOfEventsPerRequest,
       );
 
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
+            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: state.nextPage + 1,
           ),
         ),
@@ -87,13 +79,12 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
         requestType,
-        numberOfEventsPerRequest,
       );
 
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
+            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: 1,
           ),
         ),

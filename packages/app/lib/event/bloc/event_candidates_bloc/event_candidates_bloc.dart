@@ -11,11 +11,14 @@ import 'event_candidates_state.dart';
 
 class EventCandidatesBloc
     extends Bloc<EventCandidatesEvent, EventCandidatesState> {
+  final int eventId;
+
   final EventParticipationRepository eventParticipationsRepository;
   final EventRepository eventRepository;
   final int numberOfCandidatesPerRequest = 15;
 
   EventCandidatesBloc({
+    required this.eventId,
     required this.eventParticipationsRepository,
     required this.eventRepository,
   }) : super(EventCandidatesInitial()) {
@@ -26,18 +29,12 @@ class EventCandidatesBloc
     on<AddCandidates>(_onAddCandidates);
   }
 
-  @override
-  Future<void> close() async {
-    await eventParticipationsRepository.close();
-    return super.close();
-  }
-
   Future<void> _onSubscribeToEventCandidates(
     SubscribeToEventCandidates event,
     Emitter<EventCandidatesState> emit,
   ) async {
     await emit.forEach<List<EventCandidate>>(
-      eventParticipationsRepository.candidatesStream,
+      eventParticipationsRepository.candidatesStream(eventId),
       onData: (candidates) => state.copyWith(
         candidates: candidates,
       ),
@@ -150,7 +147,7 @@ class EventCandidatesBloc
         numberOfCandidatesPerRequest,
       );
 
-      eventRepository.onParticipantsAdded(addedParticipants);
+      eventRepository.onParticipantsAdded(addedParticipants, event.eventId);
 
       emit(EventAddCandidatesSuccess(state));
     } catch (e) {

@@ -120,9 +120,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
             TextButton(
               onPressed: () {
                 context.read<EventDetailsBloc>().add(
-                  CancelEvent(
-                    eventId: eventId,
-                  ),
+                  CancelEvent(),
                 );
 
                 Navigator.of(context).pop();
@@ -138,7 +136,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
   void _onDelete(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (modalContext) {
         return AlertDialog(
           title: const Text("Supprimer l'événement"),
           content:
@@ -146,19 +144,17 @@ class EventDetailsActionsMenu extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(modalContext).pop();
               },
               child: const Text("Annuler"),
             ),
             TextButton(
               onPressed: () {
                 context.read<EventDetailsBloc>().add(
-                  DeleteEvent(
-                    eventId: eventId,
-                  ),
+                  DeleteEvent(),
                 );
 
-                Navigator.of(context).pop();
+                Navigator.of(modalContext).pop();
               },
               child: const Text("Supprimer"),
             ),
@@ -170,9 +166,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
 
   void _onLeave(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-      LeaveEvent(
-        eventId: eventId,
-      ),
+      LeaveEvent(),
     );
   }
 }

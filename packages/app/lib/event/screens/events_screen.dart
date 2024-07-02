@@ -12,22 +12,33 @@ import '../../app/app_router.gr.dart';
 import '../../shared/types/tab_description.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/bar/top_bar_tab_dropdown.dart';
-import '../bloc/event_details_bloc/event_details_bloc.dart';
-import '../bloc/event_details_bloc/event_details_state.dart';
+import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../fragments/archived_events.dart';
+import '../services/event/event_repository.dart';
 import '../types/minimal_event.dart';
 import '../widgets/add_event_floating_button.dart';
 
 enum EventListTab { future, user, archived }
 
 @RoutePage()
-class EventsScreen extends StatefulWidget {
+class EventsScreen extends StatefulWidget implements AutoRouteWrapper {
   const EventsScreen({super.key});
 
   @override
   State<EventsScreen> createState() => _EventsScreenState();
+
+  @override
+  Widget wrappedRoute(context) {
+    return BlocProvider<FutureEventsBloc>(
+      create: (context) => FutureEventsBloc(
+        eventRepository:
+        RepositoryProvider.of<EventRepository>(context),
+      )..add(SubscribeToEvents()),
+      child: this,
+    );
+  }
 }
 
 class _EventsScreenState extends State<EventsScreen>
@@ -56,13 +67,6 @@ class _EventsScreenState extends State<EventsScreen>
 
             if (state is EventCreationFailure) {
               Toast.showErrorToast(context, state.errorMessage);
-            }
-          },
-        ),
-        BlocListener<EventDetailsBloc, EventDetailsState>(
-          listener: (context, state) {
-            if (state is DeleteEventSuccess) {
-              Toast.showSuccessToast(context, "Événement supprimé");
             }
           },
         ),

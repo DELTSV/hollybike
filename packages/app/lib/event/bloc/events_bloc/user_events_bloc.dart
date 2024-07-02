@@ -7,9 +7,9 @@ import 'events_event.dart';
 import 'events_state.dart';
 
 class UserEventsBloc extends EventsBloc {
-  late int userId;
+  final int userId;
 
-  UserEventsBloc({required super.eventRepository})
+  UserEventsBloc({required super.eventRepository, required this.userId})
       : super(requestType: "future") {
     on<RefreshUserEvents>(_onRefreshUserEvents);
   }
@@ -20,7 +20,7 @@ class UserEventsBloc extends EventsBloc {
     Emitter<EventsState> emit,
   ) async {
     await emit.forEach<List<MinimalEvent>>(
-      eventRepository.userEventsStream,
+      eventRepository.userEventsStream(userId),
       onData: (events) => state.copyWith(
         events: events,
       ),
@@ -31,20 +31,18 @@ class UserEventsBloc extends EventsBloc {
     RefreshUserEvents event,
     Emitter<EventsState> emit,
   ) async {
-    userId = event.userId;
     emit(EventPageLoadInProgress(state));
 
     try {
       PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
         requestType,
-        numberOfEventsPerRequest,
         userId: userId,
       );
 
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
+            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: 1,
           ),
         ),
@@ -69,14 +67,13 @@ class UserEventsBloc extends EventsBloc {
       PaginatedList<MinimalEvent> page = await eventRepository.fetchEvents(
         requestType,
         state.nextPage,
-        numberOfEventsPerRequest,
         userId: userId,
       );
 
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == numberOfEventsPerRequest,
+            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: state.nextPage + 1,
           ),
         ),

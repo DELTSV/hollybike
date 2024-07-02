@@ -204,9 +204,7 @@ class EventDetailsMyImages extends StatelessWidget {
 
   void _onJoin(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-      JoinEvent(
-        eventId: eventId,
-      ),
+      JoinEvent(),
     );
   }
 }

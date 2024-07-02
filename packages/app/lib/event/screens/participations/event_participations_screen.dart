@@ -13,11 +13,14 @@ import '../../../shared/widgets/app_toast.dart';
 import '../../../shared/widgets/bar/top_bar.dart';
 import '../../../shared/widgets/bar/top_bar_title.dart';
 import '../../../shared/widgets/loaders/themed_refresh_indicator.dart';
+import '../../services/event/event_repository.dart';
+import '../../services/participation/event_participation_repository.dart';
 import '../../types/participation/event_participation.dart';
 import '../../widgets/participations/event_participation_card.dart';
 
 @RoutePage()
-class EventParticipationsScreen extends StatefulWidget {
+class EventParticipationsScreen extends StatefulWidget
+    implements AutoRouteWrapper {
   final EventDetails eventDetails;
   final List<EventParticipation> participationPreview;
 
@@ -30,6 +33,21 @@ class EventParticipationsScreen extends StatefulWidget {
   @override
   State<EventParticipationsScreen> createState() =>
       _EventParticipationsScreenState();
+
+  @override
+  Widget wrappedRoute(context) {
+    return BlocProvider<EventParticipationBloc>(
+      create: (context) => EventParticipationBloc(
+        eventId: eventDetails.event.id,
+        eventParticipationsRepository:
+        RepositoryProvider.of<EventParticipationRepository>(
+          context,
+        ),
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
+      )..add(SubscribeToEventParticipations()),
+      child: this,
+    );
+  }
 }
 
 class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
@@ -172,19 +190,16 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
 
   void _loadNextPage() {
     context.read<EventParticipationBloc>().add(
-      LoadEventParticipationsNextPage(
-        eventId: widget.eventDetails.event.id,
-      ),
-    );
+          LoadEventParticipationsNextPage(),
+        );
   }
 
   Future<void> _refreshParticipants() {
     context.read<EventParticipationBloc>().add(
-      RefreshEventParticipations(
-        eventId: widget.eventDetails.event.id,
-        participationPreview: widget.participationPreview,
-      ),
-    );
+          RefreshEventParticipations(
+            participationPreview: widget.participationPreview,
+          ),
+        );
 
     return context.read<EventParticipationBloc>().firstWhenNotLoading;
   }

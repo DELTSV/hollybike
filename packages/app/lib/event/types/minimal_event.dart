@@ -30,6 +30,16 @@ class MinimalEvent with _$MinimalEvent {
 
   factory MinimalEvent.fromJson(JsonMap json) => _$MinimalEventFromJson(json);
 
+  factory MinimalEvent.empty() => MinimalEvent(
+        id: 0,
+        name: '',
+        owner: MinimalUser.empty(),
+        status: EventStatusState.scheduled,
+        startDate: DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
   ImageProvider get imageProvider => Event.imageProviderFromDateTimeAndImage(
         startDate,
         image: image,

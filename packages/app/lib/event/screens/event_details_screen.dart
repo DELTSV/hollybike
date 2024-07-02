@@ -15,6 +15,7 @@ import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:provider/provider.dart';
 
+import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_persistence.dart';
 import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
@@ -23,14 +24,25 @@ import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
 import '../fragments/details/event_details_my_images.dart';
+import '../services/event/event_repository.dart';
 import '../types/event_details.dart';
 import '../widgets/details/event_details_actions_menu.dart';
 import '../widgets/images/show_event_images_picker.dart';
 
 enum EventDetailsTab { info, photos, myPhotos, map }
 
+class Args {
+  final MinimalEvent? event;
+  final bool animate;
+
+  Args({
+    required this.event,
+    this.animate = true,
+  });
+}
+
 @RoutePage()
-class EventDetailsScreen extends StatefulWidget {
+class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
   final MinimalEvent event;
   final bool animate;
 
@@ -42,12 +54,21 @@ class EventDetailsScreen extends StatefulWidget {
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
+
+  @override
+  Widget wrappedRoute(context) {
+    return BlocProvider(
+      create: (context) => EventDetailsBloc(
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
+        eventId: event.id,
+      )..add(SubscribeToEvent()),
+      child: this,
+    );
+  }
 }
 
 class _EventDetailsScreenState extends State<EventDetailsScreen>
     with SingleTickerProviderStateMixin {
-  var eventName = "";
-
   late final TabController _tabController = TabController(
     length: 4,
     vsync: this,
@@ -71,10 +92,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           currentTab = newTab;
         });
       }
-    });
-
-    setState(() {
-      eventName = widget.event.name;
     });
 
     _loadEventDetails();
@@ -103,94 +120,118 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         }
 
         if (state is DeleteEventSuccess) {
-          context.router.maybePop();
-        }
+          Toast.showSuccessToast(context, "Événement supprimé");
+          context.router.removeWhere((route) {
+            if (route.path == '/event-participations') {
+              final eventId = route
+                  .argsAs(
+                  orElse: () =>
+                      EventParticipationsRouteArgs(eventDetails: EventDetails.empty(), participationPreview: []))
+                  .eventDetails
+                  .event
+                  .id;
 
-        setState(() {
-          eventName = state.eventDetails?.event.name ?? widget.event.name;
-        });
+              return eventId == widget.event.id;
+            }
+
+            if (route.path == "/event-details") {
+              final eventId = route
+                  .argsAs(
+                  orElse: () =>
+                      EventDetailsRouteArgs(event: MinimalEvent.empty()))
+                  .event
+                  .id;
+
+              return eventId == widget.event.id;
+            }
+
+            return false;
+          });
+        }
       },
-      child: Hud(
-        appBar: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-          builder: (context, state) {
-            return TopBar(
+      child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+        builder: (context, state) {
+          return Hud(
+            appBar: TopBar(
               prefix: TopBarActionIcon(
                 onPressed: () => context.router.maybePop(),
                 icon: Icons.arrow_back,
               ),
               title: const TopBarTitle("Détails"),
               suffix: _renderActions(state),
-            );
-          },
-        ),
-        floatingActionButton: _getFloatingButton(),
-        body: DefaultTabController(
-          length: 4,
-          child: NestedScrollView(
-            controller: _scrollController,
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              // These are the slivers that show up in the "outer" scroll view.
-              return <Widget>[
-                SliverToBoxAdapter(
-                  child: EventDetailsHeader(
-                    event: widget.event,
-                    animate: widget.animate,
-                  ),
-                ),
-                SliverOverlapAbsorber(
-                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                    context,
-                  ),
-                  sliver: SliverPersistentHeader(
-                    pinned: true,
-                    delegate: PinnedHeaderDelegate(
-                      height: 50,
-                      child: Container(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        child: TabBar(
-                          controller: _tabController,
-                          labelColor: Theme.of(context).colorScheme.secondary,
-                          indicatorColor:
-                              Theme.of(context).colorScheme.secondary,
-                          tabs: const [
-                            Tab(icon: Icon(Icons.info)),
-                            Tab(icon: Icon(Icons.photo_library)),
-                            Tab(icon: Icon(Icons.image)),
-                            Tab(icon: Icon(Icons.map)),
-                          ],
+            ),
+            floatingActionButton: _getFloatingButton(),
+            body: DefaultTabController(
+              length: 4,
+              child: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  // These are the slivers that show up in the "outer" scroll view.
+                  return <Widget>[
+                    SliverToBoxAdapter(
+                      child: EventDetailsHeader(
+                        event: state.eventDetails?.event.toMinimalEvent() ??
+                            widget.event,
+                        animate: widget.animate,
+                      ),
+                    ),
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context,
+                      ),
+                      sliver: SliverPersistentHeader(
+                        pinned: true,
+                        delegate: PinnedHeaderDelegate(
+                          height: 50,
+                          child: Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            child: TabBar(
+                              controller: _tabController,
+                              labelColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              indicatorColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              tabs: const [
+                                Tab(icon: Icon(Icons.info)),
+                                Tab(icon: Icon(Icons.photo_library)),
+                                Tab(icon: Icon(Icons.image)),
+                                Tab(icon: Icon(Icons.map)),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ];
+                },
+                body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
+                  builder: (context, state) {
+                    if (state is EventDetailsLoadInProgress) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (state.eventDetails == null ||
+                        state is EventDetailsLoadFailure) {
+                      return const Center(
+                        child: Text(
+                          "Impossible de charger les détails de l'événement",
+                        ),
+                      );
+                    }
+
+                    return TabBarView(
+                      controller: _tabController,
+                      children: _getTabs(state.eventDetails!),
+                    );
+                  },
                 ),
-              ];
-            },
-            body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-              builder: (context, state) {
-                if (state is EventDetailsLoadInProgress) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (state.eventDetails == null ||
-                    state is EventDetailsLoadFailure) {
-                  return const Center(
-                    child: Text(
-                      "Impossible de charger les détails de l'événement",
-                    ),
-                  );
-                }
-
-                return TabBarView(
-                  controller: _tabController,
-                  children: _getTabs(state.eventDetails!),
-                );
-              },
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -325,19 +366,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
   void _loadEventDetails() {
     context.read<EventDetailsBloc>().add(
-      LoadEventDetails(
-        eventId: widget.event.id,
-      ),
-    );
+          LoadEventDetails(),
+        );
   }
 
   void _onEdit(EventFormData formData) {
     context.read<EventDetailsBloc>().add(
-      EditEvent(
-        eventId: widget.event.id,
-        formData: formData,
-      ),
-    );
+          EditEvent(formData: formData),
+        );
 
     Navigator.of(context).pop();
   }

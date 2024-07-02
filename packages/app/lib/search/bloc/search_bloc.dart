@@ -11,7 +11,6 @@ import 'search_state.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final EventRepository eventRepository;
   final ProfileRepository profileRepository;
-  final int numberOfEventsPerRequest = 10;
 
   SearchBloc({
     required this.eventRepository,
@@ -21,12 +20,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<LoadEventsSearchNextPage>(_onLoadEventsSearchNextPage);
     on<LoadProfilesSearchNextPage>(_onLoadProfilesSearchNextPage);
     on<RefreshSearch>(_onRefreshSearch);
-  }
-
-  @override
-  Future<void> close() async {
-    await eventRepository.close();
-    return super.close();
   }
 
   Future<void> _onSubscribeToEventsSearch(
@@ -55,14 +48,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       final page = await eventRepository.fetchEvents(
         null,
         state.eventsNextPage,
-        numberOfEventsPerRequest,
         query: state.lastSearchQuery as String,
       );
 
       emit(
         SearchLoadSuccess(
           state.copyWith(
-            hasMoreEvents: page.items.length == numberOfEventsPerRequest,
+            hasMoreEvents: page.items.length == eventRepository.numberOfEventsPerRequest,
             eventsNextPage: state.eventsNextPage + 1,
           ),
         ),
@@ -95,7 +87,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoadSuccess(
           state.copyWith(
             profiles: state.profiles + page.items,
-            hasMoreProfiles: page.items.length == numberOfEventsPerRequest,
+            hasMoreProfiles: page.items.length == eventRepository.numberOfEventsPerRequest,
             profilesNextPage: state.profilesNextPage + 1,
           ),
         ),
@@ -114,13 +106,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     try {
       final eventsPage = await eventRepository.refreshEvents(
         null,
-        numberOfEventsPerRequest,
         query: event.query,
       );
 
       final profilesPage = await profileRepository.searchProfiles(
         null,
-        numberOfEventsPerRequest,
+        eventRepository.numberOfEventsPerRequest,
         event.query,
       );
 
@@ -128,11 +119,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoadSuccess(
           state.copyWith(
             lastSearchQuery: event.query,
-            hasMoreEvents: eventsPage.items.length == numberOfEventsPerRequest,
+            hasMoreEvents: eventsPage.items.length == eventRepository.numberOfEventsPerRequest,
             eventsNextPage: 1,
             profiles: profilesPage.items,
             hasMoreProfiles:
-                profilesPage.items.length == numberOfEventsPerRequest,
+                profilesPage.items.length == eventRepository.numberOfEventsPerRequest,
             profilesNextPage: 1,
           ),
         ),

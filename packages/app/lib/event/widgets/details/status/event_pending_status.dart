@@ -28,9 +28,7 @@ class EventPendingStatus extends StatelessWidget {
 
   void _onPublish(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-      PublishEvent(
-        eventId: eventId,
-      ),
+      PublishEvent(),
     );
   }
 }

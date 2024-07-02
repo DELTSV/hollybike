@@ -65,7 +65,6 @@ class EventParticipationCard extends StatelessWidget {
   void _onPromote(BuildContext context) {
     context.read<EventParticipationBloc>().add(
       PromoteEventParticipant(
-        eventId: eventId,
         userId: participation.user.id,
       ),
     );
@@ -74,7 +73,6 @@ class EventParticipationCard extends StatelessWidget {
   void _onDemote(BuildContext context) {
     context.read<EventParticipationBloc>().add(
       DemoteEventParticipant(
-        eventId: eventId,
         userId: participation.user.id,
       ),
     );
@@ -83,7 +81,6 @@ class EventParticipationCard extends StatelessWidget {
   void _onRemove(BuildContext context) {
     context.read<EventParticipationBloc>().add(
       RemoveEventParticipant(
-        eventId: eventId,
         userId: participation.user.id,
       ),
     );

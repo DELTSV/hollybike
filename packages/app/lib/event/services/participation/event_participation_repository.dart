@@ -1,6 +1,5 @@
-import 'package:rxdart/rxdart.dart';
-
 import '../../../shared/types/paginated_list.dart';
+import '../../../shared/utils/stream_mapper.dart';
 import '../../types/participation/event_candidate.dart';
 import '../../types/participation/event_participation.dart';
 import '../../types/participation/event_role.dart';
@@ -9,19 +8,18 @@ import 'event_participation_api.dart';
 class EventParticipationRepository {
   final EventParticipationsApi eventParticipationsApi;
 
-  late final _eventParticipationsStreamController =
-      BehaviorSubject<List<EventParticipation>>.seeded([]);
-
-  late final _eventCandidatesStreamController =
-      BehaviorSubject<List<EventCandidate>>.seeded([]);
-
-  Stream<List<EventCandidate>> get candidatesStream =>
-      _eventCandidatesStreamController.stream;
-
-  Stream<List<EventParticipation>> get participationsStream =>
-      _eventParticipationsStreamController.stream;
+  final _eventParticipationsStreamMapper =
+      StreamMapper<List<EventParticipation>>(seedValue: []);
+  final _eventCandidatesStreamMapper =
+      StreamMapper<List<EventCandidate>>(seedValue: []);
 
   EventParticipationRepository({required this.eventParticipationsApi});
+
+  Stream<List<EventCandidate>> candidatesStream(int eventId) =>
+      _eventCandidatesStreamMapper.stream(eventId);
+
+  Stream<List<EventParticipation>> participationsStream(int eventId) =>
+      _eventParticipationsStreamMapper.stream(eventId);
 
   Future<PaginatedList<EventCandidate>> fetchCandidates(
     int eventId,
@@ -36,9 +34,14 @@ class EventParticipationRepository {
       search,
     );
 
-    _eventCandidatesStreamController.add(
-      _eventCandidatesStreamController.value + pageResult.items,
-    );
+    final candidates = _eventCandidatesStreamMapper.get(eventId);
+
+    if (candidates != null) {
+      _eventCandidatesStreamMapper.add(
+        eventId,
+        candidates + pageResult.items,
+      );
+    }
 
     return pageResult;
   }
@@ -55,7 +58,8 @@ class EventParticipationRepository {
       search,
     );
 
-    _eventCandidatesStreamController.add(
+    _eventCandidatesStreamMapper.add(
+      eventId,
       pageResult.items,
     );
 
@@ -73,9 +77,14 @@ class EventParticipationRepository {
       participationsPerPage,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value + pageResult.items,
-    );
+    final participations = _eventParticipationsStreamMapper.get(eventId);
+
+    if (participations != null) {
+      _eventParticipationsStreamMapper.add(
+        eventId,
+        participations + pageResult.items,
+      );
+    }
 
     return pageResult;
   }
@@ -90,7 +99,8 @@ class EventParticipationRepository {
       participationsPerPage,
     );
 
-    _eventParticipationsStreamController.add(
+    _eventParticipationsStreamMapper.add(
+      eventId,
       pageResult.items,
     );
 
@@ -106,13 +116,16 @@ class EventParticipationRepository {
       userId,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value
-          .map((participation) => participation.user.id == userId
-              ? participation.copyWith(role: EventRole.organizer)
-              : participation)
-          .toList(),
-    );
+    final participations = _eventParticipationsStreamMapper.get(eventId);
+
+    if (participations != null) {
+      _eventParticipationsStreamMapper.add(
+        eventId,
+        participations.map((participation) => participation.user.id == userId
+            ? participation.copyWith(role: EventRole.organizer)
+            : participation).toList(),
+      );
+    }
   }
 
   Future<void> demoteParticipant(
@@ -123,14 +136,16 @@ class EventParticipationRepository {
       eventId,
       userId,
     );
+    final participations = _eventParticipationsStreamMapper.get(eventId);
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value
-          .map((participation) => participation.user.id == userId
-              ? participation.copyWith(role: EventRole.member)
-              : participation)
-          .toList(),
-    );
+    if (participations != null) {
+      _eventParticipationsStreamMapper.add(
+        eventId,
+        participations.map((participation) => participation.user.id == userId
+            ? participation.copyWith(role: EventRole.member)
+            : participation).toList(),
+      );
+    }
   }
 
   Future<void> removeParticipant(
@@ -142,16 +157,14 @@ class EventParticipationRepository {
       userId,
     );
 
-    _eventParticipationsStreamController.add(
-      _eventParticipationsStreamController.value
-          .where((participation) => participation.user.id != userId)
-          .toList(),
-    );
-  }
+    final participations = _eventParticipationsStreamMapper.get(eventId);
 
-  Future<void> close() async {
-    _eventParticipationsStreamController.close();
-    _eventCandidatesStreamController.close();
+    if (participations != null) {
+      _eventParticipationsStreamMapper.add(
+        eventId,
+        participations.where((participation) => participation.user.id != userId).toList(),
+      );
+    }
   }
 
   Future<List<EventParticipation>> addParticipants(

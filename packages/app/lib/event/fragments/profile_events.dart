@@ -8,9 +8,6 @@ import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
-import '../../shared/widgets/app_toast.dart';
-import '../bloc/event_details_bloc/event_details_bloc.dart';
-import '../bloc/event_details_bloc/event_details_state.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../types/minimal_event.dart';
@@ -33,21 +30,13 @@ class _ProfileEventsState extends State<ProfileEvents> {
   @override
   Widget build(BuildContext context) {
     return ThemedRefreshIndicator(
-      onRefresh: () => _refreshEvents(context, widget.userId),
+      onRefresh: () => _refreshEvents(context),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthConnected) {
-                _refreshEvents(context, widget.userId);
-              }
-            },
-          ),
-          BlocListener<EventDetailsBloc, EventDetailsState>(
-            listener: (context, state) {
-              if (state is DeleteEventSuccess) {
-                Toast.showSuccessToast(context, "Événement supprimé");
-                _refreshEvents(context, widget.userId);
+                _refreshEvents(context);
               }
             },
           ),
@@ -100,7 +89,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
   @override
   void initState() {
     super.initState();
-    _refreshEvents(context, widget.userId);
+    _refreshEvents(context);
 
     final scrollController = widget.scrollView.currentState!.innerController;
     scrollController.addListener(() {
@@ -116,14 +105,8 @@ class _ProfileEventsState extends State<ProfileEvents> {
     context.read<UserEventsBloc>().add(LoadEventsNextPage());
   }
 
-  Future<void> _refreshEvents(BuildContext context, int? userId) {
-    if (userId == null) return Future.value();
-
-    context.read<UserEventsBloc>().add(
-          RefreshUserEvents(
-            userId: userId,
-          ),
-        );
+  Future<void> _refreshEvents(BuildContext context) {
+    context.read<UserEventsBloc>().add(RefreshUserEvents());
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;
   }
