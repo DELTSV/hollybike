@@ -13,7 +13,6 @@ class MyPositionLocator {
   MyPositionLocator({required this.authPersistence});
 
   Future<void> start(int eventId, String eventName) async {
-
     final session = await authPersistence.currentSession;
 
     if (session == null) {
@@ -47,10 +46,10 @@ class MyPositionLocator {
           notificationTitle: 'Suivi de votre position',
           notificationMsg: 'Suivi de votre position en arrière-plan',
           notificationBigMsg:
-          'Le suivi de votre position est activé afin de partager votre position en temps réel avec les autres participants de l\'événement "$eventName" ',
+              'Le suivi de votre position est activé afin de partager votre position en temps réel avec les autres participants de l\'événement "$eventName" ',
           notificationIconColor: Colors.grey,
           notificationTapCallback:
-          MyPositionCallbackHandler.notificationCallback,
+              MyPositionCallbackHandler.notificationCallback,
         ),
       ),
     );

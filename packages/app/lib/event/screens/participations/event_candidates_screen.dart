@@ -31,11 +31,10 @@ class EventCandidatesScreen extends StatefulWidget implements AutoRouteWrapper {
       create: (context) => EventCandidatesBloc(
         eventId: eventId,
         eventParticipationsRepository:
-        RepositoryProvider.of<EventParticipationRepository>(
+            RepositoryProvider.of<EventParticipationRepository>(
           context,
         ),
-        eventRepository:
-        RepositoryProvider.of<EventRepository>(context),
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
       )..add(SubscribeToEventCandidates()),
       child: this,
     );
@@ -213,11 +212,11 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
 
   void _addCandidates() {
     context.read<EventCandidatesBloc>().add(
-      AddCandidates(
-        eventId: widget.eventId,
-        userIds: _selectedCandidates,
-      ),
-    );
+          AddCandidates(
+            eventId: widget.eventId,
+            userIds: _selectedCandidates,
+          ),
+        );
   }
 
   void _onSearchCandidates(String query) {
@@ -232,26 +231,26 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
 
   void _refreshCandidates() {
     context.read<EventCandidatesBloc>().add(
-      RefreshEventCandidates(
-        eventId: widget.eventId,
-      ),
-    );
+          RefreshEventCandidates(
+            eventId: widget.eventId,
+          ),
+        );
   }
 
   void _loadNextPage() {
     context.read<EventCandidatesBloc>().add(
-      LoadEventCandidatesNextPage(
-        eventId: widget.eventId,
-      ),
-    );
+          LoadEventCandidatesNextPage(
+            eventId: widget.eventId,
+          ),
+        );
   }
 
   void _searchCandidates(String query) {
     context.read<EventCandidatesBloc>().add(
-      SearchCandidates(
-        eventId: widget.eventId,
-        search: query,
-      ),
-    );
+          SearchCandidates(
+            eventId: widget.eventId,
+            search: query,
+          ),
+        );
   }
 }

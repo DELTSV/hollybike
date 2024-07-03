@@ -1,0 +1,4 @@
+enum ImagePickerMode {
+  single,
+  multiple,
+}

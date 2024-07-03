@@ -100,7 +100,8 @@ class _ProfileEventsState extends State<ProfileEvents> {
   }
 
   void _listenToScroll() {
-    var nextPageTrigger = 0.8 * widget.scrollController.position.maxScrollExtent;
+    var nextPageTrigger =
+        0.8 * widget.scrollController.position.maxScrollExtent;
 
     if (widget.scrollController.position.pixels > nextPageTrigger) {
       _loadNextPage(context);

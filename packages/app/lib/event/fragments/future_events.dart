@@ -26,9 +26,7 @@ class FutureEvents extends StatelessWidget {
   }
 
   void _loadNextPage(BuildContext context) {
-    context
-        .read<FutureEventsBloc>()
-        .add(LoadEventsNextPage());
+    context.read<FutureEventsBloc>().add(LoadEventsNextPage());
   }
 
   Future<void> _refreshEvents(BuildContext context) {

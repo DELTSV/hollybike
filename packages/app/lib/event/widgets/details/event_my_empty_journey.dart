@@ -33,8 +33,8 @@ class EventMyEmptyJourney extends StatelessWidget {
                 softWrap: true,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
               ),
             ),
           ],

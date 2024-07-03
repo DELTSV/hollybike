@@ -60,7 +60,8 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMore:
+                page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: state.nextPage + 1,
           ),
         ),
@@ -84,7 +85,8 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMore:
+                page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: 1,
           ),
         ),

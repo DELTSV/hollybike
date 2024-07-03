@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:hollybike/image/type/image_picker_mode.dart';
 import 'package:hollybike/image/utils/image_picker/img.dart';
-import 'package:hollybike/image/utils/image_picker/show_image_picker.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_gallery_button.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_thumbnail.dart';
 import 'package:hollybike/shared/utils/permissions.dart';
@@ -74,18 +74,23 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
       )
     ];
 
-    return SizedBox(
-      height: 100,
-      child: AnimatedCrossFade(
-        crossFadeState:
-            isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-        duration: const Duration(milliseconds: 200),
-        firstChild: Center(
+    const height = 100.0;
+
+    return AnimatedCrossFade(
+      crossFadeState:
+          isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      duration: const Duration(milliseconds: 200),
+      firstChild: SizedBox(
+        height: height,
+        child: Center(
           child: CircularProgressIndicator(
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        secondChild: ListView.separated(
+      ),
+      secondChild: SizedBox(
+        height: height,
+        child: ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(width: 8);
           },

@@ -13,7 +13,7 @@ import '../type/event_image.dart';
 class ImageApi {
   final DioClient client;
 
- ImageApi({required this.client});
+  ImageApi({required this.client});
 
   Future<PaginatedList<EventImage>> getEventImages(
     int eventId,
@@ -92,11 +92,11 @@ class ImageApi {
     }).toList());
 
     final response = await client.dio.post(
-          '/events/$eventId/images',
-          data: FormData.fromMap(
-            {'images': imageParts},
-          ),
-        );
+      '/events/$eventId/images',
+      data: FormData.fromMap(
+        {'images': imageParts},
+      ),
+    );
 
     if (response.statusCode != 201) {
       throw Exception("Failed to upload event images");
@@ -123,8 +123,8 @@ class ImageApi {
     int imageId,
   ) async {
     final response = await client.dio.get(
-          '/events/images/$imageId',
-        );
+      '/events/images/$imageId',
+    );
 
     return EventImageDetails.fromJson(response.data);
   }
@@ -133,8 +133,8 @@ class ImageApi {
     int imageId,
   ) async {
     final response = await client.dio.delete(
-          '/events/images/$imageId',
-        );
+      '/events/images/$imageId',
+    );
 
     if (response.statusCode != 204) {
       throw Exception("Failed to delete event image");

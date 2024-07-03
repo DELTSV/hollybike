@@ -33,8 +33,7 @@ class EventsScreen extends StatefulWidget implements AutoRouteWrapper {
   Widget wrappedRoute(context) {
     return BlocProvider<FutureEventsBloc>(
       create: (context) => FutureEventsBloc(
-        eventRepository:
-        RepositoryProvider.of<EventRepository>(context),
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
       )..add(SubscribeToEvents()),
       child: this,
     );

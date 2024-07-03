@@ -10,10 +10,17 @@ Future<void> showEventImagesVisibilityDialog(BuildContext context,
     {required bool isImagesPublic, required int eventId}) {
   return showDialog<void>(
     context: context,
-    builder: (BuildContext context) {
+    builder: (_) {
       return EventImagesVisibilityDialog(
         isImagesPublic: isImagesPublic,
         eventId: eventId,
+        onVisibilityChange: (isPublic) {
+          context.read<EventMyImagesBloc>().add(
+                UpdateImagesVisibility(
+                  isPublic: isPublic,
+                ),
+              );
+        },
       );
     },
   );
@@ -22,11 +29,13 @@ Future<void> showEventImagesVisibilityDialog(BuildContext context,
 class EventImagesVisibilityDialog extends StatefulWidget {
   final bool isImagesPublic;
   final int eventId;
+  final void Function(bool) onVisibilityChange;
 
   const EventImagesVisibilityDialog({
     super.key,
     required this.isImagesPublic,
     required this.eventId,
+    required this.onVisibilityChange,
   });
 
   @override
@@ -79,15 +88,6 @@ class _EventImagesVisibilityDialogState
       isPublic = !isPublic;
     });
 
-    _updateImagesVisibility();
-  }
-
-  void _updateImagesVisibility() {
-    BlocProvider.of<EventMyImagesBloc>(context).add(
-      UpdateImagesVisibility(
-        eventId: widget.eventId,
-        isPublic: isPublic,
-      ),
-    );
+    widget.onVisibilityChange(isPublic);
   }
 }

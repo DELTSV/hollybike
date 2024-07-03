@@ -14,9 +14,10 @@ class ProfileApi {
   Future<Profile> getSessionProfile(AuthSession session) async {
     final AuthSession(:host, :token) = session;
 
-    final response = await client.dio.get("$host/api/users/me", options: Options(
-      headers: {'Authorization': "Bearer $token"},
-    ));
+    final response = await client.dio.get("$host/api/users/me",
+        options: Options(
+          headers: {'Authorization': "Bearer $token"},
+        ));
 
     return Profile.fromJson(response.data);
   }

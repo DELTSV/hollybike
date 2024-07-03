@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hollybike/image/type/image_picker_mode.dart';
 import 'package:hollybike/image/utils/image_picker/img.dart';
-import 'package:hollybike/image/utils/image_picker/show_image_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'image_picker_button_container.dart';

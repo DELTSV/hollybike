@@ -1,18 +1,21 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:hollybike/image/bloc/image_list_bloc.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 import 'package:hollybike/image/type/event_image.dart';
 import 'package:hollybike/profile/bloc/profile_image_bloc/profile_images_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
-class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
+class ProfileImagesBloc extends ImageListBloc<ProfileImagesEvent> {
+  final int userId;
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
 
   ProfileImagesBloc({
+    required this.userId,
     required this.imageRepository,
   }) : super(ImageListInitial()) {
     on<LoadProfileImagesNextPage>(_onLoadProfileImagesNextPage);
@@ -31,7 +34,7 @@ class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
 
     try {
       PaginatedList<EventImage> page = await imageRepository.fetchProfileImages(
-        event.userId,
+        userId,
         state.nextPage,
         numberOfImagesPerRequest,
       );
@@ -55,16 +58,12 @@ class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
     RefreshProfileImages event,
     Emitter<ImageListState> emit,
   ) async {
-    if (event.initial) {
-      emit(ImageListInitialPageLoadInProgress(state));
-    } else {
-      emit(ImageListPageLoadInProgress(state));
-    }
+    emit(ImageListPageLoadInProgress(state));
 
     try {
       PaginatedList<EventImage> page =
-      await imageRepository.refreshProfileImages(
-        event.userId,
+          await imageRepository.refreshProfileImages(
+        userId,
         numberOfImagesPerRequest,
       );
 
@@ -87,8 +86,7 @@ class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
 extension FirstWhenNotLoading on ProfileImagesBloc {
   Future<ImageListState> get firstWhenNotLoading async {
     return stream.firstWhere((state) {
-      return state is! ImageListPageLoadInProgress &&
-          state is! ImageListInitialPageLoadInProgress;
+      return state is! ImageListPageLoadInProgress;
     });
   }
 }

@@ -40,7 +40,7 @@ class EventParticipationsScreen extends StatefulWidget
       create: (context) => EventParticipationBloc(
         eventId: eventDetails.event.id,
         eventParticipationsRepository:
-        RepositoryProvider.of<EventParticipationRepository>(
+            RepositoryProvider.of<EventParticipationRepository>(
           context,
         ),
         eventRepository: RepositoryProvider.of<EventRepository>(context),

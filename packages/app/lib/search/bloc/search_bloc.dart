@@ -54,7 +54,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(
         SearchLoadSuccess(
           state.copyWith(
-            hasMoreEvents: page.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMoreEvents:
+                page.items.length == eventRepository.numberOfEventsPerRequest,
             eventsNextPage: state.eventsNextPage + 1,
           ),
         ),
@@ -87,7 +88,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoadSuccess(
           state.copyWith(
             profiles: state.profiles + page.items,
-            hasMoreProfiles: page.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMoreProfiles:
+                page.items.length == eventRepository.numberOfEventsPerRequest,
             profilesNextPage: state.profilesNextPage + 1,
           ),
         ),
@@ -119,11 +121,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoadSuccess(
           state.copyWith(
             lastSearchQuery: event.query,
-            hasMoreEvents: eventsPage.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMoreEvents: eventsPage.items.length ==
+                eventRepository.numberOfEventsPerRequest,
             eventsNextPage: 1,
             profiles: profilesPage.items,
-            hasMoreProfiles:
-                profilesPage.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMoreProfiles: profilesPage.items.length ==
+                eventRepository.numberOfEventsPerRequest,
             profilesNextPage: 1,
           ),
         ),

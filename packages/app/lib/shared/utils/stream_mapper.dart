@@ -9,13 +9,13 @@ class StreamCounter<T> {
   StreamCounter(this.seedValue);
 
   Stream<T> get stream => _streamController.stream.doOnListen(() {
-    _listenerCount++;
-  }).doOnCancel(() {
-    _listenerCount--;
-    if (_listenerCount == 0) {
-      _streamController.close();
-    }
-  });
+        _listenerCount++;
+      }).doOnCancel(() {
+        _listenerCount--;
+        if (_listenerCount == 0) {
+          _streamController.close();
+        }
+      });
 
   void add(T value) => _streamController.add(value);
 
@@ -34,17 +34,15 @@ class StreamMapper<T> {
 
   StreamMapper({required this.seedValue});
 
-  Stream<T> stream(int key) =>
-      _streamControllerMap
+  Stream<T> stream(int key) => _streamControllerMap
           .putIfAbsent(
-        key,
+            key,
             () => BehaviorSubject<T>.seeded(seedValue),
-      )
+          )
           .stream
           .doOnListen(
-            () {
-          _streamListenerCountMap[key] =
-          _streamListenerCountMap[key] == null
+        () {
+          _streamListenerCountMap[key] = _streamListenerCountMap[key] == null
               ? 1
               : _streamListenerCountMap[key]! + 1;
         },
@@ -53,8 +51,7 @@ class StreamMapper<T> {
           return;
         }
 
-        _streamListenerCountMap[key] =
-            _streamListenerCountMap[key]! - 1;
+        _streamListenerCountMap[key] = _streamListenerCountMap[key]! - 1;
 
         if (_streamListenerCountMap[key] == 0) {
           _streamControllerMap[key]?.close();
@@ -69,7 +66,8 @@ class StreamMapper<T> {
 
   bool containsKey(int key) => _streamControllerMap.containsKey(key);
 
-  List<T> get values => _streamControllerMap.values.map((e) => e.value).toList();
+  List<T> get values =>
+      _streamControllerMap.values.map((e) => e.value).toList();
 
   List<BehaviorSubject<T>> get subjects => _streamControllerMap.values.toList();
 

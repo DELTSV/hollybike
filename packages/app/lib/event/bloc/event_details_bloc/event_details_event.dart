@@ -18,7 +18,6 @@ class PublishEvent extends EventDetailsEvent {
 }
 
 class GetEventParticipationsPreviewData extends EventDetailsEvent {
-
   GetEventParticipationsPreviewData();
 }
 

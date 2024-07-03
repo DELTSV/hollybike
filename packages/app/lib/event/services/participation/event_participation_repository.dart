@@ -121,9 +121,11 @@ class EventParticipationRepository {
     if (participations != null) {
       _eventParticipationsStreamMapper.add(
         eventId,
-        participations.map((participation) => participation.user.id == userId
-            ? participation.copyWith(role: EventRole.organizer)
-            : participation).toList(),
+        participations
+            .map((participation) => participation.user.id == userId
+                ? participation.copyWith(role: EventRole.organizer)
+                : participation)
+            .toList(),
       );
     }
   }
@@ -141,9 +143,11 @@ class EventParticipationRepository {
     if (participations != null) {
       _eventParticipationsStreamMapper.add(
         eventId,
-        participations.map((participation) => participation.user.id == userId
-            ? participation.copyWith(role: EventRole.member)
-            : participation).toList(),
+        participations
+            .map((participation) => participation.user.id == userId
+                ? participation.copyWith(role: EventRole.member)
+                : participation)
+            .toList(),
       );
     }
   }
@@ -162,7 +166,9 @@ class EventParticipationRepository {
     if (participations != null) {
       _eventParticipationsStreamMapper.add(
         eventId,
-        participations.where((participation) => participation.user.id != userId).toList(),
+        participations
+            .where((participation) => participation.user.id != userId)
+            .toList(),
       );
     }
   }

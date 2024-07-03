@@ -12,6 +12,8 @@ import 'package:hollybike/user/types/minimal_user.dart';
 import '../../../event/bloc/events_bloc/events_event.dart';
 import '../../../event/bloc/events_bloc/user_events_bloc.dart';
 import '../../../event/services/event/event_repository.dart';
+import '../../../image/services/image_repository.dart';
+import '../../bloc/profile_image_bloc/profile_images_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   final int? id;
@@ -88,28 +90,42 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
-        body: TabBarView(
-          children: [
-            BlocProvider<UserEventsBloc>(
-              create: (context) => UserEventsBloc(
-                userId: widget.profile!.id,
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEvents()),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: ProfileEvents(
-                  userId: widget.profile!.id,
-                  scrollController: _scrollController,
-                ),
-              ),
+        body: _tabBarContent(),
+      ),
+    );
+  }
+
+  Widget _tabBarContent() {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserEventsBloc>(
+          create: (context) => UserEventsBloc(
+            userId: widget.profile!.id,
+            eventRepository: RepositoryProvider.of<EventRepository>(context),
+          )..add(SubscribeToEvents()),
+        ),
+        BlocProvider<ProfileImagesBloc>(
+          create: (context) => ProfileImagesBloc(
+            userId: widget.profile!.id,
+            imageRepository: RepositoryProvider.of<ImageRepository>(
+              context,
             ),
-            ProfileImages(
+          ),
+        ),
+      ],
+      child: TabBarView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: ProfileEvents(
               userId: widget.profile!.id,
               scrollController: _scrollController,
             ),
-          ],
-        ),
+          ),
+          ProfileImages(
+            scrollController: _scrollController,
+          ),
+        ],
       ),
     );
   }

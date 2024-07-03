@@ -18,12 +18,15 @@ import 'package:provider/provider.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_persistence.dart';
+import '../../image/services/image_repository.dart';
 import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
+import '../bloc/event_images_bloc/event_images_bloc.dart';
+import '../bloc/event_images_bloc/event_my_images_bloc.dart';
 import '../fragments/details/event_details_my_images.dart';
 import '../services/event/event_repository.dart';
 import '../types/event_details.dart';
@@ -157,89 +160,117 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       },
       child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
         builder: (context, state) {
-          return Hud(
-            appBar: TopBar(
-              prefix: TopBarActionIcon(
-                onPressed: () => context.router.maybePop(),
-                icon: Icons.arrow_back,
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<EventImagesBloc>(
+                create: (context) => EventImagesBloc(
+                  eventId: widget.event.id,
+                  imageRepository: RepositoryProvider.of<ImageRepository>(
+                    context,
+                  ),
+                ),
               ),
-              title: const TopBarTitle("Détails"),
-              suffix: _renderActions(state),
-            ),
-            floatingActionButton: _getFloatingButton(),
-            body: DefaultTabController(
-              length: 4,
-              child: NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  // These are the slivers that show up in the "outer" scroll view.
-                  return <Widget>[
-                    SliverToBoxAdapter(
-                      child: EventDetailsHeader(
-                        event: state.eventDetails?.event.toMinimalEvent() ??
-                            widget.event,
-                        animate: widget.animate,
+              BlocProvider(
+                create: (context) => EventMyImagesBloc(
+                  eventId: widget.event.id,
+                  imageRepository: RepositoryProvider.of<ImageRepository>(
+                    context,
+                  ),
+                  eventRepository: RepositoryProvider.of<EventRepository>(
+                    context,
+                  ),
+                ),
+              ),
+            ],
+            child: Hud(
+              appBar: TopBar(
+                prefix: TopBarActionIcon(
+                  onPressed: () => context.router.maybePop(),
+                  icon: Icons.arrow_back,
+                ),
+                title: const TopBarTitle("Détails"),
+                suffix: _renderActions(state),
+              ),
+              floatingActionButton: _getFloatingButton(),
+              body: DefaultTabController(
+                length: 4,
+                child: NestedScrollView(
+                  controller: _scrollController,
+                  headerSliverBuilder: (
+                    BuildContext context,
+                    bool innerBoxIsScrolled,
+                  ) {
+                    return <Widget>[
+                      SliverToBoxAdapter(
+                        child: EventDetailsHeader(
+                          event: state.eventDetails?.event.toMinimalEvent() ??
+                              widget.event,
+                          animate: widget.animate,
+                        ),
                       ),
-                    ),
-                    SliverOverlapAbsorber(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                        context,
-                      ),
-                      sliver: SliverPersistentHeader(
-                        pinned: true,
-                        delegate: PinnedHeaderDelegate(
-                          height: 50,
-                          child: Container(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            child: TabBar(
-                              controller: _tabController,
-                              labelColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              indicatorColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              tabs: const [
-                                Tab(icon: Icon(Icons.info)),
-                                Tab(icon: Icon(Icons.photo_library)),
-                                Tab(icon: Icon(Icons.image)),
-                                Tab(icon: Icon(Icons.map)),
-                              ],
+                      SliverOverlapAbsorber(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                          context,
+                        ),
+                        sliver: SliverPersistentHeader(
+                          pinned: true,
+                          delegate: PinnedHeaderDelegate(
+                            height: 50,
+                            child: Container(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              child: TabBar(
+                                controller: _tabController,
+                                labelColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                indicatorColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                tabs: const [
+                                  Tab(icon: Icon(Icons.info)),
+                                  Tab(icon: Icon(Icons.photo_library)),
+                                  Tab(icon: Icon(Icons.image)),
+                                  Tab(icon: Icon(Icons.map)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ];
-                },
-                body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-                  builder: (context, state) {
-                    if (state is EventDetailsLoadInProgress &&
-                        state.eventDetails == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    if (state.eventDetails == null ||
-                        state is EventDetailsLoadFailure) {
-                      return const Center(
-                        child: Text(
-                          "Impossible de charger les détails de l'événement",
-                        ),
-                      );
-                    }
-
-                    return TabBarView(
-                      controller: _tabController,
-                      children: _getTabs(state.eventDetails!),
-                    );
+                    ];
                   },
+                  body: _tabTabContent(),
                 ),
               ),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _tabTabContent() {
+    return BlocBuilder<EventDetailsBloc, EventDetailsState>(
+      builder: (context, state) {
+        if (state is EventDetailsLoadInProgress && state.eventDetails == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (state.eventDetails == null || state is EventDetailsLoadFailure) {
+          return const Center(
+            child: Text(
+              "Impossible de charger les détails de l'événement",
+            ),
+          );
+        }
+
+        final eventDetails = state.eventDetails!;
+
+        return TabBarView(
+          controller: _tabController,
+          children: _getTabs(eventDetails),
+        );
+      },
     );
   }
 
@@ -256,12 +287,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
-      EventDetailsImages(
-        scrollController: _scrollController,
-        eventId: eventDetails.event.id,
-        isParticipating: eventDetails.isParticipating,
-        onAddPhotos: _onAddPhotoFromAllPhotos,
-      ),
+      Builder(builder: (context) {
+        return EventDetailsImages(
+          scrollController: _scrollController,
+          eventId: eventDetails.event.id,
+          isParticipating: eventDetails.isParticipating,
+          onAddPhotos: () => _onAddPhotoFromAllPhotos(context),
+        );
+      }),
       EventDetailsMyImages(
         scrollController: _scrollController,
         isParticipating: eventDetails.isParticipating,
@@ -293,8 +326,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
   Future<void> _refreshEventDetails() {
     context.read<EventDetailsBloc>().add(
-      LoadEventDetails(),
-    );
+          LoadEventDetails(),
+        );
 
     return context.read<EventDetailsBloc>().firstWhenNotLoading;
   }
@@ -354,7 +387,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     }
   }
 
-  void _onAddPhotoFromAllPhotos() {
+  void _onAddPhotoFromAllPhotos(BuildContext context) {
     _tabController.animateTo(2);
 
     Future.delayed(const Duration(milliseconds: 500), () {

@@ -94,13 +94,10 @@ class EventDetailsStatusBadge extends StatelessWidget {
           actionText!,
           textAlign: TextAlign.right,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: !isLoading
-                ? Event.getStatusColor(status)
-                : Theme.of(context)
-                .colorScheme
-                .onSurface
-                .withOpacity(0.5),
-          ),
+                color: !isLoading
+                    ? Event.getStatusColor(status)
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              ),
         ),
       ),
     );

@@ -66,8 +66,8 @@ class EventNowStatus extends StatelessWidget {
                       Navigator.of(context).pop();
 
                       context.read<EventDetailsBloc>().add(
-                        TerminateUserJourney(),
-                      );
+                            TerminateUserJourney(),
+                          );
 
                       context.read<MyPositionBloc>().add(
                             DisableSendPositions(),

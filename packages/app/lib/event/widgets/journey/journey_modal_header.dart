@@ -115,10 +115,10 @@ class JourneyModalHeader extends StatelessWidget {
     _returnToDetails(context);
 
     context.read<EventJourneyBloc>().add(
-      RemoveJourneyFromEvent(
-        eventId: event.id,
-      ),
-    );
+          RemoveJourneyFromEvent(
+            eventId: event.id,
+          ),
+        );
   }
 
   void _onActionsSelected(BuildContext context, JourneyModalAction action) {

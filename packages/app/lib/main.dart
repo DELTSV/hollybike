@@ -8,30 +8,28 @@ import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_persistence.dart';
 import 'package:hollybike/auth/bloc/auth_repository.dart';
 import 'package:hollybike/auth/bloc/auth_session_repository.dart';
-import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 import 'package:hollybike/notification/bloc/notification_bloc.dart';
 import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/positions/bloc/my_position_bloc.dart';
 import 'package:hollybike/positions/bloc/my_position_event.dart';
 import 'package:hollybike/positions/service/my_position_locator.dart';
-import 'package:hollybike/profile/services/profile_api.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
+import 'package:hollybike/profile/services/profile_api.dart';
 import 'package:hollybike/profile/services/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_bloc.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:provider/provider.dart';
-import 'event/bloc/event_images_bloc/event_my_images_bloc.dart';
+
 import 'event/services/event/event_api.dart';
 import 'event/services/event/event_repository.dart';
-import 'image/services/image_api.dart';
 import 'event/services/participation/event_participation_api.dart';
 import 'event/services/participation/event_participation_repository.dart';
+import 'image/services/image_api.dart';
 import 'journey/service/journey_api.dart';
 import 'journey/service/journey_repository.dart';
-import 'profile/bloc/profile_image_bloc/profile_images_bloc.dart';
 
 Future<void> infiniteDelay() async {
   final completer = Completer<void>();
@@ -150,30 +148,6 @@ class MyApp extends StatelessWidget {
                       profileRepository:
                           RepositoryProvider.of<ProfileRepository>(context),
                     )..add(SubscribeToCurrentSessionChange()),
-                  ),
-                  BlocProvider<EventImagesBloc>(
-                    create: (context) => EventImagesBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
-                  BlocProvider<EventMyImagesBloc>(
-                    create: (context) => EventMyImagesBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                      eventRepository: RepositoryProvider.of<EventRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
-                  BlocProvider<ProfileImagesBloc>(
-                    create: (context) => ProfileImagesBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                    ),
                   ),
                   BlocProvider<SearchBloc>(
                     create: (context) => SearchBloc(
