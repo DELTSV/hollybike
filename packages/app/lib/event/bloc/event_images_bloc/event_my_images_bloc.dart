@@ -137,3 +137,12 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
     }
   }
 }
+
+extension FirstWhenNotLoading on EventMyImagesBloc {
+  Future<EventImagesState> get firstWhenNotLoading async {
+    return stream.firstWhere((state) {
+      return state is! EventImagesPageLoadInProgress;
+    });
+  }
+}
+

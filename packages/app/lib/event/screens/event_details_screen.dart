@@ -13,6 +13,7 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../../app/app_router.gr.dart';
@@ -94,7 +95,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       }
     });
 
-    _loadEventDetails();
+    _refreshEventDetails();
   }
 
   @override
@@ -125,8 +126,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
             if (route.path == '/event-participations') {
               final eventId = route
                   .argsAs(
-                  orElse: () =>
-                      EventParticipationsRouteArgs(eventDetails: EventDetails.empty(), participationPreview: []))
+                    orElse: () => EventParticipationsRouteArgs(
+                      eventDetails: EventDetails.empty(),
+                      participationPreview: [],
+                    ),
+                  )
                   .eventDetails
                   .event
                   .id;
@@ -137,8 +141,10 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
             if (route.path == "/event-details") {
               final eventId = route
                   .argsAs(
-                  orElse: () =>
-                      EventDetailsRouteArgs(event: MinimalEvent.empty()))
+                    orElse: () => EventDetailsRouteArgs(
+                      event: MinimalEvent.empty(),
+                    ),
+                  )
                   .event
                   .id;
 
@@ -207,7 +213,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                 },
                 body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
                   builder: (context, state) {
-                    if (state is EventDetailsLoadInProgress) {
+                    if (state is EventDetailsLoadInProgress &&
+                        state.eventDetails == null) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
@@ -240,11 +247,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     EventDetails eventDetails,
   ) {
     return [
-      EventDetailsInfos(
-        eventDetails: eventDetails,
-        onViewOnMap: () {
-          _tabController.animateTo(3);
-        },
+      ThemedRefreshIndicator(
+        onRefresh: _refreshEventDetails,
+        child: EventDetailsInfos(
+          eventDetails: eventDetails,
+          onViewOnMap: () {
+            _tabController.animateTo(3);
+          },
+        ),
       ),
       EventDetailsImages(
         scrollController: _scrollController,
@@ -281,13 +291,22 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     ];
   }
 
+  Future<void> _refreshEventDetails() {
+    context.read<EventDetailsBloc>().add(
+      LoadEventDetails(),
+    );
+
+    return context.read<EventDetailsBloc>().firstWhenNotLoading;
+  }
+
   Widget? _getFloatingButton() {
     switch (currentTab) {
       case EventDetailsTab.info:
         return BlocBuilder<EventDetailsBloc, EventDetailsState>(
           builder: (context, state) {
             if (state is EventDetailsLoadFailure ||
-                state is EventDetailsLoadInProgress ||
+                (state is EventDetailsLoadInProgress &&
+                    state.eventDetails == null) ||
                 state.eventDetails == null) {
               return const SizedBox();
             }
@@ -346,7 +365,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
   Widget? _renderActions(EventDetailsState state) {
     final event = state.eventDetails;
 
-    if (state is EventDetailsLoadInProgress ||
+    if ((state is EventDetailsLoadInProgress && event == null) ||
         state is EventDetailsLoadFailure ||
         event == null ||
         (!event.isOwner && !event.isParticipating && !event.isOrganizer)) {
@@ -362,12 +381,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         isOrganizer: event.isOrganizer,
       ),
     );
-  }
-
-  void _loadEventDetails() {
-    context.read<EventDetailsBloc>().add(
-          LoadEventDetails(),
-        );
   }
 
   void _onEdit(EventFormData formData) {

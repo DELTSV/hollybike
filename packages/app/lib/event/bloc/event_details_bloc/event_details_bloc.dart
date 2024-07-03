@@ -216,3 +216,11 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     }
   }
 }
+
+extension FirstWhenNotLoading on EventDetailsBloc {
+  Future<EventDetailsState> get firstWhenNotLoading async {
+    return stream.firstWhere((state) {
+      return state is! EventDetailsLoadInProgress;
+    });
+  }
+}
