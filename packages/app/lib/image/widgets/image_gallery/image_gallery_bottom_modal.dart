@@ -96,7 +96,12 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
                   BlocBuilder<EventImageDetailsBloc, EventImageDetailsState>(
                     builder: (context, state) {
                       if (state is EventImageDetailsLoadInProgress) {
-                        return const CircularProgressIndicator();
+                        return const SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
                       }
 
                       if (state.imageDetails == null) {
@@ -199,10 +204,10 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
             TextButton(
               onPressed: () {
                 context.read<EventImageDetailsBloc>().add(
-                  DeleteImage(
-                    imageId: widget.image.id,
-                  ),
-                );
+                      DeleteImage(
+                        imageId: widget.image.id,
+                      ),
+                    );
 
                 Navigator.of(modalContext).pop();
               },

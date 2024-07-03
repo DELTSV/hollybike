@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/widgets/image_gallery/image_gallery.dart';
@@ -33,13 +35,13 @@ class ProfileImages extends StatelessWidget {
             images: state.images,
             loading: state is ImageListPageLoadInProgress,
             onImageTap: (image) {
-              // context.router.push(
-              //   EventMyImageViewRoute(
-              //     imageIndex: state.images.indexOf(image),
-              //     onLoadNextPage: () => _loadNextPage(context),
-              //     onRefresh: () => _refreshImages(context),
-              //   ),
-              // );
+              context.router.push(
+                ProfileImageViewRoute(
+                  imageIndex: state.images.indexOf(image),
+                  onLoadNextPage: () => _loadNextPage(context),
+                  onRefresh: () => _refreshImages(context),
+                ),
+              );
             },
           ),
         );
