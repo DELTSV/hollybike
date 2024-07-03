@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:hollybike/image/type/event_image.dart';
 import 'package:hollybike/image/type/event_image_details.dart';
 
-import '../../../shared/types/paginated_list.dart';
 import '../../../image/services/image_api.dart';
+import '../../../shared/types/paginated_list.dart';
 
 class ImageRepository {
   final ImageApi imageApi;
@@ -58,6 +58,33 @@ class ImageRepository {
   ) async {
     final pageResult = await imageApi.getMyEventImages(
       eventId,
+      0,
+      eventsPerPage,
+    );
+
+    return pageResult;
+  }
+
+  Future<PaginatedList<EventImage>> fetchProfileImages(
+    int userId,
+    int page,
+    int eventsPerPage,
+  ) async {
+    final pageResult = await imageApi.getProfileImages(
+      userId,
+      page,
+      eventsPerPage,
+    );
+
+    return pageResult;
+  }
+
+  Future<PaginatedList<EventImage>> refreshProfileImages(
+    int userId,
+    int eventsPerPage,
+  ) async {
+    final pageResult = await imageApi.getProfileImages(
+      userId,
       0,
       eventsPerPage,
     );

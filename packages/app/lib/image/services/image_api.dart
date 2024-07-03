@@ -51,6 +51,24 @@ class ImageApi {
     return PaginatedList.fromJson(response.data, EventImage.fromJson);
   }
 
+  Future<PaginatedList<EventImage>> getProfileImages(
+    int userId,
+    int page,
+    int imagesPerPage,
+  ) async {
+    final response = await client.dio.get(
+      '/events/images',
+      queryParameters: {
+        'page': page,
+        'per_page': imagesPerPage,
+        'id_user': 'eq:$userId',
+        'sort': 'taken_date_time.desc'
+      },
+    );
+
+    return PaginatedList.fromJson(response.data, EventImage.fromJson);
+  }
+
   Future<void> uploadEventImages(
     int eventId,
     List<File> images,

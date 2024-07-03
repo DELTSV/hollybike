@@ -31,6 +31,7 @@ import 'event/services/participation/event_participation_api.dart';
 import 'event/services/participation/event_participation_repository.dart';
 import 'journey/service/journey_api.dart';
 import 'journey/service/journey_repository.dart';
+import 'profile/bloc/profile_image_bloc/profile_images_bloc.dart';
 
 Future<void> infiniteDelay() async {
   final completer = Completer<void>();
@@ -163,6 +164,13 @@ class MyApp extends StatelessWidget {
                         context,
                       ),
                       eventRepository: RepositoryProvider.of<EventRepository>(
+                        context,
+                      ),
+                    ),
+                  ),
+                  BlocProvider<ProfileImagesBloc>(
+                    create: (context) => ProfileImagesBloc(
+                      imageRepository: RepositoryProvider.of<ImageRepository>(
                         context,
                       ),
                     ),
