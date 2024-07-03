@@ -287,12 +287,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
-      EventDetailsImages(
-        scrollController: _scrollController,
-        eventId: eventDetails.event.id,
-        isParticipating: eventDetails.isParticipating,
-        onAddPhotos: _onAddPhotoFromAllPhotos,
-      ),
+      Builder(builder: (context) {
+        return EventDetailsImages(
+          scrollController: _scrollController,
+          eventId: eventDetails.event.id,
+          isParticipating: eventDetails.isParticipating,
+          onAddPhotos: () => _onAddPhotoFromAllPhotos(context),
+        );
+      }),
       EventDetailsMyImages(
         scrollController: _scrollController,
         isParticipating: eventDetails.isParticipating,
@@ -385,7 +387,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     }
   }
 
-  void _onAddPhotoFromAllPhotos() {
+  void _onAddPhotoFromAllPhotos(BuildContext context) {
     _tabController.animateTo(2);
 
     Future.delayed(const Duration(milliseconds: 500), () {
