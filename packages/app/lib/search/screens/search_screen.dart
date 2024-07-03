@@ -92,11 +92,11 @@ class _SearchScreenState extends State<SearchScreen> {
                               .map(
                                 (event) => EventPreviewCard(
                                   event: event,
-                                  onTap: () {
+                                  onTap: (uniqueKey) {
                                     _navigateToEventDetails(
                                       context,
                                       event,
-                                      true,
+                                      uniqueKey,
                                     );
                                   },
                                 ),
@@ -208,14 +208,13 @@ class _SearchScreenState extends State<SearchScreen> {
   void _navigateToEventDetails(
     BuildContext context,
     MinimalEvent event,
-    bool animate,
+    String uniqueKey,
   ) {
-    Future.delayed(const Duration(milliseconds: 200), () {
-      context.router.push(EventDetailsRoute(
-        event: event,
-        animate: animate,
-      ));
-    });
+    context.router.push(EventDetailsRoute(
+      event: event,
+      animate: true,
+      uniqueKey: uniqueKey,
+    ));
   }
 
   void _handleSearchRequest(String query) {

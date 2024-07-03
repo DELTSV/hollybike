@@ -56,6 +56,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
           key: args.key,
           event: args.event,
           animate: args.animate,
+          uniqueKey: args.uniqueKey,
         )),
       );
     },
@@ -199,6 +200,7 @@ class EventDetailsRoute extends _i13.PageRouteInfo<EventDetailsRouteArgs> {
     _i14.Key? key,
     required _i15.MinimalEvent event,
     bool animate = true,
+    String uniqueKey = "default",
     List<_i13.PageRouteInfo>? children,
   }) : super(
           EventDetailsRoute.name,
@@ -206,6 +208,7 @@ class EventDetailsRoute extends _i13.PageRouteInfo<EventDetailsRouteArgs> {
             key: key,
             event: event,
             animate: animate,
+            uniqueKey: uniqueKey,
           ),
           initialChildren: children,
         );
@@ -221,6 +224,7 @@ class EventDetailsRouteArgs {
     this.key,
     required this.event,
     this.animate = true,
+    this.uniqueKey = "default",
   });
 
   final _i14.Key? key;
@@ -229,9 +233,11 @@ class EventDetailsRouteArgs {
 
   final bool animate;
 
+  final String uniqueKey;
+
   @override
   String toString() {
-    return 'EventDetailsRouteArgs{key: $key, event: $event, animate: $animate}';
+    return 'EventDetailsRouteArgs{key: $key, event: $event, animate: $animate, uniqueKey: $uniqueKey}';
   }
 }
 

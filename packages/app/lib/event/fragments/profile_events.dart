@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
@@ -6,11 +5,9 @@ import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 import 'package:hollybike/event/widgets/events_list/events_sections_list.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 
-import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
-import '../types/minimal_event.dart';
 
 class ProfileEvents extends StatefulWidget {
   final int? userId;
@@ -83,13 +80,6 @@ class _ProfileEventsState extends State<ProfileEvents> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: EventsSectionsList(
                 events: state.events,
-                onEventTap: (event) {
-                  _navigateToEventDetails(
-                    context,
-                    event,
-                    true,
-                  );
-                },
                 hasMore: state.hasMore,
               ),
             );
@@ -116,19 +106,5 @@ class _ProfileEventsState extends State<ProfileEvents> {
     context.read<UserEventsBloc>().add(RefreshUserEvents());
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;
-  }
-
-  void _navigateToEventDetails(
-    BuildContext context,
-    MinimalEvent event,
-    bool animate,
-  ) {
-    // delay 200 ms to allow the animation to finish
-    Future.delayed(const Duration(milliseconds: 200), () {
-      context.router.push(EventDetailsRoute(
-        event: event,
-        animate: animate,
-      ));
-    });
   }
 }

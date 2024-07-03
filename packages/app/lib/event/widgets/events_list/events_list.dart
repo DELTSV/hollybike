@@ -7,14 +7,12 @@ class EventsList extends StatefulWidget {
   final List<MinimalEvent> events;
   final void Function() onNextPageRequested;
   final void Function() onRefreshRequested;
-  final void Function(MinimalEvent event) onEventTap;
   final bool hasMore;
 
   const EventsList({
     super.key,
     required this.events,
     required this.onNextPageRequested,
-    required this.onEventTap,
     required this.onRefreshRequested,
     required this.hasMore,
   });
@@ -32,7 +30,6 @@ class _EventsListState extends State<EventsList> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: EventsSectionsList(
         events: widget.events,
-        onEventTap: widget.onEventTap,
         hasMore: widget.hasMore,
         controller: _scrollController,
       ),

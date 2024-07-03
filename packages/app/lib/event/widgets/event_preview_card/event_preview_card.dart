@@ -6,7 +6,7 @@ import '../event_form/event_date.dart';
 
 class EventPreviewCard extends StatelessWidget {
   final MinimalEvent event;
-  final void Function() onTap;
+  final void Function(String uniqueKey) onTap;
 
   const EventPreviewCard({
     super.key,
@@ -16,6 +16,8 @@ class EventPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uniqueKey = UniqueKey().toString();
+
     return Card(
       color: Theme.of(context).cardColor,
       elevation: 0,
@@ -35,7 +37,7 @@ class EventPreviewCard extends StatelessWidget {
                     SizedBox(
                       width: 110,
                       child: Hero(
-                        tag: "event-image-${event.id}",
+                        tag: "event-image-$uniqueKey",
                         child: Stack(
                           children: [
                             SizedBox(
@@ -84,7 +86,7 @@ class EventPreviewCard extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Hero(
-                                    tag: "event-name-${event.id}",
+                                    tag: "event-name-$uniqueKey",
                                     child: SizedBox(
                                       width: constraints.maxWidth,
                                       child: Text(
@@ -114,7 +116,7 @@ class EventPreviewCard extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  onTap: onTap,
+                  onTap: () => onTap(uniqueKey),
                 ),
               ),
             ),

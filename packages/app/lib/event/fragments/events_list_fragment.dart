@@ -8,18 +8,15 @@ import 'package:lottie/lottie.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
-import '../types/minimal_event.dart';
 import '../widgets/events_list/events_list.dart';
 
 class EventsListFragment<T extends EventsBloc> extends StatefulWidget {
-  final void Function(MinimalEvent) navigateToEventDetails;
   final void Function() onNextPageRequested;
   final Future<void> Function() onRefreshRequested;
   final String placeholderText;
 
   const EventsListFragment({
     super.key,
-    required this.navigateToEventDetails,
     required this.onNextPageRequested,
     required this.onRefreshRequested,
     required this.placeholderText,
@@ -70,7 +67,6 @@ class _EventsListFragmentState<T extends EventsBloc>
               hasMore: state.hasMore,
               events: state.events,
               onNextPageRequested: widget.onNextPageRequested,
-              onEventTap: widget.navigateToEventDetails,
               onRefreshRequested: widget.onRefreshRequested,
             );
           },
