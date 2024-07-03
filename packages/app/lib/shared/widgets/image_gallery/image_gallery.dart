@@ -44,7 +44,7 @@ class _ImageGalleryState extends State<ImageGallery> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.loading) {
+    if (widget.loading && widget.images.isEmpty) {
       return const SliverToBoxAdapter(
         child: SizedBox(
           height: 300,

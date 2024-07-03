@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/event/widgets/images/event_images_visibility_dialog.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.gr.dart';
@@ -30,108 +31,111 @@ class EventDetailsMyImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        BlocListener<EventMyImagesBloc, EventImagesState>(
-          listener: (context, state) {
-            if (state is EventImagesOperationFailure) {
-              Toast.showErrorToast(
-                context,
-                state.errorMessage,
-              );
-            }
-
-            if (state is EventImagesOperationSuccess) {
-              if (state.successMessage != null) {
-                Toast.showSuccessToast(
+    return ThemedRefreshIndicator(
+      onRefresh: () => _refreshImages(context),
+      child: Stack(
+        children: [
+          BlocListener<EventMyImagesBloc, EventImagesState>(
+            listener: (context, state) {
+              if (state is EventImagesOperationFailure) {
+                Toast.showErrorToast(
                   context,
-                  state.successMessage!,
+                  state.errorMessage,
                 );
               }
 
-              if (state.shouldRefresh) {
-                _refreshImages(context);
+              if (state is EventImagesOperationSuccess) {
+                if (state.successMessage != null) {
+                  Toast.showSuccessToast(
+                    context,
+                    state.successMessage!,
+                  );
+                }
+
+                if (state.shouldRefresh) {
+                  _refreshImages(context);
+                }
               }
-            }
-          },
-          child: BlocBuilder<EventMyImagesBloc, EventImagesState>(
-            builder: (context, state) {
-              return EventDetailsTabScrollWrapper(
-                sliverChild: true,
-                scrollViewKey: 'event_details_my_images_$eventId',
-                child: ImageGallery(
-                  scrollController: scrollController,
-                  emptyPlaceholder: _buildPlaceholder(context),
-                  onRefresh: () => _refreshImages(context),
-                  onLoadNextPage: () => _loadNextPage(context),
-                  images: state.images,
-                  loading: state is EventImagesPageLoadInProgress,
-                  onImageTap: (image) {
-                    context.router.push(
-                      EventMyImageViewRoute(
-                        imageIndex: state.images.indexOf(image),
-                        onLoadNextPage: () => _loadNextPage(context),
-                        onRefresh: () => _refreshImages(context),
-                      ),
-                    );
-                  },
-                ),
-              );
             },
-          ),
-        ),
-        Positioned.fill(
-          top: 60,
-          right: 10,
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Stack(
-              children: [
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: _buildVisibilityText(context),
+            child: BlocBuilder<EventMyImagesBloc, EventImagesState>(
+              builder: (context, state) {
+                return EventDetailsTabScrollWrapper(
+                  sliverChild: true,
+                  scrollViewKey: 'event_details_my_images_$eventId',
+                  child: ImageGallery(
+                    scrollController: scrollController,
+                    emptyPlaceholder: _buildPlaceholder(context),
+                    onRefresh: () => _refreshImages(context),
+                    onLoadNextPage: () => _loadNextPage(context),
+                    images: state.images,
+                    loading: state is EventImagesPageLoadInProgress,
+                    onImageTap: (image) {
+                      context.router.push(
+                        EventMyImageViewRoute(
+                          imageIndex: state.images.indexOf(image),
+                          onLoadNextPage: () => _loadNextPage(context),
+                          onRefresh: () => _refreshImages(context),
                         ),
-                        const SizedBox(width: 7),
-                        _buildVisibilityIcon(context),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                ),
-                Positioned.fill(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(5),
-                      onTap: () {
-                        showEventImagesVisibilityDialog(
-                          context,
-                          isImagesPublic: isImagesPublic,
-                          eventId: eventId,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           ),
-        ),
-      ],
+          Positioned.fill(
+            top: 60,
+            right: 10,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Stack(
+                children: [
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: _buildVisibilityText(context),
+                          ),
+                          const SizedBox(width: 7),
+                          _buildVisibilityIcon(context),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(5),
+                        onTap: () {
+                          showEventImagesVisibilityDialog(
+                            context,
+                            isImagesPublic: isImagesPublic,
+                            eventId: eventId,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -186,12 +190,14 @@ class EventDetailsMyImages extends StatelessWidget {
     );
   }
 
-  void _refreshImages(BuildContext context) {
+  Future<void> _refreshImages(BuildContext context) {
     context.read<EventMyImagesBloc>().add(
       RefreshMyEventImages(
         eventId: eventId,
       ),
     );
+
+    return context.read<EventMyImagesBloc>().firstWhenNotLoading;
   }
 
   void _loadNextPage(BuildContext context) {
