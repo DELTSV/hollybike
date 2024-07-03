@@ -105,7 +105,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
   void _onCancel(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (modalContext) {
         return AlertDialog(
           title: const Text("Annuler l'événement"),
           content:
@@ -113,9 +113,9 @@ class EventDetailsActionsMenu extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(modalContext).pop();
               },
-              child: const Text("Annuler"),
+              child: const Text("Revenir en arrière"),
             ),
             TextButton(
               onPressed: () {
@@ -123,9 +123,9 @@ class EventDetailsActionsMenu extends StatelessWidget {
                   CancelEvent(),
                 );
 
-                Navigator.of(context).pop();
+                Navigator.of(modalContext).pop();
               },
-              child: const Text("Annuler l'événement"),
+              child: const Text("Confirmer"),
             ),
           ],
         );
