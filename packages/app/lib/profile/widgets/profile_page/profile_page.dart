@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/association/types/association.dart';
 import 'package:hollybike/event/fragments/profile_events.dart';
-import 'package:hollybike/profile/bloc/profile_image_bloc/profile_images_bloc.dart';
-import 'package:hollybike/profile/bloc/profile_image_bloc/profile_images_event.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
 import 'package:hollybike/profile/widgets/profile_description/profile_description.dart';
 import 'package:hollybike/profile/widgets/profile_images.dart';
 import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
 import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
-import 'package:lottie/lottie.dart';
 
 import '../../../event/bloc/events_bloc/events_event.dart';
 import '../../../event/bloc/events_bloc/user_events_bloc.dart';
