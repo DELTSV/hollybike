@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/shared/utils/safe_set_state.dart';
 
 import '../../../image/bloc/image_list_state.dart';
 import '../../../image/type/image_picker_mode.dart';
@@ -34,7 +35,7 @@ class _EventImagePickerModalState extends State<EventImagePickerModal> {
         } else {
           // delay 300 ms
           Future.delayed(const Duration(milliseconds: 300), () {
-            setState(() {
+            safeSetState(() {
               _loading = false;
             });
           });
