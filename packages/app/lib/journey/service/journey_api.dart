@@ -40,11 +40,11 @@ class JourneyApi {
     File file,
   ) async {
     final response = await client.dio.post(
-          '/journeys/$journeyId/file',
-          data: FormData.fromMap({
-            'file': await MultipartFile.fromFile(file.path),
-          }),
-        );
+      '/journeys/$journeyId/file',
+      data: FormData.fromMap({
+        'file': await MultipartFile.fromFile(file.path),
+      }),
+    );
 
     return Journey.fromJson(response.data);
   }

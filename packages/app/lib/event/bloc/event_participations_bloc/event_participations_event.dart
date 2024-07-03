@@ -10,7 +10,6 @@ class SubscribeToEventParticipations extends EventParticipationsEvent {
 }
 
 class LoadEventParticipationsNextPage extends EventParticipationsEvent {
-
   LoadEventParticipationsNextPage();
 }
 

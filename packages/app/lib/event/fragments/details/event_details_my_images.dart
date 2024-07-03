@@ -65,10 +65,10 @@ class EventDetailsMyImages extends StatelessWidget {
                   child: ImageGallery(
                     scrollController: scrollController,
                     emptyPlaceholder: _buildPlaceholder(context),
-                    onRefresh: (initial) => _refreshImages(context, initial: initial),
+                    onRefresh: () => _refreshImages(context),
                     onLoadNextPage: () => _loadNextPage(context),
                     images: state.images,
-                    loading: state is ImageListInitialPageLoadInProgress,
+                    loading: state is ImageListPageLoadInProgress,
                     onImageTap: (image) {
                       context.router.push(
                         ImageGalleryViewRoute(
@@ -191,28 +191,23 @@ class EventDetailsMyImages extends StatelessWidget {
     );
   }
 
-  Future<void> _refreshImages(BuildContext context, {bool initial = false}) {
+  Future<void> _refreshImages(BuildContext context) {
     context.read<EventMyImagesBloc>().add(
-      RefreshMyEventImages(
-        eventId: eventId,
-        initial: initial,
-      ),
-    );
+          RefreshMyEventImages(),
+        );
 
     return context.read<EventMyImagesBloc>().firstWhenNotLoading;
   }
 
   void _loadNextPage(BuildContext context) {
     context.read<EventMyImagesBloc>().add(
-      LoadMyEventImagesNextPage(
-        eventId: eventId,
-      ),
-    );
+          LoadMyEventImagesNextPage(),
+        );
   }
 
   void _onJoin(BuildContext context) {
     context.read<EventDetailsBloc>().add(
-      JoinEvent(),
-    );
+          JoinEvent(),
+        );
   }
 }

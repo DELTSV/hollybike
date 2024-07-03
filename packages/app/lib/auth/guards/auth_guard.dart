@@ -10,7 +10,8 @@ class AuthGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
-    if (await authPersistence.isDisconnected || authPersistence.currentSessionExpired) {
+    if (await authPersistence.isDisconnected ||
+        authPersistence.currentSessionExpired) {
       router.push(LoginRoute(onAuthSuccess: () => resolver.next(true)));
     } else {
       resolver.next(true);

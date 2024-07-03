@@ -6,15 +6,17 @@ import 'package:hollybike/image/bloc/image_list_bloc.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 
-import '../../../shared/types/paginated_list.dart';
 import '../../../image/type/event_image.dart';
+import '../../../shared/types/paginated_list.dart';
 
 class EventImagesBloc extends ImageListBloc<EventImagesEvent> {
   final int numberOfImagesPerRequest = 20;
 
+  final int eventId;
   final ImageRepository imageRepository;
 
   EventImagesBloc({
+    required this.eventId,
     required this.imageRepository,
   }) : super(ImageListInitial()) {
     on<LoadEventImagesNextPage>(_onLoadEventImagesNextPage);
@@ -33,7 +35,7 @@ class EventImagesBloc extends ImageListBloc<EventImagesEvent> {
 
     try {
       PaginatedList<EventImage> page = await imageRepository.fetchEventImages(
-        event.eventId,
+        eventId,
         state.nextPage,
         numberOfImagesPerRequest,
       );
@@ -57,15 +59,11 @@ class EventImagesBloc extends ImageListBloc<EventImagesEvent> {
     RefreshEventImages event,
     Emitter<ImageListState> emit,
   ) async {
-    if (event.initial) {
-      emit(ImageListInitialPageLoadInProgress(state));
-    } else {
-      emit(ImageListPageLoadInProgress(state));
-    }
+    emit(ImageListPageLoadInProgress(state));
 
     try {
       PaginatedList<EventImage> page = await imageRepository.refreshEventImages(
-        event.eventId,
+        eventId,
         numberOfImagesPerRequest,
       );
 

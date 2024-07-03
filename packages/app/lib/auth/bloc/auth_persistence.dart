@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/shared/utils/calculate_future_or_list.dart';
 import 'package:hollybike/shared/utils/apply_on_future_or.dart';
+import 'package:hollybike/shared/utils/calculate_future_or_list.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,12 +10,9 @@ class AuthPersistence {
   final String key = "sessions-store";
 
   FutureOr<List<AuthSession>> get sessions async {
-    final sessions = (await SharedPreferences.getInstance())
-        .getStringList(key);
+    final sessions = (await SharedPreferences.getInstance()).getStringList(key);
 
-    return sessions?.map(AuthSession.fromJson)
-        .toList() ??
-        <AuthSession>[];
+    return sessions?.map(AuthSession.fromJson).toList() ?? <AuthSession>[];
   }
 
   Future<bool> get isConnected async => (await sessions).isNotEmpty;
@@ -37,21 +34,23 @@ class AuthPersistence {
     SharedPreferences.getInstance().then((sharedPreferences) {
       newFutureSessions.apply((newSessions) {
         sharedPreferences.setStringList(
-            key,
-            newSessions.map((newSession) => newSession.toJson()).toList(),
+          key,
+          newSessions.map((newSession) => newSession.toJson()).toList(),
         );
       });
     });
   }
 
-  FutureOr<AuthSession?> get currentSession async => (await sessions).firstOrNull;
+  FutureOr<AuthSession?> get currentSession async =>
+      (await sessions).firstOrNull;
 
   set currentSession(FutureOr<AuthSession?> session) {
     if (session == null) return;
 
     currentSessionExpired = false;
 
-    final FutureOr<List<AuthSession>> filteredSessions = sessions - (session as FutureOr<AuthSession>);
+    final FutureOr<List<AuthSession>> filteredSessions =
+        sessions - (session as FutureOr<AuthSession>);
     sessions = filteredSessions.add(session);
   }
 
@@ -61,7 +60,8 @@ class AuthPersistence {
 
   final _oldNewSessionCorrespondence = <AuthSession, AuthSession>{};
 
-  Future<void> replaceSession(AuthSession oldSession, AuthSession newSession) async {
+  Future<void> replaceSession(
+      AuthSession oldSession, AuthSession newSession) async {
     _oldNewSessionCorrespondence[oldSession] = newSession;
     sessions = (sessions - oldSession).add(newSession);
   }
@@ -70,7 +70,8 @@ class AuthPersistence {
     _oldNewSessionCorrespondence.remove(oldSession);
   }
 
-  AuthSession? getNewSession(AuthSession oldSession) => _oldNewSessionCorrespondence[oldSession];
+  AuthSession? getNewSession(AuthSession oldSession) =>
+      _oldNewSessionCorrespondence[oldSession];
 
   Future<AuthSession?> getSessionByToken(String token) async {
     try {
@@ -87,12 +88,15 @@ class AuthPersistence {
 
   set refreshing(bool value) {
     _refreshing = value;
-    if (!value && _refreshingCompleter != null && !_refreshingCompleter!.isCompleted) {
+    if (!value &&
+        _refreshingCompleter != null &&
+        !_refreshingCompleter!.isCompleted) {
       _refreshingCompleter!.complete();
     }
   }
 
-  Future<void> waitIfRefreshing({Duration timeout = const Duration(seconds: 20)}) async {
+  Future<void> waitIfRefreshing(
+      {Duration timeout = const Duration(seconds: 20)}) async {
     if (!_refreshing) return;
 
     _refreshingCompleter = Completer<void>();

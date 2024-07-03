@@ -73,8 +73,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             animationDuration: 300,
                             child: Container(
                               width: double.infinity,
-                              color:
-                                  Theme.of(context).scaffoldBackgroundColor,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,

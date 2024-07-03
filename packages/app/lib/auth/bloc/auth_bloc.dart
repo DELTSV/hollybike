@@ -13,7 +13,6 @@ import '../../profile/services/profile_repository.dart';
 import 'auth_session_repository.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -116,7 +115,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _onSessionExpired(AuthSessionExpired event, Emitter<AuthState> emit) async {
+  void _onSessionExpired(
+      AuthSessionExpired event, Emitter<AuthState> emit) async {
     await authRepository.removeSession(event.expiredSession);
 
     final currentSession = await authRepository.currentSession;

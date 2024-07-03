@@ -4,19 +4,9 @@ import 'package:flutter/cupertino.dart';
 abstract class ProfileImagesEvent {}
 
 class LoadProfileImagesNextPage extends ProfileImagesEvent {
-  final int userId;
-
-  LoadProfileImagesNextPage({
-    required this.userId,
-  });
+  LoadProfileImagesNextPage();
 }
 
 class RefreshProfileImages extends ProfileImagesEvent {
-  final int userId;
-  final bool initial;
-
-  RefreshProfileImages({
-    required this.userId,
-    this.initial = false,
-  });
+  RefreshProfileImages();
 }

@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:hollybike/shared/widgets/profile_card/loading_profile_card.dart';
 import 'package:hollybike/shared/widgets/profile_card/profile_card.dart';
-import 'package:hollybike/shared/widgets/async_renderer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/bloc/auth_persistence.dart';

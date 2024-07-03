@@ -43,7 +43,7 @@ class EventParticipationsPreview extends StatelessWidget {
               SizedBox(
                 height: avatarSize,
                 width:
-                (previewParticipants.length * avatarRadius) + avatarRadius,
+                    (previewParticipants.length * avatarRadius) + avatarRadius,
                 child: Stack(
                   alignment: Alignment.topLeft,
                   children: previewParticipants.asMap().entries.map((entry) {
@@ -52,7 +52,7 @@ class EventParticipationsPreview extends StatelessWidget {
 
                     final avatar = Hero(
                       tag:
-                      "profile_picture_participation_${participation.user.id}",
+                          "profile_picture_participation_${participation.user.id}",
                       child: Container(
                         width: avatarSize,
                         decoration: BoxDecoration(

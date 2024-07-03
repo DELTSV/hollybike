@@ -214,35 +214,62 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                     ),
                   ];
                 },
-                body: BlocBuilder<EventDetailsBloc, EventDetailsState>(
-                  builder: (context, state) {
-                    if (state is EventDetailsLoadInProgress &&
-                        state.eventDetails == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    if (state.eventDetails == null ||
-                        state is EventDetailsLoadFailure) {
-                      return const Center(
-                        child: Text(
-                          "Impossible de charger les détails de l'événement",
-                        ),
-                      );
-                    }
-
-                    return TabBarView(
-                      controller: _tabController,
-                      children: _getTabs(state.eventDetails!),
-                    );
-                  },
-                ),
+                body: _tabTabContent(),
               ),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _tabTabContent() {
+    return BlocBuilder<EventDetailsBloc, EventDetailsState>(
+      builder: (context, state) {
+        if (state is EventDetailsLoadInProgress && state.eventDetails == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (state.eventDetails == null || state is EventDetailsLoadFailure) {
+          return const Center(
+            child: Text(
+              "Impossible de charger les détails de l'événement",
+            ),
+          );
+        }
+
+        final eventDetails = state.eventDetails!;
+
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<EventImagesBloc>(
+              create: (context) => EventImagesBloc(
+                eventId: eventDetails.event.id,
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
+            ),
+            BlocProvider(
+              create: (context) => EventMyImagesBloc(
+                eventId: eventDetails.event.id,
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+                eventRepository: RepositoryProvider.of<EventRepository>(
+                  context,
+                ),
+              ),
+            ),
+          ],
+          child: TabBarView(
+            controller: _tabController,
+            children: _getTabs(eventDetails),
+          ),
+        );
+      },
     );
   }
 
@@ -259,35 +286,18 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
-      BlocProvider<EventImagesBloc>(
-        create: (context) => EventImagesBloc(
-          imageRepository: RepositoryProvider.of<ImageRepository>(
-            context,
-          ),
-        ),
-        child: EventDetailsImages(
-          scrollController: _scrollController,
-          eventId: eventDetails.event.id,
-          isParticipating: eventDetails.isParticipating,
-          onAddPhotos: _onAddPhotoFromAllPhotos,
-        ),
+      EventDetailsImages(
+        scrollController: _scrollController,
+        eventId: eventDetails.event.id,
+        isParticipating: eventDetails.isParticipating,
+        onAddPhotos: _onAddPhotoFromAllPhotos,
       ),
-      BlocProvider(
-        create: (context) => EventMyImagesBloc(
-          imageRepository: RepositoryProvider.of<ImageRepository>(
-            context,
-          ),
-          eventRepository: RepositoryProvider.of<EventRepository>(
-            context,
-          ),
-        ),
-        child: EventDetailsMyImages(
-          scrollController: _scrollController,
-          isParticipating: eventDetails.isParticipating,
-          isImagesPublic:
-              eventDetails.callerParticipation?.isImagesPublic ?? false,
-          eventId: eventDetails.event.id,
-        ),
+      EventDetailsMyImages(
+        scrollController: _scrollController,
+        isParticipating: eventDetails.isParticipating,
+        isImagesPublic:
+            eventDetails.callerParticipation?.isImagesPublic ?? false,
+        eventId: eventDetails.event.id,
       ),
       BlocProvider(
         create: (context) => UserPositionsBloc(

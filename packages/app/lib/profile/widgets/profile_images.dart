@@ -12,12 +12,10 @@ import 'package:lottie/lottie.dart';
 import '../bloc/profile_image_bloc/profile_images_event.dart';
 
 class ProfileImages extends StatelessWidget {
-  final int userId;
   final ScrollController scrollController;
 
   const ProfileImages({
     super.key,
-    required this.userId,
     required this.scrollController,
   });
 
@@ -33,18 +31,17 @@ class ProfileImages extends StatelessWidget {
             child: ImageGallery(
               scrollController: scrollController,
               emptyPlaceholder: _buildPlaceholder(context),
-              onRefresh: (initial) => _refreshImages(context, initial: initial),
+              onRefresh: () => _refreshImages(context),
               onLoadNextPage: () => _loadNextPage(context),
               images: state.images,
-              loading: state is ImageListInitialPageLoadInProgress,
+              loading: state is ImageListPageLoadInProgress,
               onImageTap: (image) {
                 context.router.push(
                   ImageGalleryViewRoute(
-                    imageIndex: state.images.indexOf(image),
-                    onLoadNextPage: () => _loadNextPage(context),
-                    onRefresh: () => _refreshImages(context),
-                    bloc: context.read<ProfileImagesBloc>()
-                  ),
+                      imageIndex: state.images.indexOf(image),
+                      onLoadNextPage: () => _loadNextPage(context),
+                      onRefresh: () => _refreshImages(context),
+                      bloc: context.read<ProfileImagesBloc>()),
                 );
               },
             ),
@@ -72,22 +69,17 @@ class ProfileImages extends StatelessWidget {
     );
   }
 
-  Future<void> _refreshImages(BuildContext context, {bool initial = false}) {
+  Future<void> _refreshImages(BuildContext context) {
     context.read<ProfileImagesBloc>().add(
-      RefreshProfileImages(
-        userId: userId,
-        initial: initial,
-      ),
-    );
+          RefreshProfileImages(),
+        );
 
     return context.read<ProfileImagesBloc>().firstWhenNotLoading;
   }
 
   void _loadNextPage(BuildContext context) {
     context.read<ProfileImagesBloc>().add(
-      LoadProfileImagesNextPage(
-        userId: userId,
-      ),
-    );
+          LoadProfileImagesNextPage(),
+        );
   }
 }

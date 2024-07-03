@@ -63,8 +63,8 @@ class AuthInterceptor extends Interceptor {
           newSession = await _renewSession(requestSession).then(
             (value) {
               return authPersistence.replaceSession(requestSession, value).then(
-                (_) => value,
-              );
+                    (_) => value,
+                  );
             },
           ).onError(
             (error, stackTrace) {

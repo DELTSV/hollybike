@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 
 import '../type/event_image.dart';
@@ -23,11 +22,11 @@ class ImageListState {
 
   ImageListState.state(ImageListState state)
       : this(
-    images: state.images,
-    hasMore: state.hasMore,
-    nextPage: state.nextPage,
-    status: state.status,
-  );
+          images: state.images,
+          hasMore: state.hasMore,
+          nextPage: state.nextPage,
+          status: state.status,
+        );
 
   ImageListState copyWith({
     EventImagesStatus? status,
@@ -51,11 +50,6 @@ class ImageListPageLoadInProgress extends ImageListState {
       : super.state(state.copyWith(status: EventImagesStatus.loading));
 }
 
-class ImageListInitialPageLoadInProgress extends ImageListState {
-  ImageListInitialPageLoadInProgress(ImageListState state)
-      : super.state(state.copyWith(status: EventImagesStatus.loading));
-}
-
 class ImageListPageLoadSuccess extends ImageListState {
   ImageListPageLoadSuccess(ImageListState state)
       : super.state(state.copyWith(status: EventImagesStatus.success));
@@ -64,8 +58,7 @@ class ImageListPageLoadSuccess extends ImageListState {
 class ImageListPageLoadFailure extends ImageListState {
   final String errorMessage;
 
-  ImageListPageLoadFailure(ImageListState state,
-      {required this.errorMessage})
+  ImageListPageLoadFailure(ImageListState state, {required this.errorMessage})
       : super.state(state.copyWith(status: EventImagesStatus.error));
 }
 
@@ -86,7 +79,6 @@ class ImageListOperationSuccess extends ImageListState {
 class ImageListOperationFailure extends ImageListState {
   final String errorMessage;
 
-  ImageListOperationFailure(ImageListState state,
-      {required this.errorMessage})
+  ImageListOperationFailure(ImageListState state, {required this.errorMessage})
       : super.state(state.copyWith(status: EventImagesStatus.error));
 }

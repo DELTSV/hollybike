@@ -24,7 +24,9 @@ class AuthRepository {
     _authPersistence.sessions = sessions;
   }
 
-  FutureOr<AuthSession?> get currentSession async => await _authPersistence.currentSession;
+  FutureOr<AuthSession?> get currentSession async =>
+      await _authPersistence.currentSession;
+
   set currentSession(FutureOr<AuthSession?> session) =>
       _authPersistence.currentSession = session;
 

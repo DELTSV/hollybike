@@ -29,16 +29,15 @@ class EventDetailsMap extends StatefulWidget {
 }
 
 class _EventDetailsMapState extends State<EventDetailsMap> {
-
   @override
   void initState() {
     super.initState();
 
     context.read<UserPositionsBloc>().add(
-      SubscribeToUserPositions(
-        eventId: widget.eventId,
-      ),
-    );
+          SubscribeToUserPositions(
+            eventId: widget.eventId,
+          ),
+        );
   }
 
   @override
@@ -50,8 +49,7 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
   }
 
   Widget _buildContent(BuildContext context) {
-    final currentSession =
-        Provider.of<AuthPersistence>(context).currentSession;
+    final currentSession = Provider.of<AuthPersistence>(context).currentSession;
 
     if (widget.journey == null || currentSession == null) {
       return const EmptyJourneyMap();

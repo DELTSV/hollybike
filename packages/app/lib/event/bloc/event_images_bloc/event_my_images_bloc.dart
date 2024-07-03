@@ -5,18 +5,21 @@ import 'package:hollybike/image/bloc/image_list_bloc.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 
+import '../../../image/type/event_image.dart';
 import '../../../shared/types/paginated_list.dart';
 import '../../services/event/event_repository.dart';
-import '../../../image/type/event_image.dart';
 import 'event_my_images_event.dart';
 
 class EventMyImagesBloc extends ImageListBloc<EventMyImagesEvent> {
   final int numberOfImagesPerRequest = 20;
 
+  final int eventId;
+
   final ImageRepository imageRepository;
   final EventRepository eventRepository;
 
   EventMyImagesBloc({
+    required this.eventId,
     required this.imageRepository,
     required this.eventRepository,
   }) : super(ImageListInitial()) {
@@ -38,7 +41,7 @@ class EventMyImagesBloc extends ImageListBloc<EventMyImagesEvent> {
 
     try {
       PaginatedList<EventImage> page = await imageRepository.fetchMyEventImages(
-        event.eventId,
+        eventId,
         state.nextPage,
         numberOfImagesPerRequest,
       );
@@ -62,16 +65,12 @@ class EventMyImagesBloc extends ImageListBloc<EventMyImagesEvent> {
     RefreshMyEventImages event,
     Emitter<ImageListState> emit,
   ) async {
-    if (event.initial) {
-      emit(ImageListInitialPageLoadInProgress(state));
-    } else {
-      emit(ImageListPageLoadInProgress(state));
-    }
+    emit(ImageListPageLoadInProgress(state));
 
     try {
       PaginatedList<EventImage> page =
           await imageRepository.refreshMyEventImages(
-        event.eventId,
+        eventId,
         numberOfImagesPerRequest,
       );
 
@@ -98,7 +97,7 @@ class EventMyImagesBloc extends ImageListBloc<EventMyImagesEvent> {
 
     try {
       await imageRepository.uploadEventImages(
-        event.eventId,
+        eventId,
         event.images,
       );
 
@@ -125,11 +124,11 @@ class EventMyImagesBloc extends ImageListBloc<EventMyImagesEvent> {
 
     try {
       await imageRepository.updateImagesVisibility(
-        event.eventId,
+        eventId,
         event.isPublic,
       );
 
-      eventRepository.onImagesVisibilityUpdated(event.isPublic, event.eventId);
+      eventRepository.onImagesVisibilityUpdated(event.isPublic, eventId);
 
       emit(ImageListOperationSuccess(state));
     } catch (e) {
@@ -150,4 +149,3 @@ extension FirstWhenNotLoading on EventMyImagesBloc {
     });
   }
 }
-

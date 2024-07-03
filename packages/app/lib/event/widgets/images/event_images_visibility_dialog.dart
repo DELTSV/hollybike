@@ -85,7 +85,6 @@ class _EventImagesVisibilityDialogState
   void _updateImagesVisibility() {
     BlocProvider.of<EventMyImagesBloc>(context).add(
       UpdateImagesVisibility(
-        eventId: widget.eventId,
         isPublic: isPublic,
       ),
     );

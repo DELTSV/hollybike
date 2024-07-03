@@ -55,8 +55,7 @@ class EventApi {
     return Event.fromJson(response.data);
   }
 
-  Future<Event> editEvent(
-      int eventId, EventFormData event) async {
+  Future<Event> editEvent(int eventId, EventFormData event) async {
     final response = await client.dio.put(
       '/events/$eventId',
       data: event.toJson(),
@@ -80,7 +79,7 @@ class EventApi {
   }
 
   Future<void> deleteEvent(int eventId) async {
-   await client.dio.delete(
+    await client.dio.delete(
       '/events/$eventId',
     );
   }

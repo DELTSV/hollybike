@@ -5,7 +5,6 @@ import '../../../shared/types/json_map.dart';
 import 'event_role.dart';
 
 part 'event_caller_participation.freezed.dart';
-
 part 'event_caller_participation.g.dart';
 
 @freezed

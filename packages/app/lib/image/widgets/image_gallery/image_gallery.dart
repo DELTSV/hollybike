@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import '../../type/event_image.dart';
 import '../../../event/widgets/images/event_image_with_loader.dart';
+import '../../type/event_image.dart';
 
 class ImageGallery extends StatefulWidget {
   final ScrollController scrollController;
   final List<EventImage> images;
   final bool loading;
   final void Function(EventImage) onImageTap;
-  final void Function(bool inital) onRefresh;
+  final void Function() onRefresh;
   final void Function() onLoadNextPage;
   final Widget emptyPlaceholder;
 
@@ -33,7 +33,7 @@ class _ImageGalleryState extends State<ImageGallery> {
   void initState() {
     super.initState();
     widget.scrollController.addListener(_onScroll);
-    widget.onRefresh(true);
+    widget.onRefresh();
   }
 
   @override
@@ -44,7 +44,7 @@ class _ImageGalleryState extends State<ImageGallery> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.loading) {
+    if (widget.loading && widget.images.isEmpty) {
       return const SliverToBoxAdapter(
         child: SizedBox(
           height: 300,

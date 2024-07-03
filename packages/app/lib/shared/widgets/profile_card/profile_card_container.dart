@@ -43,7 +43,9 @@ class ProfileCardContainer extends StatelessWidget {
                   ),
                 ),
               ] +
-              (endChild != null ? [const SizedBox(width: 16), endChild as Widget] : []),
+              (endChild != null
+                  ? [const SizedBox(width: 16), endChild as Widget]
+                  : []),
         ),
       ),
     );

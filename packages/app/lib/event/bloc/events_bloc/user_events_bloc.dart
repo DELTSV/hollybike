@@ -42,7 +42,8 @@ class UserEventsBloc extends EventsBloc {
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMore:
+                page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: 1,
           ),
         ),
@@ -73,7 +74,8 @@ class UserEventsBloc extends EventsBloc {
       emit(
         EventPageLoadSuccess(
           state.copyWith(
-            hasMore: page.items.length == eventRepository.numberOfEventsPerRequest,
+            hasMore:
+                page.items.length == eventRepository.numberOfEventsPerRequest,
             nextPage: state.nextPage + 1,
           ),
         ),

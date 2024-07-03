@@ -76,8 +76,7 @@ class EventDetailsInfos extends StatelessWidget {
                 ),
                 BlocProvider<EventJourneyBloc>(
                   create: (context) => EventJourneyBloc(
-                    journeyRepository:
-                    RepositoryProvider.of<JourneyRepository>(
+                    journeyRepository: RepositoryProvider.of<JourneyRepository>(
                       context,
                     ),
                     eventRepository: RepositoryProvider.of<EventRepository>(

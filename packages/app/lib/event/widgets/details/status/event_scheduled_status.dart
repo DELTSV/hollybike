@@ -56,7 +56,8 @@ class _EventScheduledStatusState extends State<EventScheduledStatus> {
     try {
       return events
           .firstWhere(
-            (event) => event.split(':')[0] == widget.eventDetails.event.id.toString(),
+            (event) =>
+                event.split(':')[0] == widget.eventDetails.event.id.toString(),
           )
           .split(':')[1];
     } catch (e) {
@@ -107,7 +108,8 @@ class _EventScheduledStatusState extends State<EventScheduledStatus> {
       eventId: eventCalendarId,
       title: widget.eventDetails.event.name,
       description: widget.eventDetails.event.description,
-      start: TZDateTime.from(widget.eventDetails.event.startDate, currentLocation),
+      start:
+          TZDateTime.from(widget.eventDetails.event.startDate, currentLocation),
       end: TZDateTime.from(endDate(), currentLocation),
       location: widget.eventDetails.journey?.readablePartialLocation,
     );
@@ -115,7 +117,8 @@ class _EventScheduledStatusState extends State<EventScheduledStatus> {
     final createdEvent = await deviceCalendarPlugin.createOrUpdateEvent(event);
 
     if (createdEvent?.hasErrors == true && mounted) {
-      Toast.showErrorToast(context, 'Erreur lors de l\'ajout de l\'événement au calendrier');
+      Toast.showErrorToast(
+          context, 'Erreur lors de l\'ajout de l\'événement au calendrier');
 
       return;
     }

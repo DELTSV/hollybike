@@ -90,35 +90,42 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ],
-        body: TabBarView(
-          children: [
-            BlocProvider<UserEventsBloc>(
-              create: (context) => UserEventsBloc(
-                userId: widget.profile!.id,
-                eventRepository:
-                    RepositoryProvider.of<EventRepository>(context),
-              )..add(SubscribeToEvents()),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: ProfileEvents(
-                  userId: widget.profile!.id,
-                  scrollController: _scrollController,
-                ),
-              ),
-            ),
-            BlocProvider<ProfileImagesBloc>(
-              create: (context) => ProfileImagesBloc(
-                imageRepository: RepositoryProvider.of<ImageRepository>(
-                  context,
-                ),
-              ),
-              child: ProfileImages(
-                userId: widget.profile!.id,
-                scrollController: _scrollController,
-              ),
-            ),
-          ],
+        body: _tabBarContent(),
+      ),
+    );
+  }
+
+  Widget _tabBarContent() {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserEventsBloc>(
+          create: (context) => UserEventsBloc(
+            userId: widget.profile!.id,
+            eventRepository: RepositoryProvider.of<EventRepository>(context),
+          )..add(SubscribeToEvents()),
         ),
+        BlocProvider<ProfileImagesBloc>(
+          create: (context) => ProfileImagesBloc(
+            userId: widget.profile!.id,
+            imageRepository: RepositoryProvider.of<ImageRepository>(
+              context,
+            ),
+          ),
+        ),
+      ],
+      child: TabBarView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: ProfileEvents(
+              userId: widget.profile!.id,
+              scrollController: _scrollController,
+            ),
+          ),
+          ProfileImages(
+            scrollController: _scrollController,
+          ),
+        ],
       ),
     );
   }

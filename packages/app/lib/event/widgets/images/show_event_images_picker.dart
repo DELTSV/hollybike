@@ -12,11 +12,10 @@ import '../../bloc/event_images_bloc/event_my_images_event.dart';
 void showEventImagesPicker(BuildContext context, int eventId) {
   void onSubmit(BuildContext context, List<File> images) {
     context.read<EventMyImagesBloc>().add(
-      UploadEventImages(
-        eventId: eventId,
-        images: images,
-      ),
-    );
+          UploadEventImages(
+            images: images,
+          ),
+        );
   }
 
   showModalBottomSheet<void>(

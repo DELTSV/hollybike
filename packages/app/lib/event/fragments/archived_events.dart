@@ -19,27 +19,23 @@ class ArchivedEvents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ArchivedEventsBloc>(
-      create: (context) => ArchivedEventsBloc(
-        eventRepository:
-        RepositoryProvider.of<EventRepository>(context),
-      )..add(SubscribeToEvents()),
-      child: Builder(
-        builder: (context) {
-          return EventsListFragment<ArchivedEventsBloc>(
-            navigateToEventDetails: navigateToEventDetails,
-            onNextPageRequested: () => _loadNextPage(context),
-            onRefreshRequested: () => _refreshEvents(context),
-            placeholderText: 'Aucun événement archivé',
-          );
-        },
-      )
-    );
+        create: (context) => ArchivedEventsBloc(
+              eventRepository: RepositoryProvider.of<EventRepository>(context),
+            )..add(SubscribeToEvents()),
+        child: Builder(
+          builder: (context) {
+            return EventsListFragment<ArchivedEventsBloc>(
+              navigateToEventDetails: navigateToEventDetails,
+              onNextPageRequested: () => _loadNextPage(context),
+              onRefreshRequested: () => _refreshEvents(context),
+              placeholderText: 'Aucun événement archivé',
+            );
+          },
+        ));
   }
 
   void _loadNextPage(BuildContext context) {
-    context
-        .read<ArchivedEventsBloc>()
-        .add(LoadEventsNextPage());
+    context.read<ArchivedEventsBloc>().add(LoadEventsNextPage());
   }
 
   Future<void> _refreshEvents(BuildContext context) {

@@ -8,7 +8,8 @@ import 'package:hollybike/image/services/image_repository.dart';
 import 'package:hollybike/image/widgets/image_gallery/image_gallery_page_view.dart';
 
 @RoutePage()
-class ImageGalleryViewScreen extends StatelessWidget implements AutoRouteWrapper {
+class ImageGalleryViewScreen extends StatelessWidget
+    implements AutoRouteWrapper {
   final int imageIndex;
   final void Function() onLoadNextPage;
   final void Function() onRefresh;
