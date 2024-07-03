@@ -24,7 +24,7 @@ class EventParticipationBloc
   }) : super(EventParticipationsInitial()) {
     on<SubscribeToEventParticipations>(_onSubscribeToEventParticipations);
     on<LoadEventParticipationsNextPage>(_onLoadEventParticipationsNextPage);
-    on<RefreshEventParticipations>(_onRefreshEvents);
+    on<RefreshEventParticipations>(_onRefreshParticipations);
     on<PromoteEventParticipant>(_onPromoteEventParticipant);
     on<DemoteEventParticipant>(_onDemoteEventParticipant);
     on<RemoveEventParticipant>(_onRemoveEventParticipant);
@@ -75,13 +75,17 @@ class EventParticipationBloc
     }
   }
 
-  Future<void> _onRefreshEvents(
+  Future<void> _onRefreshParticipations(
     RefreshEventParticipations event,
     Emitter<EventParticipationsState> emit,
   ) async {
+    final participants = state.participants.isEmpty
+        ? event.participationPreview
+        : state.participants;
+
     emit(EventParticipationsPageLoadInProgress(
         EventParticipationsInitial().copyWith(
-      participants: event.participationPreview,
+      participants: participants,
     )));
 
     try {
