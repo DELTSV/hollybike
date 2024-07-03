@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hollybike/image/type/image_picker_mode.dart';
 import 'package:hollybike/image/utils/image_picker/img.dart';
-import 'package:hollybike/image/utils/image_picker/show_image_picker.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_choice_list.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_modal_header.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_selected_images_list.dart';
@@ -67,10 +67,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
               const SizedBox(
                 height: 16,
               ),
-              ImagePickerSelectedImagesList(
-                selectedImages: _selectedImages,
-                onDeleteIndex: _onImageIndexDeleted,
-              ),
+              _buildSelectedImageList(),
               ImagePickerChoiceList(
                 mediumIdSelectedList: _getSelectedMediumIds(),
                 mode: widget.mode,
@@ -81,6 +78,17 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSelectedImageList() {
+    if (widget.isLoading || _selectedImages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return ImagePickerSelectedImagesList(
+      selectedImages: _selectedImages,
+      onDeleteIndex: _onImageIndexDeleted,
     );
   }
 

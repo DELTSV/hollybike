@@ -15,10 +15,6 @@ class ImagePickerSelectedImagesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (selectedImages.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return Column(
       children: [
         SizedBox(

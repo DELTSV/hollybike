@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:hollybike/image/type/image_picker_mode.dart';
 import 'package:hollybike/image/utils/image_picker/img.dart';
-import 'package:hollybike/image/utils/image_picker/show_image_picker.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_gallery_button.dart';
 import 'package:hollybike/image/widgets/image_picker/image_picker_thumbnail.dart';
 import 'package:hollybike/shared/utils/permissions.dart';

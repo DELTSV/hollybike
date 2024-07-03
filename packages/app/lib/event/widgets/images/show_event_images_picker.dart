@@ -1,48 +1,16 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/image/bloc/image_list_state.dart';
-import 'package:hollybike/image/utils/image_picker/show_image_picker.dart';
-
-import '../../../image/widgets/image_picker/image_picker_modal.dart';
-import '../../bloc/event_images_bloc/event_my_images_bloc.dart';
-import '../../bloc/event_images_bloc/event_my_images_event.dart';
+import 'package:hollybike/event/bloc/event_images_bloc/event_my_images_bloc.dart';
+import 'package:hollybike/event/widgets/images/event_image_picker_modal.dart';
 
 void showEventImagesPicker(BuildContext context, int eventId) {
-  void onSubmit(BuildContext context, List<File> images) {
-    context.read<EventMyImagesBloc>().add(
-      UploadEventImages(
-        images: images,
-      ),
-    );
-  }
-
   showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
-    builder: (BuildContext modalContext) {
+    builder: (_) {
       return BlocProvider.value(
         value: context.read<EventMyImagesBloc>(),
-        child: BlocListener<EventMyImagesBloc, ImageListState>(
-          listener: (context, state) {
-            if (state is ImageListOperationSuccess) {
-              Navigator.of(modalContext).pop();
-            }
-          },
-          child: BlocBuilder<EventMyImagesBloc, ImageListState>(
-            builder: (context, state) {
-              return ImagePickerModal(
-                isLoading: state is ImageListOperationInProgress,
-                mode: ImagePickerMode.multiple,
-                onClose: () {
-                  Navigator.of(modalContext).pop();
-                },
-                onSubmit: (images) => onSubmit(context, images),
-              );
-            },
-          ),
-        ),
+        child: const EventImagePickerModal(),
       );
     },
   );
