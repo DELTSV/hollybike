@@ -16,7 +16,7 @@ class EventPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uniqueKey = UniqueKey().toString();
+    final uniqueKey = DateTime.now().microsecondsSinceEpoch.toString();
 
     return Card(
       color: Theme.of(context).cardColor,
