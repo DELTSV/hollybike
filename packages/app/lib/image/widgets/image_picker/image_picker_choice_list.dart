@@ -74,18 +74,23 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
       )
     ];
 
-    return SizedBox(
-      height: 100,
-      child: AnimatedCrossFade(
-        crossFadeState:
-            isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-        duration: const Duration(milliseconds: 200),
-        firstChild: Center(
+    const height = 100.0;
+
+    return AnimatedCrossFade(
+      crossFadeState:
+          isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      duration: const Duration(milliseconds: 200),
+      firstChild: SizedBox(
+        height: height,
+        child: Center(
           child: CircularProgressIndicator(
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
-        secondChild: ListView.separated(
+      ),
+      secondChild: SizedBox(
+        height: height,
+        child: ListView.separated(
           separatorBuilder: (BuildContext context, int index) {
             return const SizedBox(width: 8);
           },
