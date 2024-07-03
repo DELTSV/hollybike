@@ -160,61 +160,85 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       },
       child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
         builder: (context, state) {
-          return Hud(
-            appBar: TopBar(
-              prefix: TopBarActionIcon(
-                onPressed: () => context.router.maybePop(),
-                icon: Icons.arrow_back,
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<EventImagesBloc>(
+                create: (context) => EventImagesBloc(
+                  eventId: widget.event.id,
+                  imageRepository: RepositoryProvider.of<ImageRepository>(
+                    context,
+                  ),
+                ),
               ),
-              title: const TopBarTitle("Détails"),
-              suffix: _renderActions(state),
-            ),
-            floatingActionButton: _getFloatingButton(),
-            body: DefaultTabController(
-              length: 4,
-              child: NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  // These are the slivers that show up in the "outer" scroll view.
-                  return <Widget>[
-                    SliverToBoxAdapter(
-                      child: EventDetailsHeader(
-                        event: state.eventDetails?.event.toMinimalEvent() ??
-                            widget.event,
-                        animate: widget.animate,
+              BlocProvider(
+                create: (context) => EventMyImagesBloc(
+                  eventId: widget.event.id,
+                  imageRepository: RepositoryProvider.of<ImageRepository>(
+                    context,
+                  ),
+                  eventRepository: RepositoryProvider.of<EventRepository>(
+                    context,
+                  ),
+                ),
+              ),
+            ],
+            child: Hud(
+              appBar: TopBar(
+                prefix: TopBarActionIcon(
+                  onPressed: () => context.router.maybePop(),
+                  icon: Icons.arrow_back,
+                ),
+                title: const TopBarTitle("Détails"),
+                suffix: _renderActions(state),
+              ),
+              floatingActionButton: _getFloatingButton(),
+              body: DefaultTabController(
+                length: 4,
+                child: NestedScrollView(
+                  controller: _scrollController,
+                  headerSliverBuilder: (
+                    BuildContext context,
+                    bool innerBoxIsScrolled,
+                  ) {
+                    return <Widget>[
+                      SliverToBoxAdapter(
+                        child: EventDetailsHeader(
+                          event: state.eventDetails?.event.toMinimalEvent() ??
+                              widget.event,
+                          animate: widget.animate,
+                        ),
                       ),
-                    ),
-                    SliverOverlapAbsorber(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                        context,
-                      ),
-                      sliver: SliverPersistentHeader(
-                        pinned: true,
-                        delegate: PinnedHeaderDelegate(
-                          height: 50,
-                          child: Container(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            child: TabBar(
-                              controller: _tabController,
-                              labelColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              indicatorColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              tabs: const [
-                                Tab(icon: Icon(Icons.info)),
-                                Tab(icon: Icon(Icons.photo_library)),
-                                Tab(icon: Icon(Icons.image)),
-                                Tab(icon: Icon(Icons.map)),
-                              ],
+                      SliverOverlapAbsorber(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                          context,
+                        ),
+                        sliver: SliverPersistentHeader(
+                          pinned: true,
+                          delegate: PinnedHeaderDelegate(
+                            height: 50,
+                            child: Container(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              child: TabBar(
+                                controller: _tabController,
+                                labelColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                indicatorColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                tabs: const [
+                                  Tab(icon: Icon(Icons.info)),
+                                  Tab(icon: Icon(Icons.photo_library)),
+                                  Tab(icon: Icon(Icons.image)),
+                                  Tab(icon: Icon(Icons.map)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ];
-                },
-                body: _tabTabContent(),
+                    ];
+                  },
+                  body: _tabTabContent(),
+                ),
               ),
             ),
           );
@@ -242,32 +266,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
         final eventDetails = state.eventDetails!;
 
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider<EventImagesBloc>(
-              create: (context) => EventImagesBloc(
-                eventId: eventDetails.event.id,
-                imageRepository: RepositoryProvider.of<ImageRepository>(
-                  context,
-                ),
-              ),
-            ),
-            BlocProvider(
-              create: (context) => EventMyImagesBloc(
-                eventId: eventDetails.event.id,
-                imageRepository: RepositoryProvider.of<ImageRepository>(
-                  context,
-                ),
-                eventRepository: RepositoryProvider.of<EventRepository>(
-                  context,
-                ),
-              ),
-            ),
-          ],
-          child: TabBarView(
-            controller: _tabController,
-            children: _getTabs(eventDetails),
-          ),
+        return TabBarView(
+          controller: _tabController,
+          children: _getTabs(eventDetails),
         );
       },
     );
