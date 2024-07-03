@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../../app/app_router.gr.dart';
 import '../../../shared/utils/dates.dart';
 import '../../../shared/widgets/pinned_header_delegate.dart';
 import '../../types/minimal_event.dart';
@@ -14,14 +16,12 @@ class EventSection {
 
 class EventsSectionsList extends StatelessWidget {
   final List<MinimalEvent> events;
-  final void Function(MinimalEvent) onEventTap;
   final bool hasMore;
   final ScrollController? controller;
 
   const EventsSectionsList({
     super.key,
     required this.events,
-    required this.onEventTap,
     required this.hasMore,
     this.controller,
   });
@@ -75,7 +75,11 @@ class EventsSectionsList extends StatelessWidget {
                               opacity: value,
                               child: EventPreviewCard(
                                 event: event,
-                                onTap: () => onEventTap(event),
+                                onTap: (uniqueKey) => _navigateToEventDetails(
+                                  context,
+                                  event,
+                                  uniqueKey,
+                                ),
                               ),
                             ),
                           );
@@ -125,5 +129,17 @@ class EventsSectionsList extends StatelessWidget {
     }
 
     return sections;
+  }
+
+  void _navigateToEventDetails(
+    BuildContext context,
+    MinimalEvent event,
+    String uniqueKey,
+  ) {
+    context.router.push(EventDetailsRoute(
+      event: event,
+      animate: true,
+      uniqueKey: uniqueKey,
+    ));
   }
 }

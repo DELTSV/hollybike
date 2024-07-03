@@ -17,7 +17,6 @@ import '../bloc/events_bloc/events_state.dart';
 import '../bloc/events_bloc/future_events_bloc.dart';
 import '../fragments/archived_events.dart';
 import '../services/event/event_repository.dart';
-import '../types/minimal_event.dart';
 import '../widgets/add_event_floating_button.dart';
 
 enum EventListTab { future, user, archived }
@@ -56,11 +55,10 @@ class _EventsScreenState extends State<EventsScreen>
               Toast.showSuccessToast(context, "Événement créé");
 
               Future.delayed(const Duration(milliseconds: 50), () {
-                _navigateToEventDetails(
-                  context,
-                  state.createdEvent.toMinimalEvent(),
-                  false,
-                );
+                context.router.push(EventDetailsRoute(
+                  event: state.createdEvent.toMinimalEvent(),
+                  animate: false,
+                ));
               });
             }
 
@@ -73,26 +71,20 @@ class _EventsScreenState extends State<EventsScreen>
       child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
         builder: (context, bloc, state) {
           final tabs = [
-            TabDescription(
+            const TabDescription(
               title: "Évènements",
               icon: Icons.event,
-              fragment: FutureEvents(
-                navigateToEventDetails: _onNavigateToEventDetails,
-              ),
+              fragment: FutureEvents(),
             ),
-            TabDescription(
+            const TabDescription(
               title: "Vos évènements",
               icon: Icons.event_available,
-              fragment: UserEvents(
-                navigateToEventDetails: _onNavigateToEventDetails,
-              ),
+              fragment: UserEvents(),
             ),
-            TabDescription(
+            const TabDescription(
               title: "Archives",
               icon: Icons.archive_outlined,
-              fragment: ArchivedEvents(
-                navigateToEventDetails: _onNavigateToEventDetails,
-              ),
+              fragment: ArchivedEvents(),
             ),
           ];
 
@@ -156,22 +148,5 @@ class _EventsScreenState extends State<EventsScreen>
         _currentTab = newTab;
       });
     }
-  }
-
-  void _onNavigateToEventDetails(MinimalEvent event) {
-    _navigateToEventDetails(context, event, true);
-  }
-
-  void _navigateToEventDetails(
-    BuildContext context,
-    MinimalEvent event,
-    bool animate,
-  ) {
-    Future.delayed(const Duration(milliseconds: 200), () {
-      context.router.push(EventDetailsRoute(
-        event: event,
-        animate: animate,
-      ));
-    });
   }
 }

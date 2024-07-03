@@ -49,11 +49,13 @@ class Args {
 class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
   final MinimalEvent event;
   final bool animate;
+  final String uniqueKey;
 
   const EventDetailsScreen({
     super.key,
     required this.event,
     this.animate = true,
+    this.uniqueKey = "default",
   });
 
   @override
@@ -206,6 +208,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                           event: state.eventDetails?.event.toMinimalEvent() ??
                               widget.event,
                           animate: widget.animate,
+                          uniqueKey: widget.uniqueKey,
                         ),
                       ),
                       SliverOverlapAbsorber(

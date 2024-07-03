@@ -33,7 +33,6 @@ class _EventImagePickerModalState extends State<EventImagePickerModal> {
             _loading = true;
           });
         } else {
-          // delay 300 ms
           Future.delayed(const Duration(milliseconds: 300), () {
             safeSetState(() {
               _loading = false;

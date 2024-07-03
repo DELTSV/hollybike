@@ -7,16 +7,10 @@ import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../bloc/events_bloc/events_event.dart';
 import '../services/event/event_repository.dart';
-import '../types/minimal_event.dart';
 import 'events_list_fragment.dart';
 
 class UserEvents extends StatelessWidget {
-  final void Function(MinimalEvent) navigateToEventDetails;
-
-  const UserEvents({
-    super.key,
-    required this.navigateToEventDetails,
-  });
+  const UserEvents({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +26,6 @@ class UserEvents extends StatelessWidget {
           child: Builder(
             builder: (context) {
               return EventsListFragment<UserEventsBloc>(
-                navigateToEventDetails: navigateToEventDetails,
                 onNextPageRequested: () => _loadNextPage(context),
                 onRefreshRequested: () => _refreshEvents(context),
                 placeholderText: 'Vous ne participez à aucun événement',

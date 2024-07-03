@@ -4,11 +4,13 @@ import 'package:hollybike/event/types/minimal_event.dart';
 class EventDetailsHeader extends StatelessWidget {
   final MinimalEvent event;
   final bool animate;
+  final String uniqueKey;
 
   const EventDetailsHeader({
     super.key,
     required this.animate,
     required this.event,
+    required this.uniqueKey,
   });
 
   @override
@@ -21,7 +23,7 @@ class EventDetailsHeader extends StatelessWidget {
           HeroMode(
             enabled: animate,
             child: Hero(
-              tag: "event-image-${event.id}",
+              tag: "event-image-$uniqueKey",
               child: Container(
                 width: double.infinity,
                 foregroundDecoration: BoxDecoration(
@@ -52,7 +54,7 @@ class EventDetailsHeader extends StatelessWidget {
                     HeroMode(
                       enabled: animate,
                       child: Hero(
-                        tag: "event-name-${event.id}",
+                        tag: "event-name-$uniqueKey",
                         child: SizedBox(
                           width: constraints.maxWidth - 20,
                           child: Text(
