@@ -13,8 +13,10 @@ class LoadProfileImagesNextPage extends ProfileImagesEvent {
 
 class RefreshProfileImages extends ProfileImagesEvent {
   final int userId;
+  final bool initial;
 
   RefreshProfileImages({
     required this.userId,
+    this.initial = false,
   });
 }

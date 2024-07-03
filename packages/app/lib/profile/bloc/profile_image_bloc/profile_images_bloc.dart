@@ -51,15 +51,19 @@ class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
     }
   }
 
-  Future<void> _onRefreshProfileImages(
+  _onRefreshProfileImages(
     RefreshProfileImages event,
     Emitter<ImageListState> emit,
   ) async {
-    emit(ImageListPageLoadInProgress(state));
+    if (event.initial) {
+      emit(ImageListInitialPageLoadInProgress(state));
+    } else {
+      emit(ImageListPageLoadInProgress(state));
+    }
 
     try {
       PaginatedList<EventImage> page =
-          await imageRepository.refreshProfileImages(
+      await imageRepository.refreshProfileImages(
         event.userId,
         numberOfImagesPerRequest,
       );
@@ -83,7 +87,8 @@ class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
 extension FirstWhenNotLoading on ProfileImagesBloc {
   Future<ImageListState> get firstWhenNotLoading async {
     return stream.firstWhere((state) {
-      return state is! ImageListPageLoadInProgress;
+      return state is! ImageListPageLoadInProgress &&
+          state is! ImageListInitialPageLoadInProgress;
     });
   }
 }

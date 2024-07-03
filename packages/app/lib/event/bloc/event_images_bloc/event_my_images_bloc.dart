@@ -61,7 +61,11 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, ImageListState> {
     RefreshMyEventImages event,
     Emitter<ImageListState> emit,
   ) async {
-    emit(ImageListPageLoadInProgress(state));
+    if (event.initial) {
+      emit(ImageListInitialPageLoadInProgress(state));
+    } else {
+      emit(ImageListPageLoadInProgress(state));
+    }
 
     try {
       PaginatedList<EventImage> page =

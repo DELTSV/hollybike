@@ -51,6 +51,11 @@ class ImageListPageLoadInProgress extends ImageListState {
       : super.state(state.copyWith(status: EventImagesStatus.loading));
 }
 
+class ImageListInitialPageLoadInProgress extends ImageListState {
+  ImageListInitialPageLoadInProgress(ImageListState state)
+      : super.state(state.copyWith(status: EventImagesStatus.loading));
+}
+
 class ImageListPageLoadSuccess extends ImageListState {
   ImageListPageLoadSuccess(ImageListState state)
       : super.state(state.copyWith(status: EventImagesStatus.success));

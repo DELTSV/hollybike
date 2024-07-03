@@ -33,10 +33,10 @@ class ProfileImages extends StatelessWidget {
             child: ImageGallery(
               scrollController: scrollController,
               emptyPlaceholder: _buildPlaceholder(context),
-              onRefresh: () => _refreshImages(context),
+              onRefresh: (initial) => _refreshImages(context, initial: initial),
               onLoadNextPage: () => _loadNextPage(context),
               images: state.images,
-              loading: state is ImageListPageLoadInProgress,
+              loading: state is ImageListInitialPageLoadInProgress,
               onImageTap: (image) {
                 context.router.push(
                   ProfileImageViewRoute(
@@ -71,10 +71,11 @@ class ProfileImages extends StatelessWidget {
     );
   }
 
-  Future<void> _refreshImages(BuildContext context) {
+  Future<void> _refreshImages(BuildContext context, {bool initial = false}) {
     context.read<ProfileImagesBloc>().add(
       RefreshProfileImages(
         userId: userId,
+        initial: initial,
       ),
     );
 

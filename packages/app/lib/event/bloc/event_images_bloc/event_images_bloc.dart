@@ -56,7 +56,11 @@ class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
     RefreshEventImages event,
     Emitter<ImageListState> emit,
   ) async {
-    emit(ImageListPageLoadInProgress(state));
+    if (event.initial) {
+      emit(ImageListInitialPageLoadInProgress(state));
+    } else {
+      emit(ImageListPageLoadInProgress(state));
+    }
 
     try {
       PaginatedList<EventImage> page = await imageRepository.refreshEventImages(
