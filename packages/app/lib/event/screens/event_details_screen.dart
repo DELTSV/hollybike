@@ -18,12 +18,15 @@ import 'package:provider/provider.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../auth/bloc/auth_persistence.dart';
+import '../../image/services/image_repository.dart';
 import '../../positions/bloc/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
 import '../bloc/event_details_bloc/event_details_event.dart';
 import '../bloc/event_details_bloc/event_details_state.dart';
+import '../bloc/event_images_bloc/event_images_bloc.dart';
+import '../bloc/event_images_bloc/event_my_images_bloc.dart';
 import '../fragments/details/event_details_my_images.dart';
 import '../services/event/event_repository.dart';
 import '../types/event_details.dart';
@@ -256,18 +259,35 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
-      EventDetailsImages(
-        scrollController: _scrollController,
-        eventId: eventDetails.event.id,
-        isParticipating: eventDetails.isParticipating,
-        onAddPhotos: _onAddPhotoFromAllPhotos,
+      BlocProvider<EventImagesBloc>(
+        create: (context) => EventImagesBloc(
+          imageRepository: RepositoryProvider.of<ImageRepository>(
+            context,
+          ),
+        ),
+        child: EventDetailsImages(
+          scrollController: _scrollController,
+          eventId: eventDetails.event.id,
+          isParticipating: eventDetails.isParticipating,
+          onAddPhotos: _onAddPhotoFromAllPhotos,
+        ),
       ),
-      EventDetailsMyImages(
-        scrollController: _scrollController,
-        isParticipating: eventDetails.isParticipating,
-        isImagesPublic:
-            eventDetails.callerParticipation?.isImagesPublic ?? false,
-        eventId: eventDetails.event.id,
+      BlocProvider(
+        create: (context) => EventMyImagesBloc(
+          imageRepository: RepositoryProvider.of<ImageRepository>(
+            context,
+          ),
+          eventRepository: RepositoryProvider.of<EventRepository>(
+            context,
+          ),
+        ),
+        child: EventDetailsMyImages(
+          scrollController: _scrollController,
+          isParticipating: eventDetails.isParticipating,
+          isImagesPublic:
+              eventDetails.callerParticipation?.isImagesPublic ?? false,
+          eventId: eventDetails.event.id,
+        ),
       ),
       BlocProvider(
         create: (context) => UserPositionsBloc(
@@ -293,8 +313,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
   Future<void> _refreshEventDetails() {
     context.read<EventDetailsBloc>().add(
-      LoadEventDetails(),
-    );
+          LoadEventDetails(),
+        );
 
     return context.read<EventDetailsBloc>().firstWhenNotLoading;
   }

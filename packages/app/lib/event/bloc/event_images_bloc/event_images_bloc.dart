@@ -2,13 +2,14 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_event.dart';
+import 'package:hollybike/image/bloc/image_list_bloc.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 
 import '../../../shared/types/paginated_list.dart';
 import '../../../image/type/event_image.dart';
 
-class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
+class EventImagesBloc extends ImageListBloc<EventImagesEvent> {
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;

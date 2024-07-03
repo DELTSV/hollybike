@@ -151,30 +151,6 @@ class MyApp extends StatelessWidget {
                           RepositoryProvider.of<ProfileRepository>(context),
                     )..add(SubscribeToCurrentSessionChange()),
                   ),
-                  BlocProvider<EventImagesBloc>(
-                    create: (context) => EventImagesBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
-                  BlocProvider<EventMyImagesBloc>(
-                    create: (context) => EventMyImagesBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                      eventRepository: RepositoryProvider.of<EventRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
-                  BlocProvider<ProfileImagesBloc>(
-                    create: (context) => ProfileImagesBloc(
-                      imageRepository: RepositoryProvider.of<ImageRepository>(
-                        context,
-                      ),
-                    ),
-                  ),
                   BlocProvider<SearchBloc>(
                     create: (context) => SearchBloc(
                       eventRepository: RepositoryProvider.of<EventRepository>(

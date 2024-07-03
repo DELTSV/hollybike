@@ -12,6 +12,8 @@ import 'package:hollybike/user/types/minimal_user.dart';
 import '../../../event/bloc/events_bloc/events_event.dart';
 import '../../../event/bloc/events_bloc/user_events_bloc.dart';
 import '../../../event/services/event/event_repository.dart';
+import '../../../image/services/image_repository.dart';
+import '../../bloc/profile_image_bloc/profile_images_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   final int? id;
@@ -104,9 +106,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            ProfileImages(
-              userId: widget.profile!.id,
-              scrollController: _scrollController,
+            BlocProvider<ProfileImagesBloc>(
+              create: (context) => ProfileImagesBloc(
+                imageRepository: RepositoryProvider.of<ImageRepository>(
+                  context,
+                ),
+              ),
+              child: ProfileImages(
+                userId: widget.profile!.id,
+                scrollController: _scrollController,
+              ),
             ),
           ],
         ),

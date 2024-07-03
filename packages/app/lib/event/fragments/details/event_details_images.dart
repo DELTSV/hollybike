@@ -43,10 +43,11 @@ class EventDetailsImages extends StatelessWidget {
               loading: state is ImageListInitialPageLoadInProgress,
               onImageTap: (image) {
                 context.router.push(
-                  EventImageViewRoute(
+                  ImageGalleryViewRoute(
                     imageIndex: state.images.indexOf(image),
                     onLoadNextPage: () => _loadNextPage(context),
                     onRefresh: () => _refreshImages(context),
+                    bloc: context.read<EventImagesBloc>(),
                   ),
                 );
               },
