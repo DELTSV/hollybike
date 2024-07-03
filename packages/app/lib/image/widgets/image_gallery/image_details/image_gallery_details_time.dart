@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../utils/dates.dart';
+import 'package:hollybike/shared/utils/dates.dart';
 
 class ImageGalleryDetailsTime extends StatelessWidget {
   final DateTime uploadedAt;

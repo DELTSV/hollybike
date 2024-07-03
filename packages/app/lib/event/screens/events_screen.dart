@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/fragments/future_events.dart';
 import 'package:hollybike/event/fragments/user_events.dart';
-import 'package:hollybike/profile/bloc/profile_bloc.dart';
+import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';

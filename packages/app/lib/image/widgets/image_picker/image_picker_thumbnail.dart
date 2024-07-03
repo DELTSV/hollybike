@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hollybike/image/utils/image_picker/img.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
-import '../../utils/image_picker/img.dart';
 import 'image_picker_thumbnail_container.dart';
 
 class ImagePickerThumbnail extends StatelessWidget {

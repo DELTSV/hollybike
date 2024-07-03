@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
-
-import '../../../utils/dates.dart';
+import 'package:hollybike/shared/utils/dates.dart';
 
 class ImageGalleryDetailsEvent extends StatelessWidget {
   final MinimalEvent event;

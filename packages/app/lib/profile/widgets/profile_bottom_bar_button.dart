@@ -4,7 +4,7 @@ import 'package:hollybike/profile/widgets/profile_modal/profile_modal.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../event/widgets/event_loading_profile_picture.dart';
-import '../bloc/profile_bloc.dart';
+import '../bloc/profile_bloc/profile_bloc.dart';
 
 class ProfileBottomBarButton extends StatelessWidget {
   const ProfileBottomBarButton({super.key});

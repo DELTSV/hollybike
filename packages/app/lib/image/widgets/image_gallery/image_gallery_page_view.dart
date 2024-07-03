@@ -2,14 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/event/types/image/event_image.dart';
+import 'package:hollybike/image/type/event_image.dart';
+import 'package:hollybike/image/widgets/image_gallery/image_gallery_bottom_modal.dart';
 import 'package:hollybike/shared/utils/safe_set_state.dart';
-import 'package:hollybike/shared/widgets/image_gallery/image_gallery_bottom_modal.dart';
+import 'package:hollybike/shared/widgets/modal/content_shrink_bottom_modal.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../event/bloc/event_images_bloc/event_image_details_bloc.dart';
 import '../../../event/bloc/event_images_bloc/event_image_details_state.dart';
-import '../modal/content_shrink_bottom_modal.dart';
 
 class ImageGalleryPageView extends StatefulWidget {
   final int imageIndex;

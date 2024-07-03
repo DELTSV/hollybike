@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:hollybike/event/types/image/event_image.dart';
+import 'package:hollybike/image/type/event_image.dart';
+import 'package:hollybike/image/type/event_image_details.dart';
 
 import '../../../shared/types/paginated_list.dart';
-import '../../types/image/event_image_details.dart';
-import 'image_api.dart';
+import '../../../image/services/image_api.dart';
 
 class ImageRepository {
   final ImageApi imageApi;

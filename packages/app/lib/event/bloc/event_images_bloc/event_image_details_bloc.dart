@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:hollybike/image/services/image_repository.dart';
 
-import '../../services/image/image_repository.dart';
 import 'event_image_details_event.dart';
 import 'event_image_details_state.dart';
 

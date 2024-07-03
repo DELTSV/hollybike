@@ -1,11 +1,12 @@
-import 'package:flutter/foundation.dart';
 
-import '../../types/image/event_image.dart';
+import 'package:flutter/cupertino.dart';
+
+import '../type/event_image.dart';
 
 enum EventImagesStatus { loading, success, error, initial }
 
 @immutable
-class EventImagesState {
+class ImageListState {
   final List<EventImage> images;
 
   final bool hasMore;
@@ -13,28 +14,28 @@ class EventImagesState {
 
   final EventImagesStatus status;
 
-  const EventImagesState({
+  const ImageListState({
     this.images = const [],
     this.hasMore = true,
     this.nextPage = 0,
     this.status = EventImagesStatus.initial,
   });
 
-  EventImagesState.state(EventImagesState state)
+  ImageListState.state(ImageListState state)
       : this(
-          images: state.images,
-          hasMore: state.hasMore,
-          nextPage: state.nextPage,
-          status: state.status,
-        );
+    images: state.images,
+    hasMore: state.hasMore,
+    nextPage: state.nextPage,
+    status: state.status,
+  );
 
-  EventImagesState copyWith({
+  ImageListState copyWith({
     EventImagesStatus? status,
     List<EventImage>? images,
     bool? hasMore,
     int? nextPage,
   }) {
-    return EventImagesState(
+    return ImageListState(
       status: status ?? this.status,
       images: images ?? this.images,
       hasMore: hasMore ?? this.hasMore,
@@ -43,44 +44,44 @@ class EventImagesState {
   }
 }
 
-class EventImagesInitial extends EventImagesState {}
+class ImageListInitial extends ImageListState {}
 
-class EventImagesPageLoadInProgress extends EventImagesState {
-  EventImagesPageLoadInProgress(EventImagesState state)
+class ImageListPageLoadInProgress extends ImageListState {
+  ImageListPageLoadInProgress(ImageListState state)
       : super.state(state.copyWith(status: EventImagesStatus.loading));
 }
 
-class EventImagesPageLoadSuccess extends EventImagesState {
-  EventImagesPageLoadSuccess(EventImagesState state)
+class ImageListPageLoadSuccess extends ImageListState {
+  ImageListPageLoadSuccess(ImageListState state)
       : super.state(state.copyWith(status: EventImagesStatus.success));
 }
 
-class EventImagesPageLoadFailure extends EventImagesState {
+class ImageListPageLoadFailure extends ImageListState {
   final String errorMessage;
 
-  EventImagesPageLoadFailure(EventImagesState state,
+  ImageListPageLoadFailure(ImageListState state,
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventImagesStatus.error));
 }
 
-class EventImagesOperationInProgress extends EventImagesState {
-  EventImagesOperationInProgress(EventImagesState state)
+class ImageListOperationInProgress extends ImageListState {
+  ImageListOperationInProgress(ImageListState state)
       : super.state(state.copyWith(status: EventImagesStatus.loading));
 }
 
-class EventImagesOperationSuccess extends EventImagesState {
+class ImageListOperationSuccess extends ImageListState {
   final bool shouldRefresh;
   final String? successMessage;
 
-  EventImagesOperationSuccess(EventImagesState state,
+  ImageListOperationSuccess(ImageListState state,
       {this.shouldRefresh = false, this.successMessage})
       : super.state(state.copyWith(status: EventImagesStatus.success));
 }
 
-class EventImagesOperationFailure extends EventImagesState {
+class ImageListOperationFailure extends ImageListState {
   final String errorMessage;
 
-  EventImagesOperationFailure(EventImagesState state,
+  ImageListOperationFailure(ImageListState state,
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventImagesStatus.error));
 }

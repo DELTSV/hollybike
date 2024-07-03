@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:hollybike/image/type/event_image_details.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
-import '../../../shared/http/dio_client.dart';
-import '../../../shared/types/paginated_list.dart';
-import '../../types/image/event_image.dart';
-import '../../types/image/event_image_details.dart';
+import '../../shared/http/dio_client.dart';
+import '../../shared/types/paginated_list.dart';
+import '../type/event_image.dart';
 
 class ImageApi {
   final DioClient client;

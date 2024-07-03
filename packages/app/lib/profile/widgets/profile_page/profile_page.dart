@@ -66,7 +66,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: TabBar(
                   labelColor: Theme.of(context).colorScheme.secondary,
                   indicatorColor: Theme.of(context).colorScheme.secondary,
-                  tabs: const [Tab(icon: Icon(Icons.event))],
+                  tabs: const [
+                    Tab(icon: Icon(Icons.event)),
+                    Tab(icon: Icon(Icons.image)),
+                  ],
                 ),
               ),
             ),

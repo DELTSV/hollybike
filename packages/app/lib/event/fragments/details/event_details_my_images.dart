@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/event/widgets/images/event_images_visibility_dialog.dart';
+import 'package:hollybike/image/bloc/image_list_state.dart';
+import 'package:hollybike/image/widgets/image_gallery/image_gallery.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../shared/widgets/app_toast.dart';
-import '../../../shared/widgets/image_gallery/image_gallery.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
-import '../../bloc/event_images_bloc/event_images_state.dart';
 import '../../bloc/event_images_bloc/event_my_images_bloc.dart';
 import '../../bloc/event_images_bloc/event_my_images_event.dart';
 
@@ -35,16 +35,16 @@ class EventDetailsMyImages extends StatelessWidget {
       onRefresh: () => _refreshImages(context),
       child: Stack(
         children: [
-          BlocListener<EventMyImagesBloc, EventImagesState>(
+          BlocListener<EventMyImagesBloc, ImageListState>(
             listener: (context, state) {
-              if (state is EventImagesOperationFailure) {
+              if (state is ImageListOperationFailure) {
                 Toast.showErrorToast(
                   context,
                   state.errorMessage,
                 );
               }
 
-              if (state is EventImagesOperationSuccess) {
+              if (state is ImageListOperationSuccess) {
                 if (state.successMessage != null) {
                   Toast.showSuccessToast(
                     context,
@@ -57,7 +57,7 @@ class EventDetailsMyImages extends StatelessWidget {
                 }
               }
             },
-            child: BlocBuilder<EventMyImagesBloc, EventImagesState>(
+            child: BlocBuilder<EventMyImagesBloc, ImageListState>(
               builder: (context, state) {
                 return EventDetailsTabScrollWrapper(
                   sliverChild: true,
@@ -68,7 +68,7 @@ class EventDetailsMyImages extends StatelessWidget {
                     onRefresh: () => _refreshImages(context),
                     onLoadNextPage: () => _loadNextPage(context),
                     images: state.images,
-                    loading: state is EventImagesPageLoadInProgress,
+                    loading: state is ImageListPageLoadInProgress,
                     onImageTap: (image) {
                       context.router.push(
                         EventMyImageViewRoute(

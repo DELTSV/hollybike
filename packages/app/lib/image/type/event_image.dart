@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../shared/types/json_map.dart';
+import '../../shared/types/json_map.dart';
 
 part 'event_image.freezed.dart';
 part 'event_image.g.dart';
