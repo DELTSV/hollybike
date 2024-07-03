@@ -61,7 +61,7 @@ class ImageApi {
       queryParameters: {
         'page': page,
         'per_page': imagesPerPage,
-        'id_user': 'eq:$userId',
+        'owner_image': 'eq:$userId',
         'sort': 'taken_date_time.desc'
       },
     );
