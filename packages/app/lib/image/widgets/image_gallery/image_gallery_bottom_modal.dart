@@ -5,9 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_event.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_image_details_state.dart';
-import 'package:hollybike/event/types/image/event_image_details.dart';
+import 'package:hollybike/image/type/event_image_details.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
-import 'package:hollybike/shared/widgets/image_gallery/image_details/image_gallery_details.dart';
 import 'package:http/http.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
@@ -15,7 +14,8 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../event/types/image/event_image.dart';
+import '../../type/event_image.dart';
+import 'image_details/image_gallery_details.dart';
 
 class ImageGalleryBottomModal extends StatefulWidget {
   final EventImage image;
@@ -96,7 +96,12 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
                   BlocBuilder<EventImageDetailsBloc, EventImageDetailsState>(
                     builder: (context, state) {
                       if (state is EventImageDetailsLoadInProgress) {
-                        return const CircularProgressIndicator();
+                        return const SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
                       }
 
                       if (state.imageDetails == null) {
@@ -199,10 +204,10 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
             TextButton(
               onPressed: () {
                 context.read<EventImageDetailsBloc>().add(
-                  DeleteImage(
-                    imageId: widget.image.id,
-                  ),
-                );
+                      DeleteImage(
+                        imageId: widget.image.id,
+                      ),
+                    );
 
                 Navigator.of(modalContext).pop();
               },

@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
-import '../../widgets/image_picker/image_picker_modal.dart';
+import 'package:hollybike/image/widgets/image_picker/image_picker_modal.dart';
 
 enum ImagePickerMode {
   single,

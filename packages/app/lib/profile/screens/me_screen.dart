@@ -6,7 +6,7 @@ import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../shared/widgets/bar/top_bar.dart';
 import '../../shared/widgets/hud/hud.dart';
-import '../bloc/profile_bloc.dart';
+import '../bloc/profile_bloc/profile_bloc.dart';
 import '../widgets/profile_modal/profile_modal.dart';
 
 @RoutePage()

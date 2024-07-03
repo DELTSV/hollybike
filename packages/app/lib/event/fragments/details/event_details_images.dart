@@ -2,13 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_images_bloc/event_images_bloc.dart';
+import 'package:hollybike/image/bloc/image_list_state.dart';
+import 'package:hollybike/image/widgets/image_gallery/image_gallery.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../shared/widgets/image_gallery/image_gallery.dart';
 import '../../bloc/event_images_bloc/event_images_event.dart';
-import '../../bloc/event_images_bloc/event_images_state.dart';
 import '../../widgets/details/event_details_scroll_wrapper.dart';
 
 class EventDetailsImages extends StatelessWidget {
@@ -29,7 +29,7 @@ class EventDetailsImages extends StatelessWidget {
   Widget build(BuildContext context) {
     return ThemedRefreshIndicator(
       onRefresh: () => _refreshImages(context),
-      child: BlocBuilder<EventImagesBloc, EventImagesState>(
+      child: BlocBuilder<EventImagesBloc, ImageListState>(
         builder: (context, state) {
           return EventDetailsTabScrollWrapper(
             sliverChild: true,
@@ -37,10 +37,10 @@ class EventDetailsImages extends StatelessWidget {
             child: ImageGallery(
               scrollController: scrollController,
               emptyPlaceholder: _buildPlaceholder(),
-              onRefresh: () => _refreshImages(context),
+              onRefresh: (initial) => _refreshImages(context, initial: initial),
               onLoadNextPage: () => _loadNextPage(context),
               images: state.images,
-              loading: state is EventImagesPageLoadInProgress,
+              loading: state is ImageListInitialPageLoadInProgress,
               onImageTap: (image) {
                 context.router.push(
                   EventImageViewRoute(
@@ -89,10 +89,11 @@ class EventDetailsImages extends StatelessWidget {
     );
   }
 
-  Future<void> _refreshImages(BuildContext context) {
+  Future<void> _refreshImages(BuildContext context, {bool initial = false}) {
     context.read<EventImagesBloc>().add(
       RefreshEventImages(
         eventId: eventId,
+        initial: initial,
       ),
     );
 

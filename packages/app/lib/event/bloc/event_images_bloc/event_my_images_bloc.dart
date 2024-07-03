@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/bloc/event_images_bloc/event_images_state.dart';
+import 'package:hollybike/image/bloc/image_list_state.dart';
+import 'package:hollybike/image/services/image_repository.dart';
 
 import '../../../shared/types/paginated_list.dart';
 import '../../services/event/event_repository.dart';
-import '../../services/image/image_repository.dart';
-import '../../types/image/event_image.dart';
+import '../../../image/type/event_image.dart';
 import 'event_my_images_event.dart';
 
-class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
+class EventMyImagesBloc extends Bloc<EventMyImagesEvent, ImageListState> {
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
@@ -18,7 +18,7 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
   EventMyImagesBloc({
     required this.imageRepository,
     required this.eventRepository,
-  }) : super(EventImagesInitial()) {
+  }) : super(ImageListInitial()) {
     on<LoadMyEventImagesNextPage>(_onLoadMyEventImagesNextPage);
     on<RefreshMyEventImages>(_onRefreshMyEventImages);
     on<UploadEventImages>(_onUploadEventImages);
@@ -27,13 +27,13 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
   Future<void> _onLoadMyEventImagesNextPage(
     LoadMyEventImagesNextPage event,
-    Emitter<EventImagesState> emit,
+    Emitter<ImageListState> emit,
   ) async {
     if (state.hasMore == false || state.status == EventImagesStatus.loading) {
       return;
     }
 
-    emit(EventImagesPageLoadInProgress(state));
+    emit(ImageListPageLoadInProgress(state));
 
     try {
       PaginatedList<EventImage> page = await imageRepository.fetchMyEventImages(
@@ -42,14 +42,14 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
         numberOfImagesPerRequest,
       );
 
-      emit(EventImagesPageLoadSuccess(state.copyWith(
+      emit(ImageListPageLoadSuccess(state.copyWith(
         images: [...state.images, ...page.items],
         hasMore: page.items.length == numberOfImagesPerRequest,
         nextPage: state.nextPage + 1,
       )));
     } catch (e) {
       log('Error while loading next page of images', error: e);
-      emit(EventImagesPageLoadFailure(
+      emit(ImageListPageLoadFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -59,9 +59,13 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
   Future<void> _onRefreshMyEventImages(
     RefreshMyEventImages event,
-    Emitter<EventImagesState> emit,
+    Emitter<ImageListState> emit,
   ) async {
-    emit(EventImagesPageLoadInProgress(state));
+    if (event.initial) {
+      emit(ImageListInitialPageLoadInProgress(state));
+    } else {
+      emit(ImageListPageLoadInProgress(state));
+    }
 
     try {
       PaginatedList<EventImage> page =
@@ -70,14 +74,14 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
         numberOfImagesPerRequest,
       );
 
-      emit(EventImagesPageLoadSuccess(state.copyWith(
+      emit(ImageListPageLoadSuccess(state.copyWith(
         images: page.items,
         hasMore: page.items.length == numberOfImagesPerRequest,
         nextPage: 1,
       )));
     } catch (e) {
       log('Error while refreshing images', error: e);
-      emit(EventImagesPageLoadFailure(
+      emit(ImageListPageLoadFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -87,9 +91,9 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
   Future<void> _onUploadEventImages(
     UploadEventImages event,
-    Emitter<EventImagesState> emit,
+    Emitter<ImageListState> emit,
   ) async {
-    emit(EventImagesOperationInProgress(state));
+    emit(ImageListOperationInProgress(state));
 
     try {
       await imageRepository.uploadEventImages(
@@ -97,14 +101,14 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
         event.images,
       );
 
-      emit(EventImagesOperationSuccess(
+      emit(ImageListOperationSuccess(
         state,
         shouldRefresh: true,
         successMessage: "Photos ajoutées avec succès",
       ));
     } catch (e) {
       log('Error while uploading images', error: e);
-      emit(EventImagesOperationFailure(
+      emit(ImageListOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -114,9 +118,9 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
   Future<void> _onUpdateImagesVisibility(
     UpdateImagesVisibility event,
-    Emitter<EventImagesState> emit,
+    Emitter<ImageListState> emit,
   ) async {
-    emit(EventImagesOperationInProgress(state));
+    emit(ImageListOperationInProgress(state));
 
     try {
       await imageRepository.updateImagesVisibility(
@@ -126,10 +130,10 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 
       eventRepository.onImagesVisibilityUpdated(event.isPublic, event.eventId);
 
-      emit(EventImagesOperationSuccess(state));
+      emit(ImageListOperationSuccess(state));
     } catch (e) {
       log('Error while updating images visibility', error: e);
-      emit(EventImagesOperationFailure(
+      emit(ImageListOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -139,9 +143,9 @@ class EventMyImagesBloc extends Bloc<EventMyImagesEvent, EventImagesState> {
 }
 
 extension FirstWhenNotLoading on EventMyImagesBloc {
-  Future<EventImagesState> get firstWhenNotLoading async {
+  Future<ImageListState> get firstWhenNotLoading async {
     return stream.firstWhere((state) {
-      return state is! EventImagesPageLoadInProgress;
+      return state is! ImageListPageLoadInProgress;
     });
   }
 }

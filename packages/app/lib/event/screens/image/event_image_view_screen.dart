@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/image/bloc/image_list_state.dart';
+import 'package:hollybike/image/services/image_repository.dart';
+import 'package:hollybike/image/widgets/image_gallery/image_gallery_page_view.dart';
 
-import '../../../shared/widgets/image_gallery/image_gallery_page_view.dart';
 import '../../bloc/event_images_bloc/event_image_details_bloc.dart';
 import '../../bloc/event_images_bloc/event_images_bloc.dart';
-import '../../bloc/event_images_bloc/event_images_state.dart';
-import '../../services/image/image_repository.dart';
 
 @RoutePage()
 class EventImageViewScreen extends StatelessWidget implements AutoRouteWrapper {
@@ -35,7 +35,7 @@ class EventImageViewScreen extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<EventImagesBloc, EventImagesState>(
+    return BlocBuilder<EventImagesBloc, ImageListState>(
       builder: (context, state) => ImageGalleryPageView(
         imageIndex: imageIndex,
         images: state.images,

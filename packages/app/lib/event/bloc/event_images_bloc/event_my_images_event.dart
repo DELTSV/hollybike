@@ -16,9 +16,11 @@ class LoadMyEventImagesNextPage extends EventMyImagesEvent {
 
 class RefreshMyEventImages extends EventMyImagesEvent {
   final int eventId;
+  final bool initial;
 
   RefreshMyEventImages({
     required this.eventId,
+    this.initial = false,
   });
 }
 

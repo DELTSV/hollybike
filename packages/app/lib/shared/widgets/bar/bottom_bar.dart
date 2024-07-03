@@ -5,7 +5,7 @@ import 'package:hollybike/profile/widgets/profile_bottom_bar_button.dart';
 import 'package:hollybike/shared/widgets/bar/bottom_bar_icon_button.dart';
 
 import '../../../app/app_router.gr.dart';
-import '../../../profile/bloc/profile_bloc.dart';
+import '../../../profile/bloc/profile_bloc/profile_bloc.dart';
 
 class NavRoute {
   final String routeName;

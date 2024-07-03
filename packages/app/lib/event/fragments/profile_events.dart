@@ -14,12 +14,12 @@ import '../types/minimal_event.dart';
 
 class ProfileEvents extends StatefulWidget {
   final int? userId;
-  final GlobalKey<NestedScrollViewState> scrollView;
+  final ScrollController scrollController;
 
   const ProfileEvents({
     super.key,
     required this.userId,
-    required this.scrollView,
+    required this.scrollController,
   });
 
   @override
@@ -27,6 +27,19 @@ class ProfileEvents extends StatefulWidget {
 }
 
 class _ProfileEventsState extends State<ProfileEvents> {
+  @override
+  void initState() {
+    super.initState();
+    _refreshEvents(context);
+    widget.scrollController.addListener(_listenToScroll);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_listenToScroll);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ThemedRefreshIndicator(
@@ -86,19 +99,12 @@ class _ProfileEventsState extends State<ProfileEvents> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _refreshEvents(context);
+  void _listenToScroll() {
+    var nextPageTrigger = 0.8 * widget.scrollController.position.maxScrollExtent;
 
-    final scrollController = widget.scrollView.currentState!.innerController;
-    scrollController.addListener(() {
-      var nextPageTrigger = 0.8 * scrollController.position.maxScrollExtent;
-
-      if (scrollController.position.pixels > nextPageTrigger) {
-        _loadNextPage(context);
-      }
-    });
+    if (widget.scrollController.position.pixels > nextPageTrigger) {
+      _loadNextPage(context);
+    }
   }
 
   void _loadNextPage(BuildContext context) {

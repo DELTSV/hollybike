@@ -13,8 +13,10 @@ class LoadEventImagesNextPage extends EventImagesEvent {
 
 class RefreshEventImages extends EventImagesEvent {
   final int eventId;
+  final bool initial;
 
   RefreshEventImages({
     required this.eventId,
+    this.initial = false,
   });
 }

@@ -6,7 +6,7 @@ import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
-import '../services/profile_repository.dart';
+import '../../services/profile_repository.dart';
 
 part 'profile_event.dart';
 

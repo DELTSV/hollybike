@@ -4,6 +4,7 @@ import 'package:hollybike/association/types/association.dart';
 import 'package:hollybike/event/fragments/profile_events.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
 import 'package:hollybike/profile/widgets/profile_description/profile_description.dart';
+import 'package:hollybike/profile/widgets/profile_images.dart';
 import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
 import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
@@ -29,8 +30,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late final ScrollController _scrollController;
-  final scrollViewKey = GlobalKey<NestedScrollViewState>();
+  late final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return DefaultTabController(
-      length: 1,
+      length: 2,
       child: NestedScrollView(
-        key: scrollViewKey,
         controller: _scrollController,
         headerSliverBuilder: (context, scrolled) => [
           SliverToBoxAdapter(
@@ -63,46 +73,44 @@ class _ProfilePageState extends State<ProfilePage> {
               pinned: true,
               delegate: PinnedHeaderDelegate(
                 height: 50,
-                child: TabBar(
-                  labelColor: Theme.of(context).colorScheme.secondary,
-                  indicatorColor: Theme.of(context).colorScheme.secondary,
-                  tabs: const [Tab(icon: Icon(Icons.event))],
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: TabBar(
+                    labelColor: Theme.of(context).colorScheme.secondary,
+                    indicatorColor: Theme.of(context).colorScheme.secondary,
+                    tabs: const [
+                      Tab(icon: Icon(Icons.event)),
+                      Tab(icon: Icon(Icons.image)),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ],
-        body: Padding(
-          padding: const EdgeInsets.only(top: 50),
-          child: TabBarView(
-            children: [
-              BlocProvider<UserEventsBloc>(
-                create: (context) => UserEventsBloc(
-                  userId: widget.profile!.id,
-                  eventRepository:
-                      RepositoryProvider.of<EventRepository>(context),
-                )..add(SubscribeToEvents()),
+        body: TabBarView(
+          children: [
+            BlocProvider<UserEventsBloc>(
+              create: (context) => UserEventsBloc(
+                userId: widget.profile!.id,
+                eventRepository:
+                    RepositoryProvider.of<EventRepository>(context),
+              )..add(SubscribeToEvents()),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50),
                 child: ProfileEvents(
                   userId: widget.profile!.id,
-                  scrollView: scrollViewKey,
+                  scrollController: _scrollController,
                 ),
               ),
-            ],
-          ),
+            ),
+            ProfileImages(
+              userId: widget.profile!.id,
+              scrollController: _scrollController,
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 }

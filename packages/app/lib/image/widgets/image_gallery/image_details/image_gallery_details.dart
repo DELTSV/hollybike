@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/event/types/image/event_image_details.dart';
-import 'package:hollybike/shared/widgets/image_gallery/image_details/image_gallery_details_owner.dart';
+import 'package:hollybike/image/type/event_image_details.dart';
+import 'package:hollybike/image/widgets/image_gallery/image_details/image_gallery_details_owner.dart';
 
 import 'image_gallery_details_event.dart';
 import 'image_gallery_details_position.dart';

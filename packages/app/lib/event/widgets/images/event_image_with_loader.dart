@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../shared/widgets/loading_placeholders/gradient_loading_placeholder.dart';
-import '../../types/image/event_image.dart';
+import '../../../image/type/event_image.dart';
 
 class EventImageWithLoader extends StatelessWidget {
   final EventImage image;

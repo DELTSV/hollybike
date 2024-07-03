@@ -1,27 +1,26 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/event/bloc/event_images_bloc/event_images_event.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/services/image_repository.dart';
+import 'package:hollybike/image/type/event_image.dart';
+import 'package:hollybike/profile/bloc/profile_image_bloc/profile_images_event.dart';
+import 'package:hollybike/shared/types/paginated_list.dart';
 
-import '../../../shared/types/paginated_list.dart';
-import '../../../image/type/event_image.dart';
-
-class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
+class ProfileImagesBloc extends Bloc<ProfileImagesEvent, ImageListState> {
   final int numberOfImagesPerRequest = 20;
 
   final ImageRepository imageRepository;
 
-  EventImagesBloc({
+  ProfileImagesBloc({
     required this.imageRepository,
   }) : super(ImageListInitial()) {
-    on<LoadEventImagesNextPage>(_onLoadEventImagesNextPage);
-    on<RefreshEventImages>(_onRefreshEventImages);
+    on<LoadProfileImagesNextPage>(_onLoadProfileImagesNextPage);
+    on<RefreshProfileImages>(_onRefreshProfileImages);
   }
 
-  Future<void> _onLoadEventImagesNextPage(
-    LoadEventImagesNextPage event,
+  Future<void> _onLoadProfileImagesNextPage(
+    LoadProfileImagesNextPage event,
     Emitter<ImageListState> emit,
   ) async {
     if (state.hasMore == false || state.status == EventImagesStatus.loading) {
@@ -31,8 +30,8 @@ class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
     emit(ImageListPageLoadInProgress(state));
 
     try {
-      PaginatedList<EventImage> page = await imageRepository.fetchEventImages(
-        event.eventId,
+      PaginatedList<EventImage> page = await imageRepository.fetchProfileImages(
+        event.userId,
         state.nextPage,
         numberOfImagesPerRequest,
       );
@@ -52,8 +51,8 @@ class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
     }
   }
 
-  Future<void> _onRefreshEventImages(
-    RefreshEventImages event,
+  _onRefreshProfileImages(
+    RefreshProfileImages event,
     Emitter<ImageListState> emit,
   ) async {
     if (event.initial) {
@@ -63,8 +62,9 @@ class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
     }
 
     try {
-      PaginatedList<EventImage> page = await imageRepository.refreshEventImages(
-        event.eventId,
+      PaginatedList<EventImage> page =
+      await imageRepository.refreshProfileImages(
+        event.userId,
         numberOfImagesPerRequest,
       );
 
@@ -84,10 +84,11 @@ class EventImagesBloc extends Bloc<EventImagesEvent, ImageListState> {
   }
 }
 
-extension FirstWhenNotLoading on EventImagesBloc {
+extension FirstWhenNotLoading on ProfileImagesBloc {
   Future<ImageListState> get firstWhenNotLoading async {
     return stream.firstWhere((state) {
-      return state is! ImageListPageLoadInProgress;
+      return state is! ImageListPageLoadInProgress &&
+          state is! ImageListInitialPageLoadInProgress;
     });
   }
 }
