@@ -6,7 +6,6 @@ import 'package:hollybike/event/widgets/map/journey_map.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
 import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
 import 'package:hollybike/positions/bloc/user_positions_state.dart';
-import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
 import 'package:provider/provider.dart';
 
 import '../../../positions/bloc/user_positions_event.dart';
@@ -57,31 +56,11 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
 
     return BlocBuilder<UserPositionsBloc, UserPositionsState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            if (state.status == UserPositionsStatus.success)
-              ..._buildUserPositions(state.userPositions),
-            JourneyMap(
-              journey: widget.journey!,
-              onMapLoaded: widget.onMapLoaded,
-            ),
-          ],
+        return JourneyMap(
+          journey: widget.journey!,
+          onMapLoaded: widget.onMapLoaded,
         );
       },
     );
-  }
-
-  List<Widget> _buildUserPositions(
-      List<WebsocketReceivePosition> userPositions) {
-    return userPositions.map((position) {
-      return Row(
-        children: [
-          Text(position.userId.toString()),
-          const SizedBox(width: 10),
-          Text('${position.latitude.toString()}, '),
-          Text(position.longitude.toString()),
-        ],
-      );
-    }).toList();
   }
 }
