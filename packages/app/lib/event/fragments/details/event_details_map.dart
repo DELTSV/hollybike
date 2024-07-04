@@ -57,32 +57,11 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
 
     return BlocBuilder<UserPositionsBloc, UserPositionsState>(
       builder: (context, state) {
-        return Column(
-          children: [
-            if (state.status == UserPositionsStatus.success)
-              ..._buildUserPositions(state.userPositions),
-            JourneyMap(
-              journey: widget.journey!,
-              onMapLoaded: widget.onMapLoaded,
-            ),
-          ],
+        return JourneyMap(
+          journey: widget.journey!,
+          onMapLoaded: widget.onMapLoaded,
         );
       },
     );
-  }
-
-  List<Widget> _buildUserPositions(
-    List<WebsocketReceivePosition> userPositions,
-  ) {
-    return userPositions.map((position) {
-      return Row(
-        children: [
-          Text(position.userId.toString()),
-          const SizedBox(width: 10),
-          Text('${position.latitude.toString()}, '),
-          Text(position.longitude.toString()),
-        ],
-      );
-    }).toList();
   }
 }

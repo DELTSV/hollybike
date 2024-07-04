@@ -51,7 +51,6 @@ final then = WebsocketReceivePosition(
 
 class _JourneyMapState extends State<JourneyMap> {
   bool _mapLoading = true;
-  bool _mockPositionStep = false;
 
   @override
   Widget build(BuildContext context) {
