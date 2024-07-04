@@ -253,13 +253,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
   Widget _tabTabContent() {
     return BlocBuilder<EventDetailsBloc, EventDetailsState>(
       builder: (context, state) {
-        if (state is EventDetailsLoadInProgress && state.eventDetails == null) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        if (state.eventDetails == null || state is EventDetailsLoadFailure) {
+        if (state.eventDetails == null && state is EventDetailsLoadFailure) {
           return const Center(
             child: Text(
               "Impossible de charger les détails de l'événement",
@@ -267,11 +261,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           );
         }
 
-        final eventDetails = state.eventDetails!;
-
-        return TabBarView(
-          controller: _tabController,
-          children: _getTabs(eventDetails),
+        return AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          firstChild: state.eventDetails == null
+              ? const SizedBox()
+              : TabBarView(
+                  controller: _tabController,
+                  children: _getTabs(state.eventDetails!),
+                ),
+          secondChild: const Center(
+            child: CircularProgressIndicator(),
+          ),
+          crossFadeState:
+              state is EventDetailsLoadInProgress && state.eventDetails == null
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
         );
       },
     );
