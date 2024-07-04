@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="app profile" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--profile --bundle-sksl-path flutter.sksl.json --dart-define=PUBLIC_ACCESS_TOKEN=$PUBLIC_ACCESS_TOKEN$" />
+    <option name="filePath" value="$PROJECT_DIR$/packages/app/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>
