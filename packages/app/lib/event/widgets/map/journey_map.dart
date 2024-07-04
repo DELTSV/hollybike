@@ -260,6 +260,7 @@ class _JourneyMapState extends State<JourneyMap> {
     UserPositionsState userPositionsState,
   ) async {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
+    final colorScheme = Theme.of(context).colorScheme;
     final options = await Future.wait(
         userPositionsState.userPositions.map((position) async {
       final user = profileBloc.getProfileById(position.userId);
@@ -279,8 +280,8 @@ class _JourneyMapState extends State<JourneyMap> {
         textSize: 12,
         textField: user?.username,
         textHaloWidth: 2,
-        textHaloColor: Theme.of(context).colorScheme.primary.value,
-        textColor: Theme.of(context).colorScheme.onPrimary.value,
+        textHaloColor: colorScheme.primary.value,
+        textColor: colorScheme.onPrimary.value,
       );
     }).toList());
 

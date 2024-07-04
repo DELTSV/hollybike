@@ -6,7 +6,6 @@ import 'package:hollybike/event/widgets/map/journey_map.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
 import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
 import 'package:hollybike/positions/bloc/user_positions_state.dart';
-import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
 import 'package:provider/provider.dart';
 
 import '../../../positions/bloc/user_positions_event.dart';
