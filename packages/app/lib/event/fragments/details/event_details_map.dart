@@ -72,7 +72,8 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
   }
 
   List<Widget> _buildUserPositions(
-      List<WebsocketReceivePosition> userPositions) {
+    List<WebsocketReceivePosition> userPositions,
+  ) {
     return userPositions.map((position) {
       return Row(
         children: [
