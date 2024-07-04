@@ -9,11 +9,11 @@ import 'package:geojson_vi/geojson_vi.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
 import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
 import 'package:hollybike/positions/bloc/user_positions_state.dart';
-import 'package:hollybike/profile/bloc/profile_bloc.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../../positions/types/recieve/websocket_receive_position.dart';
+import '../../../profile/bloc/profile_bloc/profile_bloc.dart';
 import '../../../shared/utils/waiter.dart';
 
 class JourneyMap extends StatefulWidget {
