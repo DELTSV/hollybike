@@ -21,6 +21,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final AuthRepository authRepository;
   FlutterBackgroundService? service;
 
+  void Function(FlutterBackgroundService)? onInitialized;
+
   NotificationBloc({required this.authRepository})
       : super(NotificationInitial()) {
     on<InitNotificationService>(_onInitNotificationService);
@@ -29,6 +31,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       service.on('stopService').listen((event) {
         this.service = null;
       });
+
+      if (onInitialized != null) {
+        onInitialized?.call(service);
+        onInitialized = null;
+      }
 
       this.service = service;
     });
@@ -44,10 +51,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       return;
     }
 
-    service?.invoke("connect", {
-      "token": currentSession.token,
-      "host": currentSession.host,
-    });
+    connect(FlutterBackgroundService service) async {
+      await Permission.notification.request();
+
+      service.invoke("connect", {
+        "token": currentSession.token,
+        "host": currentSession.host,
+      });
+    }
+
+    if (service == null) {
+      onInitialized = connect;
+      return;
+    }
+
+    connect(service!);
   }
 
   Future<FlutterBackgroundService> initializeService() async {
@@ -67,8 +85,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     );
 
     await service.startService();
-
-    await Permission.notification.request();
 
     return service;
   }
