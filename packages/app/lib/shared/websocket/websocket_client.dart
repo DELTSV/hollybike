@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_status_updated.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
 
 import 'recieve/websocket_error.dart';
@@ -72,6 +73,8 @@ class WebsocketClient {
           return WebsocketSubscribed.fromJson(json);
         case 'receive-user-position':
           return WebsocketReceivePosition.fromJson(json);
+        case 'EventStatusUpdateNotification':
+          return WebsocketEventStatusUpdated.fromJson(json);
         case 'error':
           return WebsocketError.fromJson(json);
       }

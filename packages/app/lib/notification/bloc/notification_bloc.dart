@@ -4,10 +4,12 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/services/auth_repository.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_error.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
 import 'package:hollybike/shared/websocket/websocket_client.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../auth/types/auth_session.dart';
 
@@ -19,8 +21,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final AuthRepository authRepository;
   FlutterBackgroundService? service;
 
-  void Function(FlutterBackgroundService)? onInitialized;
-
   NotificationBloc({required this.authRepository})
       : super(NotificationInitial()) {
     on<InitNotificationService>(_onInitNotificationService);
@@ -29,11 +29,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       service.on('stopService').listen((event) {
         this.service = null;
       });
-
-      if (onInitialized != null) {
-        onInitialized?.call(service);
-        onInitialized = null;
-      }
 
       this.service = service;
     });
@@ -46,24 +41,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final currentSession = await authRepository.currentSession;
 
     if (currentSession == null) {
-      // TODO: Handle this case
       return;
     }
 
-    connect(FlutterBackgroundService service) {
-      print("invoking connect $service");
-      service.invoke("connect", {
-        "token": currentSession.token,
-        "host": currentSession.host,
-      });
-    };
-
-    if (service == null) {
-      onInitialized = connect;
-      return;
-    }
-
-    connect(service!);
+    service?.invoke("connect", {
+      "token": currentSession.token,
+      "host": currentSession.host,
+    });
   }
 
   Future<FlutterBackgroundService> initializeService() async {
@@ -84,11 +68,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
     await service.startService();
 
+    await Permission.notification.request();
+
     return service;
   }
 
   @pragma('vm:entry-point')
-  static void onStart(ServiceInstance service) {
+  static void onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -164,5 +150,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       webSocket?.close();
       service.stopSelf();
     });
+
+    final currentSession = await AuthPersistence().currentSession;
+
+    if (currentSession != null) {
+      connectWebSocket(currentSession.token, currentSession.host);
+    }
   }
 }
