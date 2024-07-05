@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
             description: "Entrez vos identifiants pour vous connecter.",
             notificationsConsumerId: "loginForm",
             formTexts: FormTexts(
-              submit: "Connexion",
+              submit: "Se connecter",
               link: (
                 description: "Vous n'avez pas encore de compte ?",
                 buttonText: "Inscrivez-vous",
@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
             ),
             onFormSubmit: (formValue) {
               BlocProvider.of<AuthBloc>(context).add(AuthLogin(
-                host: formValue["host"] as String,
+                host: _formatHostFromInput(formValue["host"] as String),
                 loginDto: LoginDto.fromMap(formValue),
               ));
             },
@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
               "host": FormFieldConfig(
                 label: "Adresse du serveur",
                 validator: _inputValidator,
-                defaultValue: "https://hollybike.fr",
+                defaultValue: "hollybike.fr",
                 autofillHints: [AutofillHints.url],
                 textInputType: TextInputType.url,
               ),
@@ -80,6 +80,17 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+  
+  String _formatHostFromInput(String input) {
+    if (!input.startsWith("http")) {
+      if (RegExp(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").hasMatch(input)) {
+        return "http://$input";
+      }
+
+      return "https://$input";
+    }
+    return input;
   }
 
   String? _inputValidator(String? inputText) {
