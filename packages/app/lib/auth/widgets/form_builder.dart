@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/notification/widgets/error_consumer.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:hollybike/shared/widgets/form_title.dart';
 
@@ -30,7 +29,7 @@ class FormBuilder extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: addSeparators(
-        _renderHeader() + _renderError() + _renderTextInputs(),
+        _renderHeader() + _renderTextInputs(),
         SizedBox.fromSize(size: const Size.square(16)),
       ),
     );
@@ -41,14 +40,6 @@ class FormBuilder extends StatelessWidget {
       FormTitle(
         title: title,
         description: description,
-      ),
-    ];
-  }
-
-  List<Widget> _renderError() {
-    return <Widget>[
-      ErrorConsumer(
-        notificationsConsumerId: notificationsConsumerId,
       ),
     ];
   }

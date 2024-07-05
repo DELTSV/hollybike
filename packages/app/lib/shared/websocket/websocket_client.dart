@@ -4,11 +4,13 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
-import 'package:hollybike/positions/types/recieve/websocket_subscribed.dart';
-import 'package:hollybike/positions/types/send/websocket_send_position.dart';
-import 'package:hollybike/positions/types/send/websocket_subscribe.dart';
-import 'package:hollybike/positions/types/websocket_message.dart';
+import 'package:hollybike/shared/websocket/websocket_message.dart';
+
+import 'recieve/websocket_error.dart';
+import 'recieve/websocket_receive_position.dart';
+import 'recieve/websocket_subscribed.dart';
+import 'send/websocket_send_position.dart';
+import 'send/websocket_subscribe.dart';
 
 class WebsocketClient {
   final AuthSession session;
@@ -70,6 +72,8 @@ class WebsocketClient {
           return WebsocketSubscribed.fromJson(json);
         case 'receive-user-position':
           return WebsocketReceivePosition.fromJson(json);
+        case 'error':
+          return WebsocketError.fromJson(json);
       }
 
       throw Exception('Unknown message type');

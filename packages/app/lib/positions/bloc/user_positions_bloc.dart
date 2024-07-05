@@ -3,13 +3,13 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/positions/bloc/user_positions_event.dart';
 import 'package:hollybike/positions/bloc/user_positions_state.dart';
-import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
-import 'package:hollybike/positions/types/websocket_message.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
+import 'package:hollybike/shared/websocket/websocket_client.dart';
+import 'package:hollybike/shared/websocket/websocket_message.dart';
 
 import '../../auth/services/auth_persistence.dart';
 import '../../auth/types/auth_session.dart';
-import '../types/recieve/websocket_subscribed.dart';
-import '../types/websocket_client.dart';
 
 class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
   final AuthPersistence authPersistence;

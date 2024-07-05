@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import '../../shared/types/json_map.dart';
+import 'package:hollybike/shared/types/json_map.dart';
 
 part 'websocket_message.freezed.dart';
 part 'websocket_message.g.dart';
