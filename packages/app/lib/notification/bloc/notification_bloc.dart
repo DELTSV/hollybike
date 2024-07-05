@@ -19,6 +19,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final AuthRepository authRepository;
   FlutterBackgroundService? service;
 
+  void Function(FlutterBackgroundService)? onInitialized;
+
   NotificationBloc({required this.authRepository})
       : super(NotificationInitial()) {
     on<InitNotificationService>(_onInitNotificationService);
@@ -27,6 +29,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       service.on('stopService').listen((event) {
         this.service = null;
       });
+
+      if (onInitialized != null) {
+        onInitialized?.call(service);
+        onInitialized = null;
+      }
 
       this.service = service;
     });
@@ -38,19 +45,25 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   ) async {
     final currentSession = await authRepository.currentSession;
 
-    print(currentSession);
-
     if (currentSession == null) {
       // TODO: Handle this case
       return;
     }
 
-    print("connecting to websocket : $service");
+    connect(FlutterBackgroundService service) {
+      print("invoking connect $service");
+      service.invoke("connect", {
+        "token": currentSession.token,
+        "host": currentSession.host,
+      });
+    };
 
-    service?.invoke("connect", {
-      "token": currentSession.token,
-      "host": currentSession.host,
-    });
+    if (service == null) {
+      onInitialized = connect;
+      return;
+    }
+
+    connect(service!);
   }
 
   Future<FlutterBackgroundService> initializeService() async {
@@ -69,9 +82,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       ),
     );
 
-    // service.invoke("stopService", null);
-
-    print("initializing service");
     await service.startService();
 
     return service;
@@ -143,13 +153,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       });
     }
 
-    print("service started");
-
     service.on('connect').listen((event) {
       final token = event?['token'] as String;
       final host = event?['host'] as String;
-
-      print("connecting to websocket : $token, $host");
 
       connectWebSocket(token, host);
     });

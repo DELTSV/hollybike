@@ -76,7 +76,7 @@ class WebsocketClient {
           return WebsocketError.fromJson(json);
       }
 
-      throw Exception('Unknown message type');
+      throw Exception('Unknown message type: ${json['type']}');
     });
   }
 
