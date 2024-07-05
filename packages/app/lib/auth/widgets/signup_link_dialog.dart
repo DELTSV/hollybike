@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
-import 'package:hollybike/shared/widgets/camera/qrcode_camera.dart';
 import 'package:hollybike/shared/widgets/dialog/closable_dialog.dart';
 import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
+import 'package:native_qr/native_qr.dart';
 
 import '../../shared/utils/is_valid_signup_link.dart';
 
@@ -18,6 +18,9 @@ class SignupLinkDialog extends StatefulWidget {
 class _SignupLinkDialogState extends State<SignupLinkDialog> {
   final _formKey = GlobalKey<FormState>();
   final _linkController = TextEditingController();
+
+
+  get isValid => _formKey.currentState?.validate() == true;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: _handleSubmit,
+                      onPressed: isValid ? _handleSubmit : null,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(18),
                         shape: const RoundedRectangleBorder(
@@ -57,31 +60,36 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: addSeparators(
-                [
-                  Text(
-                    "ou scanner un qr code",
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  Icon(
-                    Icons.qr_code_scanner,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ],
-                SizedBox.fromSize(size: const Size.square(8)),
-              ),
+            Text(
+              "Vous pouvez aussi",
+              style: Theme.of(context).textTheme.titleSmall,
             ),
-            QrcodeCamera(
-              onUrlFound: _handleUrlFound,
-              urlValidator: isValidSignupLink,
+            ElevatedButton(
+              onPressed: _onScanQrCode,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Scanner un QR code"),
+                  SizedBox(width: 8),
+                  Icon(Icons.qr_code_scanner),
+                ],
+              ),
             ),
           ],
           SizedBox.fromSize(size: const Size.square(16)),
         ),
       ),
     );
+  }
+
+  void _onScanQrCode() async {
+    NativeQr nativeQr = NativeQr();
+    String? result = await nativeQr.get();
+
+    if (result != null) {
+      _handleUrlFound(result);
+    }
   }
 
   static String? _validateInvitationLink(String? link) {
@@ -98,11 +106,13 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
   void _handleUrlFound(String url) {
     _linkController.text = url;
     HapticFeedback.lightImpact();
+
+    _handleSubmit();
   }
 
   void _handleSubmit() {
-    if (_formKey.currentState!.validate()) {
-      context.router.replaceNamed(_linkController.text);
+    if (isValid) {
+      context.router.pushNamed(_linkController.text);
     }
   }
 }

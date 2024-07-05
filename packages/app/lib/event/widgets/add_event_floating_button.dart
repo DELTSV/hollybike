@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/future_events_bloc.dart';
@@ -13,28 +11,26 @@ class AddEventFloatingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
-      onPressed: () {
-        Timer(const Duration(milliseconds: 100), () {
-          showModalBottomSheet<void>(
-            isScrollControlled: true,
-            context: context,
-            enableDrag: false,
-            builder: (BuildContext modalContext) {
-              return EventFormModal(
-                onSubmit: (formData) {
-                  context.read<FutureEventsBloc>().add(
-                        CreateEvent(
-                          formData: formData,
-                        ),
-                      );
+      onPressed: () async {
+        showModalBottomSheet<void>(
+          isScrollControlled: true,
+          context: context,
+          enableDrag: false,
+          builder: (BuildContext modalContext) {
+            return EventFormModal(
+              onSubmit: (formData) {
+                context.read<FutureEventsBloc>().add(
+                      CreateEvent(
+                        formData: formData,
+                      ),
+                    );
 
-                  Navigator.of(modalContext).pop();
-                },
-                submitButtonText: 'Créer',
-              );
-            },
-          );
-        });
+                Navigator.of(modalContext).pop();
+              },
+              submitButtonText: 'Créer',
+            );
+          },
+        );
       },
       label: Text(
         'Ajouter',
