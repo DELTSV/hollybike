@@ -3,7 +3,7 @@ import 'package:background_locator_2/settings/android_settings.dart';
 import 'package:background_locator_2/settings/ios_settings.dart';
 import 'package:background_locator_2/settings/locator_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 
 import 'my_position_handler.dart';
 

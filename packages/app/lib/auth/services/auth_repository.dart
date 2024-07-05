@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:hollybike/auth/bloc/auth_api.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_api.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';

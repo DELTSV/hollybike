@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/event/widgets/map/journey_map.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';

@@ -73,6 +73,7 @@ dependencies:
   sensors_plus: ^5.0.1
   device_calendar: ^4.3.2
   flutter_displaymode: ^0.6.0
+  native_qr: ^0.0.3
 
 dev_dependencies:
   flutter_test:

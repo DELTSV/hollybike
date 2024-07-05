@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../../auth/bloc/auth_persistence.dart';
+import '../../auth/services/auth_persistence.dart';
 import '../../auth/types/auth_session.dart';
 
 class AuthInterceptor extends Interceptor {

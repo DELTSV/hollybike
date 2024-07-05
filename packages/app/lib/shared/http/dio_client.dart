@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 
 import 'auth_interceptor.dart';
 

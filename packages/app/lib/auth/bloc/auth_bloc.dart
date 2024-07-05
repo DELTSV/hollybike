@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/auth/bloc/auth_repository.dart';
+import 'package:hollybike/auth/services/auth_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
@@ -10,7 +10,7 @@ import 'package:hollybike/notification/bloc/notification_repository.dart';
 import 'package:hollybike/notification/types/notification_exception.dart';
 
 import '../../profile/services/profile_repository.dart';
-import 'auth_session_repository.dart';
+import '../services/auth_session_repository.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
