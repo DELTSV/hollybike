@@ -33,7 +33,7 @@ class LoginScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthConnected) onAuthSuccess.call();
+          if (state is AuthConnected) onAuthSuccess();
         },
         child: BannerDialog(
           body: FormBuilder(
@@ -63,7 +63,7 @@ class LoginScreen extends StatelessWidget {
                 textInputType: TextInputType.url,
               ),
               "email": FormFieldConfig(
-                label: "Adresse mail",
+                label: "Adresse email",
                 validator: _inputValidator,
                 autofocus: true,
                 autofillHints: [AutofillHints.email],
@@ -84,7 +84,7 @@ class LoginScreen extends StatelessWidget {
 
   String? _inputValidator(String? inputText) {
     if (inputText == null || inputText.isEmpty) {
-      return "Ce champs ne peut pas être vide.";
+      return "Ce champ ne peut pas être vide.";
     }
     return null;
   }

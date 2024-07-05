@@ -8,7 +8,7 @@ import 'package:hollybike/shared/widgets/profile_card/loading_profile_card.dart'
 import 'package:hollybike/shared/widgets/profile_card/profile_card.dart';
 import 'package:provider/provider.dart';
 
-import '../../../auth/bloc/auth_persistence.dart';
+import '../../../auth/services/auth_persistence.dart';
 import '../../services/profile_repository.dart';
 
 class ProfileModalList extends StatelessWidget {

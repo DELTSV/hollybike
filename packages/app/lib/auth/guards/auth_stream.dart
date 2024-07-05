@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
-import 'package:hollybike/auth/bloc/auth_session_repository.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_session_repository.dart';
 
 class AuthStream extends ChangeNotifier {
   AuthStream(BuildContext context, {required AuthPersistence authPersistence}) {

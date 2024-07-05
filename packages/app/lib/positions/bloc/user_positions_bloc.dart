@@ -6,7 +6,7 @@ import 'package:hollybike/positions/bloc/user_positions_state.dart';
 import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
 import 'package:hollybike/positions/types/websocket_message.dart';
 
-import '../../auth/bloc/auth_persistence.dart';
+import '../../auth/services/auth_persistence.dart';
 import '../../auth/types/auth_session.dart';
 import '../types/recieve/websocket_subscribed.dart';
 import '../types/websocket_client.dart';

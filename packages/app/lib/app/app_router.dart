@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:hollybike/app/app_router.gr.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/guards/auth_guard.dart';
 
 @AutoRouterConfig()

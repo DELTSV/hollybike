@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hollybike/app/app_router.dart';
-import 'package:hollybike/auth/bloc/auth_persistence.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/guards/auth_stream.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
