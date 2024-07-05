@@ -38,7 +38,7 @@ class SignupScreen extends StatelessWidget {
             description: "Saisissez les informations de votre nouveau compte.",
             notificationsConsumerId: "signupForm",
             formTexts: const FormTexts(
-              submit: "Inscription",
+              submit: "S'inscrire",
             ),
             onFormSubmit: (formValue) {
               final values = Map.from(context.routeData.queryParams.rawMap);
