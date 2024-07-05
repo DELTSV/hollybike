@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app.dart';
 import 'package:hollybike/auth/bloc/auth_api.dart';
@@ -30,6 +32,8 @@ import 'event/services/participation/event_participation_repository.dart';
 import 'image/services/image_api.dart';
 import 'journey/service/journey_api.dart';
 import 'journey/service/journey_repository.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
+
 
 Future<void> infiniteDelay() async {
   final completer = Completer<void>();
@@ -52,8 +56,29 @@ class NetworkImageCache extends WidgetsFlutterBinding {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      setHighRefreshRate();
+    });
+  }
+
+  Future<void> setHighRefreshRate() async {
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+    } on PlatformException catch (_) {
+      // Not supported
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
