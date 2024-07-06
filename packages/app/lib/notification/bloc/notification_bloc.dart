@@ -1,4 +1,7 @@
+import 'dart:developer';
 import 'dart:ui';
+
+import 'dart:math' show Random;
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +9,14 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/services/auth_repository.dart';
-import 'package:hollybike/shared/websocket/recieve/websocket_error.dart';
-import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
+import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/shared/websocket/websocket_client.dart';
+import 'package:hollybike/shared/websocket/websocket_message.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../auth/types/auth_session.dart';
+import '../../shared/websocket/recieve/websocket_event_status_updated.dart';
+import '../../shared/websocket/recieve/websocket_subscribed.dart';
 
 part 'notification_event.dart';
 
@@ -89,40 +94,71 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     return service;
   }
 
+  static void pushEventStatusUpdated(
+    WebsocketEventStatusUpdated event,
+    FlutterLocalNotificationsPlugin notificationPlugin,
+  ) async {
+    const notificationDetails = AndroidNotificationDetails(
+      'hollybike-event-status-notifications',
+      'Notifications de status des événements',
+      channelDescription: 'Canal de notifications de Hollybike pour le status des événements',
+      importance: Importance.max,
+      priority: Priority.high,
+      styleInformation: BigTextStyleInformation(''),
+      showWhen: false,
+    );
+
+    final title = event.status == EventStatusState.canceled
+        ? 'L\'événement ${event.name} a été annulé'
+        : 'Le statut de l\'événement ${event.name} a été mis à jour';
+
+    await notificationPlugin.show(
+      Random().nextInt(100),
+      event.name,
+      title,
+      const NotificationDetails(
+        android: notificationDetails,
+      ),
+    );
+  }
+
+  static void onSubscribed(
+    WebsocketBody event,
+  ) async {
+    final data = event as WebsocketSubscribed;
+
+    if (data.subscribed) {
+      log('Subscribed to notifications');
+    } else {
+      log('Failed to subscribe to notifications');
+    }
+  }
+
+  static void onEventStatusUpdated(
+    WebsocketBody event,
+    FlutterLocalNotificationsPlugin notificationPlugin,
+  ) async {
+    final data = event as WebsocketEventStatusUpdated;
+
+    log('Event status updated: ${data.name}, ${data.status}');
+
+    pushEventStatusUpdated(data, notificationPlugin);
+  }
+
   @pragma('vm:entry-point')
   static void onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('background');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings(
+          'hollybike_logo',
+        ),
+      ),
+    );
 
     WebsocketClient? webSocket;
-
-    void showNotification(String message) async {
-      const AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-        'your_channel_id',
-        'your_channel_name',
-        channelDescription: 'your_channel_description',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: false,
-      );
-      const NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        'New Message',
-        message,
-        platformChannelSpecifics,
-        payload: 'item x',
-      );
-    }
 
     Future<void> connectWebSocket(String token, String host) async {
       webSocket?.close();
@@ -142,15 +178,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
       webSocket?.listen((message) {
         switch (message.data.type) {
-          case 'error':
-            showNotification((message.data as WebsocketError).message);
-            break;
           case 'subscribed':
-            final WebsocketSubscribed subscribed =
-                message.data as WebsocketSubscribed;
-            showNotification("Subscribed: ${subscribed.subscribed}");
-          default:
-            showNotification("Message ${message.data.type}");
+            onSubscribed(message.data);
+            break;
+          case 'EventStatusUpdateNotification':
+            onEventStatusUpdated(message.data, flutterLocalNotificationsPlugin);
+            break;
         }
       });
     }
