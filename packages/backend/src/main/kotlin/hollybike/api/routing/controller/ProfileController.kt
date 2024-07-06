@@ -3,7 +3,6 @@ package hollybike.api.routing.controller
 import hollybike.api.plugins.user
 import hollybike.api.repository.Users
 import hollybike.api.repository.profileMapper
-import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Profiles
 import hollybike.api.services.ProfileService
 import hollybike.api.types.lists.TLists
@@ -19,7 +18,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlin.math.ceil
 
 class ProfileController(
 	application: Application,

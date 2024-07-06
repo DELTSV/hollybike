@@ -39,7 +39,6 @@ import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.math.ceil
 import kotlin.time.Duration.Companion.hours
 
 class JourneyController(

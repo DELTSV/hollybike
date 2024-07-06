@@ -24,14 +24,14 @@ class ExpenseService(
 	private val db: Database,
 	private val eventService: EventService
 ) {
-	private fun authorizeGetOrUpdate(caller: User, expense: Expense): Boolean = when (caller.scope) {
+	private fun authorizeGetOrUpdateOrDelete(caller: User, expense: Expense): Boolean = when (caller.scope) {
 		EUserScope.Root -> true
 		EUserScope.Admin -> expense.event.association.id == caller.association.id
 		EUserScope.User -> expense.event.participants.any { it.user.id == caller.id && it.role == EEventRole.Organizer }
 	}
 
 	private infix fun Expense?.getIfAllowed(caller: User) =
-		this?.let { if (authorizeGetOrUpdate(caller, it)) it else null }
+		this?.let { if (authorizeGetOrUpdateOrDelete(caller, it)) it else null }
 
 	private fun authorizeCreate(caller: User, event: Event): Boolean = when (caller.scope) {
 		EUserScope.Root -> true
@@ -45,7 +45,7 @@ class ExpenseService(
 
 	fun getEventExpense(caller: User, event: Event): List<Expense>? = transaction(db) {
 		Expense.find { Expenses.event eq event.id }.let {
-			if (it.all { exp -> authorizeGetOrUpdate(caller, exp) }) {
+			if (it.all { exp -> authorizeGetOrUpdateOrDelete(caller, exp) }) {
 				it.toList()
 			} else {
 				null
@@ -115,7 +115,7 @@ class ExpenseService(
 	}
 
 	fun updateExpense(caller: User, expense: Expense, update: TUpdateExpense): Result<Expense> {
-		if (!authorizeGetOrUpdate(caller, expense)) {
+		if (!authorizeGetOrUpdateOrDelete(caller, expense)) {
 			return Result.failure(NotAllowedException())
 		}
 		transaction(db) {
@@ -125,5 +125,13 @@ class ExpenseService(
 			update.amount?.let { expense.amount = it }
 		}
 		return Result.success(expense)
+	}
+
+	fun deleteExpense(caller: User, expense: Expense): Result<Unit> {
+		if(!authorizeGetOrUpdateOrDelete(caller, expense)) {
+			return Result.failure(NotAllowedException())
+		}
+		transaction(db) { expense.delete() }
+		return Result.success(Unit)
 	}
 }

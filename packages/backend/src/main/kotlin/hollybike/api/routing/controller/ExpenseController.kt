@@ -39,6 +39,7 @@ class ExpenseController(
 				getExpense()
 				createExpense()
 				updateExpense()
+				deleteExpense()
 			}
 		}
 	}
@@ -91,6 +92,21 @@ class ExpenseController(
 			}
 			expenseService.updateExpense(call.user, expense, updateExpense).onSuccess { e ->
 				call.respond(HttpStatusCode.OK, TExpense(e))
+			}.onFailure {
+				when(it) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+				}
+			}
+		}
+	}
+
+	private fun Route.deleteExpense() {
+		delete<Expenses.Id> {
+			val expense = expenseService.getExpense(call.user, it.id) ?: run {
+				return@delete call.respond(HttpStatusCode.NotFound, "Dépense non trouvé")
+			}
+			expenseService.deleteExpense(call.user, expense).onSuccess {
+				call.respond(HttpStatusCode.NoContent)
 			}.onFailure {
 				when(it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)

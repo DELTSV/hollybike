@@ -22,7 +22,6 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
-import kotlin.math.ceil
 
 class EventImageController(
 	application: Application,
