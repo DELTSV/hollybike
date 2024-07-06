@@ -753,7 +753,7 @@ class UserTest : IntegrationSpec({
 								10
 							),
 							perPage = 10,
-							totalData = UserStore.USER_COUNT_ASSOCIATION_1
+							totalData = UserStore.USER_COUNT_ASSOCIATION_1.toLong()
 						),
 						TLists<TUser>::data
 					)
@@ -780,7 +780,7 @@ class UserTest : IntegrationSpec({
 								10
 							),
 							perPage = 10,
-							totalData = UserStore.USER_COUNT
+							totalData = UserStore.USER_COUNT.toLong()
 						),
 						TLists<TUser>::data
 					)
@@ -807,7 +807,7 @@ class UserTest : IntegrationSpec({
 								10
 							),
 							perPage = 10,
-							totalData = UserStore.USER_COUNT_ASSOCIATION_1
+							totalData = UserStore.USER_COUNT_ASSOCIATION_1.toLong()
 						),
 						TLists<TUser>::data
 					)

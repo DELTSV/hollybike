@@ -50,7 +50,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.EVENT_COUNT
+							totalData = EventStore.EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -81,7 +81,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.ASSOCIATION_1_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.ASSOCIATION_1_EVENT_COUNT
+							totalData = EventStore.ASSOCIATION_1_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -114,7 +114,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.USER_3_VISIBLE_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.USER_3_VISIBLE_EVENT_COUNT
+							totalData = EventStore.USER_3_VISIBLE_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -147,7 +147,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.USER_4_VISIBLE_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.USER_4_VISIBLE_EVENT_COUNT
+							totalData = EventStore.USER_4_VISIBLE_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -182,7 +182,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.USER_3_VISIBLE_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.USER_3_VISIBLE_EVENT_COUNT
+							totalData = EventStore.USER_3_VISIBLE_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -213,7 +213,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.USER_4_VISIBLE_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.USER_4_VISIBLE_EVENT_COUNT
+							totalData = EventStore.USER_4_VISIBLE_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -244,7 +244,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.USER_1_FUTURE_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.USER_1_FUTURE_EVENT_COUNT
+							totalData = EventStore.USER_1_FUTURE_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -302,7 +302,7 @@ class EventTest : IntegrationSpec({
 								nbItems = EventStore.ASSOCIATION_1_ARCHIVED_EVENT_COUNT
 							),
 							perPage = 10,
-							totalData = EventStore.ASSOCIATION_1_ARCHIVED_EVENT_COUNT
+							totalData = EventStore.ASSOCIATION_1_ARCHIVED_EVENT_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)
@@ -348,7 +348,7 @@ class EventTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 
-					bodyAsText() shouldBe "Event not found"
+					bodyAsText() shouldBe "L'évènement n'a pas été trouvé"
 				}
 			}
 		}
@@ -360,7 +360,7 @@ class EventTest : IntegrationSpec({
 				}.apply {
 					status shouldBe HttpStatusCode.NotFound
 
-					bodyAsText() shouldBe "Event not found"
+					bodyAsText() shouldBe "L'évènement n'a pas été trouvé"
 				}
 			}
 		}
