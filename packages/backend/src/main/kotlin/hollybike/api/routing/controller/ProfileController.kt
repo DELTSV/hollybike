@@ -3,7 +3,6 @@ package hollybike.api.routing.controller
 import hollybike.api.plugins.user
 import hollybike.api.repository.Users
 import hollybike.api.repository.profileMapper
-import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Profiles
 import hollybike.api.services.ProfileService
 import hollybike.api.types.lists.TLists
@@ -19,7 +18,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlin.math.ceil
 
 class ProfileController(
 	application: Application,
@@ -52,13 +50,7 @@ class ProfileController(
 			}
 			val count = profileService.getAllProfileCount(call.user, param)
 			val list = profileService.getAllProfile(call.user, param)
-			call.respond(HttpStatusCode.OK, TLists(
-				list.map { TUserPartial(it) },
-				param.page,
-				ceil(count.toDouble() / param.perPage).toInt(),
-				param.perPage,
-				count.toInt()
-			))
+			call.respond(TLists(list.map { TUserPartial(it) }, param, count))
 		}
 	}
 

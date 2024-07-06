@@ -90,13 +90,13 @@ class EventParticipationService(
 		caller: User,
 		eventId: Int,
 		searchParam: SearchParam
-	): Result<Int> = transaction(db) {
+	): Result<Long> = transaction(db) {
 		findEvent(caller, eventId)
 			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
 
 		val query = eventCandidatesQuery(caller, eventId, searchParam, false)
 
-		Result.success(query.count().toInt())
+		Result.success(query.count())
 	}
 
 	fun getEventParticipations(caller: User, eventId: Int, searchParam: SearchParam): Result<List<EventParticipation>> =
@@ -116,7 +116,7 @@ class EventParticipationService(
 			)
 		}
 
-	fun getEventParticipationsCount(caller: User, eventId: Int, searchParam: SearchParam): Result<Int> =
+	fun getEventParticipationsCount(caller: User, eventId: Int, searchParam: SearchParam): Result<Long> =
 		transaction(db) {
 			findEvent(caller, eventId)
 				?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
@@ -129,7 +129,6 @@ class EventParticipationService(
 					.applyParam(searchParam, false)
 					.andWhere { eventService.eventUserCondition(caller) and eventParticipationCondition(eventId) }
 					.count()
-					.toInt()
 			)
 		}
 
@@ -365,7 +364,7 @@ class EventParticipationService(
 		}
 	}
 
-	fun getParticipationsPreview(caller: User, eventId: Int): Result<Pair<List<EventParticipation>, Int>> {
+	fun getParticipationsPreview(caller: User, eventId: Int): Result<Pair<List<EventParticipation>, Long>> {
 		val searchParam = SearchParam(
 			sort = listOf(Sort(EventParticipations.joinedDateTime, SortOrder.ASC)),
 			query = null,

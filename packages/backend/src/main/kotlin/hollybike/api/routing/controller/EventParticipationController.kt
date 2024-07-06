@@ -6,7 +6,6 @@ import hollybike.api.repository.eventParticipationMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
-import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.participation.TCreateParticipations
 import hollybike.api.types.event.participation.TEventParticipation
 import hollybike.api.types.event.image.TUpdateImagesVisibility
@@ -104,15 +103,7 @@ class EventParticipationController(
 				return@get
 			}
 
-			call.respond(
-				TLists(
-					data = participations.map { TEventParticipation(it) },
-					page = searchParam.page,
-					perPage = searchParam.perPage,
-					totalPage = ceil(participationCount.toDouble() / searchParam.perPage).toInt(),
-					totalData = participationCount
-				)
-			)
+			call.respond(TLists(participations.map { TEventParticipation(it) }, searchParam, participationCount))
 		}
 	}
 

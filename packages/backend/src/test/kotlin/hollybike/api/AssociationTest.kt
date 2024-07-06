@@ -259,7 +259,7 @@ class AssociationTest : IntegrationSpec({
 								pageSize = 10
 							),
 							perPage = 10,
-							totalData = AssociationStore.ASSOCIATION_COUNT
+							totalData = AssociationStore.ASSOCIATION_COUNT.toLong()
 						),
 						TLists<TAssociation>::data
 					)

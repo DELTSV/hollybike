@@ -16,7 +16,6 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
-import kotlin.math.ceil
 
 class NotificationController(
 	application: Application,
@@ -41,15 +40,7 @@ class NotificationController(
 			val searchParam = call.request.queryParameters.getSearchParam(mapper)
 			val list = notificationService.getAll(call.user, searchParam)
 			val count = notificationService.getAllCount(call.user, searchParam)
-			call.respond(
-				TLists(
-					list.map { TNotification(it) },
-					searchParam.page,
-					ceil(count.toDouble() / searchParam.perPage).toInt(),
-					searchParam.perPage,
-					count.toInt()
-				)
-			)
+			call.respond(TLists(list.map { TNotification(it) }, searchParam, count))
 		}
 	}
 

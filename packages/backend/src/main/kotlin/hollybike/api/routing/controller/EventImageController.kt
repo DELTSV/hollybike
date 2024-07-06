@@ -22,7 +22,6 @@ import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
-import kotlin.math.ceil
 
 class EventImageController(
 	application: Application,
@@ -47,13 +46,7 @@ class EventImageController(
 		val images = eventImageService.getImages(user, searchParam)
 		val imageCount = eventImageService.countImages(user, searchParam)
 
-		return TLists(
-			data = images.map { image -> TEventImage(image) },
-			page = searchParam.page,
-			perPage = searchParam.perPage,
-			totalPage = ceil(imageCount.toDouble() / searchParam.perPage).toInt(),
-			totalData = imageCount,
-		)
+		return TLists(images.map { image -> TEventImage(image) }, searchParam, imageCount)
 	}
 
 	private fun Route.getImages() {

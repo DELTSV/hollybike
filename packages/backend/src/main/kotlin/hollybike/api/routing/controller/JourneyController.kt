@@ -39,7 +39,6 @@ import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.math.ceil
 import kotlin.time.Duration.Companion.hours
 
 class JourneyController(
@@ -122,15 +121,7 @@ class JourneyController(
 			val param = call.request.queryParameters.getSearchParam(journeysMapper + userMapper + associationMapper)
 			val list = journeyService.getAll(call.user, param).map { TJourney(it) }
 			val count = journeyService.getAllCount(call.user, param)
-			call.respond(
-				TLists(
-					list,
-					param.page,
-					ceil(count.toDouble() / param.perPage).toInt(),
-					param.perPage,
-					count.toInt()
-				)
-			)
+			call.respond(TLists(list, param, count))
 		}
 	}
 

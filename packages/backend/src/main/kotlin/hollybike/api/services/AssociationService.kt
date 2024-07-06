@@ -13,7 +13,6 @@ import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -77,11 +76,11 @@ class AssociationService(
 		Result.success(Association.wrapRows(Associations.selectAll().applyParam(searchParam)).toList())
 	}
 
-	fun countAssociations(caller: User, searchParam: SearchParam): Result<Int> = transaction(db) {
+	fun countAssociations(caller: User, searchParam: SearchParam): Result<Long> = transaction(db) {
 		if(caller.scope not EUserScope.Root) {
 			return@transaction Result.failure(NotAllowedException())
 		}
-		Result.success(Associations.selectAll().applyParam(searchParam, false).count().toInt())
+		Result.success(Associations.selectAll().applyParam(searchParam, false).count())
 	}
 
 	fun getById(caller: User, id: Int): Association? = transaction(db) {

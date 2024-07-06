@@ -203,8 +203,8 @@ class EventService(
 		).with(Event::owner, Event::association).toList()
 	}
 
-	fun countAllEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		eventsQuery(caller, searchParam, pagination = false).count().toInt()
+	fun countAllEvents(caller: User, searchParam: SearchParam): Long = transaction(db) {
+		eventsQuery(caller, searchParam, pagination = false).count()
 	}
 
 	private fun futureEventsCondition(): Op<Boolean> {
@@ -219,8 +219,8 @@ class EventService(
 		).with(Event::owner, Event::association).toList()
 	}
 
-	fun countFutureEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		eventsQuery(caller, searchParam, pagination = false).andWhere { futureEventsCondition() }.count().toInt()
+	fun countFutureEvents(caller: User, searchParam: SearchParam): Long = transaction(db) {
+		eventsQuery(caller, searchParam, pagination = false).andWhere { futureEventsCondition() }.count()
 	}
 
 	private fun archivedEventsCondition(): Op<Boolean> {
@@ -235,8 +235,8 @@ class EventService(
 		).with(Event::owner, Event::association).toList()
 	}
 
-	fun countArchivedEvents(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		eventsQuery(caller, searchParam, pagination = false).andWhere { archivedEventsCondition() }.count().toInt()
+	fun countArchivedEvents(caller: User, searchParam: SearchParam): Long = transaction(db) {
+		eventsQuery(caller, searchParam, pagination = false).andWhere { archivedEventsCondition() }.count()
 	}
 
 	fun getEventWithParticipation(caller: User, id: Int): Pair<Event, EventParticipation?>? = transaction(db) {

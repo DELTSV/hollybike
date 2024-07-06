@@ -10,7 +10,6 @@ import hollybike.api.repository.invitationMapper
 import hollybike.api.routing.resources.Invitation
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
-import hollybike.api.services.storage.StorageService
 import hollybike.api.types.auth.TMailDest
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.invitation.TInvitation
@@ -29,7 +28,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlin.math.ceil
 
 class InvitationController(
 	application: Application,
@@ -68,15 +66,7 @@ class InvitationController(
 						TInvitation(i)
 					}
 				}
-				call.respond(
-					TLists(
-						dto,
-						searchParam.page,
-						ceil(count.toDouble() / searchParam.perPage).toInt(),
-						searchParam.perPage,
-						count.toInt()
-					)
-				)
+				call.respond(TLists(dto, searchParam, count))
 			}.onFailure { e ->
 				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
