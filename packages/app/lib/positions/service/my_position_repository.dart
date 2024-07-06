@@ -4,12 +4,12 @@ import 'dart:ui';
 
 import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/location_dto.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
+import 'package:hollybike/shared/websocket/send/websocket_send_position.dart';
+import 'package:hollybike/shared/websocket/websocket_client.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../auth/types/auth_session.dart';
-import '../types/recieve/websocket_subscribed.dart';
-import '../types/send/websocket_send_position.dart';
-import '../types/websocket_client.dart';
 
 class MyPositionServiceRepository {
   static final MyPositionServiceRepository _instance =

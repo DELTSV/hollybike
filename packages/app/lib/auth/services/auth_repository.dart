@@ -5,16 +5,23 @@ import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
+import 'package:rxdart/rxdart.dart';
 
 class AuthRepository {
   final AuthApi _authApi;
   final AuthPersistence _authPersistence;
 
-  const AuthRepository({
+  final BehaviorSubject<AuthSession?> _connectedSession = BehaviorSubject();
+
+  get connectedStream => _connectedSession.stream;
+
+  AuthRepository({
     required AuthApi authApi,
     required AuthPersistence authPersistence,
   })  : _authPersistence = authPersistence,
         _authApi = authApi;
+
+  set connected(AuthSession? session) => _connectedSession.add(session);
 
   Future<List<AuthSession>> retrievePersistedSessions() async {
     return await _authPersistence.sessions;

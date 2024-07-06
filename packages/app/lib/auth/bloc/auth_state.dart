@@ -19,3 +19,9 @@ class AuthConnected extends AuthState {
 class AuthDisconnected extends AuthState {
   const AuthDisconnected() : super(authSession: null);
 }
+
+class AuthFailure extends AuthState {
+  final String message;
+
+  const AuthFailure({required this.message, required super.authSession});
+}

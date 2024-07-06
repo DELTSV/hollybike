@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
 
-import '../types/recieve/websocket_receive_position.dart';
 
 enum UserPositionsStatus { loading, success, error, initial }
 

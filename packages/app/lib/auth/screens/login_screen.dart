@@ -31,57 +31,66 @@ class LoginScreen extends StatelessWidget {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthConnected) onAuthSuccess();
+          if (state is AuthConnected) {
+            onAuthSuccess();
+            if (canPop) {
+              context.router.maybePop();
+            }
+          }
         },
-        child: BannerDialog(
-          body: FormBuilder(
-            title: "Bienvenue!",
-            description: "Entrez vos identifiants pour vous connecter.",
-            notificationsConsumerId: "loginForm",
-            formTexts: FormTexts(
-              submit: "Se connecter",
-              link: (
-                description: "Vous n'avez pas encore de compte ?",
-                buttonText: "Inscrivez-vous",
-                onDestinationClick: () => _signupLinkDialogBuilder(context)
+        builder: (context, state) {
+          final error = state is AuthFailure ? state.message : null;
+
+          return BannerDialog(
+            body: FormBuilder(
+              title: "Bienvenue!",
+              description: "Entrez vos identifiants pour vous connecter.",
+              errorText: error,
+              formTexts: FormTexts(
+                submit: "Se connecter",
+                link: (
+                  description: "Vous n'avez pas encore de compte ?",
+                  buttonText: "Inscrivez-vous",
+                  onDestinationClick: () => _signupLinkDialogBuilder(context)
+                ),
               ),
+              onFormSubmit: (formValue) {
+                BlocProvider.of<AuthBloc>(context).add(AuthLogin(
+                  host: _formatHostFromInput(formValue["host"] as String),
+                  loginDto: LoginDto.fromMap(formValue),
+                ));
+              },
+              formFields: {
+                "host": FormFieldConfig(
+                  label: "Adresse du serveur",
+                  validator: _inputValidator,
+                  defaultValue: "hollybike.fr",
+                  autofillHints: [AutofillHints.url],
+                  textInputType: TextInputType.url,
+                ),
+                "email": FormFieldConfig(
+                  label: "Adresse email",
+                  validator: _inputValidator,
+                  autofocus: true,
+                  autofillHints: [AutofillHints.email],
+                  textInputType: TextInputType.emailAddress,
+                ),
+                "password": FormFieldConfig(
+                  label: "Mot de passe",
+                  validator: _inputValidator,
+                  isSecured: true,
+                  autofillHints: [AutofillHints.password],
+                ),
+              },
             ),
-            onFormSubmit: (formValue) {
-              BlocProvider.of<AuthBloc>(context).add(AuthLogin(
-                host: _formatHostFromInput(formValue["host"] as String),
-                loginDto: LoginDto.fromMap(formValue),
-              ));
-            },
-            formFields: {
-              "host": FormFieldConfig(
-                label: "Adresse du serveur",
-                validator: _inputValidator,
-                defaultValue: "hollybike.fr",
-                autofillHints: [AutofillHints.url],
-                textInputType: TextInputType.url,
-              ),
-              "email": FormFieldConfig(
-                label: "Adresse email",
-                validator: _inputValidator,
-                autofocus: true,
-                autofillHints: [AutofillHints.email],
-                textInputType: TextInputType.emailAddress,
-              ),
-              "password": FormFieldConfig(
-                label: "Mot de passe",
-                validator: _inputValidator,
-                isSecured: true,
-                autofillHints: [AutofillHints.password],
-              ),
-            },
-          ),
-        ),
+          );
+        },
       ),
     );
   }
-  
+
   String _formatHostFromInput(String input) {
     if (!input.startsWith("http")) {
       if (RegExp(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").hasMatch(input)) {

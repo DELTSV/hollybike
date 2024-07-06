@@ -1,31 +1,29 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/services/auth_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/login_dto.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
-import 'package:hollybike/notification/bloc/notification_repository.dart';
-import 'package:hollybike/notification/types/notification_exception.dart';
 
 import '../../profile/services/profile_repository.dart';
 import '../services/auth_session_repository.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
   final AuthSessionRepository authSessionRepository;
   final ProfileRepository profileRepository;
-  final NotificationRepository notificationRepository;
 
   AuthBloc({
     required this.authRepository,
     required this.authSessionRepository,
     required this.profileRepository,
-    required this.notificationRepository,
   }) : super(const AuthInitial()) {
     _init();
     on<AuthPersistentSessionsLoaded>(_onAuthSessionsLoaded);
@@ -43,6 +41,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   void onChange(Change<AuthState> change) {
     super.onChange(change);
+
+    if (change.nextState is AuthFailure) return;
+
     authSessionRepository.authSessionState = change.nextState.authSession;
   }
 
@@ -62,11 +63,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) {
     authRepository.currentSession = event.newCurrentSession;
-    authSessionRepository.authSessionSwitch = event.newCurrentSession;
     emit(AuthConnected(authSession: event.newCurrentSession));
   }
 
   void _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
+    const defaultError =
+        "Oups! Il semble y avoir une erreur. Veuillez vérifier l'adresse du serveur et réessayer.";
+
     try {
       final session = await authRepository.login(
         event.host,
@@ -75,23 +78,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       authRepository.currentSession = session;
       emit(AuthConnected(authSession: session));
-    } on NotificationException catch (exception) {
-      notificationRepository.push(
-        exception.message,
-        isError: true,
-        consumerId: "loginForm",
-      );
+    } on DioException catch (exception) {
+      emit(AuthFailure(
+        message: exception.response?.data ?? defaultError,
+        authSession: state.authSession,
+      ));
     } catch (e) {
       log(e.toString());
-      notificationRepository.push(
-        "Oups! Il semble y avoir une erreur. Veuillez vérifier l'adresse du serveur et réessayer.",
-        isError: true,
-        consumerId: "loginForm",
-      );
+      emit(AuthFailure(
+        message: defaultError,
+        authSession: state.authSession,
+      ));
     }
   }
 
   void _onSignup(AuthSignup event, Emitter<AuthState> emit) async {
+    const defaultError =
+        "Il semble que le lien d'invitation que vous utilisez est invalide.";
+
     try {
       final session = await authRepository.signup(
         event.host,
@@ -100,17 +104,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       authRepository.currentSession = session;
       emit(AuthConnected(authSession: session));
-    } on NotificationException catch (exception) {
-      notificationRepository.push(
-        exception.message,
-        isError: true,
-        consumerId: "signupForm",
+    } on DioException catch (exception) {
+      emit(
+        AuthFailure(
+          message: exception.response?.data ?? defaultError,
+          authSession: state.authSession,
+        ),
       );
     } catch (e) {
-      notificationRepository.push(
-        "Il semble que le lien d'invitation que vous utilisez est invalide.",
-        isError: true,
-        consumerId: "signupForm",
+      log(e.toString());
+      emit(
+        AuthFailure(
+          message: defaultError,
+          authSession: state.authSession,
+        ),
       );
     }
   }

@@ -4,11 +4,17 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:hollybike/auth/types/auth_session.dart';
-import 'package:hollybike/positions/types/recieve/websocket_receive_position.dart';
-import 'package:hollybike/positions/types/recieve/websocket_subscribed.dart';
-import 'package:hollybike/positions/types/send/websocket_send_position.dart';
-import 'package:hollybike/positions/types/send/websocket_subscribe.dart';
-import 'package:hollybike/positions/types/websocket_message.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_added_to_event.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_deleted.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_status_updated.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_removed_from_event.dart';
+import 'package:hollybike/shared/websocket/websocket_message.dart';
+
+import 'recieve/websocket_error.dart';
+import 'recieve/websocket_receive_position.dart';
+import 'recieve/websocket_subscribed.dart';
+import 'send/websocket_send_position.dart';
+import 'send/websocket_subscribe.dart';
 
 class WebsocketClient {
   final AuthSession session;
@@ -43,6 +49,10 @@ class WebsocketClient {
     return this;
   }
 
+  void pingInterval(int seconds) {
+    _client?.pingInterval = Duration(seconds: seconds);
+  }
+
   void onDisconnect(void Function() onDisconnect) {
     _client?.done.then((_) {
       onDisconnect();
@@ -51,7 +61,8 @@ class WebsocketClient {
 
   void _send(String message) {
     if (_client == null) {
-      throw Exception('Websocket not connected');
+      log('Trying to send message to a closed connection.');
+      return;
     }
 
     log('Sending message: $message');
@@ -70,9 +81,19 @@ class WebsocketClient {
           return WebsocketSubscribed.fromJson(json);
         case 'receive-user-position':
           return WebsocketReceivePosition.fromJson(json);
+        case 'EventStatusUpdateNotification':
+          return WebsocketEventStatusUpdated.fromJson(json);
+        case 'AddedToEventNotification':
+          return WebsocketAddedToEvent.fromJson(json);
+        case 'RemovedFromEventNotification':
+          return WebsocketRemovedFromEvent.fromJson(json);
+        case 'DeleteEventNotification':
+          return WebsocketEventDeleted.fromJson(json);
+        case 'error':
+          return WebsocketError.fromJson(json);
       }
 
-      throw Exception('Unknown message type');
+      throw Exception('Unknown message type: ${json['type']}');
     });
   }
 
@@ -82,7 +103,13 @@ class WebsocketClient {
   bool get isConnected => _client != null;
 
   void listen(void Function(WebsocketMessage) onData) {
-    _client?.listen((data) => onData(parseMessage(data)));
+    _client?.listen((data) {
+      try {
+        onData(parseMessage(data));
+      } catch (e) {
+        log('Error parsing message: $e');
+      }
+    });
   }
 
   void subscribe(String channel) {

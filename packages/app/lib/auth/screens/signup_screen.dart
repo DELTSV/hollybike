@@ -30,49 +30,52 @@ class SignupScreen extends StatelessWidget {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-      body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {},
-        child: BannerDialog(
-          body: FormBuilder(
-            title: "Inscrivez-vous!",
-            description: "Saisissez les informations de votre nouveau compte.",
-            notificationsConsumerId: "signupForm",
-            formTexts: const FormTexts(
-              submit: "S'inscrire",
-            ),
-            onFormSubmit: (formValue) {
-              final values = Map.from(context.routeData.queryParams.rawMap);
-              values.addAll(formValue);
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          final error = state is AuthFailure ? state.message : null;
 
-              BlocProvider.of<AuthBloc>(context).add(AuthSignup(
-                host: context.routeData.queryParams.getString("host"),
-                signupDto: SignupDto.fromMap(values),
-              ));
-            },
-            formFields: {
-              "username": FormFieldConfig(
-                label: "Nom utilisateur",
-                validator: _inputValidator,
-                autofocus: true,
-                autofillHints: [AutofillHints.newUsername],
-                textInputType: TextInputType.name,
+          return BannerDialog(
+            body: FormBuilder(
+              title: "Inscrivez-vous!",
+              description: "Saisissez les informations de votre nouveau compte.",
+              errorText: error,
+              formTexts: const FormTexts(
+                submit: "S'inscrire",
               ),
-              "email": FormFieldConfig(
-                label: "Adresse mail",
-                validator: _inputValidator,
-                autofillHints: [AutofillHints.email],
-                textInputType: TextInputType.emailAddress,
-              ),
-              "password": FormFieldConfig(
-                label: "Mot de passe",
-                validator: _inputValidator,
-                isSecured: true,
-                hasControlField: true,
-                autofillHints: [AutofillHints.newPassword],
-              ),
-            },
-          ),
-        ),
+              onFormSubmit: (formValue) {
+                final values = Map.from(context.routeData.queryParams.rawMap);
+                values.addAll(formValue);
+
+                BlocProvider.of<AuthBloc>(context).add(AuthSignup(
+                  host: context.routeData.queryParams.getString("host"),
+                  signupDto: SignupDto.fromMap(values),
+                ));
+              },
+              formFields: {
+                "username": FormFieldConfig(
+                  label: "Nom utilisateur",
+                  validator: _inputValidator,
+                  autofocus: true,
+                  autofillHints: [AutofillHints.newUsername],
+                  textInputType: TextInputType.name,
+                ),
+                "email": FormFieldConfig(
+                  label: "Adresse mail",
+                  validator: _inputValidator,
+                  autofillHints: [AutofillHints.email],
+                  textInputType: TextInputType.emailAddress,
+                ),
+                "password": FormFieldConfig(
+                  label: "Mot de passe",
+                  validator: _inputValidator,
+                  isSecured: true,
+                  hasControlField: true,
+                  autofillHints: [AutofillHints.newPassword],
+                ),
+              },
+            ),
+          );
+        },
       ),
     );
   }
