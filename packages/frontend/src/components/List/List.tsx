@@ -95,7 +95,7 @@ export function List<T>(props: ListProps<T>) {
 	);
 
 	return (
-		<div className={"flex flex-col grow gap-2"}>
+		<div className={"flex flex-col grow gap-2 overflow-x-auto"}>
 			<div className={"flex justify-between"}>
 				<Input
 					value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}

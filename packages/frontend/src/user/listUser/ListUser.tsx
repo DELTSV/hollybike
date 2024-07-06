@@ -59,7 +59,7 @@ export function ListUser() {
 				{
 					name: "Mail",
 					id: "email",
-					width: "500px",
+					width: "",
 				},
 				{
 					name: "Pseudo",
