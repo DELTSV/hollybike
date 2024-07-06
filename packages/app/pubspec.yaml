@@ -127,16 +127,16 @@ flutter_native_splash:
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
   # png file and should be sized for 4x pixel density.
-  image: assets/icon/icon_padding.png
+  image: assets/icon/icon.png
 
   # The branding property allows you to specify an image used as branding in the splash screen.
   # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,
   # see the Android 12 section below.
-  #branding: assets/dart.png
+  branding: assets/icon/brand.png
 
   # To position the branding image at the bottom of the screen you can use bottom, bottomRight,
   # and bottomLeft. The default values is bottom if not specified or specified something else.
-  #branding_mode: bottom
+  branding_mode: bottom
 
   # The color_dark, background_image_dark, image_dark, branding_dark are parameters that set the background
   # and image when the device is in dark mode. If they are not specified, the app will use the
@@ -152,7 +152,7 @@ flutter_native_splash:
   # Please visit https://developer.android.com/guide/topics/ui/splash-screen
   # Following are specific parameters for Android 12+.
   android_12:
-    image: assets/icon/icon_padding.png
+    image: assets/icon/icon.png
 
   # The image parameter sets the splash screen icon image.  If this parameter is not specified,
   # the app's launcher icon will be used instead.
@@ -170,7 +170,9 @@ flutter_native_splash:
   #icon_background_color: "#111111"
 
   # The branding property allows you to specify an image used as branding in the splash screen.
-  #branding: assets/dart.png
+    branding: assets/icon/brand.png
+
+    branding_mode: bottom
 
   # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
   # apply when the device is in dark mode. If they are not specified, the app will use the
