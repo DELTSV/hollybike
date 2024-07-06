@@ -18,6 +18,8 @@ import { useUser } from "../user/useUser.tsx";
 import { EUserScope } from "../types/EUserScope.ts";
 import { TList } from "../types/TList.ts";
 import { TAssociation } from "../types/TAssociation.ts";
+import { ButtonDanger } from "../components/Button/ButtonDanger.tsx";
+import { useNavigate } from "react-router-dom";
 
 interface EventInfoProps {
 	eventData: TEvent,
@@ -27,7 +29,9 @@ interface EventInfoProps {
 
 export function EventInfo(props: EventInfoProps) {
 	const { user } = useUser();
+	const navigate = useNavigate();
 	const [total, setTotal] = useState(20);
+	const [confirm, setConfirm] = useState(false);
 	const associations = useApi<TList<TAssociation>>(
 		`/associations?per-page=${total}`,
 		[total],
@@ -52,7 +56,7 @@ export function EventInfo(props: EventInfoProps) {
 		}
 	}, [props.eventData.association, setAssociation]);
 	return (
-		<Card className={"grid grid-cols-2 gap-2 items-center"}>
+		<Card className={"grid grid-cols-2 gap-2 items-center 2xl:overflow-auto"}>
 			<p>Nom</p>
 			<Input
 				value={eventData.name} onInput={e => setEventData(prev => ({
@@ -118,7 +122,7 @@ export function EventInfo(props: EventInfoProps) {
 					/>
 				</> }
 			<Button
-				className={"col-span-2 justify-self-center"}
+				className={"justify-self-center"}
 				onClick={() => {
 					api<TEvent>(`/events/${id}`, {
 						method: "PUT",
@@ -140,6 +144,28 @@ export function EventInfo(props: EventInfoProps) {
 			>
 				Sauvegarder
 			</Button>
+			<ButtonDanger
+				className={"justify-self-center"}
+				onClick={() => {
+					if (confirm) {
+						api(`/events/${eventData.id}`, { method: "DELETE" }).then((res) => {
+							if (res.status === 200) {
+								navigate("/events");
+								toast("Évènement supprimé", { type: "success" });
+							} else {
+								toast(res.message, { type: "error" });
+							}
+						});
+					} else {
+						setConfirm(true);
+						setTimeout(() => {
+							setConfirm(false);
+						}, 5000);
+					}
+				}}
+			>
+				{ confirm ? "Êtes vous sur ?" : "Supprimer l'évènement" }
+			</ButtonDanger>
 		</Card>
 	);
 }

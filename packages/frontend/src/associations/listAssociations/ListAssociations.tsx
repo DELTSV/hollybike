@@ -50,7 +50,11 @@ export function ListAssociations() {
 				line={(d: TAssociation) => [
 					<Cell>{ d.name }</Cell>,
 					<Cell>{ d.status }</Cell>,
-					<Cell>{ d.picture }</Cell>,
+					<Cell>
+						{ d.picture !== undefined ?
+							<img className={"max-h-10"} src={d.picture} alt={`Image de l'association ${d.name}`}/> :
+							<p>Aucune image</p> }
+					</Cell>,
 					<Cell className={"cursor-pointer"} onClick={() => navigate(`/associations/${d.id}`)}><OpenInNew/></Cell>,
 				]}
 			/>
