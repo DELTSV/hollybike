@@ -84,7 +84,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
         autoStart: true,
-        isForegroundMode: false,
+        autoStartOnBoot: true,
+        isForegroundMode: true,
+        initialNotificationTitle: 'Service de notifications HollyBike',
+        initialNotificationContent: 'Ce service permet de recevoir des notifications en temps réel.',
       ),
       iosConfiguration: IosConfiguration(
         autoStart: true,
@@ -122,7 +125,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       'hollybike-event-status-notifications',
       'Status des événements',
       channelDescription:
-      'Canal de notifications de Hollybike pour le status des événements',
+          'Canal de notifications de Hollybike pour le status des événements',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
@@ -228,13 +231,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   @pragma('vm:entry-point')
   static void onStart(ServiceInstance service) async {
+    bool initializing = true;
+
     DartPluginRegistrant.ensureInitialized();
+
+    final authPersistence = AuthPersistence();
 
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings(
-          'background',
+          'ic_stat_hollybike',
         ),
       ),
     );
@@ -269,19 +276,49 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
             break;
           case 'AddedToEventNotification':
             onAddedToEvent(message.data, flutterLocalNotificationsPlugin);
+            break;
           case 'RemovedFromEventNotification':
             onRemovedFromEvent(message.data, flutterLocalNotificationsPlugin);
+            break;
           case 'DeleteEventNotification':
             onEventDeleted(message.data, flutterLocalNotificationsPlugin);
+            break;
         }
       });
 
+      void retryConnection() {
+        Future.delayed(const Duration(seconds: 10), () async {
+          try {
+            log('Retrying connection');
+
+            final currentSession = await authPersistence.currentSession;
+
+            if (currentSession == null) {
+              return;
+            }
+
+            connectWebSocket(currentSession.token, currentSession.host);
+          } catch (e) {
+            log('Error: $e', stackTrace: StackTrace.current);
+            retryConnection(); // Retry again if an error occurs
+          }
+        });
+      }
+
       webSocket?.onDisconnect(() {
         log('Notification websocket disconnected');
+
+        webSocket = null;
+
+        retryConnection();
       });
     }
 
     service.on('connect').listen((event) {
+      if (initializing) {
+        return;
+      }
+
       final token = event?['token'] as String;
       final host = event?['host'] as String;
 
@@ -293,10 +330,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       service.stopSelf();
     });
 
-    final currentSession = await AuthPersistence().currentSession;
+    final currentSession = await authPersistence.currentSession;
 
     if (currentSession != null) {
       connectWebSocket(currentSession.token, currentSession.host);
     }
+
+    initializing = false;
   }
 }
