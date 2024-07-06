@@ -8,7 +8,7 @@ data class SearchParam(
 	val sort: List<Sort>,
 	val filter: MutableList<Filter>,
 	val page: Int,
-	val perPage: Int,
+	var perPage: Int,
 	val mapper: Mapper
 )
 

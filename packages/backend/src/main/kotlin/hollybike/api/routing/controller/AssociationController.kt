@@ -5,10 +5,10 @@ import hollybike.api.exceptions.*
 import hollybike.api.services.AssociationService
 import hollybike.api.isCloud
 import hollybike.api.plugins.user
-import hollybike.api.repository.associationMapper
-import hollybike.api.repository.invitationMapper
+import hollybike.api.repository.*
 import hollybike.api.routing.resources.API
 import hollybike.api.routing.resources.Associations
+import hollybike.api.services.ExpenseService
 import hollybike.api.services.auth.AuthService
 import hollybike.api.services.auth.InvitationService
 import hollybike.api.types.association.*
@@ -20,8 +20,7 @@ import hollybike.api.types.association.TUpdateAssociation
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.*
-import hollybike.api.utils.search.getMapperData
-import hollybike.api.utils.search.getSearchParam
+import hollybike.api.utils.search.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -29,13 +28,16 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.utils.io.charsets.*
+import kotlinx.datetime.*
 import kotlin.math.ceil
 
 class AssociationController(
 	application: Application,
 	private val associationService: AssociationService,
 	private val invitationService: InvitationService,
-	private val authService: AuthService
+	private val authService: AuthService,
+	private val expenseService: ExpenseService
 ) {
 	init {
 		application.routing {
@@ -49,6 +51,7 @@ class AssociationController(
 				getById()
 				getAllInvitationsByAssociations()
 				getAllInvitationsByAssociationsMetadata()
+				getAssociationYearlyReport()
 
 				if (application.isCloud) {
 					getAll()
@@ -335,15 +338,7 @@ class AssociationController(
 						TInvitation(i)
 					}
 				}
-				call.respond(
-					TLists(
-						dto,
-						searchParam.page,
-						ceil(count.toDouble() / searchParam.perPage).toInt(),
-						searchParam.perPage,
-						count.toInt()
-					)
-				)
+				call.respond(TLists(dto, searchParam, count))
 			}.onFailure { e ->
 				when (e) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
@@ -355,6 +350,25 @@ class AssociationController(
 	private fun Route.getAllInvitationsByAssociationsMetadata() {
 		get<Associations.Id.Invitations.MetaData<API>>(EUserScope.Admin) {
 			call.respond(invitationMapper.getMapperData())
+		}
+	}
+
+	private fun Route.getAssociationYearlyReport() {
+		get<Associations.Id.Expenses.Year.YearParam<API>>(EUserScope.Admin) {
+			val startOfYear = LocalDate(it.year, 1, 1)
+			val endOfThisYear = LocalDate(it.year, 12, 31)
+			val param = SearchParam(null, listOf(), mutableListOf(), 0, 20, eventMapper + expenseMapper)
+			val total = expenseService.getAllCount(call.user, param)
+			param.perPage = total.toInt()
+			param.filter.add(Filter(Expenses.date, startOfYear.toString(), FilterMode.GREATER_THAN_EQUAL))
+			param.filter.add(Filter(Expenses.date, endOfThisYear.toString(), FilterMode.LOWER_THAN))
+			val expenses = expenseService.getAll(call.user, param)
+			call.respondOutputStream(ContentType.Text.CSV) {
+				write("name,id_event,name_event,description,amount,date\n".toByteArray(Charsets.UTF_8))
+				expenses.forEach { e ->
+					write("${e.name},${e.event.id.value},${e.event.name},${e.description},${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+				}
+			}
 		}
 	}
 }

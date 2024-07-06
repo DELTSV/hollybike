@@ -77,11 +77,11 @@ class AssociationService(
 		Result.success(Association.wrapRows(Associations.selectAll().applyParam(searchParam)).toList())
 	}
 
-	fun countAssociations(caller: User, searchParam: SearchParam): Result<Int> = transaction(db) {
+	fun countAssociations(caller: User, searchParam: SearchParam): Result<Long> = transaction(db) {
 		if(caller.scope not EUserScope.Root) {
 			return@transaction Result.failure(NotAllowedException())
 		}
-		Result.success(Associations.selectAll().applyParam(searchParam, false).count().toInt())
+		Result.success(Associations.selectAll().applyParam(searchParam, false).count())
 	}
 
 	fun getById(caller: User, id: Int): Association? = transaction(db) {

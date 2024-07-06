@@ -1,7 +1,6 @@
 package hollybike.api.routing.controller
 
 import hollybike.api.plugins.user
-import hollybike.api.repository.Event
 import hollybike.api.repository.associationMapper
 import hollybike.api.repository.eventMapper
 import hollybike.api.repository.userMapper
@@ -13,7 +12,6 @@ import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.checkContentType
 import hollybike.api.utils.get
-import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
@@ -27,7 +25,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlin.math.ceil
 
 class EventController(
 	application: Application,
@@ -35,7 +32,8 @@ class EventController(
 	private val eventParticipationService: EventParticipationService,
 	private val associationService: AssociationService,
 	private val userService: UserService,
-	private val userEventPositionService: UserEventPositionService
+	private val userEventPositionService: UserEventPositionService,
+	private val expenseService: ExpenseService
 ) {
 	private val mapper = eventMapper + associationMapper + userMapper
 
@@ -64,16 +62,6 @@ class EventController(
 		}
 	}
 
-	private fun getEventsPagination(events: List<Event>, total: Int, searchParam: SearchParam): TLists<TEventPartial> {
-		return TLists(
-			data = events.map { TEventPartial(it) },
-			page = searchParam.page,
-			perPage = searchParam.perPage,
-			totalPage = ceil(total.toDouble() / searchParam.perPage).toInt(),
-			totalData = total
-		)
-	}
-
 	private fun Route.getAllEvents() {
 		get<Events> {
 			val params = call.request.queryParameters.getSearchParam(mapper)
@@ -81,7 +69,7 @@ class EventController(
 			val events = eventService.getAllEvents(call.user, params)
 			val totalEvents = eventService.countAllEvents(call.user, params)
 
-			call.respond(getEventsPagination(events, totalEvents, params))
+			call.respond(TLists(events.map { TEventPartial(it) }, params, totalEvents))
 		}
 	}
 
@@ -92,7 +80,7 @@ class EventController(
 			val events = eventService.getFutureEvents(call.user, searchParam)
 			val totalEvents = eventService.countFutureEvents(call.user, searchParam)
 
-			call.respond(getEventsPagination(events, totalEvents, searchParam))
+			call.respond(TLists(events.map { TEventPartial(it) }, searchParam, totalEvents))
 		}
 	}
 
@@ -103,14 +91,19 @@ class EventController(
 			val events = eventService.getArchivedEvents(call.user, searchParam)
 			val totalEvents = eventService.countArchivedEvents(call.user, searchParam)
 
-			call.respond(getEventsPagination(events, totalEvents, searchParam))
+			call.respond(TLists(events.map { TEventPartial(it) }, searchParam, totalEvents))
 		}
 	}
 
 	private fun Route.getEventDetails() {
 		get<Events.Id.Details> { id ->
 			val (event, callerParticipation) = eventService.getEventWithParticipation(call.user, id.details.id)
-				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
+				?: return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
+
+			val eventExpenses = expenseService.getEventExpense(call.user, event) ?: run {
+				call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
+				return@get
+			}
 
 			eventParticipationService.getParticipationsPreview(call.user, id.details.id)
 				.onSuccess { (participants, participantsCount) ->
@@ -119,7 +112,8 @@ class EventController(
 							event,
 							callerParticipation,
 							participants,
-							participantsCount
+							participantsCount,
+							eventExpenses
 						)
 					)
 				}.onFailure {
@@ -131,7 +125,7 @@ class EventController(
 	private fun Route.getEvent() {
 		get<Events.Id> { id ->
 			val event = eventService.getEvent(call.user, id.id)
-				?: return@get call.respond(HttpStatusCode.NotFound, "Event not found")
+				?: return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
 
 			call.respond(TEvent(event))
 		}

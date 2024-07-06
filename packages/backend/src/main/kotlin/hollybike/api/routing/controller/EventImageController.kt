@@ -47,13 +47,7 @@ class EventImageController(
 		val images = eventImageService.getImages(user, searchParam)
 		val imageCount = eventImageService.countImages(user, searchParam)
 
-		return TLists(
-			data = images.map { image -> TEventImage(image) },
-			page = searchParam.page,
-			perPage = searchParam.perPage,
-			totalPage = ceil(imageCount.toDouble() / searchParam.perPage).toInt(),
-			totalData = imageCount,
-		)
+		return TLists(images.map { image -> TEventImage(image) }, searchParam, imageCount)
 	}
 
 	private fun Route.getImages() {

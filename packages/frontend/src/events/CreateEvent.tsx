@@ -17,6 +17,7 @@ import { Select } from "../components/Select/Select.tsx";
 import { TList } from "../types/TList.ts";
 import { TAssociation } from "../types/TAssociation.ts";
 import { TextArea } from "../components/Input/TextArea.tsx";
+import { RedStar } from "../components/RedStar/RedStar.tsx";
 
 export function CreateEvent() {
 	const navigate = useNavigate();
@@ -55,7 +56,7 @@ export function CreateEvent() {
 			<Card>
 				<h2 className={"text-xl"}>Créer un événement</h2>
 				<form className={"grid grid-cols-2 items-center gap-2"} onSubmit={e => e.preventDefault()}>
-					<p>Nom de l'événement</p>
+					<p>Nom de l'événement <RedStar/></p>
 					<Input value={name} onInput={e => setName(e.currentTarget.value)} placeholder={"Nom"}/>
 					<p>Description</p>
 					<TextArea
@@ -64,13 +65,13 @@ export function CreateEvent() {
 						onInput={e => setDescription(e.currentTarget.value)}
 					>
 					</TextArea>
-					<p>Date de début</p>
+					<p>Date de début <RedStar/></p>
 					<InputCalendar value={start} setValue={setStart} time/>
 					<p>Date de fin</p>
 					<InputCalendar value={end} setValue={setEnd} time/>
 					{ user?.scope === EUserScope.Root &&
 						<>
-							<p>Association</p>
+							<p>Association <RedStar/></p>
 							<Select
 								value={association} onChange={value => setAssociation(value as number)}
 								searchable={total > 5}
@@ -82,6 +83,7 @@ export function CreateEvent() {
 						</> }
 					<Button
 						type={"submit"}
+						disabled={name === "" || user?.scope === EUserScope.Root && association === undefined}
 						className={"col-span-2 justify-self-center"} onClick={() => {
 							api<TEvent>("/events", {
 								method: "POST",

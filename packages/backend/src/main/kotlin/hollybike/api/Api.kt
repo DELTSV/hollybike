@@ -50,6 +50,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
 	val profileService = ProfileService(db)
 	val userEventPositionService = UserEventPositionService(db, CoroutineScope(Dispatchers.Default), storageService)
+	val expenseService = ExpenseService(db, eventService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}
@@ -58,15 +59,16 @@ fun Application.api(storageService: StorageService, db: Database) {
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
 	UserController(this, userService, storageService)
-	AssociationController(this, associationService, invitationService, authService)
+	AssociationController(this, associationService, invitationService, authService, expenseService)
 	InvitationController(this, authService, invitationService, mailSender)
-	EventController(this, eventService, eventParticipationService, associationService, userService, userEventPositionService)
+	EventController(this, eventService, eventParticipationService, associationService, userService, userEventPositionService, expenseService)
 	EventParticipationController(this, eventParticipationService)
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
 	ProfileController(this, profileService)
 	WebSocketController(this, authVerifier, notificationService, userEventPositionService)
 	NotificationController(this, notificationService)
+	ExpenseController(this, expenseService)
 
 	if (isOnPremise) {
 		StorageController(this, storageService)

@@ -202,15 +202,7 @@ class UserController(
 			val list = userService.getAll(call.user, param)?.map { TUser(it) }
 			val count = userService.getAllCount(call.user, param)
 			if (list != null && count != null) {
-				call.respond(
-					TLists(
-						list,
-						param.page,
-						ceil(count.toDouble() / param.perPage).toInt(),
-						param.perPage,
-						count.toInt()
-					)
-				)
+				call.respond(TLists(list, param, count))
 			} else {
 				call.respond(HttpStatusCode.Forbidden)
 			}

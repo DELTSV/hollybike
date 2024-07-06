@@ -104,15 +104,7 @@ class EventParticipationController(
 				return@get
 			}
 
-			call.respond(
-				TLists(
-					data = participations.map { TEventParticipation(it) },
-					page = searchParam.page,
-					perPage = searchParam.perPage,
-					totalPage = ceil(participationCount.toDouble() / searchParam.perPage).toInt(),
-					totalData = participationCount
-				)
-			)
+			call.respond(TLists(participations.map { TEventParticipation(it) }, searchParam, participationCount))
 		}
 	}
 

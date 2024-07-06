@@ -109,8 +109,8 @@ class EventImageService(
 		}
 	}
 
-	fun countImages(caller: User, searchParam: SearchParam): Int = transaction(db) {
-		eventImagesRequest(caller, searchParam, withPagination = false).count().toInt()
+	fun countImages(caller: User, searchParam: SearchParam): Long = transaction(db) {
+		eventImagesRequest(caller, searchParam, withPagination = false).count()
 	}
 
 	suspend fun uploadImages(

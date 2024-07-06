@@ -20,6 +20,7 @@ import { TList } from "../types/TList.ts";
 import {
 	EUserScope, scopes, scopesName,
 } from "../types/EUserScope.ts";
+import { RedStar } from "../components/RedStar/RedStar.tsx";
 
 const expirationOptions: Option[] = [
 	{
@@ -98,7 +99,7 @@ export function CreateInvitation() {
 	return (
 		<div className={"mx-2"}>
 			<Card className={"grid grid-cols-2 gap-2 items-center"}>
-				<p>Rôle</p>
+				<p>Rôle <RedStar/></p>
 				<Select
 					default={invitation.role}
 					value={invitation.role} onChange={v => setInvitation(prev => ({
@@ -124,7 +125,7 @@ export function CreateInvitation() {
 				/>
 				{ user?.scope === "Root" &&
 				<>
-					<p>Association</p>
+					<p>Association <RedStar/></p>
 					<Select
 						options={options ?? []}
 						searchable={(associations.data?.total_data ?? 0) > 5}
@@ -136,6 +137,7 @@ export function CreateInvitation() {
 					/>
 				</> }
 				<Button
+					disabled={user?.scope === EUserScope.Root && invitation.association === undefined}
 					className={"col-span-2 justify-self-center"}
 					onClick={() => {
 						api<TInvitation>("/invitation", {

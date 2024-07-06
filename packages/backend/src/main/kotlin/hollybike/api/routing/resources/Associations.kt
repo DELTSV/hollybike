@@ -20,6 +20,15 @@ class Associations<T>(val parent: T) {
 
 		@Resource("/data")
 		class Data<T>(val id: Id<T>)
+
+		@Resource("/expenses")
+		class Expenses<T>(val id: Id<T>) {
+			@Resource("/year")
+			class Year<T>(val expenses: Expenses<T>) {
+				@Resource("{year}")
+				class YearParam<T>(val yearParent: Year<T>, val year: Int)
+			}
+		}
 	}
 
 	@Resource("me")

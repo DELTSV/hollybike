@@ -23,7 +23,8 @@ data class TEventPartial(
 	val createDateTime: Instant,
 	@SerialName("update_date_time")
 	val updateDateTime: Instant,
-	val association: TPartialAssociation
+	val association: TPartialAssociation,
+	val budget: Int? = null
 ) {
 	constructor(entity: Event) : this(
 		id = entity.id.value,
@@ -36,6 +37,7 @@ data class TEventPartial(
 		endDateTime = entity.endDateTime,
 		createDateTime = entity.createDateTime,
 		updateDateTime = entity.updateDateTime,
-		association = TPartialAssociation(entity.association)
+		association = TPartialAssociation(entity.association),
+		budget = entity.budget
 	)
 }

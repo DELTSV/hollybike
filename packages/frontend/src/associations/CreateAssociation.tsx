@@ -9,6 +9,7 @@ import { api } from "../utils/useApi.ts";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { TAssociation } from "../types/TAssociation.ts";
+import { RedStar } from "../components/RedStar/RedStar.tsx";
 
 export function CreateAssociation() {
 	const navigate = useNavigate();
@@ -16,7 +17,7 @@ export function CreateAssociation() {
 	return (
 		<div>
 			<Card className={"grid grid-cols-2 gap-2"}>
-				<p>Nom de l'association</p>
+				<p>Nom de l'association <RedStar/></p>
 				<Input
 					value={newAsso.name} onInput={e => setNewAsso(prev => ({
 						...prev,
@@ -24,6 +25,7 @@ export function CreateAssociation() {
 					}))}
 				/>
 				<Button
+					disabled={newAsso.name === ""}
 					className={"col-span-2 justify-self-center"} onClick={() => {
 						api<TAssociation>("/associations", {
 							method: "POST",

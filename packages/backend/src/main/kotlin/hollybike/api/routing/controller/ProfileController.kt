@@ -52,13 +52,7 @@ class ProfileController(
 			}
 			val count = profileService.getAllProfileCount(call.user, param)
 			val list = profileService.getAllProfile(call.user, param)
-			call.respond(HttpStatusCode.OK, TLists(
-				list.map { TUserPartial(it) },
-				param.page,
-				ceil(count.toDouble() / param.perPage).toInt(),
-				param.perPage,
-				count.toInt()
-			))
+			call.respond(TLists(list.map { TUserPartial(it) }, param, count))
 		}
 	}
 

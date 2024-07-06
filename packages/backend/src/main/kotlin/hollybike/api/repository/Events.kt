@@ -23,6 +23,7 @@ object Events : IntIdTable("events", "id_event") {
 	val endDateTime = timestamp("end_date_time").nullable().default(null)
 	val createDateTime = timestamp("create_date_time").clientDefault { Clock.System.now() }
 	val updateDateTime = timestamp("update_date_time").clientDefault { Clock.System.now() }
+	val budget = integer("budget").nullable().default(null)
 }
 
 class Event(id: EntityID<Int>) : IntEntity(id) {
@@ -39,6 +40,7 @@ class Event(id: EntityID<Int>) : IntEntity(id) {
 	var endDateTime by Events.endDateTime
 	var createDateTime by Events.createDateTime
 	var updateDateTime by Events.updateDateTime
+	var budget by Events.budget
 
 	companion object : IntEntityClass<Event>(Events)
 }

@@ -41,15 +41,7 @@ class NotificationController(
 			val searchParam = call.request.queryParameters.getSearchParam(mapper)
 			val list = notificationService.getAll(call.user, searchParam)
 			val count = notificationService.getAllCount(call.user, searchParam)
-			call.respond(
-				TLists(
-					list.map { TNotification(it) },
-					searchParam.page,
-					ceil(count.toDouble() / searchParam.perPage).toInt(),
-					searchParam.perPage,
-					count.toInt()
-				)
-			)
+			call.respond(TLists(list.map { TNotification(it) }, searchParam, count))
 		}
 	}
 

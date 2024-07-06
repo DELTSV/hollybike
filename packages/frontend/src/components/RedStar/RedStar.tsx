@@ -6,6 +6,6 @@ interface RedStarProps {
 
 export function RedStar(props: RedStarProps) {
 	return (
-		<span className={clsx("text-red-500", props.className)}>*</span>
+		<span className={clsx("text-red", props.className)}>*</span>
 	);
 }

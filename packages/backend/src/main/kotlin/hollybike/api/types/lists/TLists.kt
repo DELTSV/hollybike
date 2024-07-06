@@ -1,7 +1,9 @@
 package hollybike.api.types.lists
 
+import hollybike.api.utils.search.SearchParam
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.math.ceil
 
 @Serializable
 data class TLists<T>(
@@ -12,5 +14,13 @@ data class TLists<T>(
 	@SerialName("per_page")
 	val perPage: Int,
 	@SerialName("total_data")
-	val totalData: Int
-)
+	val totalData: Long
+) {
+	constructor(data: List<T>, param: SearchParam, total: Long): this (
+		data,
+		param.page,
+		ceil(total.div(param.perPage.toDouble())).toInt(),
+		param.perPage,
+		total
+	)
+}
