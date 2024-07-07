@@ -153,7 +153,7 @@ mixin _$DailyWeatherGrouped {
   String get date => throw _privateConstructorUsedError;
   String get maxTemperature => throw _privateConstructorUsedError;
   String get minTemperature => throw _privateConstructorUsedError;
-  int get weatherCode => throw _privateConstructorUsedError;
+  WeatherCondition get weatherCondition => throw _privateConstructorUsedError;
   List<HourlyWeather> get hourlyWeather => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -171,7 +171,7 @@ abstract class $DailyWeatherGroupedCopyWith<$Res> {
       {String date,
       String maxTemperature,
       String minTemperature,
-      int weatherCode,
+      WeatherCondition weatherCondition,
       List<HourlyWeather> hourlyWeather});
 }
 
@@ -191,7 +191,7 @@ class _$DailyWeatherGroupedCopyWithImpl<$Res, $Val extends DailyWeatherGrouped>
     Object? date = null,
     Object? maxTemperature = null,
     Object? minTemperature = null,
-    Object? weatherCode = null,
+    Object? weatherCondition = null,
     Object? hourlyWeather = null,
   }) {
     return _then(_value.copyWith(
@@ -207,10 +207,10 @@ class _$DailyWeatherGroupedCopyWithImpl<$Res, $Val extends DailyWeatherGrouped>
           ? _value.minTemperature
           : minTemperature // ignore: cast_nullable_to_non_nullable
               as String,
-      weatherCode: null == weatherCode
-          ? _value.weatherCode
-          : weatherCode // ignore: cast_nullable_to_non_nullable
-              as int,
+      weatherCondition: null == weatherCondition
+          ? _value.weatherCondition
+          : weatherCondition // ignore: cast_nullable_to_non_nullable
+              as WeatherCondition,
       hourlyWeather: null == hourlyWeather
           ? _value.hourlyWeather
           : hourlyWeather // ignore: cast_nullable_to_non_nullable
@@ -231,7 +231,7 @@ abstract class _$$DailyWeatherGroupedImplCopyWith<$Res>
       {String date,
       String maxTemperature,
       String minTemperature,
-      int weatherCode,
+      WeatherCondition weatherCondition,
       List<HourlyWeather> hourlyWeather});
 }
 
@@ -249,7 +249,7 @@ class __$$DailyWeatherGroupedImplCopyWithImpl<$Res>
     Object? date = null,
     Object? maxTemperature = null,
     Object? minTemperature = null,
-    Object? weatherCode = null,
+    Object? weatherCondition = null,
     Object? hourlyWeather = null,
   }) {
     return _then(_$DailyWeatherGroupedImpl(
@@ -265,10 +265,10 @@ class __$$DailyWeatherGroupedImplCopyWithImpl<$Res>
           ? _value.minTemperature
           : minTemperature // ignore: cast_nullable_to_non_nullable
               as String,
-      weatherCode: null == weatherCode
-          ? _value.weatherCode
-          : weatherCode // ignore: cast_nullable_to_non_nullable
-              as int,
+      weatherCondition: null == weatherCondition
+          ? _value.weatherCondition
+          : weatherCondition // ignore: cast_nullable_to_non_nullable
+              as WeatherCondition,
       hourlyWeather: null == hourlyWeather
           ? _value._hourlyWeather
           : hourlyWeather // ignore: cast_nullable_to_non_nullable
@@ -284,7 +284,7 @@ class _$DailyWeatherGroupedImpl implements _DailyWeatherGrouped {
       {required this.date,
       required this.maxTemperature,
       required this.minTemperature,
-      required this.weatherCode,
+      required this.weatherCondition,
       required final List<HourlyWeather> hourlyWeather})
       : _hourlyWeather = hourlyWeather;
 
@@ -295,7 +295,7 @@ class _$DailyWeatherGroupedImpl implements _DailyWeatherGrouped {
   @override
   final String minTemperature;
   @override
-  final int weatherCode;
+  final WeatherCondition weatherCondition;
   final List<HourlyWeather> _hourlyWeather;
   @override
   List<HourlyWeather> get hourlyWeather {
@@ -306,7 +306,7 @@ class _$DailyWeatherGroupedImpl implements _DailyWeatherGrouped {
 
   @override
   String toString() {
-    return 'DailyWeatherGrouped(date: $date, maxTemperature: $maxTemperature, minTemperature: $minTemperature, weatherCode: $weatherCode, hourlyWeather: $hourlyWeather)';
+    return 'DailyWeatherGrouped(date: $date, maxTemperature: $maxTemperature, minTemperature: $minTemperature, weatherCondition: $weatherCondition, hourlyWeather: $hourlyWeather)';
   }
 
   @override
@@ -319,8 +319,8 @@ class _$DailyWeatherGroupedImpl implements _DailyWeatherGrouped {
                 other.maxTemperature == maxTemperature) &&
             (identical(other.minTemperature, minTemperature) ||
                 other.minTemperature == minTemperature) &&
-            (identical(other.weatherCode, weatherCode) ||
-                other.weatherCode == weatherCode) &&
+            (identical(other.weatherCondition, weatherCondition) ||
+                other.weatherCondition == weatherCondition) &&
             const DeepCollectionEquality()
                 .equals(other._hourlyWeather, _hourlyWeather));
   }
@@ -331,7 +331,7 @@ class _$DailyWeatherGroupedImpl implements _DailyWeatherGrouped {
       date,
       maxTemperature,
       minTemperature,
-      weatherCode,
+      weatherCondition,
       const DeepCollectionEquality().hash(_hourlyWeather));
 
   @JsonKey(ignore: true)
@@ -347,7 +347,7 @@ abstract class _DailyWeatherGrouped implements DailyWeatherGrouped {
           {required final String date,
           required final String maxTemperature,
           required final String minTemperature,
-          required final int weatherCode,
+          required final WeatherCondition weatherCondition,
           required final List<HourlyWeather> hourlyWeather}) =
       _$DailyWeatherGroupedImpl;
 
@@ -358,7 +358,7 @@ abstract class _DailyWeatherGrouped implements DailyWeatherGrouped {
   @override
   String get minTemperature;
   @override
-  int get weatherCode;
+  WeatherCondition get weatherCondition;
   @override
   List<HourlyWeather> get hourlyWeather;
   @override
@@ -370,8 +370,8 @@ abstract class _DailyWeatherGrouped implements DailyWeatherGrouped {
 /// @nodoc
 mixin _$HourlyWeather {
   String get time => throw _privateConstructorUsedError;
-  String? get temperature => throw _privateConstructorUsedError;
-  int? get weatherCode => throw _privateConstructorUsedError;
+  String get temperature => throw _privateConstructorUsedError;
+  WeatherCondition get weatherCondition => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HourlyWeatherCopyWith<HourlyWeather> get copyWith =>
@@ -384,7 +384,8 @@ abstract class $HourlyWeatherCopyWith<$Res> {
           HourlyWeather value, $Res Function(HourlyWeather) then) =
       _$HourlyWeatherCopyWithImpl<$Res, HourlyWeather>;
   @useResult
-  $Res call({String time, String? temperature, int? weatherCode});
+  $Res call(
+      {String time, String temperature, WeatherCondition weatherCondition});
 }
 
 /// @nodoc
@@ -401,22 +402,22 @@ class _$HourlyWeatherCopyWithImpl<$Res, $Val extends HourlyWeather>
   @override
   $Res call({
     Object? time = null,
-    Object? temperature = freezed,
-    Object? weatherCode = freezed,
+    Object? temperature = null,
+    Object? weatherCondition = null,
   }) {
     return _then(_value.copyWith(
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as String,
-      temperature: freezed == temperature
+      temperature: null == temperature
           ? _value.temperature
           : temperature // ignore: cast_nullable_to_non_nullable
-              as String?,
-      weatherCode: freezed == weatherCode
-          ? _value.weatherCode
-          : weatherCode // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String,
+      weatherCondition: null == weatherCondition
+          ? _value.weatherCondition
+          : weatherCondition // ignore: cast_nullable_to_non_nullable
+              as WeatherCondition,
     ) as $Val);
   }
 }
@@ -429,7 +430,8 @@ abstract class _$$HourlyWeatherImplCopyWith<$Res>
       __$$HourlyWeatherImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String time, String? temperature, int? weatherCode});
+  $Res call(
+      {String time, String temperature, WeatherCondition weatherCondition});
 }
 
 /// @nodoc
@@ -444,22 +446,22 @@ class __$$HourlyWeatherImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? time = null,
-    Object? temperature = freezed,
-    Object? weatherCode = freezed,
+    Object? temperature = null,
+    Object? weatherCondition = null,
   }) {
     return _then(_$HourlyWeatherImpl(
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as String,
-      temperature: freezed == temperature
+      temperature: null == temperature
           ? _value.temperature
           : temperature // ignore: cast_nullable_to_non_nullable
-              as String?,
-      weatherCode: freezed == weatherCode
-          ? _value.weatherCode
-          : weatherCode // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String,
+      weatherCondition: null == weatherCondition
+          ? _value.weatherCondition
+          : weatherCondition // ignore: cast_nullable_to_non_nullable
+              as WeatherCondition,
     ));
   }
 }
@@ -470,18 +472,18 @@ class _$HourlyWeatherImpl implements _HourlyWeather {
   const _$HourlyWeatherImpl(
       {required this.time,
       required this.temperature,
-      required this.weatherCode});
+      required this.weatherCondition});
 
   @override
   final String time;
   @override
-  final String? temperature;
+  final String temperature;
   @override
-  final int? weatherCode;
+  final WeatherCondition weatherCondition;
 
   @override
   String toString() {
-    return 'HourlyWeather(time: $time, temperature: $temperature, weatherCode: $weatherCode)';
+    return 'HourlyWeather(time: $time, temperature: $temperature, weatherCondition: $weatherCondition)';
   }
 
   @override
@@ -492,12 +494,13 @@ class _$HourlyWeatherImpl implements _HourlyWeather {
             (identical(other.time, time) || other.time == time) &&
             (identical(other.temperature, temperature) ||
                 other.temperature == temperature) &&
-            (identical(other.weatherCode, weatherCode) ||
-                other.weatherCode == weatherCode));
+            (identical(other.weatherCondition, weatherCondition) ||
+                other.weatherCondition == weatherCondition));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, time, temperature, weatherCode);
+  int get hashCode =>
+      Object.hash(runtimeType, time, temperature, weatherCondition);
 
   @JsonKey(ignore: true)
   @override
@@ -509,15 +512,15 @@ class _$HourlyWeatherImpl implements _HourlyWeather {
 abstract class _HourlyWeather implements HourlyWeather {
   const factory _HourlyWeather(
       {required final String time,
-      required final String? temperature,
-      required final int? weatherCode}) = _$HourlyWeatherImpl;
+      required final String temperature,
+      required final WeatherCondition weatherCondition}) = _$HourlyWeatherImpl;
 
   @override
   String get time;
   @override
-  String? get temperature;
+  String get temperature;
   @override
-  int? get weatherCode;
+  WeatherCondition get weatherCondition;
   @override
   @JsonKey(ignore: true)
   _$$HourlyWeatherImplCopyWith<_$HourlyWeatherImpl> get copyWith =>

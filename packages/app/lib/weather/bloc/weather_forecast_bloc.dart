@@ -21,16 +21,20 @@ class WeatherForecastBloc
   ) async {
     emit(WeatherForecastLoading(state));
     try {
-      DateTime endDate = event.endDate ?? event.startDate;
+      final startDate = event.startDate.isBefore(DateTime.now())
+          ? DateTime.now()
+          : event.startDate;
 
-      if (endDate.difference(event.startDate).inDays > 5) {
-        endDate = event.startDate.add(const Duration(days: 5));
+      DateTime endDate = event.endDate ?? startDate;
+
+      if (endDate.difference(startDate).inDays > 5) {
+        endDate = startDate.add(const Duration(days: 5));
       }
 
       final weatherForecast = await weatherForecastApi.fetchWeatherForecast(
         event.latitude,
         event.longitude,
-        event.startDate,
+        startDate,
         endDate,
       );
 

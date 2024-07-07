@@ -1,5 +1,5 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hollybike/weather/types/weather_condition.dart';
 import 'package:hollybike/weather/types/weather_forecast_response.dart';
 import 'package:intl/intl.dart';
 
@@ -11,10 +11,15 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
     required List<DailyWeatherGrouped> dailyWeather,
   }) = _WeatherForecastGrouped;
 
-  factory WeatherForecastGrouped.fromResponse(WeatherForecastResponse response) {
+  factory WeatherForecastGrouped.fromResponse(
+      WeatherForecastResponse response) {
     final Map<String, List<HourlyWeather>> groupedHourly = {};
     for (int i = 0; i < response.hourly.time.length; i++) {
-      if (response.hourly.temperature2m[i] == null || response.hourly.weatherCode[i] == null) {
+      final weatherCondition =
+          getWeatherCondition(response.hourly.weatherCode[i] ?? -1);
+
+      if (response.hourly.temperature2m[i] == null ||
+          weatherCondition == null) {
         continue;
       }
 
@@ -24,25 +29,32 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
 
       final hourlyWeather = HourlyWeather(
         time: hour,
-        temperature: '${response.hourly.temperature2m[i]}${response.hourlyUnits.temperature2m}',
-        weatherCode: response.hourly.weatherCode[i]!,
+        temperature:
+            '${response.hourly.temperature2m[i]?.round()}${response.hourlyUnits.temperature2m}',
+        weatherCondition: weatherCondition,
       );
 
       groupedHourly.putIfAbsent(date, () => []).add(hourlyWeather);
     }
 
-    // Group daily data
     final List<DailyWeatherGrouped> groupedDaily = [];
     for (int i = 0; i < response.daily.time.length; i++) {
-      if (response.daily.temperature2mMax[i] == null || response.daily.temperature2mMin[i] == null || response.daily.weatherCode[i] == null) {
+      final weatherCondition =
+          getWeatherCondition(response.daily.weatherCode[i] ?? -1);
+
+      if (response.daily.temperature2mMax[i] == null ||
+          response.daily.temperature2mMin[i] == null ||
+          weatherCondition == null) {
         continue;
       }
 
       final dailyWeatherGrouped = DailyWeatherGrouped(
         date: response.daily.time[i],
-        maxTemperature: '${response.daily.temperature2mMax[i]}${response.dailyUnits.temperature2mMax}',
-        minTemperature: '${response.daily.temperature2mMin[i]}${response.dailyUnits.temperature2mMin}',
-        weatherCode: response.daily.weatherCode[i]!,
+        maxTemperature:
+            '${response.daily.temperature2mMax[i]?.round()}${response.dailyUnits.temperature2mMax}',
+        minTemperature:
+            '${response.daily.temperature2mMin[i]?.round()}${response.dailyUnits.temperature2mMin}',
+        weatherCondition: weatherCondition,
         hourlyWeather: groupedHourly[response.daily.time[i]] ?? [],
       );
       groupedDaily.add(dailyWeatherGrouped);
@@ -58,7 +70,7 @@ class DailyWeatherGrouped with _$DailyWeatherGrouped {
     required String date,
     required String maxTemperature,
     required String minTemperature,
-    required int weatherCode,
+    required WeatherCondition weatherCondition,
     required List<HourlyWeather> hourlyWeather,
   }) = _DailyWeatherGrouped;
 }
@@ -68,6 +80,6 @@ class HourlyWeather with _$HourlyWeather {
   const factory HourlyWeather({
     required String time,
     required String temperature,
-    required int weatherCode,
+    required WeatherCondition weatherCondition,
   }) = _HourlyWeather;
 }

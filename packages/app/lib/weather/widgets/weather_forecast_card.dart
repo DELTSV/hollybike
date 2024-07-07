@@ -21,7 +21,7 @@ class WeatherForecastCard extends StatelessWidget {
       children: [
         const SizedBox(height: 16),
         SizedBox(
-          height: 100,
+          height: 120,
           child: _buildWeatherForecastCardContent(context, destination),
         )
       ],
@@ -34,7 +34,9 @@ class WeatherForecastCard extends StatelessWidget {
   ) {
     final startDate = eventDetails.event.startDate;
 
-    if (startDate.isBefore(DateTime.now())) {
+    final endDate = eventDetails.event.endDate ?? startDate.add(const Duration(hours: 4));
+
+    if (endDate.isBefore(DateTime.now())) {
       return const WeatherForecastEmptyCard(
         message:
             'La météo est disponible uniquement pour les événements à venir.',

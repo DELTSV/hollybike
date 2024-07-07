@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/journey/widgets/journey_position.dart';
 import 'package:hollybike/shared/types/position.dart';
+import 'package:hollybike/weather/types/weather_condition.dart';
 import 'package:hollybike/weather/widgets/weather_forecast_empty_card.dart';
+import 'package:lottie/lottie.dart';
 
 import '../bloc/weather_forecast_bloc.dart';
 import '../bloc/weather_forecast_event.dart';
@@ -35,7 +38,7 @@ class WeatherForecastCardContent extends StatelessWidget {
         builder: (context, state) {
           return AnimatedCrossFade(
             firstChild: Container(
-              height: 100,
+              height: 120,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(14),
@@ -46,7 +49,7 @@ class WeatherForecastCardContent extends StatelessWidget {
               ),
             ),
             secondChild: SizedBox(
-              height: 100,
+              height: 120,
               width: double.infinity,
               child: Material(
                 color: Colors.transparent,
@@ -63,7 +66,8 @@ class WeatherForecastCardContent extends StatelessWidget {
                 ),
               ),
             ),
-            crossFadeState: (state is WeatherForecastLoading || state is WeatherForecastInitial)
+            crossFadeState: (state is WeatherForecastLoading ||
+                    state is WeatherForecastInitial)
                 ? CrossFadeState.showFirst
                 : CrossFadeState.showSecond,
             duration: const Duration(milliseconds: 300),
@@ -75,10 +79,44 @@ class WeatherForecastCardContent extends StatelessWidget {
 
   Widget _buildForecast(BuildContext context, WeatherForecastState state) {
     if (state is WeatherForecastSuccess) {
-      return Column(
-        children: state.weatherForecast.dailyWeather.map((dailyWeather) {
-          return Text(dailyWeather.maxTemperature);
-        }).toList(),
+      final weatherForecast = state.weatherForecast;
+
+      final firstDay = weatherForecast.dailyWeather.first;
+
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                top: 16,
+                bottom: 16,
+                right: 0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  JourneyPosition(
+                    pos: destination,
+                    isLarge: true,
+                  ),
+                  Text(
+                    '${firstDay.maxTemperature} / ${firstDay.minTemperature} - ${getWeatherConditionLabel(firstDay.weatherCondition)}',
+                    maxLines: 2,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Lottie.asset(
+            getWeatherConditionLottiePath(firstDay.weatherCondition),
+          ),
+        ],
       );
     }
 
