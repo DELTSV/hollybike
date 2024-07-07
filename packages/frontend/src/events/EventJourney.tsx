@@ -100,7 +100,7 @@ export function EventJourney(props: EventJourneyProps) {
 				<>
 					<p>Départ</p>
 					<p>{ positionToString(props.eventDetail.journey.start) }</p>
-					<p>Arriver</p>
+					<p>Arrivée</p>
 					<p>{ positionToString(props.eventDetail.journey.end) }</p>
 					<p>Destination</p>
 					<p>{ positionToString(props.eventDetail.journey.destination) }</p>
