@@ -11,6 +11,7 @@ import hollybike.api.types.event.participation.TEventParticipation
 import hollybike.api.types.event.image.TUpdateImagesVisibility
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.TUserPartial
+import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -32,6 +33,7 @@ class EventParticipationController(
 			authenticate {
 				getParticipationCandidates()
 				getParticipations()
+				getParticipationsMetaData()
 				updateImageVisibility()
 				addUsersToEvent()
 				removeUserFromEvent()
@@ -104,6 +106,12 @@ class EventParticipationController(
 			}
 
 			call.respond(TLists(participations.map { TEventParticipation(it) }, searchParam, participationCount))
+		}
+	}
+
+	private fun Route.getParticipationsMetaData() {
+		get<Events.Id.Participations.MetaData> {
+			call.respond((userMapper + eventMapper + eventParticipationMapper).getMapperData())
 		}
 	}
 

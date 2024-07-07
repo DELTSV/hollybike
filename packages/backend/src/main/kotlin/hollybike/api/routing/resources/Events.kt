@@ -76,6 +76,9 @@ class Events(val api: API = API()) {
 				@Resource("journey")
 				class Journey(val user: User)
 			}
+
+			@Resource("meta-data")
+			class MetaData(val participations: Participations)
 		}
 
 		@Resource("images")
