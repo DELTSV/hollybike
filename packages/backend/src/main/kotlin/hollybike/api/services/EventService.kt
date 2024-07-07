@@ -307,7 +307,7 @@ class EventService(
 			}
 
 			Result.success(
-				createdEvent
+				createdEvent.load(Event::participants)
 			)
 		}.apply {
 			onSuccess { e ->
