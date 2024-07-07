@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
+import 'package:hollybike/event/bloc/event_expenses_bloc/event_expenses_bloc.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/widgets/expenses/empty_preview_expenses_card.dart';
@@ -66,8 +68,20 @@ class ExpensesPreviewCard extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       builder: (_) {
-        return BlocProvider.value(
-          value: BlocProvider.of<EventDetailsBloc>(context),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(
+              value: BlocProvider.of<EventDetailsBloc>(context),
+            ),
+            BlocProvider(
+              create: (context) => EventExpensesBloc(
+                eventId: eventDetails.event.id,
+                eventRepository: RepositoryProvider.of<EventRepository>(
+                  context,
+                ),
+              ),
+            ),
+          ],
           child: const ExpensesModal(),
         );
       },

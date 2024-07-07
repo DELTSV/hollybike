@@ -1,4 +1,5 @@
 import 'package:hollybike/event/types/event_details.dart';
+import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/journey/type/journey.dart';
@@ -449,5 +450,74 @@ class EventRepository {
             ),
           ),
     );
+  }
+
+  deleteExpense(int expenseId, int eventId) async {
+    await eventApi.deleteExpense(expenseId);
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    int? newTotal = details.totalExpense;
+
+    final newExpenses = details.expenses?.where((e) {
+      if (e.id == expenseId) {
+        final totalExpense = details.totalExpense;
+        if (totalExpense != null) {
+          newTotal = totalExpense - e.amount;
+        }
+        return false;
+      }
+
+      return true;
+    }).toList();
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        expenses: newExpenses,
+        totalExpense: newTotal,
+      ),
+    );
+  }
+
+  Future<EventExpense> addExpense(
+    int eventId,
+    String name,
+    int amount,
+    String? description,
+  ) async {
+    final expense = await eventApi.addExpense(
+      eventId,
+      name,
+      amount,
+      description,
+    );
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return expense;
+    }
+
+    final newTotal = (details.totalExpense ?? 0) + amount;
+
+    final newExpenses = <EventExpense>[
+      expense,
+      ...details.expenses ?? [],
+    ];
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        expenses: newExpenses,
+        totalExpense: newTotal,
+      ),
+    );
+
+    return expense;
   }
 }

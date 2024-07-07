@@ -18,6 +18,7 @@ import io.ktor.http.*
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -53,7 +54,7 @@ class ExpenseService(
 	}
 
 	fun getEventExpense(caller: User, event: Event): List<Expense>? = transaction(db) {
-		Expense.find { Expenses.event eq event.id }.let {
+		Expense.find { Expenses.event eq event.id }.orderBy(Expenses.date to SortOrder.ASC).toList().let {
 			if (it.all { exp -> authorizeGetOrUpdateOrDelete(caller, exp) }) {
 				it.toList()
 			} else {

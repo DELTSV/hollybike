@@ -40,6 +40,12 @@ class _GradientProgressBarState extends State<GradientProgressBar>
     });
   }
 
+  @override
+  void dispose() {
+    _progressController.dispose();
+    super.dispose();
+  }
+
   void _animate() {
     Future.delayed(const Duration(milliseconds: 200), () {
       _progressController.animateTo(

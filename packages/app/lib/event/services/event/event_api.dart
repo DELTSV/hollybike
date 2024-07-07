@@ -1,3 +1,4 @@
+import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
@@ -124,5 +125,31 @@ class EventApi {
     );
 
     return UserJourney.fromJson(response.data);
+  }
+
+  Future<void> deleteExpense(int expenseId) async {
+    await client.dio.delete(
+      '/expenses/$expenseId',
+    );
+  }
+
+  Future<EventExpense> addExpense(
+    int eventId,
+    String name,
+    int amount,
+    String? description,
+  ) async {
+    final response = await client.dio.post(
+      '/expenses',
+      data: {
+        'name': name,
+        'description': description,
+        'date': DateTime.now().toUtc().toIso8601String(),
+        'amount': amount,
+        'event': eventId,
+      },
+    );
+
+    return EventExpense.fromJson(response.data);
   }
 }
