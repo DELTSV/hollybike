@@ -74,7 +74,10 @@ class Events(val api: API = API()) {
 				class Demote(val demote: User)
 
 				@Resource("journey")
-				class Journey(val user: User)
+				class Journey(val user: User) {
+					@Resource("file")
+					class File(val journey: Journey)
+				}
 			}
 
 			@Resource("meta-data")

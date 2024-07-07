@@ -114,3 +114,27 @@ private fun Wpt.getPoint(): Feature {
 		)
 	)
 }
+
+fun GeoJson.toGpx(): Gpx {
+	val wpts = this.getWaypoints()
+	val rtes = this.getRoutes()
+	return Gpx("1.0", "Hollybike", wpts, rtes, emptyList())
+}
+
+fun GeoJson.getWaypoints(): List<Wpt> = when(this) {
+	is Point -> listOf(Wpt(coordinates[0], coordinates[1], ele = coordinates[2]))
+	is MultiPoint -> this.coordinates.map { Wpt(it[0], it[1], ele = it[2]) }
+	is Feature -> this.geometry?.getWaypoints() ?: emptyList()
+	is FeatureCollection -> this.features.flatMap { it.getWaypoints() }
+	is GeometryCollection -> this.geometries.flatMap { it.getWaypoints() }
+	else -> emptyList()
+}
+
+fun GeoJson.getRoutes(): List<Rte> = when(this) {
+	is LineString -> listOf(Rte(rtePt = this.coordinates.map { Wpt(it[0], it[1], ele = it[2]) }))
+	is MultiLineString -> this.coordinates.map { ls -> Rte(rtePt = ls.map { Wpt(it[0], it[1], ele = it[2]) }) }
+	is Feature -> this.geometry?.getRoutes() ?: emptyList()
+	is FeatureCollection -> this.features.flatMap { it.getRoutes() }
+	is GeometryCollection -> this.geometries.flatMap { it.getRoutes() }
+	else -> emptyList()
+}
