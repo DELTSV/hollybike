@@ -15,10 +15,10 @@ export function AssociationData(props: AssociationDataProps) {
 	);
 	return (
 		<Card>
-			<p>Nombre d'utilisateur : { data.data?.total_user }</p>
+			<p>Nombre d'utilisateurs : { data.data?.total_user }</p>
 			<p>Nombre d'évènements : { data.data?.total_event }</p>
-			<p>Nombre de balade : { data.data?.total_event_with_journey }</p>
-			<p>Nombre de trajet : { data.data?.total_journey }</p>
+			<p>Nombre de balades : { data.data?.total_event_with_journey }</p>
+			<p>Nombre de trajets : { data.data?.total_journey }</p>
 		</Card>
 	);
 }

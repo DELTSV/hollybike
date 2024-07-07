@@ -1,5 +1,6 @@
 package hollybike.api.repository
 
+import hollybike.api.signatureService
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
@@ -14,6 +15,7 @@ object Expenses : IntIdTable("expenses", "id_expense") {
 	val date = timestamp("date").default(Clock.System.now())
 	val amount = integer("amount")
 	val event = reference("event", Events)
+	val proof = varchar("proof", 2_048).nullable().default(null)
 }
 
 class Expense(id: EntityID<Int>) : IntEntity(id) {
@@ -22,6 +24,8 @@ class Expense(id: EntityID<Int>) : IntEntity(id) {
 	var date by Expenses.date
 	var amount by Expenses.amount
 	var event by Event referencedOn Expenses.event
+	var proof by Expenses.proof
+	val proofSigned by Expenses.proof.transform({ it }, { it?.let { s -> signatureService.sign(s) } })
 
 	companion object: IntEntityClass<Expense>(Expenses)
 }

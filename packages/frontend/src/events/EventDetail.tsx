@@ -13,6 +13,7 @@ import { TEventDetail } from "../types/TEventDetail.ts";
 import { EventParticipant } from "./EventParticipants.tsx";
 import { EventGallery } from "./EventGallery.tsx";
 import { clsx } from "clsx";
+import { EventExpense } from "./EventExpense.tsx";
 
 export function EventDetail() {
 	const {
@@ -36,7 +37,14 @@ export function EventDetail() {
 			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")}/>
 			<EventJourney eventDetail={eventDetail.data} doReload={doReload}/>
 			<EventParticipant event={eventDetail.data?.event ?? dummyEvent}/>
-			<EventGallery eventId={eventDetail.data?.event?.id ?? -1}/>
+			<div className={"flex gap-2"}>
+				<EventGallery eventId={eventDetail.data?.event?.id ?? -1}/>
+				<EventExpense
+					expenses={eventDetail.data?.expenses ?? []}
+					eventId={eventDetail?.data?.event?.id ?? -1}
+					doReload={doReload}
+				/>
+			</div>
 		</div>
 	);
 }

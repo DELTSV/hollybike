@@ -16,22 +16,22 @@ data class TEventDetails(
 	val journey: TJourneyPartial?,
 	val previewParticipants: List<TEventParticipation>,
 	val previewParticipantsCount: Long,
-	val expenses: List<TExpense>,
-	val totalExpense: Int
+	val expenses: List<TExpense>? = null,
+	val totalExpense: Int? = null
 ) {
 	constructor(
 		event: Event,
 		callerParticipation: EventParticipation?,
 		participants: List<EventParticipation>,
 		participantsCount: Long,
-		expenses: List<Expense>
+		expenses: List<Expense>?
 	) : this(
-		event = TEvent(event),
+		event = TEvent(event, expenses != null),
 		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it) },
 		journey = event.journey?.let { TJourneyPartial(it) },
 		previewParticipants = participants.map { TEventParticipation(it) },
 		previewParticipantsCount = participantsCount,
-		expenses = expenses.map { TExpense(it) },
-		totalExpense = expenses.sumOf { it.amount }
+		expenses = expenses?.map { TExpense(it) },
+		totalExpense = expenses?.sumOf { it.amount }
 	)
 }

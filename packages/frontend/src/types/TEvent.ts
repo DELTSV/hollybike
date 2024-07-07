@@ -15,7 +15,8 @@ export interface TEvent {
 	end_date_time?: Date,
 	create_date_time: Date,
 	update_date_time: Date,
-	association: TAssociationPartial
+	association: TAssociationPartial,
+	budget?: number
 }
 
 export const dummyEvent: TEvent = {
