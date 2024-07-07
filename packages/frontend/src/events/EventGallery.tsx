@@ -47,7 +47,7 @@ export function EventGallery(props: EventGalleryProps) {
 		reload,
 	]);
 	return (
-		<Card className={"overflow-hidden flex flex-col min-h-96 grid-flow-row grow"}>
+		<Card className={"overflow-hidden flex flex-col min-h-96 max-w-[50%] grid-flow-row"}>
 			<div className={"flex justify-between gap-2 items-center"}>
 				<h2 className={"text-2xl"}>Galerie</h2>
 				<div className={"flex items-center gap-2"}>

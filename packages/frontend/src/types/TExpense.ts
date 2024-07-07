@@ -4,4 +4,5 @@ export interface TExpense {
 	description?: string,
 	date: Date,
 	amount: number,
+	proof?: string
 }

@@ -9,11 +9,17 @@ import {
 	dateToFrenchString, InputCalendar,
 } from "../components/Calendar/InputCalendar.tsx";
 import { RedStar } from "../components/RedStar/RedStar.tsx";
-import { api } from "../utils/useApi.ts";
+
 import { DoReload } from "../utils/useReload.ts";
-import { KeyboardArrowDown } from "@material-ui/icons";
+import {
+	KeyboardArrowDown, VisibilityOutlined,
+} from "@material-ui/icons";
 import { clsx } from "clsx";
+import { FileInput } from "../components/Input/FileInput.tsx";
 import { toast } from "react-toastify";
+import {
+	api, apiRaw,
+} from "../utils/useApi.ts";
 
 interface EventExpenseProps {
 	expenses: TExpense[],
@@ -30,8 +36,9 @@ export function EventExpense(props: EventExpenseProps) {
 	const [description, setDescription] = useState<string>();
 	const [date, setDate] = useState<Date | undefined>(new Date());
 	const [amount, setAmount] = useState("");
+	const [proof, setProof] = useState<File | null>(null);
 	return (
-		<Card className={"grow"}>
+		<Card className={"grow-[1]"}>
 			<div className={"flex justify-between items-center"}>
 				Dépense
 				<Button onClick={() => setDisplayAdd(true)}>Ajouter</Button>
@@ -63,8 +70,10 @@ export function EventExpense(props: EventExpenseProps) {
 						value={amount}
 						onInput={e => setAmount(e.currentTarget.value)}
 					/>
+					<p>Preuve d'achat</p>
+					<FileInput value={proof} setValue={setProof} placeholder={"Preuve d'achat"}/>
 					<Button
-						className={"col-span-2 justify-self-center"} onClick={() => {
+						className={"col-span-2 justify-self-center"} onClick={async () => {
 							api<TExpense>("/expenses", {
 								method: "POST",
 								body: {
@@ -74,15 +83,34 @@ export function EventExpense(props: EventExpenseProps) {
 									amount: Math.round(parseFloat(amount) * 100),
 									event: eventId,
 								},
-							}).then((res) => {
+							}).then(async (res) => {
 								if (res.status === 201) {
-									setDisplayAdd(false);
-									doReload();
-									toast("Dépense ajoutée", { type: "success" });
-									setName("");
-									setDescription("");
-									setDate(new Date());
-									setAmount("undefined");
+									if (proof !== null) {
+										apiRaw(`/expenses/${res.data?.id}/proof`, proof?.type, {
+											method: "PUT",
+											body: (await proof?.stream().getReader().read())?.value,
+										}).then((res) => {
+											if (res.status === 200) {
+												setDisplayAdd(false);
+												doReload();
+												toast("Dépense ajoutée", { type: "success" });
+												setName("");
+												setDescription("");
+												setDate(new Date());
+												setAmount("undefined");
+											} else {
+												toast(res.message, { type: "error" });
+											}
+										});
+									} else {
+										setDisplayAdd(false);
+										doReload();
+										toast("Dépense ajoutée", { type: "success" });
+										setName("");
+										setDescription("");
+										setDate(new Date());
+										setAmount("undefined");
+									}
 								} else {
 									toast(res.message, { type: "error" });
 								}
@@ -103,6 +131,7 @@ interface ExpenseProps {
 
 function Expense(props: ExpenseProps) {
 	const [visible, setVisible] = useState(false);
+	const [modal, setModal] = useState(false);
 	return (
 		<div className={"cursor-pointer"} onClick={() => setVisible(!visible)}>
 			<div className={"flex justify-between"}>
@@ -113,9 +142,18 @@ function Expense(props: ExpenseProps) {
 				</div>
 				<KeyboardArrowDown className={clsx("!transition", visible && "rotate-180" || "rotate-0")}/>
 			</div>
-			<div className={clsx("transition-all overflow-hidden", visible && "max-h-20" || "max-h-0")}>
-				{ props.expense.description }
+			<div className={clsx("transition-all overflow-hidden flex justify-between", visible && "max-h-20" || "max-h-0")}>
+				<p>{ props.expense.description }</p>
+				{ props.expense.proof && <VisibilityOutlined
+					onClick={(e) => {
+						setModal(true);
+						e.stopPropagation();
+					}}
+				/> }
 			</div>
+			<Modal visible={modal} setVisible={setModal}>
+				<img alt={"Preuve d'achat max-h-full w-auto h-auto"} src={props.expense.proof}/>
+			</Modal>
 		</div>
 	);
 }
