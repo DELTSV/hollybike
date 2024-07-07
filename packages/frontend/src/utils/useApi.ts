@@ -9,7 +9,8 @@ import { externalDisconnect } from "../auth/context.tsx";
 interface UseApiOptions {
 	method?: string,
 	body?: any,
-	if?: boolean
+	if?: boolean,
+	retryIfUnauthorized?: boolean,
 }
 
 interface APIResponse<T> {
@@ -22,14 +23,16 @@ interface ApiOptions {
 	method?: string,
 	body?: any,
 	headers?: Record<string, string>,
-	if?: boolean
+	if?: boolean,
+	retryIfUnauthorized?: boolean,
 }
 
 interface ApiRawOptions {
 	method?: string,
 	body?: BodyInit,
 	headers?: Record<string, string>,
-	if?: boolean
+	if?: boolean,
+	retryIfUnauthorized?: boolean,
 }
 
 export function useApi<T>(
@@ -66,6 +69,7 @@ export async function api<T>(url: string, options?: ApiOptions): Promise<APIResp
 		body: JSON.stringify(options?.body),
 		headers: options?.headers,
 		if: options?.if,
+		retryIfUnauthorized: options?.retryIfUnauthorized,
 	});
 }
 
@@ -98,7 +102,7 @@ export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOpti
 	}
 	const responseText = await response.text();
 	if (response.status.toString()[0] !== "2") {
-		if (response.status === 401) {
+		if (response.status === 401 && options?.retryIfUnauthorized !== false) {
 			if (localStorage.getItem("refreshing") !== "true") {
 				localStorage.setItem("refreshing", "true");
 				const refreshToken = localStorage.getItem("refreshToken");

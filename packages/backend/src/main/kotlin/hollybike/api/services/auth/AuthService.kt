@@ -69,7 +69,7 @@ class AuthService(
 		.withIssuer(conf.domain)
 		.withClaim("email", email)
 		.withClaim("scope", scope.value)
-		.withExpiresAt(Date(System.currentTimeMillis() + 60000 * 60 * 24))
+		.withExpiresAt(Date(System.currentTimeMillis() + 60_000 * 60 * 24))
 		.sign(Algorithm.HMAC256(conf.secret))
 
 	private fun verifyLinkSignature(

@@ -59,6 +59,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 		api<TAuthInfo>("/auth/login", {
 			method: "POST",
 			body: data,
+			retryIfUnauthorized: false,
 		}).then((res) => {
 			if (res.status === 200 && res.data) {
 				localStorage.setItem("token", res.data.token);
