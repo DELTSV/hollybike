@@ -42,10 +42,6 @@ class WeatherForecastBloc
         weatherForecast,
       );
 
-      // wait 2 seconds to simulate a slow network
-
-      await Future.delayed(const Duration(seconds: 2));
-
       emit(WeatherForecastSuccess(state, groupedWeatherForecast));
     } catch (e) {
       log('error occurred', error: e);

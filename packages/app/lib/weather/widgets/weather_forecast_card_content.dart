@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/journey/widgets/journey_position.dart';
 import 'package:hollybike/shared/types/position.dart';
 import 'package:hollybike/weather/types/weather_condition.dart';
+import 'package:hollybike/weather/types/weather_forecast_grouped.dart';
 import 'package:hollybike/weather/widgets/weather_forecast_empty_card.dart';
+import 'package:hollybike/weather/widgets/weather_forecast_modal.dart';
 import 'package:lottie/lottie.dart';
 
 import '../bloc/weather_forecast_bloc.dart';
@@ -54,7 +56,9 @@ class WeatherForecastCardContent extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: state is WeatherForecastSuccess
+                      ? () => onTap(context, state.weatherForecast)
+                      : null,
                   borderRadius: BorderRadius.circular(14),
                   child: Ink(
                     decoration: BoxDecoration(
@@ -75,6 +79,18 @@ class WeatherForecastCardContent extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void onTap(BuildContext context, WeatherForecastGrouped weatherForecast) {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return WeatherForecastModal(
+            weatherForecast: weatherForecast,
+          );
+        });
   }
 
   Widget _buildForecast(BuildContext context, WeatherForecastState state) {
