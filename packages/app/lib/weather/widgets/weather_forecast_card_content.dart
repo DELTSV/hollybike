@@ -130,7 +130,10 @@ class WeatherForecastCardContent extends StatelessWidget {
             ),
           ),
           Lottie.asset(
-            getWeatherConditionLottiePath(firstDay.weatherCondition),
+            getWeatherConditionLottiePath(
+              firstDay.weatherCondition,
+              firstDay.hourlyWeather.first.isDay,
+            ),
           ),
         ],
       );

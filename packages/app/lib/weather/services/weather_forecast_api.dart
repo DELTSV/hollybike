@@ -24,7 +24,7 @@ class WeatherForecastApi {
       'latitude': latitude,
       'longitude': longitude,
       'hourly': 'temperature_2m,weather_code',
-      'daily': 'weather_code,temperature_2m_max,temperature_2m_min',
+      'daily': 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset',
       'timezone': 'Europe/Paris',
       'start_date': formattedStartDate,
       'end_date': formattedEndDate,

@@ -51,6 +51,8 @@ class DailyUnits with _$DailyUnits {
     @JsonKey(name: 'weather_code') required String weatherCode,
     @JsonKey(name: 'temperature_2m_max') required String temperature2mMax,
     @JsonKey(name: 'temperature_2m_min') required String temperature2mMin,
+    @JsonKey(name: 'sunrise') required String sunrise,
+    @JsonKey(name: 'sunset') required String sunset,
   }) = _DailyUnits;
 
   factory DailyUnits.fromJson(Map<String, dynamic> json) => _$DailyUnitsFromJson(json);
@@ -63,6 +65,8 @@ class Daily with _$Daily {
     @JsonKey(name: 'weather_code') required List<int?> weatherCode,
     @JsonKey(name: 'temperature_2m_max') required List<double?> temperature2mMax,
     @JsonKey(name: 'temperature_2m_min') required List<double?> temperature2mMin,
+    @JsonKey(name: 'sunrise') required List<String?> sunrise,
+    @JsonKey(name: 'sunset') required List<String?> sunset,
   }) = _Daily;
 
   factory Daily.fromJson(Map<String, dynamic> json) => _$DailyFromJson(json);
