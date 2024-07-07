@@ -4,6 +4,8 @@ import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/widgets/expenses/empty_preview_expenses_card.dart';
 import 'package:hollybike/event/widgets/expenses/expenses_preview_card_content.dart';
 
+import 'expenses_modal.dart';
+
 class ExpensesPreviewCard extends StatelessWidget {
   final EventDetails eventDetails;
 
@@ -26,6 +28,7 @@ class ExpensesPreviewCard extends StatelessWidget {
           height: 100,
           width: double.infinity,
           child: _buildExpenses(
+            context,
             eventDetails.expenses!,
             eventDetails.event.budget,
             eventDetails.totalExpense!,
@@ -36,18 +39,36 @@ class ExpensesPreviewCard extends StatelessWidget {
   }
 
   Widget _buildExpenses(
+    BuildContext context,
     List<EventExpense> expenses,
     int? budget,
     int totalExpenses,
   ) {
     if (expenses.isEmpty && budget == null) {
-      return const EmptyPreviewExpensesCard();
+      return EmptyPreviewExpensesCard(
+        onTap: () => onTap(context),
+      );
     }
 
     return ExpensesPreviewCardContent(
       expenses: expenses,
       budget: budget,
       totalExpenses: totalExpenses,
+      onTap: () => onTap(context),
+    );
+  }
+
+  void onTap(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return ExpensesModal(
+          expenses: eventDetails.expenses ?? [],
+          budget: eventDetails.event.budget,
+        );
+      },
     );
   }
 }

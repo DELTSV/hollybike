@@ -6,12 +6,14 @@ class ExpensesPreviewCardContent extends StatelessWidget {
   final List<EventExpense> expenses;
   final int? budget;
   final int totalExpenses;
+  final void Function() onTap;
 
   const ExpensesPreviewCardContent({
     super.key,
     required this.expenses,
     required this.budget,
     required this.totalExpenses,
+    required this.onTap,
   });
 
   @override
@@ -68,7 +70,7 @@ class ExpensesPreviewCardContent extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(14),
-              onTap: () {},
+              onTap: onTap,
             ),
           ),
         ),

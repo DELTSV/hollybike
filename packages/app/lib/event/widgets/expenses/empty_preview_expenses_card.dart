@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class EmptyPreviewExpensesCard extends StatelessWidget {
-  const EmptyPreviewExpensesCard({super.key});
+  final void Function()? onTap;
+
+  const EmptyPreviewExpensesCard({
+    super.key,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +49,7 @@ class EmptyPreviewExpensesCard extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 borderRadius: BorderRadius.circular(14),
-                onTap: () {},
+                onTap: onTap,
               ),
             ),
           ),
