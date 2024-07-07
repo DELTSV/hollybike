@@ -40,6 +40,10 @@ export function EventInfo(props: EventInfoProps) {
 	const {
 		eventData, setEventData, id,
 	} = props;
+	const [budgetText, setBudgetText] = useState("");
+	useEffect(() => {
+		setBudgetText(eventData.budget ? (eventData.budget / 100).toFixed(2) : "");
+	}, [eventData.budget]);
 	useEffect(() => {
 		setTotal(associations.data?.total_data ?? 20);
 	}, [associations, setTotal]);
@@ -109,6 +113,12 @@ export function EventInfo(props: EventInfoProps) {
 				}}
 				time
 			/>
+			<p>Budget</p>
+			<Input
+				value={budgetText}
+				type={"number"}
+				onInput={e => setBudgetText(e.currentTarget.value)}
+			/>
 			{ user?.scope === EUserScope.Root &&
 				<>
 					<p>Association</p>
@@ -131,6 +141,7 @@ export function EventInfo(props: EventInfoProps) {
 							description: eventData.description,
 							start_date: eventData.start_date_time,
 							end_date: eventData.end_date_time,
+							budget: budgetText !== "" ? parseFloat(budgetText) * 100 : undefined,
 						},
 					}).then((res) => {
 						if (res.status === 200 && res.data !== undefined) {

@@ -358,6 +358,7 @@ class EventService(
 		description: String?,
 		startDate: Instant,
 		endDate: Instant?,
+		budget: Int?
 	): Result<Event> {
 		checkEventInputDates(startDate, endDate, false).onFailure { return Result.failure(it) }
 		checkEventTextFields(name, description).onFailure { return Result.failure(it) }
@@ -370,6 +371,7 @@ class EventService(
 						this.description = description
 						this.startDateTime = startDate
 						this.endDateTime = endDate
+						this.budget = budget
 					}
 
 					Result.success(event)

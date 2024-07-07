@@ -11,5 +11,6 @@ data class TUpdateEvent(
 	@SerialName("start_date")
 	val startDate: Instant,
 	@SerialName("end_date")
-	val endDate: Instant? = null
+	val endDate: Instant? = null,
+	val budget: Int? = null
 )

@@ -193,7 +193,8 @@ class EventController(
 				updateEvent.name,
 				updateEvent.description,
 				updateEvent.startDate,
-				updateEvent.endDate
+				updateEvent.endDate,
+				updateEvent.budget
 			).onSuccess {
 				call.respond(HttpStatusCode.OK, TEvent(it))
 			}.onFailure {

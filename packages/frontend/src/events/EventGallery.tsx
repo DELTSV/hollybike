@@ -47,7 +47,7 @@ export function EventGallery(props: EventGalleryProps) {
 		reload,
 	]);
 	return (
-		<Card className={"overflow-hidden flex flex-col min-h-96 grid-flow-row"}>
+		<Card className={"overflow-hidden flex flex-col min-h-96 grid-flow-row grow"}>
 			<div className={"flex justify-between gap-2 items-center"}>
 				<h2 className={"text-2xl"}>Galerie</h2>
 				<div className={"flex items-center gap-2"}>
@@ -77,7 +77,7 @@ export function EventGallery(props: EventGalleryProps) {
 				</div>
 			</div>
 			<div
-				className={"overflow-y-auto grow grid grid-cols-3"} onScroll={(e) => {
+				className={"overflow-y-auto grow grid grid-cols-2"} onScroll={(e) => {
 					const bottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight;
 					if (bottom && ! done) {
 						setPage(prev => prev + 1);
@@ -85,15 +85,11 @@ export function EventGallery(props: EventGalleryProps) {
 				}}
 			>
 				<div>
-					{ Object.values(images).filter((_image, i) => i % 3 === 0).map(i =>
+					{ Object.values(images).filter((_image, i) => i % 2 === 0).map(i =>
 						<img src={i.url}/>) }
 				</div>
 				<div>
-					{ Object.values(images).filter((_image, i) => i % 3 === 1).map(i =>
-						<img src={i.url}/>) }
-				</div>
-				<div>
-					{ Object.values(images).filter((_image, i) => i % 3 === 2).map(i =>
+					{ Object.values(images).filter((_image, i) => i % 2 === 1).map(i =>
 						<img src={i.url}/>) }
 				</div>
 
