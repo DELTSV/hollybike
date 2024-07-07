@@ -100,7 +100,7 @@ class EventController(
 			val (event, callerParticipation) = eventService.getEventWithParticipation(call.user, id.details.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
 
-			val eventExpenses = expenseService.getEventExpense(call.user, event) ?: emptyList()
+			val eventExpenses = expenseService.getEventExpense(call.user, event)
 
 			eventParticipationService.getParticipationsPreview(call.user, id.details.id)
 				.onSuccess { (participants, participantsCount) ->
@@ -124,7 +124,7 @@ class EventController(
 			val event = eventService.getEvent(call.user, id.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
 
-			call.respond(TEvent(event))
+			call.respond(TEvent(event, expenseService.authorizeBudget(call.user, event)))
 		}
 	}
 
@@ -144,7 +144,7 @@ class EventController(
 				newEvent.endDate,
 				association
 			).onSuccess {
-				call.respond(HttpStatusCode.Created, TEvent(it))
+				call.respond(HttpStatusCode.Created, TEvent(it, expenseService.authorizeBudget(call.user, it)))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}
@@ -193,7 +193,7 @@ class EventController(
 				updateEvent.endDate,
 				updateEvent.budget
 			).onSuccess {
-				call.respond(HttpStatusCode.OK, TEvent(it))
+				call.respond(HttpStatusCode.OK, TEvent(it, expenseService.authorizeBudget(call.user, it)))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}
@@ -256,7 +256,7 @@ class EventController(
 				image.streamProvider().readBytes(),
 				contentType.toString()
 			).onSuccess {
-				call.respond(TEvent(it))
+				call.respond(TEvent(it, expenseService.authorizeBudget(call.user, it)))
 			}.onFailure {
 				eventService.handleEventExceptions(it, call)
 			}

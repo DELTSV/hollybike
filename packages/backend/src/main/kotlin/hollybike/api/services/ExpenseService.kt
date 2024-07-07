@@ -42,6 +42,12 @@ class ExpenseService(
 		EUserScope.User -> event.participants.any { it.user.id == caller.id && it.role == EEventRole.Organizer }
 	}
 
+	fun authorizeBudget(caller: User, event: Event): Boolean = when (caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> event.association.id == caller.association.id
+		EUserScope.User -> event.participants.any { it.user.id == caller.id && it.role == EEventRole.Organizer }
+	}
+
 	fun getExpense(caller: User, id: Int): Expense? = transaction(db) {
 		Expense.findById(id)?.load(Expense::event) getIfAllowed caller
 	}
@@ -142,7 +148,7 @@ class ExpenseService(
 		if(!authorizeGetOrUpdateOrDelete(caller, expense)) {
 			return Result.failure(NotAllowedException())
 		}
-		val path = "/e/${expense.event.id}/e/${expense.id}/p"
+		val path = "e/${expense.event.id}/e/${expense.id}/p"
 		storageService.store(data, path, contentType.contentType)
 		transaction(db) {
 			expense.proof = path
