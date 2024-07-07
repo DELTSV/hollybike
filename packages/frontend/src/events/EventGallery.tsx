@@ -51,8 +51,7 @@ export function EventGallery(props: EventGalleryProps) {
 			<div className={"flex justify-between gap-2 items-center"}>
 				<h2 className={"text-2xl"}>Galerie</h2>
 				<div className={"flex items-center gap-2"}>
-					<p>Ajouter une image</p>
-					<FileInput value={file} placeholder={"Image"} setValue={setFile}/>
+					<FileInput value={file} placeholder={"Ajouter une image"} setValue={setFile}/>
 					<Button
 						disabled={file === null} onClick={() => {
 							if (file !== null) {
