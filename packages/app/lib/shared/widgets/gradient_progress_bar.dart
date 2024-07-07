@@ -27,7 +27,7 @@ class _GradientProgressBarState extends State<GradientProgressBar>
   void didUpdateWidget(GradientProgressBar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.value != widget.value) {
+    if (oldWidget.value != widget.value || oldWidget.maxValue != widget.maxValue) {
       _animate();
     }
   }

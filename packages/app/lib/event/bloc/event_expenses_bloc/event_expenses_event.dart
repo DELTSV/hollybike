@@ -22,3 +22,11 @@ class AddExpense extends EventExpensesEvent {
     required this.description,
   });
 }
+
+class EditBudget extends EventExpensesEvent {
+  final int? budget;
+
+  EditBudget({
+    required this.budget,
+  });
+}

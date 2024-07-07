@@ -156,13 +156,15 @@ class EventRepository {
     int eventId,
     EventFormData event,
   ) async {
-    final editedEvent = await eventApi.editEvent(eventId, event);
-
     final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
+
+    final editedEvent = await eventApi.editEvent(eventId, event.withBudget(
+      details.event.budget,
+    ));
 
     _eventDetailsStreamMapper.add(
         eventId, details.copyWith(event: editedEvent));
@@ -519,5 +521,43 @@ class EventRepository {
     );
 
     return expense;
+  }
+
+  Future<void> editBudget(
+    int eventId,
+    int? budget,
+  ) async {
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    await eventApi.editEvent(eventId, EventFormData(
+      name: details.event.name,
+      description: details.event.description,
+      startDate: details.event.startDate,
+      endDate: details.event.endDate,
+      budget: budget,
+    ));
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        event: Event(
+          id: details.event.id,
+          name: details.event.name,
+          description: details.event.description,
+          status: details.event.status,
+          budget: budget,
+          startDate: details.event.startDate,
+          endDate: details.event.endDate,
+          owner: details.event.owner,
+          createdAt: details.event.createdAt,
+          updatedAt: details.event.updatedAt,
+          image: details.event.image,
+        ),
+      ),
+    );
   }
 }

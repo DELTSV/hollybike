@@ -15,6 +15,7 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
   }) : super(EventJourneyInitial()) {
     on<DeleteExpense>(_onDeleteExpense);
     on<AddExpense>(_onAddExpense);
+    on<EditBudget>(_onEditBudget);
   }
 
   _onDeleteExpense(
@@ -61,5 +62,27 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
     }
 
     emit(EventJourneyOperationSuccess(state, successMessage: 'Dépense ajoutée.'));
+  }
+
+  _onEditBudget(
+    EditBudget event,
+    Emitter<EventExpensesState> emit,
+  ) async {
+    emit(EventJourneyOperationInProgress(state));
+
+    try {
+      await eventRepository.editBudget(
+        eventId,
+        event.budget,
+      );
+    } catch (e) {
+      emit(EventJourneyOperationFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+      return;
+    }
+
+    emit(EventJourneyOperationSuccess(state, successMessage: 'Budget modifié.'));
   }
 }

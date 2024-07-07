@@ -8,13 +8,24 @@ part 'event_form_data.g.dart';
 
 @freezed
 class EventFormData with _$EventFormData {
+  const EventFormData._();
+
   const factory EventFormData({
     required String name,
-    String? description,
+    required String? description,
     @JsonKey(toJson: dateToJson, name: "start_date")
     required DateTime startDate,
-    @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate,
+    @JsonKey(toJson: dateToJson, name: "end_date") required DateTime? endDate,
+    int? budget,
   }) = _EventFormData;
+
+  EventFormData withBudget(int? budget) => EventFormData(
+        name: name,
+        description: description,
+        startDate: startDate,
+        endDate: endDate,
+        budget: budget,
+      );
 
   factory EventFormData.fromJson(JsonMap json) => _$EventFormDataFromJson(json);
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:hollybike/event/widgets/expenses/currency_input.dart';
 
 class AddExpenseModal extends StatefulWidget {
   final void Function(
@@ -18,7 +17,8 @@ class AddExpenseModal extends StatefulWidget {
 class _AddExpenseModalState extends State<AddExpenseModal> {
   late final TextEditingController _nameController = TextEditingController();
   late final TextEditingController _amountController = TextEditingController();
-  late final TextEditingController _descriptionController = TextEditingController();
+  late final TextEditingController _descriptionController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -56,17 +56,9 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
               },
             ),
             const SizedBox(height: 16),
-            TextFormField(
+            CurrencyInput(
               controller: _amountController,
-              decoration: const InputDecoration(
-                labelText: 'Montant',
-              ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                CurrencyInputFormatter(),
-              ],
+              labelText: 'Montant',
               validator: (value) {
                 if (value?.isEmpty == true || value == '0,00 €') {
                   return 'Veuillez entrer un montant';
@@ -113,26 +105,6 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
           child: const Text('Ajouter'),
         ),
       ],
-    );
-  }
-}
-
-class CurrencyInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    String numericText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-
-    double value = double.parse(numericText);
-
-    final formatter = NumberFormat.simpleCurrency(locale: "fr_FR");
-    String newText = formatter.format(value / 100);
-
-    return newValue.copyWith(
-      text: newText,
-      selection: TextSelection.collapsed(offset: newText.length - 2),
     );
   }
 }
