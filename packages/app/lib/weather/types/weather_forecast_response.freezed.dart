@@ -1069,11 +1069,11 @@ Daily _$DailyFromJson(Map<String, dynamic> json) {
 mixin _$Daily {
   List<String> get time => throw _privateConstructorUsedError;
   @JsonKey(name: 'weather_code')
-  List<int> get weatherCode => throw _privateConstructorUsedError;
+  List<int?> get weatherCode => throw _privateConstructorUsedError;
   @JsonKey(name: 'temperature_2m_max')
-  List<double> get temperature2mMax => throw _privateConstructorUsedError;
+  List<double?> get temperature2mMax => throw _privateConstructorUsedError;
   @JsonKey(name: 'temperature_2m_min')
-  List<double> get temperature2mMin => throw _privateConstructorUsedError;
+  List<double?> get temperature2mMin => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1087,9 +1087,9 @@ abstract class $DailyCopyWith<$Res> {
   @useResult
   $Res call(
       {List<String> time,
-      @JsonKey(name: 'weather_code') List<int> weatherCode,
-      @JsonKey(name: 'temperature_2m_max') List<double> temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') List<double> temperature2mMin});
+      @JsonKey(name: 'weather_code') List<int?> weatherCode,
+      @JsonKey(name: 'temperature_2m_max') List<double?> temperature2mMax,
+      @JsonKey(name: 'temperature_2m_min') List<double?> temperature2mMin});
 }
 
 /// @nodoc
@@ -1118,15 +1118,15 @@ class _$DailyCopyWithImpl<$Res, $Val extends Daily>
       weatherCode: null == weatherCode
           ? _value.weatherCode
           : weatherCode // ignore: cast_nullable_to_non_nullable
-              as List<int>,
+              as List<int?>,
       temperature2mMax: null == temperature2mMax
           ? _value.temperature2mMax
           : temperature2mMax // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double?>,
       temperature2mMin: null == temperature2mMin
           ? _value.temperature2mMin
           : temperature2mMin // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double?>,
     ) as $Val);
   }
 }
@@ -1140,9 +1140,9 @@ abstract class _$$DailyImplCopyWith<$Res> implements $DailyCopyWith<$Res> {
   @useResult
   $Res call(
       {List<String> time,
-      @JsonKey(name: 'weather_code') List<int> weatherCode,
-      @JsonKey(name: 'temperature_2m_max') List<double> temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') List<double> temperature2mMin});
+      @JsonKey(name: 'weather_code') List<int?> weatherCode,
+      @JsonKey(name: 'temperature_2m_max') List<double?> temperature2mMax,
+      @JsonKey(name: 'temperature_2m_min') List<double?> temperature2mMin});
 }
 
 /// @nodoc
@@ -1169,15 +1169,15 @@ class __$$DailyImplCopyWithImpl<$Res>
       weatherCode: null == weatherCode
           ? _value._weatherCode
           : weatherCode // ignore: cast_nullable_to_non_nullable
-              as List<int>,
+              as List<int?>,
       temperature2mMax: null == temperature2mMax
           ? _value._temperature2mMax
           : temperature2mMax // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double?>,
       temperature2mMin: null == temperature2mMin
           ? _value._temperature2mMin
           : temperature2mMin // ignore: cast_nullable_to_non_nullable
-              as List<double>,
+              as List<double?>,
     ));
   }
 }
@@ -1187,11 +1187,11 @@ class __$$DailyImplCopyWithImpl<$Res>
 class _$DailyImpl implements _Daily {
   const _$DailyImpl(
       {required final List<String> time,
-      @JsonKey(name: 'weather_code') required final List<int> weatherCode,
+      @JsonKey(name: 'weather_code') required final List<int?> weatherCode,
       @JsonKey(name: 'temperature_2m_max')
-      required final List<double> temperature2mMax,
+      required final List<double?> temperature2mMax,
       @JsonKey(name: 'temperature_2m_min')
-      required final List<double> temperature2mMin})
+      required final List<double?> temperature2mMin})
       : _time = time,
         _weatherCode = weatherCode,
         _temperature2mMax = temperature2mMax,
@@ -1208,29 +1208,29 @@ class _$DailyImpl implements _Daily {
     return EqualUnmodifiableListView(_time);
   }
 
-  final List<int> _weatherCode;
+  final List<int?> _weatherCode;
   @override
   @JsonKey(name: 'weather_code')
-  List<int> get weatherCode {
+  List<int?> get weatherCode {
     if (_weatherCode is EqualUnmodifiableListView) return _weatherCode;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_weatherCode);
   }
 
-  final List<double> _temperature2mMax;
+  final List<double?> _temperature2mMax;
   @override
   @JsonKey(name: 'temperature_2m_max')
-  List<double> get temperature2mMax {
+  List<double?> get temperature2mMax {
     if (_temperature2mMax is EqualUnmodifiableListView)
       return _temperature2mMax;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_temperature2mMax);
   }
 
-  final List<double> _temperature2mMin;
+  final List<double?> _temperature2mMin;
   @override
   @JsonKey(name: 'temperature_2m_min')
-  List<double> get temperature2mMin {
+  List<double?> get temperature2mMin {
     if (_temperature2mMin is EqualUnmodifiableListView)
       return _temperature2mMin;
     // ignore: implicit_dynamic_type
@@ -1282,11 +1282,11 @@ class _$DailyImpl implements _Daily {
 abstract class _Daily implements Daily {
   const factory _Daily(
       {required final List<String> time,
-      @JsonKey(name: 'weather_code') required final List<int> weatherCode,
+      @JsonKey(name: 'weather_code') required final List<int?> weatherCode,
       @JsonKey(name: 'temperature_2m_max')
-      required final List<double> temperature2mMax,
+      required final List<double?> temperature2mMax,
       @JsonKey(name: 'temperature_2m_min')
-      required final List<double> temperature2mMin}) = _$DailyImpl;
+      required final List<double?> temperature2mMin}) = _$DailyImpl;
 
   factory _Daily.fromJson(Map<String, dynamic> json) = _$DailyImpl.fromJson;
 
@@ -1294,13 +1294,13 @@ abstract class _Daily implements Daily {
   List<String> get time;
   @override
   @JsonKey(name: 'weather_code')
-  List<int> get weatherCode;
+  List<int?> get weatherCode;
   @override
   @JsonKey(name: 'temperature_2m_max')
-  List<double> get temperature2mMax;
+  List<double?> get temperature2mMax;
   @override
   @JsonKey(name: 'temperature_2m_min')
-  List<double> get temperature2mMin;
+  List<double?> get temperature2mMin;
   @override
   @JsonKey(ignore: true)
   _$$DailyImplCopyWith<_$DailyImpl> get copyWith =>

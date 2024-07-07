@@ -90,13 +90,13 @@ Map<String, dynamic> _$$DailyUnitsImplToJson(_$DailyUnitsImpl instance) =>
 _$DailyImpl _$$DailyImplFromJson(Map<String, dynamic> json) => _$DailyImpl(
       time: (json['time'] as List<dynamic>).map((e) => e as String).toList(),
       weatherCode: (json['weather_code'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+          .map((e) => (e as num?)?.toInt())
           .toList(),
       temperature2mMax: (json['temperature_2m_max'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+          .map((e) => (e as num?)?.toDouble())
           .toList(),
       temperature2mMin: (json['temperature_2m_min'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+          .map((e) => (e as num?)?.toDouble())
           .toList(),
     );
 

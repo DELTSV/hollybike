@@ -12,19 +12,20 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
   }) = _WeatherForecastGrouped;
 
   factory WeatherForecastGrouped.fromResponse(WeatherForecastResponse response) {
-    // Group hourly data by day
     final Map<String, List<HourlyWeather>> groupedHourly = {};
     for (int i = 0; i < response.hourly.time.length; i++) {
+      if (response.hourly.temperature2m[i] == null || response.hourly.weatherCode[i] == null) {
+        continue;
+      }
+
       final dateTime = DateTime.parse(response.hourly.time[i]);
       final date = DateFormat('yyyy-MM-dd').format(dateTime);
       final hour = DateFormat('HH:mm').format(dateTime);
 
       final hourlyWeather = HourlyWeather(
         time: hour,
-        temperature: response.hourly.temperature2m[i] != null
-            ? '${response.hourly.temperature2m[i]}${response.hourlyUnits.temperature2m}'
-            : null,
-        weatherCode: response.hourly.weatherCode[i],
+        temperature: '${response.hourly.temperature2m[i]}${response.hourlyUnits.temperature2m}',
+        weatherCode: response.hourly.weatherCode[i]!,
       );
 
       groupedHourly.putIfAbsent(date, () => []).add(hourlyWeather);
@@ -33,11 +34,15 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
     // Group daily data
     final List<DailyWeatherGrouped> groupedDaily = [];
     for (int i = 0; i < response.daily.time.length; i++) {
+      if (response.daily.temperature2mMax[i] == null || response.daily.temperature2mMin[i] == null || response.daily.weatherCode[i] == null) {
+        continue;
+      }
+
       final dailyWeatherGrouped = DailyWeatherGrouped(
         date: response.daily.time[i],
         maxTemperature: '${response.daily.temperature2mMax[i]}${response.dailyUnits.temperature2mMax}',
         minTemperature: '${response.daily.temperature2mMin[i]}${response.dailyUnits.temperature2mMin}',
-        weatherCode: response.daily.weatherCode[i],
+        weatherCode: response.daily.weatherCode[i]!,
         hourlyWeather: groupedHourly[response.daily.time[i]] ?? [],
       );
       groupedDaily.add(dailyWeatherGrouped);
@@ -62,7 +67,7 @@ class DailyWeatherGrouped with _$DailyWeatherGrouped {
 class HourlyWeather with _$HourlyWeather {
   const factory HourlyWeather({
     required String time,
-    required String? temperature,
-    required int? weatherCode,
+    required String temperature,
+    required int weatherCode,
   }) = _HourlyWeather;
 }

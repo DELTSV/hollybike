@@ -60,9 +60,9 @@ class DailyUnits with _$DailyUnits {
 class Daily with _$Daily {
   const factory Daily({
     required List<String> time,
-    @JsonKey(name: 'weather_code') required List<int> weatherCode,
-    @JsonKey(name: 'temperature_2m_max') required List<double> temperature2mMax,
-    @JsonKey(name: 'temperature_2m_min') required List<double> temperature2mMin,
+    @JsonKey(name: 'weather_code') required List<int?> weatherCode,
+    @JsonKey(name: 'temperature_2m_max') required List<double?> temperature2mMax,
+    @JsonKey(name: 'temperature_2m_min') required List<double?> temperature2mMin,
   }) = _Daily;
 
   factory Daily.fromJson(Map<String, dynamic> json) => _$DailyFromJson(json);
