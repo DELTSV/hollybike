@@ -50,7 +50,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val journeyService = JourneyService(db, associationService, storageService, conf.mapBox)
 	val profileService = ProfileService(db)
 	val userEventPositionService = UserEventPositionService(db, CoroutineScope(Dispatchers.Default), storageService)
-	val expenseService = ExpenseService(db, eventService)
+	val expenseService = ExpenseService(db, eventService, storageService)
 	val mailSender = attributes.conf.smtp?.let {
 		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
 	}

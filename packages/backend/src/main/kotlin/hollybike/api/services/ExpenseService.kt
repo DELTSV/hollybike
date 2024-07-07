@@ -21,7 +21,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import kotlin.math.exp
 
 class ExpenseService(
 	private val db: Database,

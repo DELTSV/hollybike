@@ -100,10 +100,7 @@ class EventController(
 			val (event, callerParticipation) = eventService.getEventWithParticipation(call.user, id.details.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
 
-			val eventExpenses = expenseService.getEventExpense(call.user, event) ?: run {
-				call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
-				return@get
-			}
+			val eventExpenses = expenseService.getEventExpense(call.user, event) ?: emptyList()
 
 			eventParticipationService.getParticipationsPreview(call.user, id.details.id)
 				.onSuccess { (participants, participantsCount) ->
