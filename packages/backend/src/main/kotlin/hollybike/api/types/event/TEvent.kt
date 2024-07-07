@@ -2,7 +2,6 @@ package hollybike.api.types.event
 
 import hollybike.api.types.user.TUserPartial
 import hollybike.api.repository.Event
-import hollybike.api.repository.User
 import hollybike.api.types.association.TPartialAssociation
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName

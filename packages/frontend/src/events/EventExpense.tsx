@@ -38,12 +38,12 @@ export function EventExpense(props: EventExpenseProps) {
 	const [amount, setAmount] = useState("");
 	const [proof, setProof] = useState<File | null>(null);
 	return (
-		<Card className={"grow-[1]"}>
+		<Card className={"grow-[1] overflow-hidden flex flex-col"}>
 			<div className={"flex justify-between items-center"}>
 				Dépense
 				<Button onClick={() => setDisplayAdd(true)}>Ajouter</Button>
 			</div>
-			<div>
+			<div className={"overflow-auto"}>
 				{ expenses.map((expense, index) =>
 					<Expense expense={expense} key={index}/>) }
 			</div>
