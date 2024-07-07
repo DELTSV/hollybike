@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/event_expense.dart';
-import 'package:hollybike/shared/widgets/gradient_progress_bar.dart';
+import 'package:hollybike/event/widgets/expenses/budget_progress.dart';
 
 class ExpensesPreviewCardContent extends StatelessWidget {
   final List<EventExpense> expenses;
@@ -18,7 +18,7 @@ class ExpensesPreviewCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expensesInEuro = totalExpenses.toDouble() / 100;
+
 
     return Stack(
       children: [
@@ -30,40 +30,11 @@ class ExpensesPreviewCardContent extends StatelessWidget {
             color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text.rich(
-                TextSpan(
-                  text: '${_getExpensesTitle()} - ',
-                  children: [
-                    TextSpan(
-                      text: expensesInEuro.toStringAsFixed(2),
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    const TextSpan(
-                      text: ' €',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              GradientProgressBar(
-                maxValue: budget?.toDouble() ?? 0,
-                value: budget == null ? 0 : expensesInEuro,
-                colors: [
-                  Colors.green.shade400,
-                  Colors.yellow.shade400,
-                  Colors.red.shade400,
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [_getBudgetTitle(context)],
-              )
-            ],
-          ),
+          child: BudgetProgress(
+            expenses: expenses,
+            budget: budget,
+            totalExpenses: totalExpenses,
+          )
         ),
         Positioned.fill(
           child: Material(
@@ -76,38 +47,5 @@ class ExpensesPreviewCardContent extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Widget _getBudgetTitle(BuildContext context) {
-    if (budget == null) {
-      return const Text('Aucun budget renseigné');
-    }
-
-    return Text.rich(
-      TextSpan(
-        text: 'Budget - ',
-        children: [
-          TextSpan(
-            text: budget?.toStringAsFixed(2),
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          const TextSpan(
-            text: ' €',
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getExpensesTitle() {
-    if (expenses.isEmpty) {
-      return 'Aucune dépenses';
-    }
-
-    if (expenses.length == 1) {
-      return '1 Dépense';
-    }
-
-    return '${expenses.length} Dépenses';
   }
 }
