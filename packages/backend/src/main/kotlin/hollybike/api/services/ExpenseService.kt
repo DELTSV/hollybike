@@ -5,6 +5,7 @@ import hollybike.api.exceptions.CannotCreateExpenseException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.exceptions.NotAllowedException
 import hollybike.api.repository.*
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.types.expense.TNewExpense
 import hollybike.api.types.expense.TUpdateExpense
@@ -13,16 +14,19 @@ import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
+import io.ktor.http.*
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.math.exp
 
 class ExpenseService(
 	private val db: Database,
-	private val eventService: EventService
+	private val eventService: EventService,
+	private val storageService: StorageService
 ) {
 	private fun authorizeGetOrUpdateOrDelete(caller: User, expense: Expense): Boolean = when (caller.scope) {
 		EUserScope.Root -> true
@@ -133,5 +137,17 @@ class ExpenseService(
 		}
 		transaction(db) { expense.delete() }
 		return Result.success(Unit)
+	}
+
+	suspend fun uploadProof(caller: User, expense: Expense, data: ByteArray, contentType: ContentType): Result<Expense> {
+		if(!authorizeGetOrUpdateOrDelete(caller, expense)) {
+			return Result.failure(NotAllowedException())
+		}
+		val path = "/e/${expense.event.id}/e/${expense.id}/p"
+		storageService.store(data, path, contentType.contentType)
+		transaction(db) {
+			expense.proof = path
+		}
+		return Result.success(expense)
 	}
 }

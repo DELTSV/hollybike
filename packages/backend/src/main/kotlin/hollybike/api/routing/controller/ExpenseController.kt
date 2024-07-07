@@ -25,7 +25,8 @@ import io.ktor.server.resources.*
 import io.ktor.server.resources.patch
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.routing
 
 class ExpenseController(
 	application: Application,
@@ -40,6 +41,7 @@ class ExpenseController(
 				createExpense()
 				updateExpense()
 				deleteExpense()
+				uploadExpenseProof()
 			}
 		}
 	}
@@ -109,6 +111,26 @@ class ExpenseController(
 				call.respond(HttpStatusCode.NoContent)
 			}.onFailure {
 				when(it) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+				}
+			}
+		}
+	}
+
+	private fun Route.uploadExpenseProof() {
+		put<Expenses.Id.Proof> {
+			val expense = expenseService.getExpense(call.user, it.id.id) ?: run {
+				return@put call.respond(HttpStatusCode.NotFound, "Dépense non trouvé")
+			}
+			val contentType = call.request.contentType()
+			if("image" !in contentType.contentType) {
+				return@put call.respond(HttpStatusCode.BadRequest)
+			}
+			val data = call.receiveStream().readBytes()
+			expenseService.uploadProof(call.user, expense, data, contentType).onSuccess { e ->
+				call.respond(TExpense(e))
+			}.onFailure { err ->
+				when(err) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 				}
 			}
