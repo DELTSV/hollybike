@@ -79,7 +79,7 @@ function Expense(props: ExpenseProps) {
 			<div className={"flex justify-between"}>
 				<div className={"flex gap-2 items-center"}>
 					<p>{ props.expense.name }</p>
-					<p className={"text-sm text-subtext-0"}>{ (props.expense.amount / 100).toFixed(2) } €</p>
+					<p className={"text-sm text-subtext-0"}>{ (props.expense.amount / 100).toFixed(2) } €</p>
 					<p>{ dateToFrenchString(props.expense.date) }</p>
 				</div>
 				<KeyboardArrowDown className={clsx("!transition", visible && "rotate-180" || "rotate-0")}/>

@@ -81,6 +81,12 @@ class Events(val api: API = API()) {
 			class MetaData(val participations: Participations)
 		}
 
+		@Resource("expenses")
+		class Expenses(val id: Id) {
+			@Resource("report")
+			class Report(val expenses: Expenses)
+		}
+
 		@Resource("images")
 		class Images(val event: Id)
 	}

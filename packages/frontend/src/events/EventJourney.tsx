@@ -123,7 +123,7 @@ export function EventJourney(props: EventJourneyProps) {
 	]);
 
 	return (
-		<Card className={"grid grid-cols-[1fr_3fr] gap-4 items-center"}>
+		<Card className={"grid grid-cols-[1fr_3fr] gap-4 items-center 2xl:overflow-y-auto"}>
 			<p className={"col-span-2 text-center"}>Trajet: { props.eventDetail?.journey?.name ?? "Aucun trajet" }</p>
 			<p>Nom</p>
 			<Input placeholder={"Nom"} value={name} onInput={e => setName(e.currentTarget.value)}/>

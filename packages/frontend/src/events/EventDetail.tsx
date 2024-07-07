@@ -37,7 +37,7 @@ export function EventDetail() {
 			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")}/>
 			<EventJourney eventDetail={eventDetail.data} doReload={doReload}/>
 			<EventParticipant event={eventDetail.data?.event ?? dummyEvent}/>
-			<div className={"flex gap-2"}>
+			<div className={"flex gap-2 flex-col 2xl:flex-row"}>
 				<EventGallery eventId={eventDetail.data?.event?.id ?? -1}/>
 				<EventExpense
 					expenses={eventDetail.data?.expenses ?? []}

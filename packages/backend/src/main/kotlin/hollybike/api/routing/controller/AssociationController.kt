@@ -30,6 +30,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.datetime.*
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
+import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 
 class AssociationController(
@@ -52,6 +55,7 @@ class AssociationController(
 				getAllInvitationsByAssociations()
 				getAllInvitationsByAssociationsMetadata()
 				getAssociationYearlyReport()
+				getAssociationPeriodReport()
 
 				if (application.isCloud) {
 					getAll()
@@ -366,7 +370,30 @@ class AssociationController(
 			call.respondOutputStream(ContentType.Text.CSV) {
 				write("name,id_event,name_event,description,amount,date\n".toByteArray(Charsets.UTF_8))
 				expenses.forEach { e ->
-					write("${e.name},${e.event.id.value},${e.event.name},${e.description},${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+					write("${e.name},${e.event.id.value},${e.event.name},\"${e.description}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+				}
+			}
+		}
+	}
+
+	private fun Route.getAssociationPeriodReport() {
+		get<Associations.Id.Expenses<API>>(EUserScope.Admin) {
+			val param = SearchParam(null, listOf(), mutableListOf(), 0, 20, eventMapper + expenseMapper)
+			call.request.queryParameters["start"]?.let { s ->
+				val start = Instant.parse(s, DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET)
+				param.filter.add(Filter(Expenses.date, start.toString(), FilterMode.GREATER_THAN_EQUAL))
+			}
+			call.request.queryParameters["end"]?.let { e ->
+				val end = Instant.parse(e, DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET)
+				param.filter.add(Filter(Expenses.date, end.toString(), FilterMode.LOWER_THAN))
+			}
+			val total = expenseService.getAllCount(call.user, param)
+			param.perPage = total.toInt()
+			val expenses = expenseService.getAll(call.user, param)
+			call.respondOutputStream(ContentType.Text.CSV) {
+				write("name,id_event,name_event,description,amount,date\n".toByteArray(Charsets.UTF_8))
+				expenses.forEach { e ->
+					write("${e.name},${e.event.id.value},${e.event.name},\"${e.description}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
 				}
 			}
 		}

@@ -44,6 +44,7 @@ class EventController(
 				getFutureEvents()
 				getArchivedEvents()
 				getEventDetails()
+				getEventExpenseReport()
 				getEvent()
 				createEvent()
 				addJourneyToEvent()
@@ -116,6 +117,23 @@ class EventController(
 				}.onFailure {
 					eventService.handleEventExceptions(it, call)
 				}
+		}
+	}
+
+	private fun Route.getEventExpenseReport() {
+		get<Events.Id.Expenses.Report> {
+			val event = eventService.getEvent(call.user, it.expenses.id.id) ?: run {
+				return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'existe pas")
+			}
+			val expenses = expenseService.getEventExpense(call.user, event) ?: run {
+				return@get call.respond(HttpStatusCode.NotFound, "Les dépenses n'ont pas été trouvé")
+			}
+			call.respondOutputStream(ContentType.Text.CSV) {
+				write("name,description,amount,date\n".toByteArray(Charsets.UTF_8))
+				expenses.forEach { e ->
+					write("${e.name},\"${e.description}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+				}
+			}
 		}
 	}
 
