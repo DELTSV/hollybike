@@ -6,7 +6,7 @@ import {
 } from "preact/hooks";
 import { Button } from "../components/Button/Button.tsx";
 import {
-	api, apiRaw,
+	api, apiRaw, useApi,
 } from "../utils/useApi.ts";
 import { DoReload } from "../utils/useReload.ts";
 import { TEventDetail } from "../types/TEventDetail.ts";
@@ -15,6 +15,9 @@ import { TJourney } from "../types/TJourney.ts";
 import { toast } from "react-toastify";
 import { positionToString } from "../utils/positionToString.ts";
 import { distanceToHumanReadable } from "../utils/distanceToHumanReadable.ts";
+import { useUser } from "../user/useUser.tsx";
+import { TList } from "../types/TList.ts";
+import { Select } from "../components/Select/Select.tsx";
 
 interface EventJourneyProps {
 	eventDetail?: TEventDetail,
@@ -24,6 +27,19 @@ interface EventJourneyProps {
 export function EventJourney(props: EventJourneyProps) {
 	const [file, setFile] = useState<File | null>(null);
 	const [name, setName] = useState("");
+	const [total, setTotal] = useState(20);
+	const [journey, setJourney] = useState<number>();
+	const { user } = useUser();
+	const journeys = useApi<TList<TJourney>>(
+		`/journeys?id_association=eq:${user?.id}&per_page=${total}`,
+		[user?.id],
+		{ if: user !== null },
+	);
+	useEffect(() => {
+		if (journeys.status === 200 && journeys.data) {
+			setTotal(journeys.data.total_data);
+		}
+	}, [journeys]);
 	useEffect(() => {
 		setName(props.eventDetail?.journey?.name ?? "");
 	}, [props.eventDetail?.journey?.name]);
@@ -67,6 +83,23 @@ export function EventJourney(props: EventJourneyProps) {
 		file,
 	]);
 
+	const setEventJourney = useCallback(async () => {
+		const res = await api(`/events/${props.eventDetail?.event?.id}/journey`, {
+			method: "POST",
+			body: { journey_id: journey },
+		});
+		if (res.status === 200) {
+			toast("Trajet mis à jour", { type: "success" });
+			props.doReload();
+		} else {
+			toast(res.message, { type: "error" });
+		}
+	}, [
+		props.eventDetail?.event.id,
+		journey,
+		props.doReload,
+	]);
+
 	const updateJourney = useCallback(async () => {
 		if (name !== "" && file && props.eventDetail?.journey) {
 			const fd = new FormData();
@@ -96,6 +129,14 @@ export function EventJourney(props: EventJourneyProps) {
 			<Input placeholder={"Nom"} value={name} onInput={e => setName(e.currentTarget.value)}/>
 			<p>Fichier</p>
 			<FileInput value={file} setValue={setFile} placeholder={"Fichier"} accept={".geojson,.gpx"}/>
+			<p>Depuis la bibliothèque</p>
+			<Select
+				options={journeys.data?.data?.map(j => ({
+					name: j.name,
+					value: j.id,
+				})) ?? []}
+				onChange={v => setJourney(parseInt(v?.toString() ?? ""))}
+			/>
 			{ props.eventDetail?.journey &&
 				<>
 					<p>Départ</p>
@@ -114,13 +155,21 @@ export function EventJourney(props: EventJourneyProps) {
 					</div>
 				</> }
 			<Button
-				disabled={name === "" || file === null}
+				disabled={(name === "" || file === null) && journey === undefined}
 				className={"col-span-2 justify-self-center"}
 				onClick={async () => {
 					if (!props.eventDetail?.journey) {
-						await createJourney();
+						if (name && file) {
+							await createJourney();
+						} else {
+							await setEventJourney();
+						}
 					} else {
-						await updateJourney();
+						if (journey) {
+							await setEventJourney();
+						} else {
+							await updateJourney();
+						}
 					}
 				}}
 			>
