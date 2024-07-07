@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/details/event_details_description.dart';
 import 'package:hollybike/event/widgets/details/event_my_journey.dart';
 import 'package:hollybike/event/widgets/journey/journey_preview_card.dart';
+import 'package:hollybike/weather/widgets/weather_forecast_card.dart';
 
 import '../../../app/app_router.gr.dart';
 import '../../../journey/service/journey_repository.dart';
@@ -91,6 +92,9 @@ class EventDetailsInfos extends StatelessWidget {
                   ),
                 ),
                 EventMyJourney(
+                  eventDetails: eventDetails,
+                ),
+                WeatherForecastCard(
                   eventDetails: eventDetails,
                 ),
                 const SizedBox(height: 16),

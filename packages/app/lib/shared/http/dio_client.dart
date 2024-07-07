@@ -10,6 +10,10 @@ class DioClient {
 
   DioClient({this.authPersistence, this.host}) : dio = Dio() {
     addInterceptor(LogInterceptor());
+
+    if (host != null) {
+      dio.options.baseUrl = host!;
+    }
   }
 
   void addInterceptor(Interceptor interceptor) {
