@@ -236,6 +236,8 @@ class EventRepository {
     _eventDetailsStreamMapper.add(
       eventId,
       EventDetails(
+        expenses: details.expenses,
+        totalExpense: details.totalExpense,
         event: details.event,
         journey: details.journey,
         callerParticipation: null,
@@ -398,6 +400,8 @@ class EventRepository {
     _eventDetailsStreamMapper.add(
       eventId,
       EventDetails(
+        expenses: details.expenses,
+        totalExpense: details.totalExpense,
         event: details.event,
         journey: null,
         callerParticipation: details.callerParticipation,

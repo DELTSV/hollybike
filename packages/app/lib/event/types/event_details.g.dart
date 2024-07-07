@@ -21,6 +21,10 @@ _$EventDetailsImpl _$$EventDetailsImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       previewParticipantsCount:
           (json['previewParticipantsCount'] as num).toInt(),
+      expenses: (json['expenses'] as List<dynamic>?)
+          ?.map((e) => EventExpense.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      totalExpense: (json['totalExpense'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$EventDetailsImplToJson(_$EventDetailsImpl instance) =>
@@ -30,4 +34,6 @@ Map<String, dynamic> _$$EventDetailsImplToJson(_$EventDetailsImpl instance) =>
       'callerParticipation': instance.callerParticipation,
       'previewParticipants': instance.previewParticipants,
       'previewParticipantsCount': instance.previewParticipantsCount,
+      'expenses': instance.expenses,
+      'totalExpense': instance.totalExpense,
     };

@@ -27,6 +27,8 @@ mixin _$EventDetails {
   List<EventParticipation> get previewParticipants =>
       throw _privateConstructorUsedError;
   int get previewParticipantsCount => throw _privateConstructorUsedError;
+  List<EventExpense>? get expenses => throw _privateConstructorUsedError;
+  int? get totalExpense => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +47,9 @@ abstract class $EventDetailsCopyWith<$Res> {
       MinimalJourney? journey,
       EventCallerParticipation? callerParticipation,
       List<EventParticipation> previewParticipants,
-      int previewParticipantsCount});
+      int previewParticipantsCount,
+      List<EventExpense>? expenses,
+      int? totalExpense});
 
   $EventCopyWith<$Res> get event;
   $MinimalJourneyCopyWith<$Res>? get journey;
@@ -70,6 +74,8 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
     Object? callerParticipation = freezed,
     Object? previewParticipants = null,
     Object? previewParticipantsCount = null,
+    Object? expenses = freezed,
+    Object? totalExpense = freezed,
   }) {
     return _then(_value.copyWith(
       event: null == event
@@ -92,6 +98,14 @@ class _$EventDetailsCopyWithImpl<$Res, $Val extends EventDetails>
           ? _value.previewParticipantsCount
           : previewParticipantsCount // ignore: cast_nullable_to_non_nullable
               as int,
+      expenses: freezed == expenses
+          ? _value.expenses
+          : expenses // ignore: cast_nullable_to_non_nullable
+              as List<EventExpense>?,
+      totalExpense: freezed == totalExpense
+          ? _value.totalExpense
+          : totalExpense // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -142,7 +156,9 @@ abstract class _$$EventDetailsImplCopyWith<$Res>
       MinimalJourney? journey,
       EventCallerParticipation? callerParticipation,
       List<EventParticipation> previewParticipants,
-      int previewParticipantsCount});
+      int previewParticipantsCount,
+      List<EventExpense>? expenses,
+      int? totalExpense});
 
   @override
   $EventCopyWith<$Res> get event;
@@ -168,6 +184,8 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
     Object? callerParticipation = freezed,
     Object? previewParticipants = null,
     Object? previewParticipantsCount = null,
+    Object? expenses = freezed,
+    Object? totalExpense = freezed,
   }) {
     return _then(_$EventDetailsImpl(
       event: null == event
@@ -190,6 +208,14 @@ class __$$EventDetailsImplCopyWithImpl<$Res>
           ? _value.previewParticipantsCount
           : previewParticipantsCount // ignore: cast_nullable_to_non_nullable
               as int,
+      expenses: freezed == expenses
+          ? _value._expenses
+          : expenses // ignore: cast_nullable_to_non_nullable
+              as List<EventExpense>?,
+      totalExpense: freezed == totalExpense
+          ? _value.totalExpense
+          : totalExpense // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -202,8 +228,11 @@ class _$EventDetailsImpl extends _EventDetails {
       required this.journey,
       required this.callerParticipation,
       required final List<EventParticipation> previewParticipants,
-      required this.previewParticipantsCount})
+      required this.previewParticipantsCount,
+      required final List<EventExpense>? expenses,
+      required this.totalExpense})
       : _previewParticipants = previewParticipants,
+        _expenses = expenses,
         super._();
 
   factory _$EventDetailsImpl.fromJson(Map<String, dynamic> json) =>
@@ -226,10 +255,22 @@ class _$EventDetailsImpl extends _EventDetails {
 
   @override
   final int previewParticipantsCount;
+  final List<EventExpense>? _expenses;
+  @override
+  List<EventExpense>? get expenses {
+    final value = _expenses;
+    if (value == null) return null;
+    if (_expenses is EqualUnmodifiableListView) return _expenses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final int? totalExpense;
 
   @override
   String toString() {
-    return 'EventDetails(event: $event, journey: $journey, callerParticipation: $callerParticipation, previewParticipants: $previewParticipants, previewParticipantsCount: $previewParticipantsCount)';
+    return 'EventDetails(event: $event, journey: $journey, callerParticipation: $callerParticipation, previewParticipants: $previewParticipants, previewParticipantsCount: $previewParticipantsCount, expenses: $expenses, totalExpense: $totalExpense)';
   }
 
   @override
@@ -245,7 +286,10 @@ class _$EventDetailsImpl extends _EventDetails {
                 .equals(other._previewParticipants, _previewParticipants) &&
             (identical(
                     other.previewParticipantsCount, previewParticipantsCount) ||
-                other.previewParticipantsCount == previewParticipantsCount));
+                other.previewParticipantsCount == previewParticipantsCount) &&
+            const DeepCollectionEquality().equals(other._expenses, _expenses) &&
+            (identical(other.totalExpense, totalExpense) ||
+                other.totalExpense == totalExpense));
   }
 
   @JsonKey(ignore: true)
@@ -256,7 +300,9 @@ class _$EventDetailsImpl extends _EventDetails {
       journey,
       callerParticipation,
       const DeepCollectionEquality().hash(_previewParticipants),
-      previewParticipantsCount);
+      previewParticipantsCount,
+      const DeepCollectionEquality().hash(_expenses),
+      totalExpense);
 
   @JsonKey(ignore: true)
   @override
@@ -278,7 +324,9 @@ abstract class _EventDetails extends EventDetails {
       required final MinimalJourney? journey,
       required final EventCallerParticipation? callerParticipation,
       required final List<EventParticipation> previewParticipants,
-      required final int previewParticipantsCount}) = _$EventDetailsImpl;
+      required final int previewParticipantsCount,
+      required final List<EventExpense>? expenses,
+      required final int? totalExpense}) = _$EventDetailsImpl;
   const _EventDetails._() : super._();
 
   factory _EventDetails.fromJson(Map<String, dynamic> json) =
@@ -294,6 +342,10 @@ abstract class _EventDetails extends EventDetails {
   List<EventParticipation> get previewParticipants;
   @override
   int get previewParticipantsCount;
+  @override
+  List<EventExpense>? get expenses;
+  @override
+  int? get totalExpense;
   @override
   @JsonKey(ignore: true)
   _$$EventDetailsImplCopyWith<_$EventDetailsImpl> get copyWith =>
