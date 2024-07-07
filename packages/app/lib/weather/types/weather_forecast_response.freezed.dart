@@ -859,6 +859,10 @@ mixin _$DailyUnits {
   String get temperature2mMax => throw _privateConstructorUsedError;
   @JsonKey(name: 'temperature_2m_min')
   String get temperature2mMin => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sunrise')
+  String get sunrise => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sunset')
+  String get sunset => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -876,7 +880,9 @@ abstract class $DailyUnitsCopyWith<$Res> {
       {String time,
       @JsonKey(name: 'weather_code') String weatherCode,
       @JsonKey(name: 'temperature_2m_max') String temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') String temperature2mMin});
+      @JsonKey(name: 'temperature_2m_min') String temperature2mMin,
+      @JsonKey(name: 'sunrise') String sunrise,
+      @JsonKey(name: 'sunset') String sunset});
 }
 
 /// @nodoc
@@ -896,6 +902,8 @@ class _$DailyUnitsCopyWithImpl<$Res, $Val extends DailyUnits>
     Object? weatherCode = null,
     Object? temperature2mMax = null,
     Object? temperature2mMin = null,
+    Object? sunrise = null,
+    Object? sunset = null,
   }) {
     return _then(_value.copyWith(
       time: null == time
@@ -914,6 +922,14 @@ class _$DailyUnitsCopyWithImpl<$Res, $Val extends DailyUnits>
           ? _value.temperature2mMin
           : temperature2mMin // ignore: cast_nullable_to_non_nullable
               as String,
+      sunrise: null == sunrise
+          ? _value.sunrise
+          : sunrise // ignore: cast_nullable_to_non_nullable
+              as String,
+      sunset: null == sunset
+          ? _value.sunset
+          : sunset // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -930,7 +946,9 @@ abstract class _$$DailyUnitsImplCopyWith<$Res>
       {String time,
       @JsonKey(name: 'weather_code') String weatherCode,
       @JsonKey(name: 'temperature_2m_max') String temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') String temperature2mMin});
+      @JsonKey(name: 'temperature_2m_min') String temperature2mMin,
+      @JsonKey(name: 'sunrise') String sunrise,
+      @JsonKey(name: 'sunset') String sunset});
 }
 
 /// @nodoc
@@ -948,6 +966,8 @@ class __$$DailyUnitsImplCopyWithImpl<$Res>
     Object? weatherCode = null,
     Object? temperature2mMax = null,
     Object? temperature2mMin = null,
+    Object? sunrise = null,
+    Object? sunset = null,
   }) {
     return _then(_$DailyUnitsImpl(
       time: null == time
@@ -966,6 +986,14 @@ class __$$DailyUnitsImplCopyWithImpl<$Res>
           ? _value.temperature2mMin
           : temperature2mMin // ignore: cast_nullable_to_non_nullable
               as String,
+      sunrise: null == sunrise
+          ? _value.sunrise
+          : sunrise // ignore: cast_nullable_to_non_nullable
+              as String,
+      sunset: null == sunset
+          ? _value.sunset
+          : sunset // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -977,7 +1005,9 @@ class _$DailyUnitsImpl implements _DailyUnits {
       {required this.time,
       @JsonKey(name: 'weather_code') required this.weatherCode,
       @JsonKey(name: 'temperature_2m_max') required this.temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') required this.temperature2mMin});
+      @JsonKey(name: 'temperature_2m_min') required this.temperature2mMin,
+      @JsonKey(name: 'sunrise') required this.sunrise,
+      @JsonKey(name: 'sunset') required this.sunset});
 
   factory _$DailyUnitsImpl.fromJson(Map<String, dynamic> json) =>
       _$$DailyUnitsImplFromJson(json);
@@ -993,10 +1023,16 @@ class _$DailyUnitsImpl implements _DailyUnits {
   @override
   @JsonKey(name: 'temperature_2m_min')
   final String temperature2mMin;
+  @override
+  @JsonKey(name: 'sunrise')
+  final String sunrise;
+  @override
+  @JsonKey(name: 'sunset')
+  final String sunset;
 
   @override
   String toString() {
-    return 'DailyUnits(time: $time, weatherCode: $weatherCode, temperature2mMax: $temperature2mMax, temperature2mMin: $temperature2mMin)';
+    return 'DailyUnits(time: $time, weatherCode: $weatherCode, temperature2mMax: $temperature2mMax, temperature2mMin: $temperature2mMin, sunrise: $sunrise, sunset: $sunset)';
   }
 
   @override
@@ -1010,13 +1046,15 @@ class _$DailyUnitsImpl implements _DailyUnits {
             (identical(other.temperature2mMax, temperature2mMax) ||
                 other.temperature2mMax == temperature2mMax) &&
             (identical(other.temperature2mMin, temperature2mMin) ||
-                other.temperature2mMin == temperature2mMin));
+                other.temperature2mMin == temperature2mMin) &&
+            (identical(other.sunrise, sunrise) || other.sunrise == sunrise) &&
+            (identical(other.sunset, sunset) || other.sunset == sunset));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, time, weatherCode, temperature2mMax, temperature2mMin);
+  int get hashCode => Object.hash(runtimeType, time, weatherCode,
+      temperature2mMax, temperature2mMin, sunrise, sunset);
 
   @JsonKey(ignore: true)
   @override
@@ -1034,12 +1072,15 @@ class _$DailyUnitsImpl implements _DailyUnits {
 
 abstract class _DailyUnits implements DailyUnits {
   const factory _DailyUnits(
-      {required final String time,
-      @JsonKey(name: 'weather_code') required final String weatherCode,
-      @JsonKey(name: 'temperature_2m_max')
-      required final String temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min')
-      required final String temperature2mMin}) = _$DailyUnitsImpl;
+          {required final String time,
+          @JsonKey(name: 'weather_code') required final String weatherCode,
+          @JsonKey(name: 'temperature_2m_max')
+          required final String temperature2mMax,
+          @JsonKey(name: 'temperature_2m_min')
+          required final String temperature2mMin,
+          @JsonKey(name: 'sunrise') required final String sunrise,
+          @JsonKey(name: 'sunset') required final String sunset}) =
+      _$DailyUnitsImpl;
 
   factory _DailyUnits.fromJson(Map<String, dynamic> json) =
       _$DailyUnitsImpl.fromJson;
@@ -1055,6 +1096,12 @@ abstract class _DailyUnits implements DailyUnits {
   @override
   @JsonKey(name: 'temperature_2m_min')
   String get temperature2mMin;
+  @override
+  @JsonKey(name: 'sunrise')
+  String get sunrise;
+  @override
+  @JsonKey(name: 'sunset')
+  String get sunset;
   @override
   @JsonKey(ignore: true)
   _$$DailyUnitsImplCopyWith<_$DailyUnitsImpl> get copyWith =>
@@ -1074,6 +1121,10 @@ mixin _$Daily {
   List<double?> get temperature2mMax => throw _privateConstructorUsedError;
   @JsonKey(name: 'temperature_2m_min')
   List<double?> get temperature2mMin => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sunrise')
+  List<String?> get sunrise => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sunset')
+  List<String?> get sunset => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1089,7 +1140,9 @@ abstract class $DailyCopyWith<$Res> {
       {List<String> time,
       @JsonKey(name: 'weather_code') List<int?> weatherCode,
       @JsonKey(name: 'temperature_2m_max') List<double?> temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') List<double?> temperature2mMin});
+      @JsonKey(name: 'temperature_2m_min') List<double?> temperature2mMin,
+      @JsonKey(name: 'sunrise') List<String?> sunrise,
+      @JsonKey(name: 'sunset') List<String?> sunset});
 }
 
 /// @nodoc
@@ -1109,6 +1162,8 @@ class _$DailyCopyWithImpl<$Res, $Val extends Daily>
     Object? weatherCode = null,
     Object? temperature2mMax = null,
     Object? temperature2mMin = null,
+    Object? sunrise = null,
+    Object? sunset = null,
   }) {
     return _then(_value.copyWith(
       time: null == time
@@ -1127,6 +1182,14 @@ class _$DailyCopyWithImpl<$Res, $Val extends Daily>
           ? _value.temperature2mMin
           : temperature2mMin // ignore: cast_nullable_to_non_nullable
               as List<double?>,
+      sunrise: null == sunrise
+          ? _value.sunrise
+          : sunrise // ignore: cast_nullable_to_non_nullable
+              as List<String?>,
+      sunset: null == sunset
+          ? _value.sunset
+          : sunset // ignore: cast_nullable_to_non_nullable
+              as List<String?>,
     ) as $Val);
   }
 }
@@ -1142,7 +1205,9 @@ abstract class _$$DailyImplCopyWith<$Res> implements $DailyCopyWith<$Res> {
       {List<String> time,
       @JsonKey(name: 'weather_code') List<int?> weatherCode,
       @JsonKey(name: 'temperature_2m_max') List<double?> temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min') List<double?> temperature2mMin});
+      @JsonKey(name: 'temperature_2m_min') List<double?> temperature2mMin,
+      @JsonKey(name: 'sunrise') List<String?> sunrise,
+      @JsonKey(name: 'sunset') List<String?> sunset});
 }
 
 /// @nodoc
@@ -1160,6 +1225,8 @@ class __$$DailyImplCopyWithImpl<$Res>
     Object? weatherCode = null,
     Object? temperature2mMax = null,
     Object? temperature2mMin = null,
+    Object? sunrise = null,
+    Object? sunset = null,
   }) {
     return _then(_$DailyImpl(
       time: null == time
@@ -1178,6 +1245,14 @@ class __$$DailyImplCopyWithImpl<$Res>
           ? _value._temperature2mMin
           : temperature2mMin // ignore: cast_nullable_to_non_nullable
               as List<double?>,
+      sunrise: null == sunrise
+          ? _value._sunrise
+          : sunrise // ignore: cast_nullable_to_non_nullable
+              as List<String?>,
+      sunset: null == sunset
+          ? _value._sunset
+          : sunset // ignore: cast_nullable_to_non_nullable
+              as List<String?>,
     ));
   }
 }
@@ -1191,11 +1266,15 @@ class _$DailyImpl implements _Daily {
       @JsonKey(name: 'temperature_2m_max')
       required final List<double?> temperature2mMax,
       @JsonKey(name: 'temperature_2m_min')
-      required final List<double?> temperature2mMin})
+      required final List<double?> temperature2mMin,
+      @JsonKey(name: 'sunrise') required final List<String?> sunrise,
+      @JsonKey(name: 'sunset') required final List<String?> sunset})
       : _time = time,
         _weatherCode = weatherCode,
         _temperature2mMax = temperature2mMax,
-        _temperature2mMin = temperature2mMin;
+        _temperature2mMin = temperature2mMin,
+        _sunrise = sunrise,
+        _sunset = sunset;
 
   factory _$DailyImpl.fromJson(Map<String, dynamic> json) =>
       _$$DailyImplFromJson(json);
@@ -1237,9 +1316,27 @@ class _$DailyImpl implements _Daily {
     return EqualUnmodifiableListView(_temperature2mMin);
   }
 
+  final List<String?> _sunrise;
+  @override
+  @JsonKey(name: 'sunrise')
+  List<String?> get sunrise {
+    if (_sunrise is EqualUnmodifiableListView) return _sunrise;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sunrise);
+  }
+
+  final List<String?> _sunset;
+  @override
+  @JsonKey(name: 'sunset')
+  List<String?> get sunset {
+    if (_sunset is EqualUnmodifiableListView) return _sunset;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sunset);
+  }
+
   @override
   String toString() {
-    return 'Daily(time: $time, weatherCode: $weatherCode, temperature2mMax: $temperature2mMax, temperature2mMin: $temperature2mMin)';
+    return 'Daily(time: $time, weatherCode: $weatherCode, temperature2mMax: $temperature2mMax, temperature2mMin: $temperature2mMin, sunrise: $sunrise, sunset: $sunset)';
   }
 
   @override
@@ -1253,7 +1350,9 @@ class _$DailyImpl implements _Daily {
             const DeepCollectionEquality()
                 .equals(other._temperature2mMax, _temperature2mMax) &&
             const DeepCollectionEquality()
-                .equals(other._temperature2mMin, _temperature2mMin));
+                .equals(other._temperature2mMin, _temperature2mMin) &&
+            const DeepCollectionEquality().equals(other._sunrise, _sunrise) &&
+            const DeepCollectionEquality().equals(other._sunset, _sunset));
   }
 
   @JsonKey(ignore: true)
@@ -1263,7 +1362,9 @@ class _$DailyImpl implements _Daily {
       const DeepCollectionEquality().hash(_time),
       const DeepCollectionEquality().hash(_weatherCode),
       const DeepCollectionEquality().hash(_temperature2mMax),
-      const DeepCollectionEquality().hash(_temperature2mMin));
+      const DeepCollectionEquality().hash(_temperature2mMin),
+      const DeepCollectionEquality().hash(_sunrise),
+      const DeepCollectionEquality().hash(_sunset));
 
   @JsonKey(ignore: true)
   @override
@@ -1281,12 +1382,15 @@ class _$DailyImpl implements _Daily {
 
 abstract class _Daily implements Daily {
   const factory _Daily(
-      {required final List<String> time,
-      @JsonKey(name: 'weather_code') required final List<int?> weatherCode,
-      @JsonKey(name: 'temperature_2m_max')
-      required final List<double?> temperature2mMax,
-      @JsonKey(name: 'temperature_2m_min')
-      required final List<double?> temperature2mMin}) = _$DailyImpl;
+          {required final List<String> time,
+          @JsonKey(name: 'weather_code') required final List<int?> weatherCode,
+          @JsonKey(name: 'temperature_2m_max')
+          required final List<double?> temperature2mMax,
+          @JsonKey(name: 'temperature_2m_min')
+          required final List<double?> temperature2mMin,
+          @JsonKey(name: 'sunrise') required final List<String?> sunrise,
+          @JsonKey(name: 'sunset') required final List<String?> sunset}) =
+      _$DailyImpl;
 
   factory _Daily.fromJson(Map<String, dynamic> json) = _$DailyImpl.fromJson;
 
@@ -1301,6 +1405,12 @@ abstract class _Daily implements Daily {
   @override
   @JsonKey(name: 'temperature_2m_min')
   List<double?> get temperature2mMin;
+  @override
+  @JsonKey(name: 'sunrise')
+  List<String?> get sunrise;
+  @override
+  @JsonKey(name: 'sunset')
+  List<String?> get sunset;
   @override
   @JsonKey(ignore: true)
   _$$DailyImplCopyWith<_$DailyImpl> get copyWith =>

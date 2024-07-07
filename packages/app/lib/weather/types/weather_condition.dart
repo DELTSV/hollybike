@@ -92,13 +92,17 @@ WeatherCondition? getWeatherCondition(int code) {
   }
 }
 
-String getWeatherConditionLottiePath(WeatherCondition condition) {
+String getWeatherConditionLottiePath(WeatherCondition condition, bool isDay) {
   switch (condition) {
     case WeatherCondition.clearSky:
-      return 'assets/lottie/lottie_sunny.json';
+      if (isDay) return 'assets/lottie/lottie_sunny.json';
+
+      return 'assets/lottie/lottie_clear_night.json';
     case WeatherCondition.mainlyClear:
     case WeatherCondition.partlyCloudy:
-      return 'assets/lottie/lottie_partially_sunny.json';
+      if (isDay) return 'assets/lottie/lottie_partially_sunny.json';
+
+      return 'assets/lottie/lottie_partially_clear_night.json';
     case WeatherCondition.overcast:
       return 'assets/lottie/lottie_cloudy.json';
     case WeatherCondition.fog:

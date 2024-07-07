@@ -370,8 +370,10 @@ abstract class _DailyWeatherGrouped implements DailyWeatherGrouped {
 /// @nodoc
 mixin _$HourlyWeather {
   String get time => throw _privateConstructorUsedError;
+  DateTime get rawTime => throw _privateConstructorUsedError;
   String get temperature => throw _privateConstructorUsedError;
   WeatherCondition get weatherCondition => throw _privateConstructorUsedError;
+  bool get isDay => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HourlyWeatherCopyWith<HourlyWeather> get copyWith =>
@@ -385,7 +387,11 @@ abstract class $HourlyWeatherCopyWith<$Res> {
       _$HourlyWeatherCopyWithImpl<$Res, HourlyWeather>;
   @useResult
   $Res call(
-      {String time, String temperature, WeatherCondition weatherCondition});
+      {String time,
+      DateTime rawTime,
+      String temperature,
+      WeatherCondition weatherCondition,
+      bool isDay});
 }
 
 /// @nodoc
@@ -402,14 +408,20 @@ class _$HourlyWeatherCopyWithImpl<$Res, $Val extends HourlyWeather>
   @override
   $Res call({
     Object? time = null,
+    Object? rawTime = null,
     Object? temperature = null,
     Object? weatherCondition = null,
+    Object? isDay = null,
   }) {
     return _then(_value.copyWith(
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as String,
+      rawTime: null == rawTime
+          ? _value.rawTime
+          : rawTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       temperature: null == temperature
           ? _value.temperature
           : temperature // ignore: cast_nullable_to_non_nullable
@@ -418,6 +430,10 @@ class _$HourlyWeatherCopyWithImpl<$Res, $Val extends HourlyWeather>
           ? _value.weatherCondition
           : weatherCondition // ignore: cast_nullable_to_non_nullable
               as WeatherCondition,
+      isDay: null == isDay
+          ? _value.isDay
+          : isDay // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -431,7 +447,11 @@ abstract class _$$HourlyWeatherImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String time, String temperature, WeatherCondition weatherCondition});
+      {String time,
+      DateTime rawTime,
+      String temperature,
+      WeatherCondition weatherCondition,
+      bool isDay});
 }
 
 /// @nodoc
@@ -446,14 +466,20 @@ class __$$HourlyWeatherImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? time = null,
+    Object? rawTime = null,
     Object? temperature = null,
     Object? weatherCondition = null,
+    Object? isDay = null,
   }) {
     return _then(_$HourlyWeatherImpl(
       time: null == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as String,
+      rawTime: null == rawTime
+          ? _value.rawTime
+          : rawTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       temperature: null == temperature
           ? _value.temperature
           : temperature // ignore: cast_nullable_to_non_nullable
@@ -462,6 +488,10 @@ class __$$HourlyWeatherImplCopyWithImpl<$Res>
           ? _value.weatherCondition
           : weatherCondition // ignore: cast_nullable_to_non_nullable
               as WeatherCondition,
+      isDay: null == isDay
+          ? _value.isDay
+          : isDay // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -471,19 +501,25 @@ class __$$HourlyWeatherImplCopyWithImpl<$Res>
 class _$HourlyWeatherImpl implements _HourlyWeather {
   const _$HourlyWeatherImpl(
       {required this.time,
+      required this.rawTime,
       required this.temperature,
-      required this.weatherCondition});
+      required this.weatherCondition,
+      required this.isDay});
 
   @override
   final String time;
   @override
+  final DateTime rawTime;
+  @override
   final String temperature;
   @override
   final WeatherCondition weatherCondition;
+  @override
+  final bool isDay;
 
   @override
   String toString() {
-    return 'HourlyWeather(time: $time, temperature: $temperature, weatherCondition: $weatherCondition)';
+    return 'HourlyWeather(time: $time, rawTime: $rawTime, temperature: $temperature, weatherCondition: $weatherCondition, isDay: $isDay)';
   }
 
   @override
@@ -492,15 +528,17 @@ class _$HourlyWeatherImpl implements _HourlyWeather {
         (other.runtimeType == runtimeType &&
             other is _$HourlyWeatherImpl &&
             (identical(other.time, time) || other.time == time) &&
+            (identical(other.rawTime, rawTime) || other.rawTime == rawTime) &&
             (identical(other.temperature, temperature) ||
                 other.temperature == temperature) &&
             (identical(other.weatherCondition, weatherCondition) ||
-                other.weatherCondition == weatherCondition));
+                other.weatherCondition == weatherCondition) &&
+            (identical(other.isDay, isDay) || other.isDay == isDay));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, time, temperature, weatherCondition);
+  int get hashCode => Object.hash(
+      runtimeType, time, rawTime, temperature, weatherCondition, isDay);
 
   @JsonKey(ignore: true)
   @override
@@ -512,15 +550,21 @@ class _$HourlyWeatherImpl implements _HourlyWeather {
 abstract class _HourlyWeather implements HourlyWeather {
   const factory _HourlyWeather(
       {required final String time,
+      required final DateTime rawTime,
       required final String temperature,
-      required final WeatherCondition weatherCondition}) = _$HourlyWeatherImpl;
+      required final WeatherCondition weatherCondition,
+      required final bool isDay}) = _$HourlyWeatherImpl;
 
   @override
   String get time;
   @override
+  DateTime get rawTime;
+  @override
   String get temperature;
   @override
   WeatherCondition get weatherCondition;
+  @override
+  bool get isDay;
   @override
   @JsonKey(ignore: true)
   _$$HourlyWeatherImplCopyWith<_$HourlyWeatherImpl> get copyWith =>

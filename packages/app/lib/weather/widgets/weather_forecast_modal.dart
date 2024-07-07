@@ -138,9 +138,12 @@ class WeatherForecastModal extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Lottie.asset(
-            getWeatherConditionLottiePath(hourlyWeather.weatherCondition),
+            getWeatherConditionLottiePath(
+              hourlyWeather.weatherCondition,
+              hourlyWeather.isDay,
+            ),
             height: 30,
-            animate: true,
+            animate: false,
           ),
           const SizedBox(width: 8),
           SizedBox(

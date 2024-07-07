@@ -24,11 +24,18 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
       }
 
       final dateTime = DateTime.parse(response.hourly.time[i]);
+
+      if (dateTime.isBefore(DateTime.now())) {
+        continue;
+      }
+
       final date = DateFormat('yyyy-MM-dd').format(dateTime);
       final hour = DateFormat('HH:mm').format(dateTime);
 
       final hourlyWeather = HourlyWeather(
+        isDay: false,
         time: hour,
+        rawTime: dateTime,
         temperature:
             '${response.hourly.temperature2m[i]?.round()}${response.hourlyUnits.temperature2m}',
         weatherCondition: weatherCondition,
@@ -44,9 +51,13 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
 
       if (response.daily.temperature2mMax[i] == null ||
           response.daily.temperature2mMin[i] == null ||
-          weatherCondition == null) {
+          weatherCondition == null ||
+          response.daily.sunrise[i] == null ||
+          response.daily.sunset[i] == null) {
         continue;
       }
+
+      final hourly = groupedHourly[response.daily.time[i]] ?? [];
 
       final dailyWeatherGrouped = DailyWeatherGrouped(
         date: response.daily.time[i],
@@ -55,7 +66,15 @@ class WeatherForecastGrouped with _$WeatherForecastGrouped {
         minTemperature:
             '${response.daily.temperature2mMin[i]?.round()}${response.dailyUnits.temperature2mMin}',
         weatherCondition: weatherCondition,
-        hourlyWeather: groupedHourly[response.daily.time[i]] ?? [],
+        hourlyWeather: hourly.map((e) {
+          final sunrise = DateTime.parse(response.daily.sunrise[i]!);
+          final sunset = DateTime.parse(response.daily.sunset[i]!);
+
+          final isDayTime =
+              e.rawTime.isAfter(sunrise) && e.rawTime.isBefore(sunset);
+
+          return e.copyWith(isDay: isDayTime);
+        }).toList(),
       );
       groupedDaily.add(dailyWeatherGrouped);
     }
@@ -79,7 +98,9 @@ class DailyWeatherGrouped with _$DailyWeatherGrouped {
 class HourlyWeather with _$HourlyWeather {
   const factory HourlyWeather({
     required String time,
+    required DateTime rawTime,
     required String temperature,
     required WeatherCondition weatherCondition,
+    required bool isDay,
   }) = _HourlyWeather;
 }
