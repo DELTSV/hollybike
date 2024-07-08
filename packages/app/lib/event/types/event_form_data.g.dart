@@ -14,6 +14,7 @@ _$EventFormDataImpl _$$EventFormDataImplFromJson(Map<String, dynamic> json) =>
       endDate: json['end_date'] == null
           ? null
           : DateTime.parse(json['end_date'] as String),
+      budget: (json['budget'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$EventFormDataImplToJson(_$EventFormDataImpl instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$$EventFormDataImplToJson(_$EventFormDataImpl instance) =>
       'description': instance.description,
       'start_date': dateToJson(instance.startDate),
       'end_date': dateToJson(instance.endDate),
+      'budget': instance.budget,
     };

@@ -25,6 +25,7 @@ class Event with _$Event {
     @JsonKey(name: "update_date_time") required DateTime updatedAt,
     String? description,
     String? image,
+    int? budget,
   }) = _Event;
 
   get color => getStatusColor(status);

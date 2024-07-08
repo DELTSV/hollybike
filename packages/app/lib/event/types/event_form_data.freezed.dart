@@ -26,6 +26,7 @@ mixin _$EventFormData {
   DateTime get startDate => throw _privateConstructorUsedError;
   @JsonKey(toJson: dateToJson, name: "end_date")
   DateTime? get endDate => throw _privateConstructorUsedError;
+  int? get budget => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,7 +44,8 @@ abstract class $EventFormDataCopyWith<$Res> {
       {String name,
       String? description,
       @JsonKey(toJson: dateToJson, name: "start_date") DateTime startDate,
-      @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate});
+      @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate,
+      int? budget});
 }
 
 /// @nodoc
@@ -63,6 +65,7 @@ class _$EventFormDataCopyWithImpl<$Res, $Val extends EventFormData>
     Object? description = freezed,
     Object? startDate = null,
     Object? endDate = freezed,
+    Object? budget = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -81,6 +84,10 @@ class _$EventFormDataCopyWithImpl<$Res, $Val extends EventFormData>
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      budget: freezed == budget
+          ? _value.budget
+          : budget // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -97,7 +104,8 @@ abstract class _$$EventFormDataImplCopyWith<$Res>
       {String name,
       String? description,
       @JsonKey(toJson: dateToJson, name: "start_date") DateTime startDate,
-      @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate});
+      @JsonKey(toJson: dateToJson, name: "end_date") DateTime? endDate,
+      int? budget});
 }
 
 /// @nodoc
@@ -115,6 +123,7 @@ class __$$EventFormDataImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? startDate = null,
     Object? endDate = freezed,
+    Object? budget = freezed,
   }) {
     return _then(_$EventFormDataImpl(
       name: null == name
@@ -133,18 +142,24 @@ class __$$EventFormDataImplCopyWithImpl<$Res>
           ? _value.endDate
           : endDate // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      budget: freezed == budget
+          ? _value.budget
+          : budget // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$EventFormDataImpl implements _EventFormData {
+class _$EventFormDataImpl extends _EventFormData {
   const _$EventFormDataImpl(
       {required this.name,
-      this.description,
+      required this.description,
       @JsonKey(toJson: dateToJson, name: "start_date") required this.startDate,
-      @JsonKey(toJson: dateToJson, name: "end_date") this.endDate});
+      @JsonKey(toJson: dateToJson, name: "end_date") required this.endDate,
+      this.budget})
+      : super._();
 
   factory _$EventFormDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventFormDataImplFromJson(json);
@@ -159,10 +174,12 @@ class _$EventFormDataImpl implements _EventFormData {
   @override
   @JsonKey(toJson: dateToJson, name: "end_date")
   final DateTime? endDate;
+  @override
+  final int? budget;
 
   @override
   String toString() {
-    return 'EventFormData(name: $name, description: $description, startDate: $startDate, endDate: $endDate)';
+    return 'EventFormData(name: $name, description: $description, startDate: $startDate, endDate: $endDate, budget: $budget)';
   }
 
   @override
@@ -175,13 +192,14 @@ class _$EventFormDataImpl implements _EventFormData {
                 other.description == description) &&
             (identical(other.startDate, startDate) ||
                 other.startDate == startDate) &&
-            (identical(other.endDate, endDate) || other.endDate == endDate));
+            (identical(other.endDate, endDate) || other.endDate == endDate) &&
+            (identical(other.budget, budget) || other.budget == budget));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, name, description, startDate, endDate);
+      Object.hash(runtimeType, name, description, startDate, endDate, budget);
 
   @JsonKey(ignore: true)
   @override
@@ -197,14 +215,16 @@ class _$EventFormDataImpl implements _EventFormData {
   }
 }
 
-abstract class _EventFormData implements EventFormData {
+abstract class _EventFormData extends EventFormData {
   const factory _EventFormData(
       {required final String name,
-      final String? description,
+      required final String? description,
       @JsonKey(toJson: dateToJson, name: "start_date")
       required final DateTime startDate,
       @JsonKey(toJson: dateToJson, name: "end_date")
-      final DateTime? endDate}) = _$EventFormDataImpl;
+      required final DateTime? endDate,
+      final int? budget}) = _$EventFormDataImpl;
+  const _EventFormData._() : super._();
 
   factory _EventFormData.fromJson(Map<String, dynamic> json) =
       _$EventFormDataImpl.fromJson;
@@ -219,6 +239,8 @@ abstract class _EventFormData implements EventFormData {
   @override
   @JsonKey(toJson: dateToJson, name: "end_date")
   DateTime? get endDate;
+  @override
+  int? get budget;
   @override
   @JsonKey(ignore: true)
   _$$EventFormDataImplCopyWith<_$EventFormDataImpl> get copyWith =>

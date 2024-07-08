@@ -14,10 +14,12 @@ import hollybike.api.types.expense.TNewExpense
 import hollybike.api.types.expense.TUpdateExpense
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.user.EUserScope
+import hollybike.api.utils.checkContentType
 import hollybike.api.utils.get
 import hollybike.api.utils.search.getMapperData
 import hollybike.api.utils.search.getSearchParam
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
@@ -77,10 +79,13 @@ class ExpenseController(
 			expenseService.createExpense(call.user, newExpense).onSuccess {
 				call.respond(HttpStatusCode.Created, TExpense(it))
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is EventNotFoundException -> call.respond(HttpStatusCode.NotFound, "L'évènement n'existe pas")
 					is CannotCreateExpenseException -> call.respond(HttpStatusCode.Forbidden)
-					is BadAmountException -> call.respond(HttpStatusCode.BadRequest, "Le montant doit être supérieur à 0")
+					is BadAmountException -> call.respond(
+						HttpStatusCode.BadRequest,
+						"Le montant doit être supérieur à 0"
+					)
 				}
 			}
 		}
@@ -95,7 +100,7 @@ class ExpenseController(
 			expenseService.updateExpense(call.user, expense, updateExpense).onSuccess { e ->
 				call.respond(HttpStatusCode.OK, TExpense(e))
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 				}
 			}
@@ -110,7 +115,7 @@ class ExpenseController(
 			expenseService.deleteExpense(call.user, expense).onSuccess {
 				call.respond(HttpStatusCode.NoContent)
 			}.onFailure {
-				when(it) {
+				when (it) {
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 				}
 			}
@@ -118,22 +123,30 @@ class ExpenseController(
 	}
 
 	private fun Route.uploadExpenseProof() {
-		put<Expenses.Id.Proof> {
-			val expense = expenseService.getExpense(call.user, it.id.id) ?: run {
+		put<Expenses.Id.Proof> { proof ->
+			val expense = expenseService.getExpense(call.user, proof.id.id) ?: run {
 				return@put call.respond(HttpStatusCode.NotFound, "Dépense non trouvé")
 			}
-			val contentType = call.request.contentType()
-			if("image" !in contentType.contentType) {
-				return@put call.respond(HttpStatusCode.BadRequest)
+
+			val multipart = call.receiveMultipart()
+			val image = multipart.readPart() as PartData.FileItem
+			val contentType = checkContentType(image).getOrElse {
+				return@put call.respond(HttpStatusCode.BadRequest, it.message!!)
 			}
-			val data = call.receiveStream().readBytes()
-			expenseService.uploadProof(call.user, expense, data, contentType).onSuccess { e ->
-				call.respond(TExpense(e))
-			}.onFailure { err ->
-				when(err) {
-					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+
+			expenseService.uploadProof(
+				call.user,
+				expense,
+				image.streamProvider().readBytes(),
+				contentType
+			)
+				.onSuccess { e ->
+					call.respond(TExpense(e))
+				}.onFailure { err ->
+					when (err) {
+						is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					}
 				}
-			}
 		}
 	}
 }

@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/types/event_details.dart';
+import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/journey/type/journey.dart';
@@ -155,13 +160,15 @@ class EventRepository {
     int eventId,
     EventFormData event,
   ) async {
-    final editedEvent = await eventApi.editEvent(eventId, event);
-
     final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
     }
+
+    final editedEvent = await eventApi.editEvent(eventId, event.withBudget(
+      details.event.budget,
+    ));
 
     _eventDetailsStreamMapper.add(
         eventId, details.copyWith(event: editedEvent));
@@ -236,6 +243,8 @@ class EventRepository {
     _eventDetailsStreamMapper.add(
       eventId,
       EventDetails(
+        expenses: details.expenses,
+        totalExpense: details.totalExpense,
         event: details.event,
         journey: details.journey,
         callerParticipation: null,
@@ -398,6 +407,8 @@ class EventRepository {
     _eventDetailsStreamMapper.add(
       eventId,
       EventDetails(
+        expenses: details.expenses,
+        totalExpense: details.totalExpense,
         event: details.event,
         journey: null,
         callerParticipation: details.callerParticipation,
@@ -444,6 +455,170 @@ class EventRepository {
               hasRecordedPositions: true,
             ),
           ),
+    );
+  }
+
+  deleteExpense(int expenseId, int eventId) async {
+    await eventApi.deleteExpense(expenseId);
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    int? newTotal = details.totalExpense;
+
+    final newExpenses = details.expenses?.where((e) {
+      if (e.id == expenseId) {
+        final totalExpense = details.totalExpense;
+        if (totalExpense != null) {
+          newTotal = totalExpense - e.amount;
+        }
+        return false;
+      }
+
+      return true;
+    }).toList();
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        expenses: newExpenses,
+        totalExpense: newTotal,
+      ),
+    );
+  }
+
+  Future<EventExpense> addExpense(
+    int eventId,
+    String name,
+    int amount,
+    String? description,
+  ) async {
+    final expense = await eventApi.addExpense(
+      eventId,
+      name,
+      amount,
+      description,
+    );
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return expense;
+    }
+
+    final newTotal = (details.totalExpense ?? 0) + amount;
+
+    final newExpenses = <EventExpense>[
+      expense,
+      ...details.expenses ?? [],
+    ];
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        expenses: newExpenses,
+        totalExpense: newTotal,
+      ),
+    );
+
+    return expense;
+  }
+
+  Future<void> editBudget(
+    int eventId,
+    int? budget,
+  ) async {
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    await eventApi.editEvent(eventId, EventFormData(
+      name: details.event.name,
+      description: details.event.description,
+      startDate: details.event.startDate,
+      endDate: details.event.endDate,
+      budget: budget,
+    ));
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        event: Event(
+          id: details.event.id,
+          name: details.event.name,
+          description: details.event.description,
+          status: details.event.status,
+          budget: budget,
+          startDate: details.event.startDate,
+          endDate: details.event.endDate,
+          owner: details.event.owner,
+          createdAt: details.event.createdAt,
+          updatedAt: details.event.updatedAt,
+          image: details.event.image,
+        ),
+      ),
+    );
+  }
+
+  Future<void> downloadReport(int eventId) async {
+    final authPersistence = AuthPersistence();
+
+    final session = await authPersistence.currentSession;
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (session == null || details == null) {
+      return;
+    }
+
+    final eventName = details.event.name.replaceAll(" ", "_").toLowerCase();
+
+    await FlutterDownloader.enqueue(
+      url: '${session.host}/api/events/$eventId/expenses/report',
+      headers: {
+        'Authorization': 'Bearer ${session.token}',
+      },
+      savedDir: "/storage/emulated/0/Download",
+      fileName: "depenses_$eventName.csv",
+      showNotification: true,
+      openFileFromNotification: true,
+    );
+  }
+
+  Future<void> uploadExpenseProof(
+      int eventId,
+    int expenseId,
+    File image,
+  ) async {
+    final updatedExpense = await eventApi.uploadExpenseProof(
+      expenseId,
+      image,
+    );
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    final newExpenses = details.expenses?.map((e) {
+      if (e.id == expenseId) {
+        return updatedExpense;
+      }
+
+      return e;
+    }).toList();
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        expenses: newExpenses,
+      ),
     );
   }
 }

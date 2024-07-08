@@ -7,8 +7,10 @@ import 'package:hollybike/event/types/participation/event_role.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
 
 import '../../shared/types/json_map.dart';
+import 'event_expense.dart';
 
 part 'event_details.freezed.dart';
+
 part 'event_details.g.dart';
 
 @freezed
@@ -21,6 +23,8 @@ class EventDetails with _$EventDetails {
     required EventCallerParticipation? callerParticipation,
     required List<EventParticipation> previewParticipants,
     required int previewParticipantsCount,
+    required List<EventExpense>? expenses,
+    required int? totalExpense,
   }) = _EventDetails;
 
   factory EventDetails.fromJson(JsonMap json) => _$EventDetailsFromJson(json);
@@ -28,9 +32,11 @@ class EventDetails with _$EventDetails {
   factory EventDetails.empty() => EventDetails(
         event: Event.empty(),
         journey: null,
+        expenses: null,
         callerParticipation: null,
         previewParticipants: [],
         previewParticipantsCount: 0,
+        totalExpense: null,
       );
 
   bool get isOwner =>
