@@ -1,3 +1,5 @@
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
@@ -558,6 +560,31 @@ class EventRepository {
           image: details.event.image,
         ),
       ),
+    );
+  }
+
+  Future<void> downloadReport(int eventId) async {
+    final authPersistence = AuthPersistence();
+
+    final session = await authPersistence.currentSession;
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (session == null || details == null) {
+      return;
+    }
+
+    final eventName = details.event.name.replaceAll(" ", "_").toLowerCase();
+
+    await FlutterDownloader.enqueue(
+      url: '${session.host}/api/events/$eventId/expenses/report',
+      headers: {
+        'Authorization': 'Bearer ${session.token}',
+      },
+      savedDir: "/storage/emulated/0/Download",
+      fileName: "depenses_$eventName.csv",
+      showNotification: true,
+      openFileFromNotification: true,
     );
   }
 }

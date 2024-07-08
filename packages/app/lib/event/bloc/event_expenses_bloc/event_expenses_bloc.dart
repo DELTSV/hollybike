@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 
 import '../../services/event/event_repository.dart';
@@ -16,6 +18,7 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
     on<DeleteExpense>(_onDeleteExpense);
     on<AddExpense>(_onAddExpense);
     on<EditBudget>(_onEditBudget);
+    on<DownloadReport>(_onDownloadReport);
   }
 
   _onDeleteExpense(
@@ -37,7 +40,8 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
       return;
     }
 
-    emit(EventJourneyOperationSuccess(state, successMessage: 'Dépense supprimée.'));
+    emit(EventJourneyOperationSuccess(state,
+        successMessage: 'Dépense supprimée.'));
   }
 
   _onAddExpense(
@@ -53,15 +57,19 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
         event.amount,
         event.description,
       );
+
+      emit(EventJourneyOperationSuccess(
+        state,
+        successMessage: 'Dépense ajoutée.',
+      ));
     } catch (e) {
+      log("An error occurred while adding expense", error: e);
+
       emit(EventJourneyOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
-      return;
     }
-
-    emit(EventJourneyOperationSuccess(state, successMessage: 'Dépense ajoutée.'));
   }
 
   _onEditBudget(
@@ -75,14 +83,41 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
         eventId,
         event.budget,
       );
+
+      emit(EventJourneyOperationSuccess(
+        state,
+        successMessage: 'Budget modifié.',
+      ));
     } catch (e) {
+      log("An error occurred while editing budget", error: e);
       emit(EventJourneyOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
-      return;
     }
+  }
 
-    emit(EventJourneyOperationSuccess(state, successMessage: 'Budget modifié.'));
+  _onDownloadReport(
+    DownloadReport event,
+    Emitter<EventExpensesState> emit,
+  ) async {
+    emit(EventJourneyOperationInProgress(state));
+
+    try {
+      await eventRepository.downloadReport(
+        eventId,
+      );
+
+      emit(EventJourneyOperationSuccess(
+        state,
+        successMessage: 'Rapport téléchargé.',
+      ));
+    } catch (e) {
+      log("An error occurred while downloading report", error: e);
+      emit(EventJourneyOperationFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+    }
   }
 }

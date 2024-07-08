@@ -58,11 +58,14 @@ class ExpensesModal extends StatelessWidget {
               height: 550,
               child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
                 builder: (context, state) {
+                  final eventName = state.eventDetails?.event.name;
                   final expenses = state.eventDetails?.expenses;
                   final budget = state.eventDetails?.event.budget;
                   final totalExpenses = state.eventDetails?.totalExpense;
 
-                  if (expenses == null || totalExpenses == null) {
+                  if (expenses == null ||
+                      totalExpenses == null ||
+                      eventName == null) {
                     return const SizedBox();
                   }
 
@@ -73,7 +76,12 @@ class ExpensesModal extends StatelessWidget {
                         children: [
                           PopupMenuButton(
                             onSelected: (value) {
-                              _onModalActionSelected(context, value, budget);
+                              _onModalActionSelected(
+                                context,
+                                value,
+                                budget,
+                                eventName,
+                              );
                             },
                             itemBuilder: (context) {
                               return _buildBudgetActions(budget, expenses);
@@ -85,6 +93,7 @@ class ExpensesModal extends StatelessWidget {
                               context,
                               ExpensesModalAction.addExpense,
                               budget,
+                              eventName,
                             ),
                             child: const Text('Ajouter une dépense'),
                           ),
@@ -268,6 +277,7 @@ class ExpensesModal extends StatelessWidget {
     BuildContext context,
     ExpensesModalAction action,
     int? budget,
+    String eventName,
   ) {
     switch (action) {
       case ExpensesModalAction.addExpense:
@@ -293,8 +303,8 @@ class ExpensesModal extends StatelessWidget {
             return EditBudgetModal(
               onBudgetChange: (budget) {
                 context.read<EventExpensesBloc>().add(
-                  EditBudget(budget: budget),
-                );
+                      EditBudget(budget: budget),
+                    );
               },
               addMode: true,
             );
@@ -303,8 +313,8 @@ class ExpensesModal extends StatelessWidget {
         break;
       case ExpensesModalAction.removeBudget:
         context.read<EventExpensesBloc>().add(
-          EditBudget(budget: null),
-        );
+              EditBudget(budget: null),
+            );
         break;
       case ExpensesModalAction.editBudget:
         showDialog(
@@ -314,15 +324,18 @@ class ExpensesModal extends StatelessWidget {
               budget: budget,
               onBudgetChange: (budget) {
                 context.read<EventExpensesBloc>().add(
-                  EditBudget(budget: budget),
-                );
+                      EditBudget(budget: budget),
+                    );
               },
             );
           },
         );
         break;
       case ExpensesModalAction.downloadCSV:
-        print('Download CSV');
+        context.read<EventExpensesBloc>().add(
+          DownloadReport(),
+        );
+
         break;
     }
   }

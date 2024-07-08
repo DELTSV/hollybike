@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hollybike/app/app.dart';
 import 'package:hollybike/auth/services/auth_api.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
@@ -33,15 +35,23 @@ import 'journey/service/journey_api.dart';
 import 'journey/service/journey_repository.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 
-
 Future<void> infiniteDelay() async {
   final completer = Completer<void>();
   return completer.future;
 }
 
-void main() {
+void main() async {
   NetworkImageCache();
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
+  );
+
+  FlutterNativeSplash.remove();
 
   runApp(const MyApp());
 }
@@ -150,7 +160,8 @@ class _MyAppState extends State<MyApp> {
                 ),
                 BlocProvider<NotificationBloc>(
                   create: (context) => NotificationBloc(
-                    authRepository: RepositoryProvider.of<AuthRepository>(context),
+                    authRepository:
+                        RepositoryProvider.of<AuthRepository>(context),
                   ),
                 ),
                 BlocProvider<ThemeBloc>(
@@ -172,8 +183,7 @@ class _MyAppState extends State<MyApp> {
                     eventRepository: RepositoryProvider.of<EventRepository>(
                       context,
                     ),
-                    profileRepository:
-                        RepositoryProvider.of<ProfileRepository>(
+                    profileRepository: RepositoryProvider.of<ProfileRepository>(
                       context,
                     ),
                   )..add(SubscribeToEventsSearch()),

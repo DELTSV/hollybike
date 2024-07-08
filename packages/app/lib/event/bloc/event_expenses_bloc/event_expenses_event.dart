@@ -30,3 +30,5 @@ class EditBudget extends EventExpensesEvent {
     required this.budget,
   });
 }
+
+class DownloadReport extends EventExpensesEvent {}
