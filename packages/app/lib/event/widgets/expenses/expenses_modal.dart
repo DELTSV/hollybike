@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:hollybike/event/widgets/expenses/budget_progress.dart';
 import 'package:hollybike/event/widgets/expenses/edit_budget_modal.dart';
 import 'package:hollybike/event/widgets/expenses/expenses_image_picker_modal.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
+import 'package:photo_view/photo_view.dart';
 
 enum ExpenseAction { delete, addProof, seeProof }
 
@@ -144,12 +146,32 @@ class ExpensesModal extends StatelessWidget {
                                               .titleSmall,
                                         ),
                                         const SizedBox(height: 4),
-                                        Text(
-                                          expense.description ?? '',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Icon(
+                                              Icons.photo_album_rounded,
+                                              size: 14,
+                                              color: expense.proof != null
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary
+                                                  : Colors.red.shade200,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              expense.proof != null
+                                                  ? 'Avec preuve de paiement'
+                                                  : 'Sans preuve de paiement',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ],
+                                        )
                                       ],
                                     ),
                                   ),
@@ -187,6 +209,88 @@ class ExpensesModal extends StatelessWidget {
                                           );
                                           break;
                                         case ExpenseAction.seeProof:
+                                          showDialog(
+                                              context: context,
+                                              builder: (_) {
+                                                return Dialog(
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            24),
+                                                    child: Stack(
+                                                      children: [
+                                                        PhotoView(
+                                                          initialScale:
+                                                              PhotoViewComputedScale
+                                                                  .contained,
+                                                          imageProvider:
+                                                              CachedNetworkImageProvider(
+                                                            expense.proof!,
+                                                            cacheKey:
+                                                                'expense_${expense.id}',
+                                                          ),
+                                                          loadingBuilder:
+                                                              (context, event) {
+                                                            return Center(
+                                                              child: Container(
+                                                                color: Colors
+                                                                    .black,
+                                                                child:
+                                                                    const Center(
+                                                                  child:
+                                                                      CircularProgressIndicator(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return Container(
+                                                              color:
+                                                                  Colors.black,
+                                                              child:
+                                                                  const Center(
+                                                                child: Text(
+                                                                  'Une erreur est survenue lors du chargement de l\'image',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          maxScale:
+                                                              PhotoViewComputedScale
+                                                                      .covered *
+                                                                  2.0,
+                                                          minScale:
+                                                              PhotoViewComputedScale
+                                                                  .contained,
+                                                        ),
+                                                        Positioned(
+                                                          top: 16,
+                                                          right: 16,
+                                                          child: IconButton(
+                                                            icon: const Icon(
+                                                              Icons.close,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              });
                                           break;
                                       }
                                     },
