@@ -54,4 +54,8 @@ class JourneyApi {
 
     return Journey.fromJson(response.data);
   }
+
+  Future<void> deleteJourney(int journeyId) async {
+    await client.dio.delete('/journeys/$journeyId');
+  }
 }

@@ -39,6 +39,10 @@ class JourneyRepository {
     return journey;
   }
 
+  Future<void> deleteJourney(int journeyId) async {
+    await journeyApi.deleteJourney(journeyId);
+  }
+
   Future<Journey> uploadJourneyFile(
     int journeyId,
     File file,
