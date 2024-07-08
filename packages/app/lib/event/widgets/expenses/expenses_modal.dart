@@ -222,7 +222,7 @@ class ExpensesModal extends StatelessWidget {
               value: ExpensesModalAction.editBudget,
               child: Row(
                 children: [
-                  Icon(Icons.attach_money),
+                  Icon(Icons.edit),
                   SizedBox(width: 8),
                   Text('Modifier le budget'),
                 ],
@@ -232,7 +232,7 @@ class ExpensesModal extends StatelessWidget {
               value: ExpensesModalAction.addBudget,
               child: Row(
                 children: [
-                  Icon(Icons.attach_money),
+                  Icon(Icons.add_circle_outline_rounded),
                   SizedBox(width: 8),
                   Text('Ajouter un budget'),
                 ],
@@ -246,7 +246,7 @@ class ExpensesModal extends StatelessWidget {
           value: ExpensesModalAction.removeBudget,
           child: Row(
             children: [
-              Icon(Icons.attach_money),
+              Icon(Icons.remove_circle_outline_rounded),
               SizedBox(width: 8),
               Text('Supprimer le budget'),
             ],

@@ -20,6 +20,12 @@ class CurrencyInput extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+        ),
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       keyboardType: TextInputType.number,

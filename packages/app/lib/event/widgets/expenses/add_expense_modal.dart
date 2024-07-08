@@ -43,8 +43,14 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
+              decoration:  InputDecoration(
                 labelText: 'Nom',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                ),
               ),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
@@ -71,8 +77,14 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
             TextFormField(
               controller: _descriptionController,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Description (optionnel)',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                ),
               ),
             ),
           ],
