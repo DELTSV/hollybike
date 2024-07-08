@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/types/event_details.dart';
@@ -585,6 +587,17 @@ class EventRepository {
       fileName: "depenses_$eventName.csv",
       showNotification: true,
       openFileFromNotification: true,
+    );
+  }
+
+  Future<void> uploadExpenseProof(
+      int eventId,
+    int expenseId,
+    File image,
+  ) async {
+    await eventApi.uploadExpenseProof(
+      expenseId,
+      image,
     );
   }
 }

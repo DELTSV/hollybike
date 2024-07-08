@@ -9,6 +9,7 @@ import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/widgets/expenses/add_expense_modal.dart';
 import 'package:hollybike/event/widgets/expenses/budget_progress.dart';
 import 'package:hollybike/event/widgets/expenses/edit_budget_modal.dart';
+import 'package:hollybike/event/widgets/expenses/expenses_image_picker_modal.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
 
 enum ExpenseAction { delete, addProof }
@@ -30,11 +31,11 @@ class ExpensesModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<EventExpensesBloc, EventExpensesState>(
       listener: (context, state) {
-        if (state is EventJourneyOperationSuccess) {
+        if (state is EventExpensesOperationSuccess) {
           Toast.showSuccessToast(context, state.successMessage);
         }
 
-        if (state is EventJourneyOperationFailure) {
+        if (state is EventExpensesOperationFailure) {
           Toast.showErrorToast(context, state.errorMessage);
         }
       },
@@ -160,12 +161,28 @@ class ExpensesModal extends StatelessWidget {
                                   ),
                                   PopupMenuButton(
                                     onSelected: (value) {
-                                      if (value == ExpenseAction.delete) {
-                                        context.read<EventExpensesBloc>().add(
-                                              DeleteExpense(
-                                                expenseId: expense.id,
-                                              ),
-                                            );
+                                      switch (value) {
+                                        case ExpenseAction.delete:
+                                          context.read<EventExpensesBloc>().add(
+                                            DeleteExpense(
+                                              expenseId: expense.id,
+                                            ),
+                                          );
+                                          break;
+                                        case ExpenseAction.addProof:
+                                          showModalBottomSheet<void>(
+                                            context: context,
+                                            backgroundColor: Colors.transparent,
+                                            builder: (_) {
+                                              return BlocProvider.value(
+                                                value: context.read<EventExpensesBloc>(),
+                                                child: ExpensesImagePickerModal(
+                                                  expenseId: expense.id,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          break;
                                       }
                                     },
                                     itemBuilder: (context) {

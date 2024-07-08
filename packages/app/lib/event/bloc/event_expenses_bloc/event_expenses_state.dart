@@ -26,22 +26,22 @@ class EventExpensesState {
 
 class EventJourneyInitial extends EventExpensesState {}
 
-class EventJourneyOperationInProgress extends EventExpensesState {
-  EventJourneyOperationInProgress(EventExpensesState state)
+class EventExpensesOperationInProgress extends EventExpensesState {
+  EventExpensesOperationInProgress(EventExpensesState state)
       : super.state(state.copyWith(status: EventExpensesStatus.loading));
 }
 
-class EventJourneyOperationSuccess extends EventExpensesState {
+class EventExpensesOperationSuccess extends EventExpensesState {
   final String successMessage;
 
-  EventJourneyOperationSuccess(EventExpensesState state, {required this.successMessage})
+  EventExpensesOperationSuccess(EventExpensesState state, {required this.successMessage})
       : super.state(state.copyWith(status: EventExpensesStatus.success));
 }
 
-class EventJourneyOperationFailure extends EventExpensesState {
+class EventExpensesOperationFailure extends EventExpensesState {
   final String errorMessage;
 
-  EventJourneyOperationFailure(EventExpensesState state,
+  EventExpensesOperationFailure(EventExpensesState state,
       {required this.errorMessage})
       : super.state(state.copyWith(status: EventExpensesStatus.error));
 }

@@ -40,17 +40,13 @@ class _EventImagePickerModalState extends State<EventImagePickerModal> {
           });
         }
       },
-      child: BlocBuilder<EventMyImagesBloc, ImageListState>(
-        builder: (context, state) {
-          return ImagePickerModal(
-            isLoading: _loading,
-            mode: ImagePickerMode.multiple,
-            onClose: () {
-              Navigator.of(context).pop();
-            },
-            onSubmit: (images) => onSubmit(context, images),
-          );
+      child: ImagePickerModal(
+        isLoading: _loading,
+        mode: ImagePickerMode.multiple,
+        onClose: () {
+          Navigator.of(context).pop();
         },
+        onSubmit: (images) => onSubmit(context, images),
       ),
     );
   }

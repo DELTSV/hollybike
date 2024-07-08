@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 
 @immutable
@@ -32,3 +34,13 @@ class EditBudget extends EventExpensesEvent {
 }
 
 class DownloadReport extends EventExpensesEvent {}
+
+class UploadExpenseProof extends EventExpensesEvent {
+  final int expenseId;
+  final File image;
+
+  UploadExpenseProof({
+    required this.expenseId,
+    required this.image,
+  });
+}

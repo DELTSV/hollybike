@@ -19,13 +19,14 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
     on<AddExpense>(_onAddExpense);
     on<EditBudget>(_onEditBudget);
     on<DownloadReport>(_onDownloadReport);
+    on<UploadExpenseProof>(_onUploadExpenseProof);
   }
 
   _onDeleteExpense(
     DeleteExpense event,
     Emitter<EventExpensesState> emit,
   ) async {
-    emit(EventJourneyOperationInProgress(state));
+    emit(EventExpensesOperationInProgress(state));
 
     try {
       await eventRepository.deleteExpense(
@@ -33,14 +34,14 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
         eventId,
       );
     } catch (e) {
-      emit(EventJourneyOperationFailure(
+      emit(EventExpensesOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
       return;
     }
 
-    emit(EventJourneyOperationSuccess(state,
+    emit(EventExpensesOperationSuccess(state,
         successMessage: 'Dépense supprimée.'));
   }
 
@@ -48,7 +49,7 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
     AddExpense event,
     Emitter<EventExpensesState> emit,
   ) async {
-    emit(EventJourneyOperationInProgress(state));
+    emit(EventExpensesOperationInProgress(state));
 
     try {
       await eventRepository.addExpense(
@@ -58,14 +59,14 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
         event.description,
       );
 
-      emit(EventJourneyOperationSuccess(
+      emit(EventExpensesOperationSuccess(
         state,
         successMessage: 'Dépense ajoutée.',
       ));
     } catch (e) {
       log("An error occurred while adding expense", error: e);
 
-      emit(EventJourneyOperationFailure(
+      emit(EventExpensesOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -76,7 +77,7 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
     EditBudget event,
     Emitter<EventExpensesState> emit,
   ) async {
-    emit(EventJourneyOperationInProgress(state));
+    emit(EventExpensesOperationInProgress(state));
 
     try {
       await eventRepository.editBudget(
@@ -84,13 +85,13 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
         event.budget,
       );
 
-      emit(EventJourneyOperationSuccess(
+      emit(EventExpensesOperationSuccess(
         state,
         successMessage: 'Budget modifié.',
       ));
     } catch (e) {
       log("An error occurred while editing budget", error: e);
-      emit(EventJourneyOperationFailure(
+      emit(EventExpensesOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
@@ -101,20 +102,46 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
     DownloadReport event,
     Emitter<EventExpensesState> emit,
   ) async {
-    emit(EventJourneyOperationInProgress(state));
+    emit(EventExpensesOperationInProgress(state));
 
     try {
       await eventRepository.downloadReport(
         eventId,
       );
 
-      emit(EventJourneyOperationSuccess(
+      emit(EventExpensesOperationSuccess(
         state,
         successMessage: 'Rapport téléchargé.',
       ));
     } catch (e) {
       log("An error occurred while downloading report", error: e);
-      emit(EventJourneyOperationFailure(
+      emit(EventExpensesOperationFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+    }
+  }
+
+  _onUploadExpenseProof(
+    UploadExpenseProof event,
+    Emitter<EventExpensesState> emit,
+  ) async {
+    emit(EventExpensesOperationInProgress(state));
+
+    try {
+      await eventRepository.uploadExpenseProof(
+        eventId,
+        event.expenseId,
+        event.image,
+      );
+
+      emit(EventExpensesOperationSuccess(
+        state,
+        successMessage: 'Preuve de dépense ajoutée.',
+      ));
+    } catch (e) {
+      log("An error occurred while uploading expense proof", error: e);
+      emit(EventExpensesOperationFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));

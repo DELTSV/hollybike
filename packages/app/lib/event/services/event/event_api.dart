@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
@@ -8,6 +12,9 @@ import '../../../journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
+
+// ignore: depend_on_referenced_packages
+import 'package:http_parser/http_parser.dart';
 
 class EventApi {
   final DioClient client;
@@ -151,5 +158,32 @@ class EventApi {
     );
 
     return EventExpense.fromJson(response.data);
+  }
+
+  Future<void> uploadExpenseProof(
+    int expenseId,
+    File image,
+  ) async {
+    final compressedImage = await FlutterImageCompress.compressWithFile(
+      image.path,
+      quality: 50,
+    );
+
+    if (compressedImage == null) {
+      throw Exception("Failed to compress image");
+    }
+
+    final formData = FormData.fromMap({
+      'proof': MultipartFile.fromBytes(
+        compressedImage,
+        filename: image.path.split('/').last,
+        contentType: MediaType.parse('image/jpeg'),
+      ),
+    });
+
+    await client.dio.put(
+      '/expenses/$expenseId/proof',
+      data: formData,
+    );
   }
 }
