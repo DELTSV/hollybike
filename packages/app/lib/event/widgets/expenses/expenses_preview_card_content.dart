@@ -18,8 +18,6 @@ class ExpensesPreviewCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Stack(
       children: [
         Container(
@@ -34,7 +32,7 @@ class ExpensesPreviewCardContent extends StatelessWidget {
             expenses: expenses,
             budget: budget,
             totalExpenses: totalExpenses,
-          )
+          ),
         ),
         Positioned.fill(
           child: Material(

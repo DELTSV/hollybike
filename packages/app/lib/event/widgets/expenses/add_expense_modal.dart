@@ -43,13 +43,15 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration:  InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nom',
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onPrimary),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
               autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -80,10 +82,12 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
               decoration: InputDecoration(
                 labelText: 'Description (optionnel)',
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.onPrimary),
                 ),
                 focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                  borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
               ),
             ),
