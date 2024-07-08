@@ -43,7 +43,7 @@ class ExpensesModal extends StatelessWidget {
           child: SafeArea(
             child: SizedBox(
               width: double.infinity,
-              height: 550,
+              // height: 550,
               child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
                 builder: (context, state) {
                   final eventName = state.eventDetails?.event.name;
@@ -58,6 +58,7 @@ class ExpensesModal extends StatelessWidget {
                   }
 
                   return Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       ExpensesModalHeader(
                         budget: budget,
@@ -79,8 +80,13 @@ class ExpensesModal extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Expanded(
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 300,
+                          minHeight: 0,
+                        ),
                         child: ListView.builder(
+                          shrinkWrap: true,
                           itemCount: expenses.length,
                           itemBuilder: (context, index) {
                             final expense = expenses[index];

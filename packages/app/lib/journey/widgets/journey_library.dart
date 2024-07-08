@@ -57,6 +57,7 @@ class JourneyLibrary extends StatelessWidget {
     }
 
     return ListView.separated(
+      shrinkWrap: true,
       itemCount: journeys.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
