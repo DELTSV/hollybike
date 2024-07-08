@@ -41,8 +41,12 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
       return;
     }
 
-    emit(EventExpensesOperationSuccess(state,
-        successMessage: 'Dépense supprimée.'));
+    emit(
+      EventExpensesOperationSuccess(
+        state,
+        successMessage: 'Dépense supprimée.',
+      ),
+    );
   }
 
   _onAddExpense(
@@ -87,7 +91,7 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
 
       emit(EventExpensesOperationSuccess(
         state,
-        successMessage: 'Budget modifié.',
+        successMessage: event.successMessage,
       ));
     } catch (e) {
       log("An error occurred while editing budget", error: e);
@@ -137,7 +141,7 @@ class EventExpensesBloc extends Bloc<EventExpensesEvent, EventExpensesState> {
 
       emit(EventExpensesOperationSuccess(
         state,
-        successMessage: 'Preuve de dépense ajoutée.',
+        successMessage: event.successMessage,
       ));
     } catch (e) {
       log("An error occurred while uploading expense proof", error: e);

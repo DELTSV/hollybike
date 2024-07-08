@@ -160,7 +160,7 @@ class EventApi {
     return EventExpense.fromJson(response.data);
   }
 
-  Future<void> uploadExpenseProof(
+  Future<EventExpense> uploadExpenseProof(
     int expenseId,
     File image,
   ) async {
@@ -181,9 +181,11 @@ class EventApi {
       ),
     });
 
-    await client.dio.put(
+    final response = await client.dio.put(
       '/expenses/$expenseId/proof',
       data: formData,
     );
+
+    return EventExpense.fromJson(response.data);
   }
 }

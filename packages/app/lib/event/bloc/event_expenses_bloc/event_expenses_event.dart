@@ -26,9 +26,11 @@ class AddExpense extends EventExpensesEvent {
 }
 
 class EditBudget extends EventExpensesEvent {
+  final String successMessage;
   final int? budget;
 
   EditBudget({
+    required this.successMessage,
     required this.budget,
   });
 }
@@ -36,10 +38,12 @@ class EditBudget extends EventExpensesEvent {
 class DownloadReport extends EventExpensesEvent {}
 
 class UploadExpenseProof extends EventExpensesEvent {
+  final String successMessage;
   final int expenseId;
   final File image;
 
   UploadExpenseProof({
+    required this.successMessage,
     required this.expenseId,
     required this.image,
   });

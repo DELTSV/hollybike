@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,11 +11,17 @@ import 'package:hollybike/shared/utils/safe_set_state.dart';
 
 class ExpensesImagePickerModal extends StatefulWidget {
   final int expenseId;
+  final bool isEditingExpense;
 
-  const ExpensesImagePickerModal({super.key, required this.expenseId});
+  const ExpensesImagePickerModal({
+    super.key,
+    required this.expenseId,
+    required this.isEditingExpense,
+  });
 
   @override
-  State<ExpensesImagePickerModal> createState() => _ExpensesImagePickerModalState();
+  State<ExpensesImagePickerModal> createState() =>
+      _ExpensesImagePickerModalState();
 }
 
 class _ExpensesImagePickerModalState extends State<ExpensesImagePickerModal> {
@@ -55,10 +60,13 @@ class _ExpensesImagePickerModalState extends State<ExpensesImagePickerModal> {
 
   void onSubmit(BuildContext context, File image) {
     context.read<EventExpensesBloc>().add(
-      UploadExpenseProof(
-        image: image,
-        expenseId: widget.expenseId,
-      ),
-    );
+          UploadExpenseProof(
+            image: image,
+            expenseId: widget.expenseId,
+            successMessage: widget.isEditingExpense
+                ? 'Preuve de paiment modifiée.'
+                : 'Preuve de paiment ajoutée.',
+          ),
+        );
   }
 }

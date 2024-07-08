@@ -12,7 +12,7 @@ import 'package:hollybike/event/widgets/expenses/edit_budget_modal.dart';
 import 'package:hollybike/event/widgets/expenses/expenses_image_picker_modal.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
 
-enum ExpenseAction { delete, addProof }
+enum ExpenseAction { delete, addProof, seeProof }
 
 enum ExpensesModalAction {
   addExpense,
@@ -155,7 +155,7 @@ class ExpensesModal extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 16),
                                   Text(
-                                    '${expense.amount.toDouble() / 100} €',
+                                    '${(expense.amount.toDouble() / 100).toStringAsFixed(2)} €',
                                     style:
                                         Theme.of(context).textTheme.titleSmall,
                                   ),
@@ -164,10 +164,10 @@ class ExpensesModal extends StatelessWidget {
                                       switch (value) {
                                         case ExpenseAction.delete:
                                           context.read<EventExpensesBloc>().add(
-                                            DeleteExpense(
-                                              expenseId: expense.id,
-                                            ),
-                                          );
+                                                DeleteExpense(
+                                                  expenseId: expense.id,
+                                                ),
+                                              );
                                           break;
                                         case ExpenseAction.addProof:
                                           showModalBottomSheet<void>(
@@ -175,41 +175,23 @@ class ExpensesModal extends StatelessWidget {
                                             backgroundColor: Colors.transparent,
                                             builder: (_) {
                                               return BlocProvider.value(
-                                                value: context.read<EventExpensesBloc>(),
+                                                value: context
+                                                    .read<EventExpensesBloc>(),
                                                 child: ExpensesImagePickerModal(
                                                   expenseId: expense.id,
+                                                  isEditingExpense:
+                                                      expense.proof != null,
                                                 ),
                                               );
                                             },
                                           );
                                           break;
+                                        case ExpenseAction.seeProof:
+                                          break;
                                       }
                                     },
                                     itemBuilder: (context) {
-                                      return [
-                                        const PopupMenuItem(
-                                          value: ExpenseAction.addProof,
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.photo_album_rounded),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                'Ajouter une preuve de paiement',
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const PopupMenuItem(
-                                          value: ExpenseAction.delete,
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.delete),
-                                              SizedBox(width: 8),
-                                              Text('Supprimer'),
-                                            ],
-                                          ),
-                                        ),
-                                      ];
+                                      return _buildExpenseActions(expense);
                                     },
                                   ),
                                 ],
@@ -227,6 +209,54 @@ class ExpensesModal extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<PopupMenuItem> _buildExpenseActions(EventExpense expense) {
+    final actions = <PopupMenuItem>[];
+
+    if (expense.proof != null) {
+      actions.add(
+        const PopupMenuItem(
+          value: ExpenseAction.seeProof,
+          child: Row(
+            children: [
+              Icon(Icons.photo_album_rounded),
+              SizedBox(width: 8),
+              Text('Voir la preuve de paiement'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    actions.addAll([
+      PopupMenuItem(
+        value: ExpenseAction.addProof,
+        child: Row(
+          children: [
+            const Icon(Icons.photo_album_rounded),
+            const SizedBox(width: 8),
+            Text(
+              expense.proof == null
+                  ? 'Ajouter une preuve de paiement'
+                  : 'Modifier la preuve de paiement',
+            ),
+          ],
+        ),
+      ),
+      const PopupMenuItem(
+        value: ExpenseAction.delete,
+        child: Row(
+          children: [
+            Icon(Icons.delete),
+            SizedBox(width: 8),
+            Text('Supprimer'),
+          ],
+        ),
+      ),
+    ]);
+
+    return actions;
   }
 
   List<PopupMenuItem> _buildBudgetActions(
@@ -320,7 +350,10 @@ class ExpensesModal extends StatelessWidget {
             return EditBudgetModal(
               onBudgetChange: (budget) {
                 context.read<EventExpensesBloc>().add(
-                      EditBudget(budget: budget),
+                      EditBudget(
+                        budget: budget,
+                        successMessage: 'Budget ajouté.',
+                      ),
                     );
               },
               addMode: true,
@@ -330,7 +363,10 @@ class ExpensesModal extends StatelessWidget {
         break;
       case ExpensesModalAction.removeBudget:
         context.read<EventExpensesBloc>().add(
-              EditBudget(budget: null),
+              EditBudget(
+                budget: null,
+                successMessage: 'Budget supprimé.',
+              ),
             );
         break;
       case ExpensesModalAction.editBudget:
@@ -341,7 +377,10 @@ class ExpensesModal extends StatelessWidget {
               budget: budget,
               onBudgetChange: (budget) {
                 context.read<EventExpensesBloc>().add(
-                      EditBudget(budget: budget),
+                      EditBudget(
+                        budget: budget,
+                        successMessage: 'Budget modifié.',
+                      ),
                     );
               },
             );
@@ -350,8 +389,8 @@ class ExpensesModal extends StatelessWidget {
         break;
       case ExpensesModalAction.downloadCSV:
         context.read<EventExpensesBloc>().add(
-          DownloadReport(),
-        );
+              DownloadReport(),
+            );
 
         break;
     }

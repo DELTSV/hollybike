@@ -595,9 +595,30 @@ class EventRepository {
     int expenseId,
     File image,
   ) async {
-    await eventApi.uploadExpenseProof(
+    final updatedExpense = await eventApi.uploadExpenseProof(
       expenseId,
       image,
+    );
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    final newExpenses = details.expenses?.map((e) {
+      if (e.id == expenseId) {
+        return updatedExpense;
+      }
+
+      return e;
+    }).toList();
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        expenses: newExpenses,
+      ),
     );
   }
 }
