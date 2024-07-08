@@ -1,16 +1,17 @@
-
 import 'package:flutter/material.dart';
 
 class GradientProgressBar extends StatefulWidget {
   final double maxValue;
   final double value;
   final List<Color> colors;
+  final bool animateStart;
 
   const GradientProgressBar({
     super.key,
     required this.maxValue,
     required this.value,
     required this.colors,
+    required this.animateStart,
   });
 
   @override
@@ -27,7 +28,8 @@ class _GradientProgressBarState extends State<GradientProgressBar>
   void didUpdateWidget(GradientProgressBar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.value != widget.value || oldWidget.maxValue != widget.maxValue) {
+    if (oldWidget.value != widget.value ||
+        oldWidget.maxValue != widget.maxValue) {
       _animate();
     }
   }
@@ -36,7 +38,11 @@ class _GradientProgressBarState extends State<GradientProgressBar>
   void initState() {
     super.initState();
     Future.delayed(const Duration(milliseconds: 100), () {
-      _animate();
+      if (widget.animateStart) {
+        _animate();
+      } else {
+        _progressController.value = getTargetFraction();
+      }
     });
   }
 

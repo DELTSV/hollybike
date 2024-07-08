@@ -75,6 +75,7 @@ class ExpensesModal extends StatelessWidget {
                           expenses: expenses,
                           budget: budget,
                           totalExpenses: totalExpenses,
+                          animateStart: false,
                         ),
                       ),
                       const SizedBox(height: 16),

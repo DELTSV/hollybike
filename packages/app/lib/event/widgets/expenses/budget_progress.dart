@@ -6,12 +6,14 @@ class BudgetProgress extends StatelessWidget {
   final List<EventExpense> expenses;
   final int? budget;
   final int totalExpenses;
+  final bool animateStart;
 
   const BudgetProgress({
     super.key,
     required this.expenses,
     required this.budget,
     required this.totalExpenses,
+    this.animateStart = true,
   });
 
   @override
@@ -37,6 +39,7 @@ class BudgetProgress extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         GradientProgressBar(
+          animateStart: animateStart,
           maxValue: budget?.toDouble() ?? 1,
           value: budget == null ? 0 : expensesInEuro,
           colors: [
