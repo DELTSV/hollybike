@@ -83,14 +83,15 @@ class WeatherForecastCardContent extends StatelessWidget {
 
   void onTap(BuildContext context, WeatherForecastGrouped weatherForecast) {
     showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return WeatherForecastModal(
-            weatherForecast: weatherForecast,
-          );
-        });
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return WeatherForecastModal(
+          weatherForecast: weatherForecast,
+        );
+      },
+    );
   }
 
   Widget _buildForecast(BuildContext context, WeatherForecastState state) {
@@ -129,12 +130,13 @@ class WeatherForecastCardContent extends StatelessWidget {
               ),
             ),
           ),
-          Lottie.asset(
-            getWeatherConditionLottiePath(
-              firstDay.weatherCondition,
-              firstDay.hourlyWeather.first.isDay,
+          if (firstDay.hourlyWeather.isNotEmpty)
+            Lottie.asset(
+              getWeatherConditionLottiePath(
+                firstDay.weatherCondition,
+                firstDay.hourlyWeather.first.isDay,
+              ),
             ),
-          ),
         ],
       );
     }

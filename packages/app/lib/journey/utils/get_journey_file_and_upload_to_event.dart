@@ -1,16 +1,11 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../event/bloc/event_journey_bloc/event_journey_bloc.dart';
-import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../../event/types/event.dart';
-import '../../event/widgets/journey/upload_journey_modal.dart';
 
-Future<File?> getJourneyFileAndUploadToEvent(
-    BuildContext context, Event event) async {
+Future<PlatformFile?> getJourneyFile(
+  BuildContext context,
+  Event event,
+) async {
   final FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.any,
   );
@@ -47,28 +42,5 @@ Future<File?> getJourneyFileAndUploadToEvent(
     return null;
   }
 
-  File file = File(result.files.single.path!);
-
-  BlocProvider.of<EventJourneyBloc>(context).add(
-    UploadJourneyFileToEvent(
-      eventId: event.id,
-      name: event.name,
-      file: file,
-    ),
-  );
-
-  await showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (_) {
-      return BlocProvider.value(
-        value: BlocProvider.of<EventJourneyBloc>(context),
-        child: UploadJourneyModal(
-          isGpx: extension == 'gpx',
-        ),
-      );
-    },
-  );
-
-  return file;
+  return result.files.single;
 }

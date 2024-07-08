@@ -81,9 +81,15 @@ class EventJourneyBloc extends Bloc<EventJourneyEvent, EventJourneyState> {
         log('Error while fetching positions for journey', error: e);
       }
     } catch (e) {
+      try {
+        await journeyRepository.deleteJourney(journey.id);
+      } catch (e) {
+        log('Error while deleting journey', error: e);
+      }
+
       emit(EventJourneyOperationFailure(
         state,
-        errorMessage: 'Une erreur est survenue.',
+        errorMessage: 'Le ficher ne semble pas compatible.',
       ));
     }
   }

@@ -9,16 +9,15 @@ import 'package:hollybike/journey/widgets/journey_library.dart';
 import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../bloc/journeys_library_bloc/journeys_library_bloc.dart';
 import '../type/journey.dart';
-import '../utils/get_journey_file_and_upload_to_event.dart';
 
 class JourneyLibraryModal extends StatefulWidget {
   final Event event;
-  final void Function()? onAddJourney;
+  final void Function()? onJourneyAdded;
 
   const JourneyLibraryModal({
     super.key,
     required this.event,
-    this.onAddJourney,
+    this.onJourneyAdded,
   });
 
   @override
@@ -88,6 +87,7 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
                             }
 
                             return JourneyLibrary(
+                              event: widget.event,
                               onAddJourney: _onAddJourney,
                               onSelected: _onSelectedJourney,
                               journeys: state.journeys,
@@ -107,18 +107,16 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
   }
 
   void _onAddJourney() async {
-    final file = await getJourneyFileAndUploadToEvent(context, widget.event);
+    Navigator.of(context).pop();
 
-    if (widget.onAddJourney != null) {
-      widget.onAddJourney!();
+    if (widget.onJourneyAdded != null) {
+      widget.onJourneyAdded!();
     }
-
-    if (file != null && mounted) Navigator.of(context).pop();
   }
 
   void _onSelectedJourney(Journey journey) {
-    if (widget.onAddJourney != null) {
-      widget.onAddJourney!();
+    if (widget.onJourneyAdded != null) {
+      widget.onJourneyAdded!();
     }
 
     BlocProvider.of<EventJourneyBloc>(context).add(

@@ -44,6 +44,12 @@ class AppRouter extends $AppRouter {
         ),
         CustomRoute(
           guards: [AuthGuard(authPersistence: authPersistence)],
+          page: ImportGpxToolRoute.page,
+          path: '/import-gpx-tool',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
+        CustomRoute(
+          guards: [AuthGuard(authPersistence: authPersistence)],
           page: MeRoute.page,
           path: '/me',
           transitionsBuilder: TransitionsBuilders.fadeIn,
