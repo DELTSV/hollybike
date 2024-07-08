@@ -75,7 +75,7 @@ class _ImportGpxToolScreenState extends State<ImportGpxToolScreen> {
               final url = request.url.toString();
 
               final isKurvigerFile =
-                  url.startsWith("https://api.kurviger.de/route/");
+                  url.startsWith("https://api.kurviger.de/route");
               final isOpenrunnerFile =
                   url.startsWith("https://api.openrunner.com/api/v2/routes/") &&
                       url.endsWith("/export/gpx-track");
