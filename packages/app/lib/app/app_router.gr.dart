@@ -102,6 +102,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
           key: args.key,
           url: args.url,
           onGpxDownloaded: args.onGpxDownloaded,
+          onClose: args.onClose,
         ),
       );
     },
@@ -367,6 +368,7 @@ class ImportGpxToolRoute extends _i13.PageRouteInfo<ImportGpxToolRouteArgs> {
     _i14.Key? key,
     required String url,
     required void Function(_i19.File) onGpxDownloaded,
+    required void Function() onClose,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           ImportGpxToolRoute.name,
@@ -374,6 +376,7 @@ class ImportGpxToolRoute extends _i13.PageRouteInfo<ImportGpxToolRouteArgs> {
             key: key,
             url: url,
             onGpxDownloaded: onGpxDownloaded,
+            onClose: onClose,
           ),
           initialChildren: children,
         );
@@ -389,6 +392,7 @@ class ImportGpxToolRouteArgs {
     this.key,
     required this.url,
     required this.onGpxDownloaded,
+    required this.onClose,
   });
 
   final _i14.Key? key;
@@ -397,9 +401,11 @@ class ImportGpxToolRouteArgs {
 
   final void Function(_i19.File) onGpxDownloaded;
 
+  final void Function() onClose;
+
   @override
   String toString() {
-    return 'ImportGpxToolRouteArgs{key: $key, url: $url, onGpxDownloaded: $onGpxDownloaded}';
+    return 'ImportGpxToolRouteArgs{key: $key, url: $url, onGpxDownloaded: $onGpxDownloaded, onClose: $onClose}';
   }
 }
 

@@ -104,6 +104,7 @@ class JourneyToolsModal extends StatelessWidget {
 
                                 onGpxDownloaded(file);
                               },
+                              onClose: () => Navigator.of(context).pop(),
                             ),
                           );
                         },
