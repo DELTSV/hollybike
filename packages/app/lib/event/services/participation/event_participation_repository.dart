@@ -16,10 +16,12 @@ class EventParticipationRepository {
 
   EventParticipationRepository({required this.eventParticipationsApi});
 
-  Stream<StreamValue<List<EventCandidate>, void>> candidatesStream(int eventId) =>
+  Stream<StreamValue<List<EventCandidate>, void>> candidatesStream(
+          int eventId) =>
       _eventCandidatesStreamMapper.stream(eventId);
 
-  Stream<StreamValue<List<EventParticipation>, void>> participationsStream(int eventId) =>
+  Stream<StreamValue<List<EventParticipation>, void>> participationsStream(
+          int eventId) =>
       _eventParticipationsStreamMapper.stream(eventId);
 
   Future<PaginatedList<EventCandidate>> fetchCandidates(

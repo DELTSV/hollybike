@@ -134,13 +134,19 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
               child:
                   BlocBuilder<EventParticipationBloc, EventParticipationsState>(
                 builder: (context, state) {
+                  final isLoading =
+                      state is EventParticipationsPageLoadInProgress &&
+                          (state.participants.length ==
+                                  widget.participationPreview.length ||
+                              state.hasMore);
+
                   if (state is EventParticipationsPageLoadFailure) {
                     return Center(
                       child: Text(state.errorMessage),
                     );
                   }
 
-                  return _buildList(state.participants);
+                  return _buildList(state.participants, isLoading);
                 },
               ),
             ),
@@ -150,16 +156,24 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
     );
   }
 
-  Widget _buildList(List<EventParticipation> participants) {
+  Widget _buildList(List<EventParticipation> participants, bool isLoading) {
+    final totalCount = participants.length + (isLoading ? 1 : 0);
+
     return ListView.separated(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(vertical: 10),
-      itemCount: participants.length,
+      itemCount: totalCount,
       separatorBuilder: (context, index) => const SizedBox(height: 10),
       physics: const AlwaysScrollableScrollPhysics(
         parent: BouncingScrollPhysics(),
       ),
       itemBuilder: (context, index) {
+        if (isLoading && index == totalCount - 1) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
         final participation = participants[index];
 
         return TweenAnimationBuilder(

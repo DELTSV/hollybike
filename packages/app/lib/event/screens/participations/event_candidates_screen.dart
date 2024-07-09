@@ -143,7 +143,8 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                 ),
                 BlocBuilder<EventCandidatesBloc, EventCandidatesState>(
                   builder: (context, state) {
-                    final isLoading = state is EventCandidatesPageLoadInProgress;
+                    final isLoading =
+                        state is EventCandidatesPageLoadInProgress;
 
                     if (isLoading && state.candidates.isEmpty) {
                       return const Column(
@@ -181,7 +182,8 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                       );
                     }
 
-                    final totalCandidates = state.candidates.length + (state.hasMore ? 1 : 0);
+                    final totalCandidates =
+                        state.candidates.length + (state.hasMore ? 1 : 0);
 
                     return Expanded(
                       child: ListView.separated(
@@ -196,7 +198,6 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                               child: CircularProgressIndicator(),
                             );
                           }
-
 
                           final candidate = state.candidates[index];
 

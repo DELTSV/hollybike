@@ -254,9 +254,19 @@ class EventRepository {
   }
 
   Future<void> joinEvent(int eventId) async {
-    final details = _eventDetailsStreamMapper.get(eventId);
-
     final participation = await eventApi.joinEvent(eventId);
+
+    final userId = participation.user.id;
+
+    final events = _userStreamMapper.get(userId);
+
+    if (events != null) {
+      if (events.any((e) => e.id == eventId)) {
+        await refreshEvents("future", userId: userId);
+      }
+    }
+
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;

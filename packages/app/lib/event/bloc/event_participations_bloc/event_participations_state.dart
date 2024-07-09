@@ -37,6 +37,7 @@ class EventParticipationsState {
     Event? createdEvent,
   }) {
     return EventParticipationsState(
+      status: status ?? this.status,
       participants: participants ?? this.participants,
       hasMore: hasMore ?? this.hasMore,
       nextPage: nextPage ?? this.nextPage,
