@@ -4,7 +4,9 @@ import 'package:hollybike/shared/utils/dates.dart';
 import 'package:hollybike/weather/types/weather_forecast_grouped.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
+import '../../shared/widgets/pinned_header_delegate.dart';
 import '../types/weather_condition.dart';
 
 class WeatherForecastModal extends StatelessWidget {
@@ -67,51 +69,114 @@ class WeatherForecastModal extends StatelessWidget {
   }
 
   Widget _buildWeatherForecast(BuildContext context) {
-    final groups = weatherForecast.dailyWeather.map((dailyWeather) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: _buildDayHeader(dailyWeather),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 13),
-              child: Column(
-                children: addSeparators(
-                  dailyWeather.hourlyWeather.map((hourlyWeather) {
-                    return _buildHourlyData(hourlyWeather);
-                  }).toList(),
-                  Divider(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onPrimary
-                        .withOpacity(0.5),
-                    height: 0.5,
-                    thickness: 0.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }).toList();
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: CustomScrollView(
+        shrinkWrap: true,
+        slivers: addSeparators(
+          weatherForecast.dailyWeather.map((dailyWeather) {
+            return SliverMainAxisGroup(
+              slivers: [
+                SliverStack(
+                  children: [
+                    SliverPositioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                    MultiSliver(children: [
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: PinnedHeaderDelegate(
+                          height: 50,
+                          animationDuration: 300,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _buildDayHeader(dailyWeather),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SliverPadding(
+                        padding: const EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 16,
+                        ),
+                        sliver: Builder(builder: (context) {
+                          if (dailyWeather.hourlyWeather.isEmpty) {
+                            return const SliverToBoxAdapter(
+                              child: SizedBox(
+                                height: 70,
+                                child: Center(
+                                  child: Text(
+                                    'Pas de données disponibles pour ce jour',
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      separatorBuilder: (context, index) => const SizedBox(height: 16),
-      itemCount: groups.length,
-      itemBuilder: (context, index) {
-        return groups[index];
-      },
+                          return SliverList.separated(
+                            itemCount: dailyWeather.hourlyWeather.length,
+                            itemBuilder: (context, index) {
+                              final hourlyWeather =
+                                  dailyWeather.hourlyWeather[index];
+
+                              return TweenAnimationBuilder(
+                                tween: Tween<double>(begin: 0, end: 1),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                builder: (context, double value, child) {
+                                  return Transform.translate(
+                                    offset: Offset(30 * (1 - value), 0),
+                                    child: Opacity(
+                                      opacity: value,
+                                      child: _buildHourlyData(hourlyWeather),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            separatorBuilder: (context, index) => Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary
+                                  .withOpacity(0.5),
+                              height: 0.5,
+                              thickness: 0.5,
+                            ),
+                          );
+                        }),
+                      ),
+                    ])
+                  ],
+                ),
+              ],
+            );
+          }).toList(),
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        ),
+      ),
     );
   }
 
