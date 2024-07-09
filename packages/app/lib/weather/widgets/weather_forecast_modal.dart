@@ -32,10 +32,34 @@ class WeatherForecastModal extends StatelessWidget {
           right: 16,
         ),
         child: SafeArea(
-          child: SizedBox(
-            width: double.infinity,
-            height: 400,
-            child: _buildWeatherForecast(context),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Prévisions météo',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxHeight: 400,
+                ),
+                child: _buildWeatherForecast(context),
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
       ),
@@ -50,6 +74,7 @@ class WeatherForecastModal extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -81,9 +106,7 @@ class WeatherForecastModal extends StatelessWidget {
     }).toList();
 
     return ListView.separated(
-      padding: const EdgeInsets.only(
-        bottom: 16,
-      ),
+      shrinkWrap: true,
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemCount: groups.length,
       itemBuilder: (context, index) {

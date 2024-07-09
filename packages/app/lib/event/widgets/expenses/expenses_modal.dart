@@ -43,7 +43,6 @@ class ExpensesModal extends StatelessWidget {
           child: SafeArea(
             child: SizedBox(
               width: double.infinity,
-              // height: 550,
               child: BlocBuilder<EventDetailsBloc, EventDetailsState>(
                 builder: (context, state) {
                   final eventName = state.eventDetails?.event.name;
@@ -97,6 +96,7 @@ class ExpensesModal extends StatelessWidget {
                           },
                         ),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   );
                 },
