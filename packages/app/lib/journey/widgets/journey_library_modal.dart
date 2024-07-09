@@ -5,6 +5,7 @@ import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_state.dart';
 import 'package:hollybike/journey/widgets/journey_library.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 
 import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../bloc/journeys_library_bloc/journeys_library_bloc.dart';
@@ -70,10 +71,13 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
               Flexible(
                 child: BlocBuilder<JourneysLibraryBloc, JourneysLibraryState>(
                   builder: (context, state) {
-                    final isLoading = state is JourneysLibraryPageLoadInProgress ||
-                        state is JourneysLibraryInitial;
+                    final isEmpty = state.journeys.isEmpty;
+                    final isLoading =
+                        state is JourneysLibraryPageLoadInProgress ||
+                            state is JourneysLibraryInitial;
 
-                    final isShrunk = isLoading || state.journeys.isEmpty;
+                    final isShrunk =
+                        (isLoading && isEmpty) || (isEmpty && !isLoading);
 
                     return AnimatedContainer(
                       constraints: BoxConstraints(
@@ -83,7 +87,7 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
                       duration: const Duration(milliseconds: 200),
                       child: _buildLibrary(
                         state.journeys,
-                        isLoading,
+                        isLoading && isEmpty,
                       ),
                     );
                   },
@@ -103,12 +107,25 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
       );
     }
 
-    return JourneyLibrary(
-      event: widget.event,
-      onAddJourney: _onAddJourney,
-      onSelected: _onSelectedJourney,
-      journeys: journeys,
+    return ThemedRefreshIndicator(
+      onRefresh: _onRefresh,
+      child: JourneyLibrary(
+        event: widget.event,
+        onAddJourney: _onAddJourney,
+        onSelected: _onSelectedJourney,
+        journeys: journeys,
+      ),
     );
+  }
+
+  Future<void> _onRefresh() {
+    final bloc = BlocProvider.of<JourneysLibraryBloc>(context);
+
+    bloc.add(
+      RefreshJourneysLibrary(),
+    );
+
+    return bloc.firstWhenNotLoading;
   }
 
   void _onAddJourney() async {
