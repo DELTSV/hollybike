@@ -47,22 +47,23 @@ void journeyImportModalFromType(
     case NewJourneyType.library:
       showModalBottomSheet<void>(
         context: context,
+        isScrollControlled: true,
         builder: (_) {
           return BlocProvider.value(
             value: BlocProvider.of<EventJourneyBloc>(context),
             child: BlocProvider<JourneysLibraryBloc>(
-                create: (context) => JourneysLibraryBloc(
-                      journeyRepository:
-                          RepositoryProvider.of<JourneyRepository>(
-                        context,
-                      ),
-                    ),
-                child: JourneyLibraryModal(
-                  event: event,
-                  onJourneyAdded: () {
-                    selected?.call();
-                  },
-                )),
+              create: (context) => JourneysLibraryBloc(
+                journeyRepository: RepositoryProvider.of<JourneyRepository>(
+                  context,
+                ),
+              ),
+              child: JourneyLibraryModal(
+                event: event,
+                onJourneyAdded: () {
+                  selected?.call();
+                },
+              ),
+            ),
           );
         },
       );

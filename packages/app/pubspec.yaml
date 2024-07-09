@@ -74,6 +74,7 @@ dependencies:
   flutter_downloader: ^1.11.7
   flutter_native_splash: ^2.4.0
   flutter_inappwebview: ^5.8.0
+  sliver_tools: ^0.2.12
 
 dev_dependencies:
   flutter_test:

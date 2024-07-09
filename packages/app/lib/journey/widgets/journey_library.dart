@@ -56,17 +56,22 @@ class JourneyLibrary extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      itemCount: journeys.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final journey = journeys[index];
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: journeys.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final journey = journeys[index];
 
-        return JourneyLibraryCard(
-          journey: journey,
-          onSelected: onSelected,
-        );
-      },
+          return JourneyLibraryCard(
+            journey: journey,
+            onSelected: onSelected,
+          );
+        },
+      ),
     );
   }
 }

@@ -1,19 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:hollybike/shared/utils/dates.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
+import 'package:hollybike/weather/bloc/weather_forecast_bloc.dart';
+import 'package:hollybike/weather/bloc/weather_forecast_event.dart';
+import 'package:hollybike/weather/bloc/weather_forecast_state.dart';
 import 'package:hollybike/weather/types/weather_forecast_grouped.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
+import '../../shared/widgets/pinned_header_delegate.dart';
 import '../types/weather_condition.dart';
 
 class WeatherForecastModal extends StatelessWidget {
-  final WeatherForecastGrouped weatherForecast;
-
-  const WeatherForecastModal({
-    super.key,
-    required this.weatherForecast,
-  });
+  const WeatherForecastModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,64 +36,178 @@ class WeatherForecastModal extends StatelessWidget {
           right: 16,
         ),
         child: SafeArea(
-          child: SizedBox(
-            width: double.infinity,
-            height: 400,
-            child: _buildWeatherForecast(context),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Prévisions météo',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              BlocBuilder<WeatherForecastBloc, WeatherForecastState>(
+                builder: (context, state) {
+                  return ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxHeight: 400,
+                    ),
+                    child: _buildWeatherForecast(
+                      context,
+                      state.weatherForecast,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildWeatherForecast(BuildContext context) {
-    final groups = weatherForecast.dailyWeather.map((dailyWeather) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: _buildDayHeader(dailyWeather),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 13),
-              child: Column(
-                children: addSeparators(
-                  dailyWeather.hourlyWeather.map((hourlyWeather) {
-                    return _buildHourlyData(hourlyWeather);
-                  }).toList(),
-                  Divider(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onPrimary
-                        .withOpacity(0.5),
-                    height: 0.5,
-                    thickness: 0.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }).toList();
+  Widget _buildWeatherForecast(
+    BuildContext context,
+    WeatherForecastGrouped? weatherForecast,
+  ) {
+    if (weatherForecast == null) {
+      return const SizedBox();
+    }
 
-    return ListView.separated(
-      padding: const EdgeInsets.only(
-        bottom: 16,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: ThemedRefreshIndicator(
+        onRefresh: () => _onRefresh(context),
+        child: CustomScrollView(
+          shrinkWrap: true,
+          slivers: addSeparators(
+            weatherForecast.dailyWeather.map((dailyWeather) {
+              return SliverMainAxisGroup(
+                slivers: [
+                  SliverStack(
+                    children: [
+                      SliverPositioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
+                      MultiSliver(children: [
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: PinnedHeaderDelegate(
+                            height: 50,
+                            animationDuration: 300,
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _buildDayHeader(dailyWeather),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            bottom: 16,
+                          ),
+                          sliver: Builder(builder: (context) {
+                            if (dailyWeather.hourlyWeather.isEmpty) {
+                              return const SliverToBoxAdapter(
+                                child: SizedBox(
+                                  height: 70,
+                                  child: Center(
+                                    child: Text(
+                                      'Pas de données disponibles pour ce jour',
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return SliverList.separated(
+                              itemCount: dailyWeather.hourlyWeather.length,
+                              itemBuilder: (context, index) {
+                                final hourlyWeather =
+                                    dailyWeather.hourlyWeather[index];
+
+                                return TweenAnimationBuilder(
+                                  tween: Tween<double>(begin: 0, end: 1),
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  builder: (context, double value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(30 * (1 - value), 0),
+                                      child: Opacity(
+                                        opacity: value,
+                                        child: _buildHourlyData(hourlyWeather),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) => Divider(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary
+                                    .withOpacity(0.5),
+                                height: 0.5,
+                                thickness: 0.5,
+                              ),
+                            );
+                          }),
+                        ),
+                      ])
+                    ],
+                  ),
+                ],
+              );
+            }).toList(),
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          ),
+        ),
       ),
-      separatorBuilder: (context, index) => const SizedBox(height: 16),
-      itemCount: groups.length,
-      itemBuilder: (context, index) {
-        return groups[index];
-      },
     );
+  }
+
+  Future<void> _onRefresh(BuildContext context) {
+    final bloc = BlocProvider.of<WeatherForecastBloc>(context);
+
+    bloc.add(
+      FetchWeatherForecast(),
+    );
+
+    return bloc.firstWhenNotLoading;
   }
 
   Widget _buildDayHeader(DailyWeatherGrouped dailyWeather) {

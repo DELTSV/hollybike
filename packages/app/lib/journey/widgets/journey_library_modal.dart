@@ -5,6 +5,7 @@ import 'package:hollybike/event/types/event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_event.dart';
 import 'package:hollybike/journey/bloc/journeys_library_bloc/journeys_library_state.dart';
 import 'package:hollybike/journey/widgets/journey_library.dart';
+import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 
 import '../../event/bloc/event_journey_bloc/event_journey_event.dart';
 import '../bloc/journeys_library_bloc/journeys_library_bloc.dart';
@@ -36,74 +37,95 @@ class _JourneyLibraryModalState extends State<JourneyLibraryModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(31),
-                topRight: Radius.circular(31),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(31),
+          topRight: Radius.circular(31),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Selectionnez un parcours',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          'Selectionnez un parcours',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Flexible(
-                      child: SizedBox(
-                        height: 250,
-                        child: BlocBuilder<JourneysLibraryBloc,
-                            JourneysLibraryState>(
-                          builder: (context, state) {
-                            if (state is JourneysLibraryPageLoadInProgress) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
+              const SizedBox(height: 16),
+              Flexible(
+                child: BlocBuilder<JourneysLibraryBloc, JourneysLibraryState>(
+                  builder: (context, state) {
+                    final isEmpty = state.journeys.isEmpty;
+                    final isLoading =
+                        state is JourneysLibraryPageLoadInProgress ||
+                            state is JourneysLibraryInitial;
 
-                            return JourneyLibrary(
-                              event: widget.event,
-                              onAddJourney: _onAddJourney,
-                              onSelected: _onSelectedJourney,
-                              journeys: state.journeys,
-                            );
-                          },
-                        ),
+                    final isShrunk =
+                        (isLoading && isEmpty) || (isEmpty && !isLoading);
+
+                    return AnimatedContainer(
+                      constraints: BoxConstraints(
+                        maxHeight: isShrunk ? 150 : 400,
                       ),
-                    ),
-                  ],
+                      curve: Curves.easeInOut,
+                      duration: const Duration(milliseconds: 200),
+                      child: _buildLibrary(
+                        state.journeys,
+                        isLoading && isEmpty,
+                      ),
+                    );
+                  },
                 ),
               ),
-            ),
+            ],
           ),
         ),
-      ],
+      ),
     );
+  }
+
+  Widget _buildLibrary(List<Journey> journeys, bool isLoading) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    return ThemedRefreshIndicator(
+      onRefresh: _onRefresh,
+      child: JourneyLibrary(
+        event: widget.event,
+        onAddJourney: _onAddJourney,
+        onSelected: _onSelectedJourney,
+        journeys: journeys,
+      ),
+    );
+  }
+
+  Future<void> _onRefresh() {
+    final bloc = BlocProvider.of<JourneysLibraryBloc>(context);
+
+    bloc.add(
+      RefreshJourneysLibrary(),
+    );
+
+    return bloc.firstWhenNotLoading;
   }
 
   void _onAddJourney() async {
