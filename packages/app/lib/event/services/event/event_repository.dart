@@ -8,9 +8,11 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/journey/type/journey.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+import 'package:hollybike/shared/utils/streams/stream_counter.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../../journey/type/user_journey.dart';
-import '../../../shared/utils/stream_mapper.dart';
+import '../../../shared/utils/streams/stream_mapper.dart';
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
 import '../../types/participation/event_participation.dart';
@@ -21,34 +23,54 @@ class EventRepository {
 
   final int numberOfEventsPerRequest = 10;
 
-  final _eventDetailsStreamMapper =
-      StreamMapper<EventDetails?>(seedValue: null);
+  final _eventDetailsStreamMapper = StreamMapper<EventDetails?, void>(
+    seedValue: null,
+    name: "event-details",
+  );
 
-  Stream<StreamValue<EventDetails?>> eventDetailsStream(int eventId) =>
+  Stream<StreamValue<EventDetails?, void>> eventDetailsStream(int eventId) =>
       _eventDetailsStreamMapper.stream(eventId);
 
-  final _userStreamMapper = StreamMapper<List<MinimalEvent>>(seedValue: []);
+  final _userStreamMapper = StreamMapper<List<MinimalEvent>, RefreshedType>(
+    seedValue: [],
+    initialState: RefreshedType.none,
+    name: "user-events",
+  );
 
-  Stream<StreamValue<List<MinimalEvent>>> userEventsStream(int userId) =>
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>> userEventsStream(
+    int userId,
+  ) =>
       _userStreamMapper.stream(userId);
 
   final _futureEventsStreamCounter =
-      StreamCounter<List<MinimalEvent>>([], "future");
+      StreamCounter<List<MinimalEvent>, RefreshedType>(
+    [],
+    "future-events",
+    initialState: RefreshedType.none,
+  );
 
   final _archivedEventsStreamCounter =
-      StreamCounter<List<MinimalEvent>>([], "archived");
+      StreamCounter<List<MinimalEvent>, RefreshedType>(
+    [],
+    "archived-events",
+    initialState: RefreshedType.none,
+  );
 
   final _searchEventsStreamCounter =
-      StreamCounter<List<MinimalEvent>>([], "search");
+      StreamCounter<List<MinimalEvent>, RefreshedType>(
+    [],
+    "search-events",
+    initialState: RefreshedType.none,
+  );
 
-  Stream<StreamValue<List<MinimalEvent>>> get futureStream =>
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>> get futureStream =>
       _futureEventsStreamCounter.stream;
 
-  Stream<StreamValue<List<MinimalEvent>>> get archivedEventsStream =>
-      _archivedEventsStreamCounter.stream;
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>>
+      get archivedEventsStream => _archivedEventsStreamCounter.stream;
 
-  Stream<StreamValue<List<MinimalEvent>>> get searchEventsStream =>
-      _searchEventsStreamCounter.stream;
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>>
+      get searchEventsStream => _searchEventsStreamCounter.stream;
 
   String _lastQuery = "";
 
@@ -119,7 +141,7 @@ class EventRepository {
       _userStreamMapper.add(
         userId,
         pageResult.items,
-        refreshing: refreshedTypeFromPageResult(pageResult),
+        state: pageResult.refreshedType,
       );
 
       return pageResult;
@@ -129,19 +151,19 @@ class EventRepository {
       case "future":
         _futureEventsStreamCounter.add(
           pageResult.items,
-          refreshing: refreshedTypeFromPageResult(pageResult),
+          state: pageResult.refreshedType,
         );
         break;
       case "archived":
         _archivedEventsStreamCounter.add(
           pageResult.items,
-          refreshing: refreshedTypeFromPageResult(pageResult),
+          state: pageResult.refreshedType,
         );
         break;
       default:
         _searchEventsStreamCounter.add(
           pageResult.items,
-          refreshing: refreshedTypeFromPageResult(pageResult),
+          state: pageResult.refreshedType,
         );
         break;
     }
@@ -185,18 +207,16 @@ class EventRepository {
       details.copyWith(event: editedEvent),
     );
 
-    for (var controller in [
-          _futureEventsStreamCounter.subject,
-          _archivedEventsStreamCounter.subject,
-          _searchEventsStreamCounter.subject,
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
         ] +
-        _userStreamMapper.subjects) {
-      controller?.add(
-        StreamValue(
-          controller.value.value
-              .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
-              .toList(),
-        ),
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
+            .toList(),
       );
     }
   }
@@ -217,20 +237,18 @@ class EventRepository {
       ),
     );
 
-    for (var controller in [
-          _futureEventsStreamCounter.subject,
-          _archivedEventsStreamCounter.subject,
-          _searchEventsStreamCounter.subject,
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
         ] +
-        _userStreamMapper.subjects) {
-      controller?.add(
-        StreamValue(
-          controller.value.value
-              .map((e) => e.id == eventId
-                  ? e.copyWith(status: EventStatusState.scheduled)
-                  : e)
-              .toList(),
-        ),
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId
+                ? e.copyWith(status: EventStatusState.scheduled)
+                : e)
+            .toList(),
       );
     }
   }
@@ -338,20 +356,18 @@ class EventRepository {
       ),
     );
 
-    for (var controller in [
-          _futureEventsStreamCounter.subject,
-          _archivedEventsStreamCounter.subject,
-          _searchEventsStreamCounter.subject,
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
         ] +
-        _userStreamMapper.subjects) {
-      controller?.add(
-        StreamValue(
-          controller.value.value
-              .map((e) => e.id == eventId
-                  ? e.copyWith(status: EventStatusState.canceled)
-                  : e)
-              .toList(),
-        ),
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId
+                ? e.copyWith(status: EventStatusState.canceled)
+                : e)
+            .toList(),
       );
     }
   }

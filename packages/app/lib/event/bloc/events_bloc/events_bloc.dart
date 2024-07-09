@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
-import 'package:hollybike/shared/utils/stream_mapper.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../services/event/event_repository.dart';
 import 'events_event.dart';
@@ -22,7 +22,7 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<RefreshEvents>(_onRefreshEvents);
   }
 
-  Stream<StreamValue<List<MinimalEvent>>> _getStream() {
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>> _getStream() {
     if (requestType == "future") {
       return eventRepository.futureStream;
     } else {
@@ -34,13 +34,11 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     SubscribeToEvents event,
     Emitter<EventsState> emit,
   ) async {
-    await emit.forEach<StreamValue<List<MinimalEvent>>>(
+    await emit.forEach<StreamValue<List<MinimalEvent>, RefreshedType>>(
       _getStream(),
       onData: (data) {
         final events = data.value;
-        final isRefreshed = data.refreshed;
-
-        print('events: $isRefreshed');
+        final isRefreshed = data.state;
 
         if (isRefreshed == RefreshedType.none) {
           return state.copyWith(

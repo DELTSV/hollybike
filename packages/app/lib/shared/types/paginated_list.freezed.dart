@@ -156,14 +156,15 @@ class __$$PaginatedListImplCopyWithImpl<T, $Res>
 
 /// @nodoc
 @JsonSerializable(genericArgumentFactories: true)
-class _$PaginatedListImpl<T> implements _PaginatedList<T> {
+class _$PaginatedListImpl<T> extends _PaginatedList<T> {
   const _$PaginatedListImpl(
       {required this.page,
       @JsonKey(name: "total_page") required this.totalPages,
       @JsonKey(name: "per_page") required this.perPage,
       @JsonKey(name: "total_data") required this.totalItems,
       @JsonKey(name: "data") required final List<T> items})
-      : _items = items;
+      : _items = items,
+        super._();
 
   factory _$PaginatedListImpl.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
@@ -226,7 +227,7 @@ class _$PaginatedListImpl<T> implements _PaginatedList<T> {
   }
 }
 
-abstract class _PaginatedList<T> implements PaginatedList<T> {
+abstract class _PaginatedList<T> extends PaginatedList<T> {
   const factory _PaginatedList(
           {required final int page,
           @JsonKey(name: "total_page") required final int totalPages,
@@ -234,6 +235,7 @@ abstract class _PaginatedList<T> implements PaginatedList<T> {
           @JsonKey(name: "total_data") required final int totalItems,
           @JsonKey(name: "data") required final List<T> items}) =
       _$PaginatedListImpl<T>;
+  const _PaginatedList._() : super._();
 
   factory _PaginatedList.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =

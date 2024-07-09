@@ -1,5 +1,6 @@
 import '../../../shared/types/paginated_list.dart';
-import '../../../shared/utils/stream_mapper.dart';
+import '../../../shared/utils/streams/stream_mapper.dart';
+import '../../../shared/utils/streams/stream_value.dart';
 import '../../types/participation/event_candidate.dart';
 import '../../types/participation/event_participation.dart';
 import '../../types/participation/event_role.dart';
@@ -9,16 +10,16 @@ class EventParticipationRepository {
   final EventParticipationsApi eventParticipationsApi;
 
   final _eventParticipationsStreamMapper =
-      StreamMapper<List<EventParticipation>>(seedValue: []);
+      StreamMapper<List<EventParticipation>, void>(seedValue: []);
   final _eventCandidatesStreamMapper =
-      StreamMapper<List<EventCandidate>>(seedValue: []);
+      StreamMapper<List<EventCandidate>, void>(seedValue: []);
 
   EventParticipationRepository({required this.eventParticipationsApi});
 
-  Stream<StreamValue<List<EventCandidate>>> candidatesStream(int eventId) =>
+  Stream<StreamValue<List<EventCandidate>, void>> candidatesStream(int eventId) =>
       _eventCandidatesStreamMapper.stream(eventId);
 
-  Stream<StreamValue<List<EventParticipation>>> participationsStream(int eventId) =>
+  Stream<StreamValue<List<EventParticipation>, void>> participationsStream(int eventId) =>
       _eventParticipationsStreamMapper.stream(eventId);
 
   Future<PaginatedList<EventCandidate>> fetchCandidates(

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
-import 'package:hollybike/shared/utils/stream_mapper.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../../shared/types/paginated_list.dart';
 import '../../types/minimal_event.dart';
@@ -20,11 +20,11 @@ class UserEventsBloc extends EventsBloc {
     SubscribeToEvents event,
     Emitter<EventsState> emit,
   ) async {
-    await emit.forEach<StreamValue<List<MinimalEvent>>>(
+    await emit.forEach<StreamValue<List<MinimalEvent>, RefreshedType>>(
       eventRepository.userEventsStream(userId),
       onData: (data) {
         final events = data.value;
-        final isRefreshed = data.refreshed;
+        final isRefreshed = data.state;
 
         if (isRefreshed == RefreshedType.none) {
           return state.copyWith(

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
-import 'package:hollybike/shared/utils/stream_mapper.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../services/event/event_repository.dart';
 import 'event_details_event.dart';
@@ -32,7 +32,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     SubscribeToEvent event,
     Emitter<EventDetailsState> emit,
   ) async {
-    await emit.forEach<StreamValue<EventDetails?>>(
+    await emit.forEach<StreamValue<EventDetails?, void>>(
       _eventRepository.eventDetailsStream(eventId),
       onData: (data) => EventDetailsState(
         eventDetails: data.value,

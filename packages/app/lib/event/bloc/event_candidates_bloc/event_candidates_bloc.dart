@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:hollybike/shared/utils/stream_mapper.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../../shared/types/paginated_list.dart';
 import '../../services/event/event_repository.dart';
@@ -34,7 +34,7 @@ class EventCandidatesBloc
     SubscribeToEventCandidates event,
     Emitter<EventCandidatesState> emit,
   ) async {
-    await emit.forEach<StreamValue<List<EventCandidate>>>(
+    await emit.forEach<StreamValue<List<EventCandidate>, void>>(
       eventParticipationsRepository.candidatesStream(eventId),
       onData: (data) => state.copyWith(
         candidates: data.value,
