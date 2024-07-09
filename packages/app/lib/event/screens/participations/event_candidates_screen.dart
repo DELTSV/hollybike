@@ -143,7 +143,9 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                 ),
                 BlocBuilder<EventCandidatesBloc, EventCandidatesState>(
                   builder: (context, state) {
-                    if (state is EventCandidatesPageLoadInProgress) {
+                    final isLoading = state is EventCandidatesPageLoadInProgress;
+
+                    if (isLoading && state.candidates.isEmpty) {
                       return const Column(
                         children: [
                           SizedBox(height: 32),
@@ -179,14 +181,23 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                       );
                     }
 
+                    final totalCandidates = state.candidates.length + (state.hasMore ? 1 : 0);
+
                     return Expanded(
                       child: ListView.separated(
                         controller: _scrollController,
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        itemCount: state.candidates.length,
+                        itemCount: totalCandidates,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
+                          if (state.hasMore && index == totalCandidates - 1) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+
                           final candidate = state.candidates[index];
 
                           return EventCandidateCard(

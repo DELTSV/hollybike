@@ -42,6 +42,7 @@ class EventCandidatesState {
     Event? createdEvent,
   }) {
     return EventCandidatesState(
+      status: status ?? this.status,
       candidates: candidates ?? this.candidates,
       search: search ?? this.search,
       hasMore: hasMore ?? this.hasMore,

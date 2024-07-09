@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/bloc/events_bloc/events_bloc.dart';
+import 'package:hollybike/shared/utils/stream_mapper.dart';
 
 import '../../../shared/types/paginated_list.dart';
 import '../../types/minimal_event.dart';
@@ -19,11 +20,26 @@ class UserEventsBloc extends EventsBloc {
     SubscribeToEvents event,
     Emitter<EventsState> emit,
   ) async {
-    await emit.forEach<List<MinimalEvent>>(
+    await emit.forEach<StreamValue<List<MinimalEvent>>>(
       eventRepository.userEventsStream(userId),
-      onData: (events) => state.copyWith(
-        events: events,
-      ),
+      onData: (data) {
+        final events = data.value;
+        final isRefreshed = data.refreshed;
+
+        if (isRefreshed == RefreshedType.none) {
+          return state.copyWith(
+            events: events,
+          );
+        }
+
+        return EventPageLoadSuccess(
+          state.copyWith(
+            events: events,
+            hasMore: isRefreshed == RefreshedType.refreshedAndHasMore,
+            nextPage: 1,
+          ),
+        );
+      },
     );
   }
 
@@ -34,19 +50,9 @@ class UserEventsBloc extends EventsBloc {
     emit(EventPageLoadInProgress(state));
 
     try {
-      PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
+      await eventRepository.refreshEvents(
         requestType,
         userId: userId,
-      );
-
-      emit(
-        EventPageLoadSuccess(
-          state.copyWith(
-            hasMore:
-                page.items.length == eventRepository.numberOfEventsPerRequest,
-            nextPage: 1,
-          ),
-        ),
       );
     } catch (e) {
       emit(handleError(e, 'Error while refreshing events'));

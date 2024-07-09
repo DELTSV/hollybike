@@ -24,27 +24,30 @@ class EventRepository {
   final _eventDetailsStreamMapper =
       StreamMapper<EventDetails?>(seedValue: null);
 
-  Stream<EventDetails?> eventDetailsStream(int eventId) =>
+  Stream<StreamValue<EventDetails?>> eventDetailsStream(int eventId) =>
       _eventDetailsStreamMapper.stream(eventId);
 
   final _userStreamMapper = StreamMapper<List<MinimalEvent>>(seedValue: []);
 
-  Stream<List<MinimalEvent>> userEventsStream(int userId) =>
+  Stream<StreamValue<List<MinimalEvent>>> userEventsStream(int userId) =>
       _userStreamMapper.stream(userId);
 
-  final _futureEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
+  final _futureEventsStreamCounter =
+      StreamCounter<List<MinimalEvent>>([], "future");
 
-  final _archivedEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
+  final _archivedEventsStreamCounter =
+      StreamCounter<List<MinimalEvent>>([], "archived");
 
-  final _searchEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
+  final _searchEventsStreamCounter =
+      StreamCounter<List<MinimalEvent>>([], "search");
 
-  Stream<List<MinimalEvent>> get futureStream =>
+  Stream<StreamValue<List<MinimalEvent>>> get futureStream =>
       _futureEventsStreamCounter.stream;
 
-  Stream<List<MinimalEvent>> get archivedEventsStream =>
+  Stream<StreamValue<List<MinimalEvent>>> get archivedEventsStream =>
       _archivedEventsStreamCounter.stream;
 
-  Stream<List<MinimalEvent>> get searchEventsStream =>
+  Stream<StreamValue<List<MinimalEvent>>> get searchEventsStream =>
       _searchEventsStreamCounter.stream;
 
   String _lastQuery = "";
@@ -116,6 +119,7 @@ class EventRepository {
       _userStreamMapper.add(
         userId,
         pageResult.items,
+        refreshing: refreshedTypeFromPageResult(pageResult),
       );
 
       return pageResult;
@@ -125,16 +129,19 @@ class EventRepository {
       case "future":
         _futureEventsStreamCounter.add(
           pageResult.items,
+          refreshing: refreshedTypeFromPageResult(pageResult),
         );
         break;
       case "archived":
         _archivedEventsStreamCounter.add(
           pageResult.items,
+          refreshing: refreshedTypeFromPageResult(pageResult),
         );
         break;
       default:
         _searchEventsStreamCounter.add(
           pageResult.items,
+          refreshing: refreshedTypeFromPageResult(pageResult),
         );
         break;
     }
@@ -166,12 +173,17 @@ class EventRepository {
       return;
     }
 
-    final editedEvent = await eventApi.editEvent(eventId, event.withBudget(
-      details.event.budget,
-    ));
+    final editedEvent = await eventApi.editEvent(
+      eventId,
+      event.withBudget(
+        details.event.budget,
+      ),
+    );
 
     _eventDetailsStreamMapper.add(
-        eventId, details.copyWith(event: editedEvent));
+      eventId,
+      details.copyWith(event: editedEvent),
+    );
 
     for (var controller in [
           _futureEventsStreamCounter.subject,
@@ -179,10 +191,12 @@ class EventRepository {
           _searchEventsStreamCounter.subject,
         ] +
         _userStreamMapper.subjects) {
-      controller.add(
-        controller.value
-            .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
-            .toList(),
+      controller?.add(
+        StreamValue(
+          controller.value.value
+              .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
+              .toList(),
+        ),
       );
     }
   }
@@ -209,12 +223,14 @@ class EventRepository {
           _searchEventsStreamCounter.subject,
         ] +
         _userStreamMapper.subjects) {
-      controller.add(
-        controller.value
-            .map((e) => e.id == eventId
-                ? e.copyWith(status: EventStatusState.scheduled)
-                : e)
-            .toList(),
+      controller?.add(
+        StreamValue(
+          controller.value.value
+              .map((e) => e.id == eventId
+                  ? e.copyWith(status: EventStatusState.scheduled)
+                  : e)
+              .toList(),
+        ),
       );
     }
   }
@@ -260,19 +276,39 @@ class EventRepository {
     await eventApi.deleteEvent(eventId);
 
     for (var userId in _userStreamMapper.keys) {
-      refreshEvents("future", userId: userId);
+      final events = _userStreamMapper.get(userId);
+
+      if (events == null) {
+        continue;
+      }
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents("future", userId: userId);
+      }
     }
 
     if (_futureEventsStreamCounter.isListening) {
-      refreshEvents("future");
+      final events = _futureEventsStreamCounter.value;
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents("future");
+      }
     }
 
     if (_archivedEventsStreamCounter.isListening) {
-      refreshEvents("archived");
+      final events = _archivedEventsStreamCounter.value;
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents("archived");
+      }
     }
 
     if (_searchEventsStreamCounter.isListening) {
-      refreshEvents(null, query: _lastQuery);
+      final events = _searchEventsStreamCounter.value;
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents(null, query: _lastQuery);
+      }
     }
   }
 
@@ -298,12 +334,14 @@ class EventRepository {
           _searchEventsStreamCounter.subject,
         ] +
         _userStreamMapper.subjects) {
-      controller.add(
-        controller.value
-            .map((e) => e.id == eventId
-                ? e.copyWith(status: EventStatusState.canceled)
-                : e)
-            .toList(),
+      controller?.add(
+        StreamValue(
+          controller.value.value
+              .map((e) => e.id == eventId
+                  ? e.copyWith(status: EventStatusState.canceled)
+                  : e)
+              .toList(),
+        ),
       );
     }
   }
@@ -537,13 +575,16 @@ class EventRepository {
       return;
     }
 
-    await eventApi.editEvent(eventId, EventFormData(
-      name: details.event.name,
-      description: details.event.description,
-      startDate: details.event.startDate,
-      endDate: details.event.endDate,
-      budget: budget,
-    ));
+    await eventApi.editEvent(
+      eventId,
+      EventFormData(
+        name: details.event.name,
+        description: details.event.description,
+        startDate: details.event.startDate,
+        endDate: details.event.endDate,
+        budget: budget,
+      ),
+    );
 
     _eventDetailsStreamMapper.add(
       eventId,
@@ -591,7 +632,7 @@ class EventRepository {
   }
 
   Future<void> uploadExpenseProof(
-      int eventId,
+    int eventId,
     int expenseId,
     File image,
   ) async {
