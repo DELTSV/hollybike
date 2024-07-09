@@ -121,13 +121,13 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
           ),
           floatingActionButton: floatingActionButton,
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
                 TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -141,6 +141,7 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                   ),
                   onChanged: _onSearchCandidates,
                 ),
+                const SizedBox(height: 16),
                 BlocBuilder<EventCandidatesBloc, EventCandidatesState>(
                   builder: (context, state) {
                     final isLoading =
@@ -186,30 +187,33 @@ class _EventCandidatesScreenState extends State<EventCandidatesScreen> {
                         state.candidates.length + (state.hasMore ? 1 : 0);
 
                     return Expanded(
-                      child: ListView.separated(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        itemCount: totalCandidates,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          if (state.hasMore && index == totalCandidates - 1) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: ListView.separated(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.only(bottom: 80),
+                          itemCount: totalCandidates,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 6),
+                          itemBuilder: (context, index) {
+                            if (state.hasMore && index == totalCandidates - 1) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            final candidate = state.candidates[index];
+
+                            return EventCandidateCard(
+                              candidate: candidate,
+                              alreadyParticipating: candidate.eventRole != null,
+                              isSelected:
+                                  _selectedCandidates.contains(candidate.id) ||
+                                      candidate.eventRole != null,
+                              onTap: () => _onCandidateSelected(candidate.id),
                             );
-                          }
-
-                          final candidate = state.candidates[index];
-
-                          return EventCandidateCard(
-                            candidate: candidate,
-                            alreadyParticipating: candidate.eventRole != null,
-                            isSelected:
-                                _selectedCandidates.contains(candidate.id) ||
-                                    candidate.eventRole != null,
-                            onTap: () => _onCandidateSelected(candidate.id),
-                          );
-                        },
+                          },
+                        ),
                       ),
                     );
                   },

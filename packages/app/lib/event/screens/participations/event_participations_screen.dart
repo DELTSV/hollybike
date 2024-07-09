@@ -130,7 +130,7 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
           child: Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
-              padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
+              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
               child:
                   BlocBuilder<EventParticipationBloc, EventParticipationsState>(
                 builder: (context, state) {
@@ -159,46 +159,47 @@ class _EventParticipationsScreenState extends State<EventParticipationsScreen> {
   Widget _buildList(List<EventParticipation> participants, bool isLoading) {
     final totalCount = participants.length + (isLoading ? 1 : 0);
 
-    return ListView.separated(
-      controller: _scrollController,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      itemCount: totalCount,
-      separatorBuilder: (context, index) => const SizedBox(height: 10),
-      physics: const AlwaysScrollableScrollPhysics(
-        parent: BouncingScrollPhysics(),
-      ),
-      itemBuilder: (context, index) {
-        if (isLoading && index == totalCount - 1) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        final participation = participants[index];
-
-        return TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.ease,
-          builder: (context, double value, child) {
-            return Transform.translate(
-              offset: Offset(30 * (1 - value), 0),
-              child: Opacity(
-                opacity: value,
-                child: EventParticipationCard(
-                  eventId: widget.eventDetails.event.id,
-                  participation: participation,
-                  isOwner: widget.eventDetails.event.owner.id ==
-                      participation.user.id,
-                  isCurrentUser: participation.user.id ==
-                      widget.eventDetails.callerParticipation?.userId,
-                  isCurrentUserOrganizer: widget.eventDetails.isOrganizer,
-                ),
-              ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: ListView.separated(
+        controller: _scrollController,
+        padding: const EdgeInsets.only(bottom: 80),
+        itemCount: totalCount,
+        separatorBuilder: (context, index) => const SizedBox(height: 6),
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          if (isLoading && index == totalCount - 1) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        );
-      },
+          }
+
+          final participation = participants[index];
+
+          return TweenAnimationBuilder(
+            tween: Tween<double>(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.ease,
+            builder: (context, double value, child) {
+              return Transform.translate(
+                offset: Offset(30 * (1 - value), 0),
+                child: Opacity(
+                  opacity: value,
+                  child: EventParticipationCard(
+                    eventId: widget.eventDetails.event.id,
+                    participation: participation,
+                    isOwner: widget.eventDetails.event.owner.id ==
+                        participation.user.id,
+                    isCurrentUser: participation.user.id ==
+                        widget.eventDetails.callerParticipation?.userId,
+                    isCurrentUserOrganizer: widget.eventDetails.isOrganizer,
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
