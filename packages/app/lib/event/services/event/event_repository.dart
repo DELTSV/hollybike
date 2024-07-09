@@ -256,6 +256,16 @@ class EventRepository {
       return;
     }
 
+    final userId = details.callerParticipation!.userId;
+
+    final events = _userStreamMapper.get(userId);
+
+    if (events != null) {
+      if (events.any((e) => e.id == eventId)) {
+        await refreshEvents("future", userId: userId);
+      }
+    }
+
     _eventDetailsStreamMapper.add(
       eventId,
       EventDetails(
@@ -269,7 +279,7 @@ class EventRepository {
       ),
     );
 
-    onParticipantRemoved(details.callerParticipation!.userId, eventId);
+    onParticipantRemoved(userId, eventId);
   }
 
   Future<void> deleteEvent(int eventId) async {
