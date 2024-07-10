@@ -1,6 +1,5 @@
 import {
-	Inputs,
-	useEffect, useMemo, useState,
+	Inputs, useEffect, useMemo, useState,
 } from "preact/hooks";
 import { backendBaseUrl } from "../config";
 import { TAuthInfo } from "../auth/types";
@@ -74,23 +73,10 @@ export async function api<T>(url: string, options?: ApiOptions): Promise<APIResp
 }
 
 export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOptions): Promise<APIResponse<T>> {
-	const headers = new Headers(options?.headers);
-	const token = localStorage.getItem("token") ?? "";
-	headers.append("Authorization", `Bearer ${token}`);
-	if (type !== undefined) {
-		headers.append("Content-Type", type);
-	}
-	const init: RequestInit = {
-		method: options?.method ?? "GET",
-		mode: "cors",
-		body: options?.body,
-		headers: headers,
-		credentials: "same-origin",
-	};
 	let response: Response;
 	if (options?.if !== false) {
 		try {
-			response = await fetch(backendBaseUrl + url, init);
+			response = await apiResponseRaw(url, type, options);
 		} catch (e) {
 			return {
 				status: -1,
@@ -178,6 +164,23 @@ export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOpti
 			message: responseText,
 		};
 	}
+}
+
+export async function apiResponseRaw(url: string, type?: string, options?: ApiRawOptions): Promise<Response> {
+	const headers = new Headers(options?.headers);
+	const token = localStorage.getItem("token") ?? "";
+	headers.append("Authorization", `Bearer ${token}`);
+	if (type !== undefined) {
+		headers.append("Content-Type", type);
+	}
+	const init: RequestInit = {
+		method: options?.method ?? "GET",
+		mode: "cors",
+		body: options?.body,
+		headers: headers,
+		credentials: "same-origin",
+	};
+	return await fetch(backendBaseUrl + url, init);
 }
 
 export function isISODateTime(date: string): boolean {
