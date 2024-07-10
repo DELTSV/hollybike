@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_status.dart';
+import 'package:hollybike/shared/utils/safe_set_state.dart';
 
 import '../../../shared/utils/dates.dart';
 import '../../types/event_status_state.dart';
@@ -22,7 +23,7 @@ class EventPreviewCard extends StatefulWidget {
 
 class _EventPreviewCardState extends State<EventPreviewCard> {
   late String _uniqueKey;
-  bool _animate = false;
+  bool _animate = true;
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _EventPreviewCardState extends State<EventPreviewCard> {
       _animate = false;
 
       Future.delayed(Duration.zero, () {
-        setState(() {
+        safeSetState(() {
           _animate = true;
         });
       });
