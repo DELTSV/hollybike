@@ -157,34 +157,6 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
     return entries;
   }
 
-  Widget _animate(Widget child, int index) {
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: Duration(milliseconds: 100 * index),
-      curve: Curves.ease,
-      builder: (context, double value, _) {
-        if (value != 1) {
-          return const SizedBox();
-        }
-
-        return TweenAnimationBuilder(
-          tween: Tween<double>(begin: 0, end: 1),
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.ease,
-          builder: (context, double value, _) {
-            return Transform.translate(
-              offset: Offset(30 * (1 - value), 0),
-              child: Opacity(
-                opacity: value,
-                child: child,
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   void _handleSelectedValueChange(int? value) {
     widget.controller.animateTo(value as int);
   }
