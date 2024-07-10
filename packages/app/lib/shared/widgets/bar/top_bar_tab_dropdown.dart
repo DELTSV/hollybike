@@ -26,33 +26,85 @@ class TopBarTabDropdown extends StatefulWidget {
 
 class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
   late final TextEditingController controller;
+  late final GlobalKey _menuKey;
   int _currentTab = 0;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
-      child: DropdownMenu(
-        controller: controller,
-        textStyle: Theme.of(context).textTheme.titleMedium,
-        inputDecorationTheme: const InputDecorationTheme(
-          contentPadding: EdgeInsets.only(left: 16),
-          border: InputBorder.none,
-        ),
-        menuStyle: MenuStyle(
-          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return DropdownMenu(
+                key: _menuKey,
+                controller: controller,
+                textStyle: Theme.of(context).textTheme.titleMedium,
+                inputDecorationTheme: InputDecorationTheme(
+                  constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.only(left: 16),
+                  border: InputBorder.none,
+                ),
+                menuStyle: MenuStyle(
+                  padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  backgroundColor:
+                      WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
+                ),
+                onSelected: _handleSelectedValueChange,
+                dropdownMenuEntries: _renderMenuEntries(),
+              );
+            }
+          ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: openDropdown,
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
           ),
-          backgroundColor:
-              WidgetStatePropertyAll(Theme.of(context).colorScheme.primary),
-        ),
-        onSelected: _handleSelectedValueChange,
-        dropdownMenuEntries: _renderMenuEntries(),
+        ],
       ),
     );
+  }
+
+  void openDropdown() {
+    TextField? detector;
+    void searchForGestureDetector(BuildContext element) {
+      element.visitChildElements((element) {
+        if (element.widget is TextField) {
+          detector = element.widget as TextField;
+          return;
+
+        } else {
+          searchForGestureDetector(element);
+        }
+
+        return;
+      });
+    }
+
+    final context = _menuKey.currentContext;
+
+    if (context == null) {
+      return;
+    }
+
+    searchForGestureDetector(context);
+
+    if (detector == null) {
+      return;
+    }
+
+    detector?.onTap?.call();
   }
 
   @override
@@ -61,6 +113,8 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
     controller = TextEditingController(
       text: widget.entries[widget.controller.index].title,
     );
+
+    _menuKey = GlobalKey();
 
     _currentTab = widget.controller.index;
 
@@ -94,8 +148,8 @@ class _TopBarTabDropdownState extends State<TopBarTabDropdown> {
       entries.add(
         DropdownMenuEntry(
           value: i,
-          labelWidget: _animate(Text(widget.entries[i].title), i),
-          trailingIcon: _animate(Icon(widget.entries[i].icon), i),
+          labelWidget: Text(widget.entries[i].title),
+          trailingIcon: Icon(widget.entries[i].icon),
           label: widget.entries[i].title,
         ),
       );

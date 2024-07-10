@@ -23,25 +23,32 @@ class TopBar extends StatelessWidget {
           left: prefix == null ? 0 : 16,
           right: suffix == null ? 0 : 16,
         ),
-        child: Stack(
-          children: _renderTitle() +
-              [
-                Container(
-                  constraints: BoxConstraints.tight(const Size.fromHeight(60)),
-                  child: Row(
+        child: SizedBox(
+          height: 46,
+          child: Stack(
+            fit: StackFit.expand,
+            children: _renderTitle() +
+                [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: _renderFix(prefix) + _renderFix(suffix),
                   ),
-                ),
-              ],
+                ],
+          ),
         ),
       ),
     );
   }
 
-  List<Widget> _renderFix(Widget? fix) =>
-      fix == null ? [const SizedBox()] : [fix];
+  List<Widget> _renderFix(Widget? fix) => fix == null
+      ? [const SizedBox()]
+      : [
+          SizedBox(
+            height: double.infinity,
+            child: fix,
+          )
+        ];
 
   List<Widget> _renderTitle() => title == null
       ? <Widget>[]
@@ -59,10 +66,7 @@ class TopBar extends StatelessWidget {
                     tag: "top_bar_title",
                     transitionOnUserGestures: true,
                     child: BarContainer(
-                      child: Padding(
-                        padding: EdgeInsets.all(noPadding ? 1.5 : 16),
-                        child: title,
-                      ),
+                      child: title,
                     ),
                   ),
                 ),

@@ -56,6 +56,7 @@ class _EditBudgetModalState extends State<EditBudgetModal> {
     final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       title: Text(
         widget.addMode ? 'Ajouter un budget' : 'Modifier le budget',
       ),

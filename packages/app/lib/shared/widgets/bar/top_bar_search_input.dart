@@ -28,33 +28,37 @@ class _TopBarSearchInputState extends State<TopBarSearchInput> {
     return Material(
       type: MaterialType.transparency,
       child: Container(
-        margin: const EdgeInsets.all(9),
-        padding: const EdgeInsets.all(3),
+        margin: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(7),
+          borderRadius: BorderRadius.circular(50),
         ),
-        child: TextFormField(
-          focusNode: _focusNode,
-          textAlignVertical: TextAlignVertical.center,
-          style: Theme.of(context).textTheme.titleSmall,
-          onEditingComplete: _handleEditingCompletion,
-          onTapOutside: _handleOutsideTap,
-          onChanged: _handleChange,
-          decoration: InputDecoration(
-            hintText: "Recherche",
-            hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return TextFormField(
+              focusNode: _focusNode,
+              textAlignVertical: TextAlignVertical.center,
+              style: Theme.of(context).textTheme.titleSmall,
+              onEditingComplete: _handleEditingCompletion,
+              onTapOutside: _handleOutsideTap,
+              onChanged: _handleChange,
+              decoration: InputDecoration(
+                hintText: "Recherche",
+                hintStyle: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                constraints: BoxConstraints(maxHeight: constraints.maxHeight),
+                isDense: true,
+                prefixIcon: Icon(
+                  Icons.search,
                   color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  size: constraints.maxHeight * 0.6,
                 ),
-            constraints: const BoxConstraints.expand(height: 32),
-            contentPadding: const EdgeInsets.only(bottom: 14),
-            prefixIcon: Icon(
-              Icons.search,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            ),
-            border: InputBorder.none,
-          ),
-          controller: _controller,
+                border: InputBorder.none,
+              ),
+              controller: _controller,
+            );
+          }
         ),
       ),
     );

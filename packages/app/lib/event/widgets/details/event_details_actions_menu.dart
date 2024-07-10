@@ -30,6 +30,10 @@ class EventDetailsActionsMenu extends StatelessWidget {
     if (actions.isEmpty) return const SizedBox();
 
     return PopupMenuButton(
+      icon: Icon(
+        Icons.more_vert,
+        color: Theme.of(context).colorScheme.primary,
+      ),
       itemBuilder: (context) {
         return actions;
       },

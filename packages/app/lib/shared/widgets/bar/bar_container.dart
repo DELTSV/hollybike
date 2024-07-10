@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BarContainer extends StatelessWidget {
-  final Widget child;
+  final Widget? child;
 
   const BarContainer({
     super.key,
@@ -12,17 +12,15 @@ class BarContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
+        alignment: Alignment.centerLeft,
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(50),
           color: Theme.of(context).colorScheme.primary,
         ),
+        height: double.infinity,
         foregroundDecoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            width: 2,
-            color: Theme.of(context).colorScheme.onPrimary.withAlpha(100),
-          ),
+          borderRadius: BorderRadius.circular(50),
         ),
         clipBehavior: Clip.hardEdge,
         child: child,

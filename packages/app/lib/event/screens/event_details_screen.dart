@@ -236,9 +236,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                                     Theme.of(context).colorScheme.secondary,
                                 tabs: const [
                                   Tab(icon: Icon(Icons.info)),
-                                  Tab(icon: Icon(Icons.photo_library)),
-                                  Tab(icon: Icon(Icons.image)),
-                                  Tab(icon: Icon(Icons.map)),
+                                  Tab(icon: Icon(Icons.photo_library_rounded)),
+                                  Tab(
+                                    icon: Icon(
+                                      Icons.add_photo_alternate_rounded,
+                                    ),
+                                  ),
+                                  Tab(icon: Icon(Icons.explore_rounded)),
+                                  Tab(icon: Icon(Icons.map_rounded)),
                                 ],
                               ),
                             ),
@@ -420,6 +425,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     }
 
     return TopBarActionContainer(
+      colorInverted: true,
       child: EventDetailsActionsMenu(
         eventId: event.event.id,
         status: event.event.status,
