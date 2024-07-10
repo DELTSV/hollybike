@@ -33,6 +33,7 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
     final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       title: const Text(
         'Ajouter une dépense',
       ),

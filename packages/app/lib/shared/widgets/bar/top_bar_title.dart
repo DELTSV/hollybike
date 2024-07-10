@@ -10,9 +10,12 @@ class TopBarTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
     );
   }
 }

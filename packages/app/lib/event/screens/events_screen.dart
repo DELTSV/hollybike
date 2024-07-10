@@ -77,7 +77,7 @@ class _EventsScreenState extends State<EventsScreen>
               fragment: FutureEvents(),
             ),
             const TabDescription(
-              title: "Vos évènements",
+              title: "Mes évènements",
               icon: Icons.event_available,
               fragment: UserEvents(),
             ),

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class TopBarActionContainer extends StatefulWidget {
   final void Function()? onPressed;
   final Widget? child;
+  final bool colorInverted;
 
   const TopBarActionContainer({
     super.key,
     this.onPressed,
     required this.child,
+    this.colorInverted = false,
   });
 
   @override
@@ -23,20 +25,23 @@ class _TopBarActionContainerState extends State<TopBarActionContainer>
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _animation,
-      child: Material(
-        type: MaterialType.transparency,
-        child: Ink(
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Theme.of(context).colorScheme.primary,
-            border: Border.all(
-              width: 2,
-              color: Theme.of(context).colorScheme.onPrimary.withAlpha(100),
-            ),
+            color: widget.colorInverted
+                ? Theme.of(context).colorScheme.onPrimary
+                : Theme.of(context).colorScheme.primary,
           ),
-          child: InkWell(
-            onTap: widget.onPressed,
-            child: widget.child,
+          child: Material(
+            shape: const CircleBorder(),
+            type: MaterialType.transparency,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(50),
+              onTap: widget.onPressed,
+              child: widget.child,
+            ),
           ),
         ),
       ),

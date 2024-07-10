@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/widgets/profile_page/profile_page.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/bloc_provided_builder.dart';
 
 import '../../shared/widgets/bar/top_bar.dart';
@@ -18,10 +19,12 @@ class MeScreen extends StatelessWidget {
     return Hud(
       displayNavBar: true,
       appBar: TopBar(
-        prefix: TopBarActionIcon(
+        suffix: TopBarActionIcon(
+          colorInverted: true,
           icon: Icons.settings,
           onPressed: () => _handlePrefixClick(context),
         ),
+        title: const TopBarTitle("Mon profil"),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
         builder: (context, bloc, state) => ProfilePage(

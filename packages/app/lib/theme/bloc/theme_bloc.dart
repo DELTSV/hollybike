@@ -32,6 +32,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     surface: const Color(0xff11111b),
     onSurface: const Color(0xffbac2de),
     onSurfaceVariant: const Color(0xffcdd6f4),
+    surfaceContainer: const Color(0xff1e1e2e),
     outline: const Color(0xffcdd6f4),
     secondary: const Color(0xff94e2d5),
   );
@@ -48,6 +49,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     surface: const Color(0xffdce0e8),
     onSurface: const Color(0xff4c4f69),
     onSurfaceVariant: const Color(0xff5c5f77),
+    surfaceContainer: const Color(0xffeff1f5),
     outline: const Color(0xff5c5f77),
     secondary: const Color(0xff179299),
   );
