@@ -202,7 +202,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
               ),
               floatingActionButton: _getFloatingButton(),
               body: DefaultTabController(
-                length: 4,
+                length: 5,
                 child: NestedScrollView(
                   controller: _scrollController,
                   headerSliverBuilder: (
