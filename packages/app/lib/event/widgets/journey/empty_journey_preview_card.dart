@@ -26,31 +26,13 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Flexible(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Lottie.asset(
-                      'assets/lottie/lottie_journey.json',
-                      repeat: false,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Aucun parcours sélectionné',
-                    softWrap: true,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                  ),
-                ],
-              ),
+            Lottie.asset(
+              'assets/lottie/lottie_journey.json',
+              repeat: false,
             ),
-            const Flexible(
+            const SizedBox(width: 16),
+            const Expanded(
               child: Text(
                 'Sélectionner un parcours',
                 textAlign: TextAlign.center,

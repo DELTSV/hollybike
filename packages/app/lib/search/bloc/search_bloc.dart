@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
+import 'package:hollybike/shared/types/paginated_list.dart';
 
 import '../../event/types/minimal_event.dart';
 import '../../profile/services/profile_repository.dart';
+import '../../shared/utils/streams/stream_value.dart';
 import 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -26,9 +28,26 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     SubscribeToEventsSearch event,
     Emitter<SearchState> emit,
   ) async {
-    await emit.forEach<List<MinimalEvent>>(
+    await emit.forEach<StreamValue<List<MinimalEvent>, RefreshedType>>(
       eventRepository.searchEventsStream,
-      onData: (events) => state.copyWith(events: events),
+      onData: (data) {
+        final events = data.value;
+        final isRefreshed = data.state;
+
+        if (isRefreshed == RefreshedType.none) {
+          return state.copyWith(
+            events: events,
+          );
+        }
+
+        return SearchLoadSuccess(
+          state.copyWith(
+            events: events,
+            hasMoreEvents: isRefreshed == RefreshedType.refreshedAndHasMore,
+            eventsNextPage: 1,
+          ),
+        );
+      },
     );
   }
 
@@ -106,7 +125,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(SearchLoadInProgress(const SearchState()));
 
     try {
-      final eventsPage = await eventRepository.refreshEvents(
+      await eventRepository.refreshEvents(
         null,
         query: event.query,
       );
@@ -121,9 +140,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         SearchLoadSuccess(
           state.copyWith(
             lastSearchQuery: event.query,
-            hasMoreEvents: eventsPage.items.length ==
-                eventRepository.numberOfEventsPerRequest,
-            eventsNextPage: 1,
             profiles: profilesPage.items,
             hasMoreProfiles: profilesPage.items.length ==
                 eventRepository.numberOfEventsPerRequest,

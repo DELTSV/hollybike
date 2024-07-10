@@ -11,7 +11,7 @@ class EventDetailsDescription extends StatefulWidget {
 }
 
 class _EventDetailsDescriptionState extends State<EventDetailsDescription> {
-  bool _expanded = true;
+  bool _expanded = false;
 
   @override
   Widget build(BuildContext context) {
