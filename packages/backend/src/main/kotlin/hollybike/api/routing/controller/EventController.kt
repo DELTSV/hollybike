@@ -122,7 +122,9 @@ class EventController(
 			val (event, callerParticipation) = eventService.getEventWithParticipation(call.user, id.details.id)
 				?: return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'a pas été trouvé")
 
-			val eventExpenses = expenseService.getEventExpense(call.user, event)
+			val eventExpenses = callerParticipation?.let {
+				expenseService.getEventExpense(it, call.user, event)
+			}
 
 			eventParticipationService.getParticipationsPreview(call.user, id.details.id)
 				.onSuccess { (participants, participantsCount) ->
@@ -142,13 +144,19 @@ class EventController(
 	}
 
 	private fun Route.getEventExpenseReport() {
-		get<Events.Id.Expenses.Report> {
-			val event = eventService.getEvent(call.user, it.expenses.id.id) ?: run {
+		get<Events.Id.Expenses.Report> { report ->
+			val event = eventService.getEvent(call.user, report.expenses.id.id) ?: run {
 				return@get call.respond(HttpStatusCode.NotFound, "L'évènement n'existe pas")
 			}
-			val expenses = expenseService.getEventExpense(call.user, event) ?: run {
+
+			val callerParticipation = eventParticipationService.getParticipation(call.user, event.id.value).getOrElse {
+				return@get eventService.handleEventExceptions(it, call)
+			}
+
+			val expenses = expenseService.getEventExpense(callerParticipation, call.user, event) ?: run {
 				return@get call.respond(HttpStatusCode.NotFound, "Les dépenses n'ont pas été trouvé")
 			}
+
 			call.respondOutputStream(ContentType.Text.CSV) {
 				write("name,description,amount,date\n".toByteArray(Charsets.UTF_8))
 				expenses.forEach { e ->
@@ -376,9 +384,9 @@ class EventController(
 
 			val geojson = json.decodeFromString<GeoJson>(data.toString(Charsets.UTF_8))
 
-			if(call.request.accept()?.contains("geo+json") == true) {
+			if (call.request.accept()?.contains("geo+json") == true) {
 				call.respond(json.encodeToString(geojson))
-			} else if(call.request.accept()?.contains("gpx") == true) {
+			} else if (call.request.accept()?.contains("gpx") == true) {
 				call.respond(xml.encodeToString(geojson.toGpx()))
 			} else {
 				call.respond(HttpStatusCode.BadRequest, "Il manque un format de retour")
