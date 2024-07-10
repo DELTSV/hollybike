@@ -1,6 +1,5 @@
 package hollybike.api.types.journey
 
-import aws.smithy.kotlin.runtime.util.length
 import hollybike.api.logger
 import kotlinx.datetime.Instant
 import kotlinx.datetime.format.DateTimeComponents
