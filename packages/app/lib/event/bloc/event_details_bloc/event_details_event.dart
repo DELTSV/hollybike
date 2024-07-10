@@ -48,3 +48,7 @@ class EditEvent extends EventDetailsEvent {
 class TerminateUserJourney extends EventDetailsEvent {
   TerminateUserJourney();
 }
+
+class EventStarted extends EventDetailsEvent {
+  EventStarted();
+}

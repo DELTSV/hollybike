@@ -54,15 +54,19 @@ String fromDateToDuration(DateTime date) {
   } else if (difference.inDays > 1) {
     return "Dans ${difference.inDays} jours";
   } else if (difference.inDays == 1) {
-    return "Demain";
+    return "Dans un jour";
   } else if (difference.inHours > 1) {
     return "Dans ${difference.inHours} heures";
   } else if (difference.inHours == 1) {
     return "Dans une heure";
   } else if (difference.inMinutes > 1) {
     return "Dans ${difference.inMinutes} minutes";
-  } else {
+  } else if (difference.inMinutes == 1) {
+    return "Dans une minute";
+  } else if (difference.inSeconds <= 0) {
     return "Maintenant";
+  } else {
+    return "Dans ${difference.inSeconds} secondes";
   }
 }
 
@@ -97,7 +101,9 @@ String formatPastTime(DateTime date) {
     return "il y a une heure";
   } else if (difference.inMinutes > 1) {
     return "il y a ${difference.inMinutes} minutes";
+  } else if (difference.inMinutes == 1) {
+    return "il y a une minute";
   } else {
-    return "il y a ${difference.inSeconds} seconde${difference.inSeconds > 1 ? "s" : ""}";
+    return "il y a quelques secondes";
   }
 }

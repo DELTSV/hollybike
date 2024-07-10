@@ -26,6 +26,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<DeleteEvent>(_onDeleteEvent);
     on<CancelEvent>(_onCancelEvent);
     on<TerminateUserJourney>(_onTerminateUserJourney);
+    on<EventStarted>(_onEventStarted);
   }
 
   Future<void> _onSubscribeToEvent(
@@ -214,6 +215,17 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
         state,
         errorMessage: 'Impossible de terminer le trajet',
       ));
+    }
+  }
+
+  Future<void> _onEventStarted(
+    EventStarted event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    try {
+      _eventRepository.eventStarted(eventId);
+    } catch (e) {
+      log('Error while starting event', error: e);
     }
   }
 }

@@ -32,7 +32,10 @@ class EventStatusFeed extends StatelessWidget {
           eventDetails: eventDetails,
         );
       case EventStatusState.finished:
-        return EventFinishedStatus(endDate: eventDetails.event.startDate);
+        return EventFinishedStatus(
+          endDate: eventDetails.event.endDate ??
+              eventDetails.event.startDate.add(const Duration(hours: 4)),
+        );
       case EventStatusState.now:
         return BlocBuilder<MyPositionBloc, MyPositionState>(
           builder: (context, state) {
