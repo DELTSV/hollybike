@@ -698,4 +698,34 @@ class EventRepository {
       ),
     );
   }
+
+  void eventStarted(int eventId) {
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        event: details.event.copyWith(status: EventStatusState.now),
+      ),
+    );
+
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
+        ] +
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId
+                ? e.copyWith(status: EventStatusState.now)
+                : e)
+            .toList(),
+      );
+    }
+  }
 }

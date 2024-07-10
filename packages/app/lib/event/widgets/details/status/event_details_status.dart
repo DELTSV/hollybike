@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/event/widgets/event_status.dart';
 
+import '../../../../shared/utils/dates.dart';
 import '../../../bloc/event_details_bloc/event_details_bloc.dart';
+import '../../../bloc/event_details_bloc/event_details_event.dart';
 import '../../../bloc/event_details_bloc/event_details_state.dart';
 import '../../../types/event.dart';
 import '../../event_dot.dart';
@@ -13,6 +16,7 @@ class EventDetailsStatusBadge extends StatelessWidget {
   final bool loading;
   final EventStatusState status;
   final String message;
+  final Event? event;
 
   const EventDetailsStatusBadge({
     super.key,
@@ -21,6 +25,7 @@ class EventDetailsStatusBadge extends StatelessWidget {
     required this.status,
     this.onAction,
     this.actionText,
+    this.event,
   });
 
   bool isLoading(EventDetailsState state) {
@@ -42,23 +47,7 @@ class EventDetailsStatusBadge extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          EventDot(
-                            size: 15,
-                            status: status,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              message,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              softWrap: true,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _buildStatus(context),
                     ),
                     _buildAction(context, isLoading(state)),
                   ],
@@ -73,6 +62,41 @@ class EventDetailsStatusBadge extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildStatus(BuildContext context) {
+    final minimalEvent = event?.toMinimalEvent();
+
+    if (minimalEvent == null) {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          EventDot(
+            size: 15,
+            status: status,
+          ),
+          const SizedBox(width: 16),
+          Text(
+            message,
+            style: Theme.of(context).textTheme.bodyMedium,
+            softWrap: true,
+          ),
+        ],
+      );
+    }
+
+    return EventStatusIndicator(
+      event: minimalEvent,
+      eventStarted: () => _eventStarted(context),
+      statusTextBuilder: (status) {
+        return Text(
+          fromDateToDuration(minimalEvent.startDate),
+          style: Theme.of(context).textTheme.bodyMedium,
+          softWrap: true,
+        );
+      },
+      separatorWidth: 16,
     );
   }
 
@@ -100,6 +124,12 @@ class EventDetailsStatusBadge extends StatelessWidget {
               ),
         ),
       ),
+    );
+  }
+
+  void _eventStarted(BuildContext context) {
+    context.read<EventDetailsBloc>().add(
+      EventStarted(),
     );
   }
 }

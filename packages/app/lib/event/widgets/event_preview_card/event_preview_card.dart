@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_status.dart';
 
+import '../../../shared/utils/dates.dart';
+import '../../types/event_status_state.dart';
 import '../event_form/event_date.dart';
 
 class EventPreviewCard extends StatelessWidget {
@@ -101,7 +103,26 @@ class EventPreviewCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              EventStatusIndicator(event: event),
+                              EventStatusIndicator(
+                                event: event,
+                                separatorWidth: 5,
+                                statusTextBuilder: (status) {
+                                  switch (status) {
+                                    case EventStatusState.canceled:
+                                      return const Text("Annulé");
+                                    case EventStatusState.pending:
+                                      return const Text("En attente");
+                                    case EventStatusState.now:
+                                      return const Text("En cours");
+                                    case EventStatusState.finished:
+                                      return const Text("Terminé");
+                                    case EventStatusState.scheduled:
+                                      return Text(
+                                        fromDateToDuration(event.startDate),
+                                      );
+                                  }
+                                },
+                              ),
                             ],
                           );
                         }),
