@@ -81,6 +81,8 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
     initialIndex: 0,
   );
 
+  late bool _animate = widget.animate;
+
   late final ScrollController _scrollController = ScrollController();
 
   EventDetailsTab currentTab = EventDetailsTab.info;
@@ -127,6 +129,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
 
         if (state is DeleteEventSuccess) {
           Toast.showSuccessToast(context, "Événement supprimé");
+
+          setState(() {
+            _animate = false;
+          });
+
           context.router.removeWhere((route) {
             if (route.path == '/event-participations') {
               final eventId = route
@@ -207,7 +214,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                         child: EventDetailsHeader(
                           event: state.eventDetails?.event.toMinimalEvent() ??
                               widget.event,
-                          animate: widget.animate,
+                          animate: _animate,
                           uniqueKey: widget.uniqueKey,
                         ),
                       ),
