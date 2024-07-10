@@ -3,6 +3,8 @@ package hollybike.api.types.journey
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
@@ -79,7 +81,31 @@ data class Wpt(
 	@XmlElement(true)
 	@SerialName("dgpsid")
 	val dGpsId: UShort? = null
-)
+) {
+	constructor(coordinates: GeoJsonCoordinates, properties: JsonObject?) : this(
+		coordinates[0],
+		coordinates[1],
+		ele = coordinates[2],
+		time = properties?.getInstantOrNull("time"),
+		name = properties?.getStringOrNull("name"),
+		cmt = properties?.getStringOrNull("cmt"),
+		desc = properties?.getStringOrNull("desc"),
+		type = properties?.getStringOrNull("type"),
+		sym = properties?.getStringOrNull("sym")
+	)
+
+	constructor(coordinates: GeoJsonCoordinates, properties: JsonObject?, index: Int) : this(
+		coordinates[0],
+		coordinates[1],
+		ele = coordinates[2],
+		time = properties?.get("coordTimes")?.getInstantOrNull(index),
+		name = properties?.getStringOrNull("name"),
+		cmt = properties?.getStringOrNull("cmt"),
+		desc = properties?.getStringOrNull("desc"),
+		type = properties?.getStringOrNull("type"),
+		sym = properties?.getStringOrNull("sym")
+	)
+}
 
 @Serializable
 enum class FixType {

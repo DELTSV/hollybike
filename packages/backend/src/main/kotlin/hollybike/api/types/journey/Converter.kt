@@ -1,6 +1,9 @@
 package hollybike.api.types.journey
 
+import aws.smithy.kotlin.runtime.util.length
 import hollybike.api.logger
+import kotlinx.datetime.Instant
+import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -84,7 +87,7 @@ private fun Rte.getRoute(): Feature? {
 	cmt?.let { properties["cmt"] = JsonPrimitive(it) }
 	desc?.let { properties["desc"] = JsonPrimitive(it) }
 	type?.let { properties["type"] = JsonPrimitive(it) }
-	if(times.isNotEmpty()) {
+	if (times.isNotEmpty()) {
 		properties["coordTimes"] = JsonArray(times)
 		properties["time"] = times.first()
 	}
@@ -121,20 +124,63 @@ fun GeoJson.toGpx(): Gpx {
 	return Gpx("1.0", "Hollybike", wpts, rtes, emptyList())
 }
 
-fun GeoJson.getWaypoints(): List<Wpt> = when(this) {
-	is Point -> listOf(Wpt(coordinates[0], coordinates[1], ele = coordinates[2]))
+private fun GeoJson.getWaypoints(properties: JsonObject? = null): List<Wpt> = when (this) {
+	is Point -> listOf(Wpt(coordinates, properties))
 	is MultiPoint -> this.coordinates.map { Wpt(it[0], it[1], ele = it[2]) }
-	is Feature -> this.geometry?.getWaypoints() ?: emptyList()
+	is Feature -> this.geometry?.getWaypoints(properties) ?: emptyList()
 	is FeatureCollection -> this.features.flatMap { it.getWaypoints() }
 	is GeometryCollection -> this.geometries.flatMap { it.getWaypoints() }
 	else -> emptyList()
 }
 
-fun GeoJson.getRoutes(): List<Rte> = when(this) {
-	is LineString -> listOf(Rte(rtePt = this.coordinates.map { Wpt(it[0], it[1], ele = it[2]) }))
+private fun GeoJson.getRoutes(properties: JsonObject? = null): List<Rte> = when (this) {
+	is LineString -> listOf(Rte(rtePt = this.coordinates.mapIndexed { i, coord -> Wpt(coord, properties, i) }))
 	is MultiLineString -> this.coordinates.map { ls -> Rte(rtePt = ls.map { Wpt(it[0], it[1], ele = it[2]) }) }
 	is Feature -> this.geometry?.getRoutes() ?: emptyList()
 	is FeatureCollection -> this.features.flatMap { it.getRoutes() }
 	is GeometryCollection -> this.geometries.flatMap { it.getRoutes() }
 	else -> emptyList()
+}
+
+fun JsonElement.getStringOrNull(key: String): String? = when (this) {
+	is JsonObject -> if (containsKey(key)) {
+		when (val el = this[key]) {
+			is JsonPrimitive -> el.content
+			else -> null
+		}
+	} else {
+		null
+	}
+
+	else -> null
+}
+
+fun JsonElement.getStringOrNull(index: Int): String? = when (this) {
+	is JsonArray -> if(this.size > index) {
+		when(val el = this[index]) {
+			is JsonPrimitive -> el.content
+			else -> null
+		}
+	} else {
+		null
+	}
+	else -> null
+}
+
+fun JsonElement.getInstantOrNull(key: String): Instant? = getStringOrNull(key)?.let {
+	try {
+		Instant.parse(it, DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET)
+	} catch (e: Exception) {
+		logger.debug(e.message, e)
+		null
+	}
+}
+
+fun JsonElement.getInstantOrNull(index: Int): Instant? = getStringOrNull(index)?.let {
+	try {
+		Instant.parse(it, DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET)
+	} catch (e: Exception) {
+		logger.debug(e.message, e)
+		null
+	}
 }
