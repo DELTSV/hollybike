@@ -21,6 +21,7 @@ class EventCandidateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 5),
       child: CheckboxListTile(
         value: isSelected,
         enabled: !alreadyParticipating,

@@ -79,3 +79,11 @@ class JourneysLibraryBloc
     }
   }
 }
+
+extension FirstWhenNotLoading on JourneysLibraryBloc {
+  Future<JourneysLibraryState> get firstWhenNotLoading async {
+    return stream.firstWhere((state) {
+      return state is! JourneysLibraryPageLoadInProgress;
+    });
+  }
+}

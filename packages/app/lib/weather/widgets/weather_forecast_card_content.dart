@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/journey/widgets/journey_position.dart';
 import 'package:hollybike/shared/types/position.dart';
 import 'package:hollybike/weather/types/weather_condition.dart';
-import 'package:hollybike/weather/types/weather_forecast_grouped.dart';
 import 'package:hollybike/weather/widgets/weather_forecast_empty_card.dart';
 import 'package:hollybike/weather/widgets/weather_forecast_modal.dart';
 import 'package:lottie/lottie.dart';
@@ -30,12 +29,10 @@ class WeatherForecastCardContent extends StatelessWidget {
     return BlocProvider(
       create: (context) => WeatherForecastBloc(
         weatherForecastApi: WeatherForecastApi(),
-      )..add(FetchWeatherForecast(
-          latitude: destination.latitude,
-          longitude: destination.longitude,
-          startDate: startDate,
-          endDate: endDate,
-        )),
+        destination: destination,
+        startDate: startDate,
+        endDate: endDate,
+      )..add(FetchWeatherForecast()),
       child: BlocBuilder<WeatherForecastBloc, WeatherForecastState>(
         builder: (context, state) {
           return AnimatedCrossFade(
@@ -57,7 +54,7 @@ class WeatherForecastCardContent extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: state is WeatherForecastSuccess
-                      ? () => onTap(context, state.weatherForecast)
+                      ? () => onTap(context)
                       : null,
                   borderRadius: BorderRadius.circular(14),
                   child: Ink(
@@ -81,22 +78,24 @@ class WeatherForecastCardContent extends StatelessWidget {
     );
   }
 
-  void onTap(BuildContext context, WeatherForecastGrouped weatherForecast) {
+  void onTap(BuildContext context) {
     showModalBottomSheet(
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return WeatherForecastModal(
-            weatherForecast: weatherForecast,
-          );
-        });
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (_) {
+        return BlocProvider.value(
+          value: BlocProvider.of<WeatherForecastBloc>(context),
+          child: const WeatherForecastModal(),
+        );
+      },
+    );
   }
 
   Widget _buildForecast(BuildContext context, WeatherForecastState state) {
-    if (state is WeatherForecastSuccess) {
-      final weatherForecast = state.weatherForecast;
+    final weatherForecast = state.weatherForecast;
 
+    if (weatherForecast != null) {
       final firstDay = weatherForecast.dailyWeather.first;
 
       return Row(
@@ -129,12 +128,13 @@ class WeatherForecastCardContent extends StatelessWidget {
               ),
             ),
           ),
-          Lottie.asset(
-            getWeatherConditionLottiePath(
-              firstDay.weatherCondition,
-              firstDay.hourlyWeather.first.isDay,
+          if (firstDay.hourlyWeather.isNotEmpty)
+            Lottie.asset(
+              getWeatherConditionLottiePath(
+                firstDay.weatherCondition,
+                firstDay.hourlyWeather.first.isDay,
+              ),
             ),
-          ),
         ],
       );
     }

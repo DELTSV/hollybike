@@ -382,4 +382,15 @@ class EventParticipationService(
 
 		return Result.success(participations to participationCount)
 	}
+
+	fun getParticipation(caller: User, eventId: Int): Result<EventParticipation> = transaction(db) {
+		findEvent(caller, eventId)
+			?: return@transaction Result.failure(EventNotFoundException("Event $eventId introuvable"))
+
+		EventParticipation.find {
+			eventParticipationUserEventCondition(caller, eventId)
+		}.with(EventParticipation::user, EventParticipation::journey).firstOrNull()
+			?.let { Result.success(it) }
+			?: Result.failure(NotParticipatingToEventException("Vous ne participez pas à cet événement"))
+	}
 }

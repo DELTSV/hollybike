@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../services/event/event_repository.dart';
 import 'event_details_event.dart';
@@ -25,16 +26,17 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<DeleteEvent>(_onDeleteEvent);
     on<CancelEvent>(_onCancelEvent);
     on<TerminateUserJourney>(_onTerminateUserJourney);
+    on<EventStarted>(_onEventStarted);
   }
 
   Future<void> _onSubscribeToEvent(
     SubscribeToEvent event,
     Emitter<EventDetailsState> emit,
   ) async {
-    await emit.forEach<EventDetails?>(
+    await emit.forEach<StreamValue<EventDetails?, void>>(
       _eventRepository.eventDetailsStream(eventId),
-      onData: (event) => EventDetailsState(
-        eventDetails: event,
+      onData: (data) => EventDetailsState(
+        eventDetails: data.value,
         status: state.status,
       ),
     );
@@ -213,6 +215,17 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
         state,
         errorMessage: 'Impossible de terminer le trajet',
       ));
+    }
+  }
+
+  Future<void> _onEventStarted(
+    EventStarted event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    try {
+      _eventRepository.eventStarted(eventId);
+    } catch (e) {
+      log('Error while starting event', error: e);
     }
   }
 }

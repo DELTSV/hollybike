@@ -31,6 +31,7 @@ class _EventScheduledStatusState extends State<EventScheduledStatus> {
   Widget build(BuildContext context) {
     return EventDetailsStatusBadge(
       loading: _loading,
+      event: widget.eventDetails.event,
       status: EventStatusState.scheduled,
       message: fromDateToDuration(widget.eventDetails.event.startDate),
       actionText: 'Ajouter au calendrier',

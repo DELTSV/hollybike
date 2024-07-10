@@ -39,6 +39,7 @@ class WeatherForecastEmptyCard extends StatelessWidget {
                 softWrap: true,
               ),
             ),
+            const SizedBox(width: 16),
           ],
         ),
       ),

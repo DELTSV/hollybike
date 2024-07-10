@@ -32,7 +32,7 @@ class EventPositionSwitch extends StatelessWidget {
           width: double.infinity,
           color: Theme.of(context).colorScheme.primary,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             child: SizedBox(
               child: SwitchWithText(
                 alignment: SwitchAlignment.right,

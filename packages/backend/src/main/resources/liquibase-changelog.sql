@@ -443,3 +443,11 @@ ALTER TABLE events
 --changeset denis:16
 ALTER TABLE expenses
     ADD COLUMN IF NOT EXISTS proof VARCHAR(2048) DEFAULT NULL;
+
+--changeset loic:14
+
+ALTER TABLE expenses
+    DROP CONSTRAINT IF EXISTS expenses_event_fkey;
+
+ALTER TABLE expenses
+    ADD CONSTRAINT expenses_event_fkey FOREIGN KEY (event) REFERENCES events(id_event) ON DELETE CASCADE;

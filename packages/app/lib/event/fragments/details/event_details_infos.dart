@@ -45,7 +45,7 @@ class EventDetailsInfos extends StatelessWidget {
           EventStatusFeed(eventDetails: eventDetails),
           const SizedBox(height: 13),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
                 Row(

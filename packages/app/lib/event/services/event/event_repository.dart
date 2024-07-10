@@ -8,9 +8,11 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 import 'package:hollybike/journey/type/journey.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+import 'package:hollybike/shared/utils/streams/stream_counter.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../../journey/type/user_journey.dart';
-import '../../../shared/utils/stream_mapper.dart';
+import '../../../shared/utils/streams/stream_mapper.dart';
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
 import '../../types/participation/event_participation.dart';
@@ -21,31 +23,54 @@ class EventRepository {
 
   final int numberOfEventsPerRequest = 10;
 
-  final _eventDetailsStreamMapper =
-      StreamMapper<EventDetails?>(seedValue: null);
+  final _eventDetailsStreamMapper = StreamMapper<EventDetails?, void>(
+    seedValue: null,
+    name: "event-details",
+  );
 
-  Stream<EventDetails?> eventDetailsStream(int eventId) =>
+  Stream<StreamValue<EventDetails?, void>> eventDetailsStream(int eventId) =>
       _eventDetailsStreamMapper.stream(eventId);
 
-  final _userStreamMapper = StreamMapper<List<MinimalEvent>>(seedValue: []);
+  final _userStreamMapper = StreamMapper<List<MinimalEvent>, RefreshedType>(
+    seedValue: [],
+    initialState: RefreshedType.none,
+    name: "user-events",
+  );
 
-  Stream<List<MinimalEvent>> userEventsStream(int userId) =>
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>> userEventsStream(
+    int userId,
+  ) =>
       _userStreamMapper.stream(userId);
 
-  final _futureEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
+  final _futureEventsStreamCounter =
+      StreamCounter<List<MinimalEvent>, RefreshedType>(
+    [],
+    "future-events",
+    initialState: RefreshedType.none,
+  );
 
-  final _archivedEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
+  final _archivedEventsStreamCounter =
+      StreamCounter<List<MinimalEvent>, RefreshedType>(
+    [],
+    "archived-events",
+    initialState: RefreshedType.none,
+  );
 
-  final _searchEventsStreamCounter = StreamCounter<List<MinimalEvent>>([]);
+  final _searchEventsStreamCounter =
+      StreamCounter<List<MinimalEvent>, RefreshedType>(
+    [],
+    "search-events",
+    initialState: RefreshedType.none,
+  );
 
-  Stream<List<MinimalEvent>> get futureStream =>
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>> get futureStream =>
       _futureEventsStreamCounter.stream;
 
-  Stream<List<MinimalEvent>> get archivedEventsStream =>
-      _archivedEventsStreamCounter.stream;
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>>
+      get archivedEventsStream => _archivedEventsStreamCounter.stream;
 
-  Stream<List<MinimalEvent>> get searchEventsStream =>
-      _searchEventsStreamCounter.stream;
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>>
+      get searchEventsStream => _searchEventsStreamCounter.stream;
 
   String _lastQuery = "";
 
@@ -116,6 +141,7 @@ class EventRepository {
       _userStreamMapper.add(
         userId,
         pageResult.items,
+        state: pageResult.refreshedType,
       );
 
       return pageResult;
@@ -125,16 +151,19 @@ class EventRepository {
       case "future":
         _futureEventsStreamCounter.add(
           pageResult.items,
+          state: pageResult.refreshedType,
         );
         break;
       case "archived":
         _archivedEventsStreamCounter.add(
           pageResult.items,
+          state: pageResult.refreshedType,
         );
         break;
       default:
         _searchEventsStreamCounter.add(
           pageResult.items,
+          state: pageResult.refreshedType,
         );
         break;
     }
@@ -166,21 +195,26 @@ class EventRepository {
       return;
     }
 
-    final editedEvent = await eventApi.editEvent(eventId, event.withBudget(
-      details.event.budget,
-    ));
+    final editedEvent = await eventApi.editEvent(
+      eventId,
+      event.withBudget(
+        details.event.budget,
+      ),
+    );
 
     _eventDetailsStreamMapper.add(
-        eventId, details.copyWith(event: editedEvent));
+      eventId,
+      details.copyWith(event: editedEvent),
+    );
 
-    for (var controller in [
-          _futureEventsStreamCounter.subject,
-          _archivedEventsStreamCounter.subject,
-          _searchEventsStreamCounter.subject,
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
         ] +
-        _userStreamMapper.subjects) {
-      controller.add(
-        controller.value
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
             .map((e) => e.id == eventId ? editedEvent.toMinimalEvent() : e)
             .toList(),
       );
@@ -203,14 +237,14 @@ class EventRepository {
       ),
     );
 
-    for (var controller in [
-          _futureEventsStreamCounter.subject,
-          _archivedEventsStreamCounter.subject,
-          _searchEventsStreamCounter.subject,
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
         ] +
-        _userStreamMapper.subjects) {
-      controller.add(
-        controller.value
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
             .map((e) => e.id == eventId
                 ? e.copyWith(status: EventStatusState.scheduled)
                 : e)
@@ -220,9 +254,19 @@ class EventRepository {
   }
 
   Future<void> joinEvent(int eventId) async {
-    final details = _eventDetailsStreamMapper.get(eventId);
-
     final participation = await eventApi.joinEvent(eventId);
+
+    final userId = participation.user.id;
+
+    final events = _userStreamMapper.get(userId);
+
+    if (events != null) {
+      if (events.any((e) => e.id == eventId)) {
+        await refreshEvents("future", userId: userId);
+      }
+    }
+
+    final details = _eventDetailsStreamMapper.get(eventId);
 
     if (details == null) {
       return;
@@ -240,6 +284,16 @@ class EventRepository {
       return;
     }
 
+    final userId = details.callerParticipation!.userId;
+
+    final events = _userStreamMapper.get(userId);
+
+    if (events != null) {
+      if (events.any((e) => e.id == eventId)) {
+        await refreshEvents("future", userId: userId);
+      }
+    }
+
     _eventDetailsStreamMapper.add(
       eventId,
       EventDetails(
@@ -253,26 +307,46 @@ class EventRepository {
       ),
     );
 
-    onParticipantRemoved(details.callerParticipation!.userId, eventId);
+    onParticipantRemoved(userId, eventId);
   }
 
   Future<void> deleteEvent(int eventId) async {
     await eventApi.deleteEvent(eventId);
 
     for (var userId in _userStreamMapper.keys) {
-      refreshEvents("future", userId: userId);
+      final events = _userStreamMapper.get(userId);
+
+      if (events == null) {
+        continue;
+      }
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents("future", userId: userId);
+      }
     }
 
     if (_futureEventsStreamCounter.isListening) {
-      refreshEvents("future");
+      final events = _futureEventsStreamCounter.value;
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents("future");
+      }
     }
 
     if (_archivedEventsStreamCounter.isListening) {
-      refreshEvents("archived");
+      final events = _archivedEventsStreamCounter.value;
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents("archived");
+      }
     }
 
     if (_searchEventsStreamCounter.isListening) {
-      refreshEvents(null, query: _lastQuery);
+      final events = _searchEventsStreamCounter.value;
+
+      if (events.any((e) => e.id == eventId)) {
+        refreshEvents(null, query: _lastQuery);
+      }
     }
   }
 
@@ -292,14 +366,14 @@ class EventRepository {
       ),
     );
 
-    for (var controller in [
-          _futureEventsStreamCounter.subject,
-          _archivedEventsStreamCounter.subject,
-          _searchEventsStreamCounter.subject,
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
         ] +
-        _userStreamMapper.subjects) {
-      controller.add(
-        controller.value
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
             .map((e) => e.id == eventId
                 ? e.copyWith(status: EventStatusState.canceled)
                 : e)
@@ -537,13 +611,16 @@ class EventRepository {
       return;
     }
 
-    await eventApi.editEvent(eventId, EventFormData(
-      name: details.event.name,
-      description: details.event.description,
-      startDate: details.event.startDate,
-      endDate: details.event.endDate,
-      budget: budget,
-    ));
+    await eventApi.editEvent(
+      eventId,
+      EventFormData(
+        name: details.event.name,
+        description: details.event.description,
+        startDate: details.event.startDate,
+        endDate: details.event.endDate,
+        budget: budget,
+      ),
+    );
 
     _eventDetailsStreamMapper.add(
       eventId,
@@ -591,7 +668,7 @@ class EventRepository {
   }
 
   Future<void> uploadExpenseProof(
-      int eventId,
+    int eventId,
     int expenseId,
     File image,
   ) async {
@@ -620,5 +697,35 @@ class EventRepository {
         expenses: newExpenses,
       ),
     );
+  }
+
+  void eventStarted(int eventId) {
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        event: details.event.copyWith(status: EventStatusState.now),
+      ),
+    );
+
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
+        ] +
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId
+                ? e.copyWith(status: EventStatusState.now)
+                : e)
+            .toList(),
+      );
+    }
   }
 }

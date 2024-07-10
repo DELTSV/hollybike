@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-
 import '../../types/event.dart';
 
 enum NewJourneyType {
   library,
   file,
+  external,
 }
 
 class UploadJourneyMenu extends StatelessWidget {
   final Event event;
+  final bool includeLibrary;
   final Widget child;
   final void Function(NewJourneyType)? onSelection;
 
@@ -17,6 +18,7 @@ class UploadJourneyMenu extends StatelessWidget {
     required this.event,
     required this.child,
     this.onSelection,
+    this.includeLibrary = true,
   });
 
   @override
@@ -27,33 +29,40 @@ class UploadJourneyMenu extends StatelessWidget {
         Positioned.fill(
           child: Material(
             color: Colors.transparent,
-            child: InkWell(onTapDown: (details) {
-              showMenu(
-                context: context,
-                position: RelativeRect.fromLTRB(
-                  details.globalPosition.dx,
-                  details.globalPosition.dy,
-                  details.globalPosition.dx,
-                  details.globalPosition.dy,
-                ),
-                items: [
-                  PopupMenuItem(
-                    value: NewJourneyType.library,
-                    child: const Text('Depuis un parcours existant'),
-                    onTap: () {
-                      onSelection?.call(NewJourneyType.library);
-                    },
+            child: InkWell(
+              onTapDown: (details) async {
+                final value = await showMenu(
+                  context: context,
+                  position: RelativeRect.fromLTRB(
+                    details.globalPosition.dx,
+                    details.globalPosition.dy,
+                    details.globalPosition.dx,
+                    details.globalPosition.dy,
                   ),
-                  PopupMenuItem(
-                    value: NewJourneyType.file,
-                    child: const Text('Importer un fichier GPX/GEOJSON'),
-                    onTap: () {
-                      onSelection?.call(NewJourneyType.file);
-                    },
-                  ),
-                ],
-              );
-            }),
+                  items: [
+                    if (includeLibrary)
+                      const PopupMenuItem(
+                        value: NewJourneyType.library,
+                        child: Text('Depuis un parcours existant'),
+                      ),
+                    const PopupMenuItem(
+                      value: NewJourneyType.file,
+                      child: Text('Importer un fichier GPX/GEOJSON'),
+                    ),
+                    const PopupMenuItem(
+                      value: NewJourneyType.external,
+                      child: Text('Depuis un outil externe'),
+                    ),
+                  ],
+                );
+
+                if (value == null) {
+                  return;
+                }
+
+                onSelection?.call(value);
+              },
+            ),
           ),
         ),
       ],

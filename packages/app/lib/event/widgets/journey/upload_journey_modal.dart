@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/shared/utils/safe_set_state.dart';
 
 import '../../bloc/event_journey_bloc/event_journey_bloc.dart';
 import '../../bloc/event_journey_bloc/event_journey_state.dart';
@@ -40,7 +41,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
   }
 
   Future<void> _initialLoading(int duration) async {
-    setState(() {
+    safeSetState(() {
       _progress = 0.2;
       _creationStatus = 'Récupération du fichier...';
     });
@@ -53,7 +54,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
       return;
     }
 
-    setState(() {
+    safeSetState(() {
       _progress = 0.3;
       _creationStatus = 'Génération de la carte...';
     });
@@ -66,7 +67,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
       return;
     }
 
-    setState(() {
+    safeSetState(() {
       _progress = 0.5;
       _creationStatus = 'Conversion du fichier GPX...';
     });
@@ -75,7 +76,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
   }
 
   Future<void> _saveJourney(int duration) async {
-    setState(() {
+    safeSetState(() {
       _progress = 0.8;
       _creationStatus = 'Enregistrement du parcours...';
     });
@@ -84,7 +85,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
   }
 
   Future<void> _finalizeJourney(int duration) async {
-    setState(() {
+    safeSetState(() {
       _progress = 0.9;
       _creationStatus = 'Finalisation...';
     });
@@ -93,7 +94,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
   }
 
   Future<void> _beforeClose(int duration) async {
-    setState(() {
+    safeSetState(() {
       _progress = 1;
     });
 
@@ -101,11 +102,11 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
   }
 
   void _onClose() {
-    setState(() {
+    safeSetState(() {
       _canClose = true;
-    });
 
-    Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    });
   }
 
   @override
@@ -113,7 +114,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
     return BlocListener<EventJourneyBloc, EventJourneyState>(
       listener: (context, state) async {
         if (state is EventJourneyUploadSuccess) {
-          setState(() {
+          safeSetState(() {
             _isUploaded = true;
           });
 
@@ -125,7 +126,7 @@ class _UploadJourneyModalState extends State<UploadJourneyModal> {
         }
 
         if (state is EventJourneyCreationSuccess) {
-          setState(() {
+          safeSetState(() {
             _isCreated = true;
           });
 

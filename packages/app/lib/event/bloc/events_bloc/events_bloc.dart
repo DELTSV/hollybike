@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
 import '../../services/event/event_repository.dart';
 import 'events_event.dart';
@@ -21,7 +22,7 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<RefreshEvents>(_onRefreshEvents);
   }
 
-  Stream<List<MinimalEvent>> _getStream() {
+  Stream<StreamValue<List<MinimalEvent>, RefreshedType>> _getStream() {
     if (requestType == "future") {
       return eventRepository.futureStream;
     } else {
@@ -33,11 +34,26 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     SubscribeToEvents event,
     Emitter<EventsState> emit,
   ) async {
-    await emit.forEach<List<MinimalEvent>>(
+    await emit.forEach<StreamValue<List<MinimalEvent>, RefreshedType>>(
       _getStream(),
-      onData: (events) => state.copyWith(
-        events: events,
-      ),
+      onData: (data) {
+        final events = data.value;
+        final isRefreshed = data.state;
+
+        if (isRefreshed == RefreshedType.none) {
+          return state.copyWith(
+            events: events,
+          );
+        }
+
+        return EventPageLoadSuccess(
+          state.copyWith(
+            events: events,
+            hasMore: isRefreshed == RefreshedType.refreshedAndHasMore,
+            nextPage: 1,
+          ),
+        );
+      },
     );
   }
 
@@ -78,18 +94,8 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
     emit(EventPageLoadInProgress(state));
 
     try {
-      PaginatedList<MinimalEvent> page = await eventRepository.refreshEvents(
+      await eventRepository.refreshEvents(
         requestType,
-      );
-
-      emit(
-        EventPageLoadSuccess(
-          state.copyWith(
-            hasMore:
-                page.items.length == eventRepository.numberOfEventsPerRequest,
-            nextPage: 1,
-          ),
-        ),
       );
     } catch (e) {
       emit(handleError(e, 'Error while refreshing events'));

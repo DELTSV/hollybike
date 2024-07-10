@@ -73,6 +73,8 @@ dependencies:
   flutter_background_service: ^5.0.6
   flutter_downloader: ^1.11.7
   flutter_native_splash: ^2.4.0
+  flutter_inappwebview: ^5.8.0
+  sliver_tools: ^0.2.12
 
 dev_dependencies:
   flutter_test:
@@ -98,6 +100,7 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie/
+    - assets/images/journey_tools/
 
   fonts:
     - family: Inter
