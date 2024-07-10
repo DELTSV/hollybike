@@ -43,6 +43,13 @@ class ExpenseService(
 		EUserScope.User -> event.participants.any { it.user.id == caller.id && it.role == EEventRole.Organizer }
 	}
 
+	private fun authorizeParticipant(callerParticipation: EventParticipation, caller: User, event: Event): Boolean = when {
+		callerParticipation.role == EEventRole.Organizer -> true
+		caller.scope == EUserScope.Admin && event.association.id == caller.association.id -> true
+		caller.scope == EUserScope.Root -> true
+		else -> false
+	}
+
 	fun authorizeBudget(caller: User, event: Event): Boolean = when (caller.scope) {
 		EUserScope.Root -> true
 		EUserScope.Admin -> event.association.id == caller.association.id
@@ -53,13 +60,11 @@ class ExpenseService(
 		Expense.findById(id)?.load(Expense::event) getIfAllowed caller
 	}
 
-	fun getEventExpense(caller: User, event: Event): List<Expense>? = transaction(db) {
-		Expense.find { Expenses.event eq event.id }.orderBy(Expenses.date to SortOrder.ASC).toList().let {
-			if (it.all { exp -> authorizeGetOrUpdateOrDelete(caller, exp) }) {
-				it.toList()
-			} else {
-				null
-			}
+	fun getEventExpense(callerParticipation: EventParticipation, caller: User, event: Event): List<Expense>? = transaction(db) {
+		if (authorizeParticipant(callerParticipation, caller, event)) {
+			Expense.find { Expenses.event eq event.id }.orderBy(Expenses.date to SortOrder.ASC).toList()
+		} else {
+			null
 		}
 	}
 
