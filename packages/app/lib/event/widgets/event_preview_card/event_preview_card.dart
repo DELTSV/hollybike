@@ -6,7 +6,7 @@ import '../../../shared/utils/dates.dart';
 import '../../types/event_status_state.dart';
 import '../event_form/event_date.dart';
 
-class EventPreviewCard extends StatelessWidget {
+class EventPreviewCard extends StatefulWidget {
   final MinimalEvent event;
   final void Function(String uniqueKey) onTap;
 
@@ -17,9 +17,36 @@ class EventPreviewCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final uniqueKey = DateTime.now().microsecondsSinceEpoch.toString();
+  State<EventPreviewCard> createState() => _EventPreviewCardState();
+}
 
+class _EventPreviewCardState extends State<EventPreviewCard> {
+  late String _uniqueKey;
+  bool _animate = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _uniqueKey = _getUniqueKey();
+  }
+
+  @override
+  void didUpdateWidget(covariant EventPreviewCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.event.id != widget.event.id) {
+      _uniqueKey = _getUniqueKey();
+      _animate = false;
+
+      Future.delayed(Duration.zero, () {
+        setState(() {
+          _animate = true;
+        });
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).cardColor,
       elevation: 0,
@@ -38,43 +65,12 @@ class EventPreviewCard extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 110,
-                      child: Hero(
-                        tag: "event-image-$uniqueKey",
-                        child: Stack(
-                          children: [
-                            SizedBox(
-                              height: double.infinity,
-                              child: Container(
-                                foregroundDecoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      Theme.of(context)
-                                          .cardColor
-                                          .withOpacity(0.5),
-                                      Theme.of(context).cardColor,
-                                    ],
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.horizontal(
-                                    left: Radius.circular(10),
-                                  ),
-                                  child: Image(
-                                    image: event.imageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: EventDate(date: event.startDate),
-                            ),
-                          ],
-                        ),
-                      ),
+                      child: _animate
+                          ? Hero(
+                              tag: "event-image-$_uniqueKey",
+                              child: _buildImage(),
+                            )
+                          : _buildImage(),
                     ),
                     Expanded(
                       child: Padding(
@@ -83,28 +79,14 @@ class EventPreviewCard extends StatelessWidget {
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Hero(
-                                    tag: "event-name-$uniqueKey",
-                                    child: SizedBox(
-                                      width: constraints.maxWidth,
-                                      child: Text(
-                                        event.name,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              if (_animate)
+                                Hero(
+                                  tag: "event-name-$_uniqueKey",
+                                  child: _buildTitle(constraints.maxWidth),
+                                ),
+                              if (!_animate) _buildTitle(constraints.maxWidth),
                               EventStatusIndicator(
-                                event: event,
+                                event: widget.event,
                                 separatorWidth: 5,
                                 statusTextBuilder: (status) {
                                   switch (status) {
@@ -118,7 +100,9 @@ class EventPreviewCard extends StatelessWidget {
                                       return const Text("Terminé");
                                     case EventStatusState.scheduled:
                                       return Text(
-                                        fromDateToDuration(event.startDate),
+                                        fromDateToDuration(
+                                          widget.event.startDate,
+                                        ),
                                       );
                                   }
                                 },
@@ -137,7 +121,7 @@ class EventPreviewCard extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  onTap: () => onTap(uniqueKey),
+                  onTap: () => widget.onTap(_uniqueKey),
                 ),
               ),
             ),
@@ -145,5 +129,56 @@ class EventPreviewCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildTitle(double width) {
+    return SizedBox(
+      width: width,
+      child: Text(
+        widget.event.name,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    return Stack(
+      children: [
+        SizedBox(
+          height: double.infinity,
+          child: Container(
+            foregroundDecoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Theme.of(context).cardColor.withOpacity(0.5),
+                  Theme.of(context).cardColor,
+                ],
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(10),
+              ),
+              child: Image(
+                image: widget.event.imageProvider,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: EventDate(date: widget.event.startDate),
+        ),
+      ],
+    );
+  }
+
+  String _getUniqueKey() {
+    return DateTime.now().microsecondsSinceEpoch.toString();
   }
 }
