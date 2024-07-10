@@ -340,6 +340,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
+      const SizedBox(),
     ];
   }
 
