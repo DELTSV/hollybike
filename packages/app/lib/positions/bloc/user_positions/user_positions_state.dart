@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
 
 import 'user_positions_bloc.dart';
@@ -11,13 +10,11 @@ class UserPositionsState {
   final List<WebsocketReceivePosition> userPositions;
   final List<UserLoadEvent> usersLoadEvent;
   final UserPositionsStatus status;
-  final AuthSession? currentSession;
 
   const UserPositionsState({
     this.userPositions = const [],
     this.usersLoadEvent = const [],
     this.status = UserPositionsStatus.initial,
-    this.currentSession,
   });
 
   UserPositionsState.state(UserPositionsState state)
@@ -36,7 +33,6 @@ class UserPositionsState {
       status: status ?? this.status,
       usersLoadEvent: usersLoadEvent ?? this.usersLoadEvent,
       userPositions: userPositions ?? this.userPositions,
-      currentSession: currentSession,
     );
   }
 

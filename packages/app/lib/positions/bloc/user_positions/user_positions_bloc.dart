@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hollybike/auth/services/auth_session_repository.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/positions/bloc/user_positions/user_positions_state.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
@@ -18,11 +18,11 @@ part 'events/user_load_event.dart';
 part 'events/user_positions_event.dart';
 
 class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
-  final AuthSessionRepository authSessionRepository;
+  final AuthPersistence authPersistence;
   final ProfileRepository profileRepository;
 
   UserPositionsBloc({
-    required this.authSessionRepository,
+    required this.authPersistence,
     required this.profileRepository,
     AuthSession? currentSession,
   }) : super(UserPositionsInitial()) {
@@ -36,7 +36,7 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
   ) async {
     emit(UserPositionsLoading(state));
 
-    final currentSession = state.currentSession;
+    final currentSession = await authPersistence.currentSession;
 
     if (currentSession == null) {
       emit(UserPositionsError(state, 'Error: No session'));
@@ -127,8 +127,9 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
   }
 
   void _updateUsersProfiles(
-      List<WebsocketReceivePosition> userPositions) async {
-    final currentSession = state.currentSession;
+    List<WebsocketReceivePosition> userPositions,
+  ) async {
+    final currentSession = await authPersistence.currentSession;
     if (currentSession == null) return;
 
     final missingProfiles = userPositions.where(

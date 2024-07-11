@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/services/auth_session_repository.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/fragments/details/event_details_images.dart';
 import 'package:hollybike/event/fragments/details/event_details_infos.dart';
 import 'package:hollybike/event/fragments/details/event_details_map.dart';
@@ -17,6 +16,7 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
+import 'package:provider/provider.dart';
 
 import '../../app/app_router.gr.dart';
 import '../../image/services/image_repository.dart';
@@ -321,13 +321,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       ),
       BlocProvider(
         create: (context) => UserPositionsBloc(
-          authSessionRepository: RepositoryProvider.of<AuthSessionRepository>(
+          authPersistence: Provider.of<AuthPersistence>(
             context,
+            listen:false
           ),
           profileRepository: RepositoryProvider.of<ProfileRepository>(
             context,
           ),
-          currentSession: BlocProvider.of<AuthBloc>(context).state.authSession,
         ),
         child: EventDetailsMap(
           eventId: eventDetails.event.id,
