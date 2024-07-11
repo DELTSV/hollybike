@@ -149,7 +149,7 @@ class UserEventPositionService(
 
 		fun calculatePercentage(value: Double?, otherValues: List<Double>, key: String) {
 			if (value != null) {
-				val countBetter = otherValues.count { it < value }
+				val countBetter = otherValues.count { it <= value }
 				val percentage = (countBetter.toDouble() / otherValues.size.toDouble()) * 100
 				hasBest[key] = percentage
 			}

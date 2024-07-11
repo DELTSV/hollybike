@@ -90,14 +90,14 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
                           maxValue: 100,
                           value: _betterPercentage,
                           colors: [
-                            Colors.green.shade400,
-                            Colors.yellow.shade400,
                             Colors.red.shade400,
+                            Colors.yellow.shade400,
+                            Colors.green.shade400,
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Vous avez fait mieux que ${(_betterPercentage).round()}% des participants !",
+                          "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% des participants !",
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -169,6 +169,16 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
         ),
       ),
     );
+  }
+
+  String _getIsBetterMeanText(bool isCurrentUser) {
+    if (isCurrentUser) {
+      return 'Vous avez fait mieux que';
+    } else if (widget.username != null) {
+      return '${widget.username} a fait mieux que';
+    } else {
+      return 'Le participant a fait mieux que';
+    }
   }
 
   BoxDecoration _modalDecoration(BuildContext context) {
