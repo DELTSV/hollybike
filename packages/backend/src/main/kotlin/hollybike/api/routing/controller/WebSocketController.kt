@@ -6,6 +6,7 @@ import hollybike.api.services.UserEventPositionService
 import hollybike.api.types.websocket.*
 import hollybike.api.utils.websocket.AuthVerifier
 import hollybike.api.utils.websocket.WebSocketRouter
+import hollybike.api.utils.websocket.on
 import hollybike.api.utils.websocket.webSocket
 import io.ktor.server.application.*
 
@@ -29,7 +30,7 @@ class WebSocketController(
 	}
 
 	private fun WebSocketRouter.notification() {
-		var user: User?
+		var user: User? = null
 		request("/notification") {
 			onSubscribe {
 				user = it
@@ -42,6 +43,14 @@ class WebSocketController(
 			}
 			onUnsubscribe {
 				user = null
+			}
+			on<ReadNotification> {
+				user?.let { u ->
+					val notification = notificationService.getNotificationById(u, it.notification) ?: run {
+						return@on
+					}
+					notificationService.setNotificationSeen(notification, true)
+				}
 			}
 		}
 	}

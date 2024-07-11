@@ -12,7 +12,6 @@ import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.websocket.DeleteEventNotification
 import hollybike.api.types.websocket.EventStatusUpdateNotification
-import hollybike.api.types.websocket.NewEventNotification
 import hollybike.api.types.websocket.UpdateEventNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
