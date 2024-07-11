@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/journey/type/user_journey.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import '../../../shared/utils/dates.dart';
+import '../../../shared/widgets/gradient_progress_bar.dart';
 
 enum JourneyModalAction {
   resetJourney,
   downloadJourney,
 }
 
-class EventParticipationJourneyModal extends StatelessWidget {
+class EventParticipationJourneyModal extends StatefulWidget {
   final UserJourney journey;
   final int userId;
   final String? username;
@@ -20,6 +21,24 @@ class EventParticipationJourneyModal extends StatelessWidget {
     required this.userId,
     this.username,
   });
+
+  @override
+  State<EventParticipationJourneyModal> createState() => _EventParticipationJourneyModalState();
+}
+
+class _EventParticipationJourneyModalState extends State<EventParticipationJourneyModal> {
+  late final double _betterPercentage;
+
+  @override
+  void initState() {
+    super.initState();
+    final isBetterThan = widget.journey.isBetterThan;
+
+    _betterPercentage = isBetterThan.entries.fold(0.0, (acc, entry) {
+      final isBetter = entry.value;
+      return acc + isBetter;
+    }) / isBetterThan.length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,25 +54,54 @@ class EventParticipationJourneyModal extends StatelessWidget {
           child: BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               final currentProfile = state.currentProfile;
-              final isCurrentUser = currentProfile?.id == userId;
+              final isCurrentUser = currentProfile?.id == widget.userId;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildHeader(context, isCurrentUser),
                   const SizedBox(height: 16),
                   _JourneyInfoRow(
                     icon: Icons.history,
                     text:
-                        "Parcours terminé ${formatTimeDate(journey.createdAt.toLocal())}",
+                        "Parcours terminé ${formatTimeDate(widget.journey.createdAt.toLocal())}",
                   ),
                   const SizedBox(height: 8),
                   _JourneyInfoRow(
                     icon: Icons.route_outlined,
                     text:
-                        '${journey.distanceLabel} - ${journey.totalTimeLabel}',
+                        '${widget.journey.distanceLabel} - ${widget.journey.totalTimeLabel}',
                     titleStyle: Theme.of(context).textTheme.titleMedium,
                     bodyStyle: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GradientProgressBar(
+                          animateStart: true,
+                          maxValue: 100,
+                          value: _betterPercentage,
+                          colors: [
+                            Colors.green.shade400,
+                            Colors.yellow.shade400,
+                            Colors.red.shade400,
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Vous avez fait mieux que ${(_betterPercentage).round()}% des participants !",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _JourneyStatRow(
@@ -62,11 +110,11 @@ class EventParticipationJourneyModal extends StatelessWidget {
                       stats: [
                         _StatItem(
                           icon: Icons.north_east_rounded,
-                          label: '${journey.totalElevationGain?.round()} m',
+                          label: '${widget.journey.totalElevationGain?.round()} m',
                         ),
                         _StatItem(
                           icon: Icons.south_east_rounded,
-                          label: '${journey.totalElevationLoss?.round()} m',
+                          label: '${widget.journey.totalElevationLoss?.round()} m',
                         ),
                       ],
                     ),
@@ -75,11 +123,11 @@ class EventParticipationJourneyModal extends StatelessWidget {
                       stats: [
                         _StatItem(
                           icon: Icons.speed_rounded,
-                          label: journey.maxSpeedLabel,
+                          label: widget.journey.maxSpeedLabel,
                         ),
                         _StatItem(
                           icon: Icons.speed_rounded,
-                          label: journey.avgSpeedLabel,
+                          label: widget.journey.avgSpeedLabel,
                         ),
                       ],
                     ),
@@ -91,11 +139,11 @@ class EventParticipationJourneyModal extends StatelessWidget {
                       stats: [
                         _StatItem(
                           icon: Icons.vertical_align_bottom_rounded,
-                          label: '${journey.minElevation?.round()} m',
+                          label: '${widget.journey.minElevation?.round()} m',
                         ),
                         _StatItem(
                           icon: Icons.terrain_rounded,
-                          label: '${journey.maxElevation?.round()} m',
+                          label: '${widget.journey.maxElevation?.round()} m',
                         ),
                       ],
                     ),
@@ -104,11 +152,11 @@ class EventParticipationJourneyModal extends StatelessWidget {
                       stats: [
                         _StatItem(
                           icon: Icons.gps_fixed_rounded,
-                          label: journey.maxGForceLabel,
+                          label: widget.journey.maxGForceLabel,
                         ),
                         _StatItem(
                           icon: Icons.gps_fixed_rounded,
-                          label: journey.avgGForceLabel,
+                          label: widget.journey.avgGForceLabel,
                         ),
                       ],
                     ),
@@ -173,7 +221,7 @@ class EventParticipationJourneyModal extends StatelessWidget {
         const SizedBox(width: 16),
         Flexible(
           child: Text(
-            'Parcours de $username',
+            'Parcours de ${widget.username}',
             style: Theme.of(context).textTheme.titleMedium,
             softWrap: true,
           ),
