@@ -259,11 +259,9 @@ class _JourneyMapState extends State<JourneyMap> {
     PointAnnotationManager pointManager,
     UserPositionsState userPositionsState,
   ) async {
-    final profileBloc = BlocProvider.of<ProfileBloc>(context);
     final colorScheme = Theme.of(context).colorScheme;
     final options = await Future.wait(
         userPositionsState.userPositions.map((position) async {
-      final user = profileBloc.getProfileById(position.userId);
       final icon = await rootBundle
           .load("assets/images/placeholder_profile_picture.jpg");
       return PointAnnotationOptions(
@@ -278,7 +276,6 @@ class _JourneyMapState extends State<JourneyMap> {
         iconAnchor: IconAnchor.BOTTOM,
         textAnchor: TextAnchor.TOP,
         textSize: 12,
-        textField: user?.username,
         textHaloWidth: 2,
         textHaloColor: colorScheme.primary.value,
         textColor: colorScheme.onPrimary.value,

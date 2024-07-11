@@ -18,9 +18,9 @@ class ProfileBottomBarButton extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
           shape: BoxShape.circle,
         ),
-        child: _renderProfilePicture(),
+        child: _renderProfilePicture(context),
       ),
-      icon: _renderProfilePicture(),
+      icon: _renderProfilePicture(context),
       label: 'Profile',
     );
   }
@@ -34,20 +34,30 @@ class ProfileBottomBarButton extends StatelessWidget {
     );
   }
 
-  Widget _renderProfilePicture() {
-    return BlocProvidedBuilder<ProfileBloc, ProfileState>(
-      builder: (context, bloc, state) {
-        final currentProfile = bloc.currentProfile;
-        return GestureDetector(
-          onLongPress: () => _handleLongPress(context),
-          child: UserProfilePicture(
-            url: currentProfile?.profilePicture,
+  Widget _renderProfilePicture(BuildContext context) {
+    return GestureDetector(
+      onLongPress: () => _handleLongPress(context),
+      child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
+        builder: (context, bloc, state) {
+          final currentProfile = bloc.currentProfile;
+
+          if (currentProfile is ProfileLoadSuccessEvent) {
+            return UserProfilePicture(
+              url: currentProfile.profile.profilePicture,
+              radius: 12,
+              isLoading: false,
+              userId: currentProfile.profile.id,
+            );
+          }
+
+          return const UserProfilePicture(
+            url: null,
             radius: 12,
-            isLoading: currentProfile == null,
-            userId: currentProfile?.id,
-          ),
-        );
-      },
+            isLoading: true,
+            userId: null,
+          );
+        },
+      ),
     );
   }
 }

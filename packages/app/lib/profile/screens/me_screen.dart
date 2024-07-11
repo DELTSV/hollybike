@@ -27,10 +27,21 @@ class MeScreen extends StatelessWidget {
         title: const TopBarTitle("Mon profil"),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) => ProfilePage(
-          profile: bloc.currentProfile?.toMinimalUser(),
-          association: bloc.currentProfile?.association,
-        ),
+        builder: (context, bloc, state) {
+          final currentProfile = bloc.currentProfile;
+
+          if (currentProfile is ProfileLoadSuccessEvent) {
+            return ProfilePage(
+              profile: currentProfile.profile.toMinimalUser(),
+              association: currentProfile.profile.association,
+            );
+          }
+
+          return const ProfilePage(
+            profile: null,
+            association: null,
+          );
+        },
       ),
     );
   }

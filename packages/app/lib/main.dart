@@ -170,8 +170,6 @@ class _MyAppState extends State<MyApp> {
                 BlocProvider<ProfileBloc>(
                   lazy: false,
                   create: (context) => ProfileBloc(
-                    authRepository:
-                        RepositoryProvider.of<AuthRepository>(context),
                     authSessionRepository:
                         RepositoryProvider.of<AuthSessionRepository>(context),
                     profileRepository:

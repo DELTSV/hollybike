@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/auth/services/auth_repository.dart';
 import 'package:hollybike/auth/services/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
@@ -8,53 +7,98 @@ import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../services/profile_repository.dart';
 
-part 'profile_event.dart';
+part 'events/profile_event.dart';
+
+part 'events/profile_load_event.dart';
+
+part 'events/user_load_event.dart';
+
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository;
-  final AuthRepository authRepository;
   final AuthSessionRepository authSessionRepository;
 
-  bool _loading = false;
-
-  Profile? get currentProfile {
-    final profile = state.currentProfile;
-    if (profile == null && state.currentSession != null && !_loading) {
-      _loading = true;
-      add(ProfileLoadBySession(session: state.currentSession as AuthSession));
-    }
-    return profile;
+  ProfileLoadEvent? get currentProfile {
+    final session = state.currentSession;
+    return session == null ? null : getProfile(session);
   }
 
-  MinimalUser? getProfileById(int id) {
+  ProfileLoadEvent? getProfile(AuthSession session) {
+    try {
+      return state.profilesLoad
+          .firstWhere((loadEvent) => loadEvent.session == session);
+    } catch (_) {
+      final futureOrProfile = profileRepository.getProfile(session);
+
+      if (futureOrProfile is Future<Profile>) {
+        futureOrProfile.then((profile) {
+          add(ProfileLoadSuccessEvent(session: session, profile: profile));
+        }, onError: (error) {
+          add(ProfileLoadErrorEvent(session: session, error: error));
+        });
+        add(ProfileLoadingEvent(session: session));
+      } else {
+        add(
+          ProfileLoadSuccessEvent(
+            session: session,
+            profile: futureOrProfile,
+          ),
+        );
+      }
+      return null;
+    }
+  }
+
+  UserLoadEvent? getUserById(int id) {
     final currentSession = state.currentSession;
     if (currentSession == null) return null;
 
-    bool isSearchedProfile(MinimalUser profile) => profile.id == id;
-
     try {
-      return state.sessionProfiles.values
-          .map((sessionProfile) => sessionProfile.toMinimalUser())
-          .firstWhere(
-            isSearchedProfile,
-            orElse: () =>
-                state.profiles[currentSession]!.firstWhere(isSearchedProfile),
-          );
+      return state.usersLoad.firstWhere((loadEvent) =>
+          loadEvent.id == id && loadEvent.observerSession == currentSession);
     } catch (_) {
-      add(ProfileLoadById(sessionSearching: currentSession, id: id));
+      final futureOrUser = profileRepository.getUserById(id, currentSession);
+
+      if (futureOrUser is Future<MinimalUser>) {
+        futureOrUser.then((user) {
+          add(
+            UserLoadSuccessEvent(
+              observerSession: currentSession,
+              id: id,
+              user: user,
+            ),
+          );
+        }, onError: (error) {
+          add(
+            UserLoadErrorEvent(
+              observerSession: currentSession,
+              id: id,
+              error: error,
+            ),
+          );
+        });
+        add(UserLoadingEvent(observerSession: currentSession, id: id));
+      } else {
+        add(
+          UserLoadSuccessEvent(
+            observerSession: currentSession,
+            id: id,
+            user: futureOrUser,
+          ),
+        );
+      }
       return null;
     }
   }
 
   ProfileBloc({
     required this.profileRepository,
-    required this.authRepository,
     required this.authSessionRepository,
-  }) : super(ProfileInitial()) {
+  }) : super(InitialProfileState()) {
     on<SubscribeToCurrentSessionChange>(_onSubscribeToCurrentSessionChange);
-    on<ProfileLoadBySession>(_onProfileLoadBySession);
-    on<ProfileLoadById>(_onProfileLoadById);
+    on<ProfileLoadEvent>(_onProfileLoadEvent);
+    on<UserLoadEvent>(_onUserLoadEvent);
   }
 
   void _onSubscribeToCurrentSessionChange(
@@ -64,43 +108,35 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     await emit.forEach<AuthSession?>(
       authSessionRepository.authSessionStream,
       onData: (session) {
-        return CurrentSessionChange(
+        return ChangedSessionProfileState(
           oldState: state,
-          session: session,
+          currentSession: session,
         );
       },
     );
   }
 
-  void _onProfileLoadBySession(
-      ProfileLoadBySession event, Emitter<ProfileState> emit) async {
-    final session = event.session;
-
-    try {
-      final profile = await profileRepository.getSessionProfile(session);
-
-      emit(SessionProfileSaving(
+  void _onProfileLoadEvent(
+    ProfileLoadEvent event,
+    Emitter<ProfileState> emit,
+  ) {
+    emit(
+      UpdateLoadEventProfileState(
         oldState: state,
-        session: session,
-        profile: profile,
-      ));
-
-      _loading = false;
-    } catch (_) {}
+        profileLoadEvent: event,
+      ),
+    );
   }
 
-  void _onProfileLoadById(
-    ProfileLoadById event,
+  void _onUserLoadEvent(
+    UserLoadEvent event,
     Emitter<ProfileState> emit,
-  ) async {
-    final profile = await profileRepository.getIdProfile(
-      event.id,
+  ) {
+    emit(
+      UpdateLoadEventProfileState(
+        oldState: state,
+        userLoadEvent: event,
+      ),
     );
-
-    emit(ProfileSaving(
-      oldState: state,
-      session: event.sessionSearching,
-      profile: profile,
-    ));
   }
 }
