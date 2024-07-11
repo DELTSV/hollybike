@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/journey/type/user_journey.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
 
 import 'event_participation_journey_content.dart';
 import 'event_participation_journey_empty.dart';
 
 class EventParticipationJourney extends StatelessWidget {
   final UserJourney? journey;
-  final String username;
+  final MinimalUser user;
 
   const EventParticipationJourney({
     super.key,
     required this.journey,
-    required this.username,
+    required this.user,
   });
 
   @override
@@ -20,20 +21,16 @@ class EventParticipationJourney extends StatelessWidget {
       return SizedBox(
         height: 80,
         child: EventParticipationJourneyEmpty(
-          username: username,
+          username: user.username,
         ),
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: EventParticipationJourneyContent(
-        existingJourney: journey!,
-      ),
+    return EventParticipationJourneyContent(
+      existingJourney: journey!,
+      color: Theme.of(context).colorScheme.primaryContainer,
+      username: user.username,
+      userId: user.id,
     );
   }
 }

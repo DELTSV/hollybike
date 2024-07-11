@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/types/participation/event_participation.dart';
-import 'package:hollybike/event/widgets/participations/event_participation_journey_empty.dart';
-import 'package:intl/intl.dart';
+import 'package:hollybike/shared/utils/dates.dart';
 
 import '../event_loading_profile_picture.dart';
 import 'event_participation_journey.dart';
@@ -76,7 +75,7 @@ class EventParticipationModal extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    "Inscrit ${_getJoinedDate()}",
+                    "Inscrit ${formatTimeDate(participation.joinedDateTime.toLocal())}",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -84,33 +83,13 @@ class EventParticipationModal extends StatelessWidget {
               const SizedBox(height: 16),
               EventParticipationJourney(
                 journey: participation.journey,
-                username: participation.user.username,
+                user: participation.user,
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  String _getJoinedDate() {
-    final date = participation.joinedDateTime.toLocal();
-    final now = DateTime.now();
-    final difference = now.difference(date).inDays;
-
-    String formattedDate;
-
-    if (difference == 0) {
-      formattedDate = "aujourd'hui";
-    } else if (difference == 1) {
-      formattedDate = "hier";
-    } else {
-      formattedDate = "le ${DateFormat.yMMMMd('fr_FR').format(date)}";
-    }
-
-    final time = "${date.hour}h${date.minute.toString().padLeft(2, '0')}";
-
-    return "$formattedDate à $time";
   }
 
   void _onOpenUserProfile(BuildContext context) {
