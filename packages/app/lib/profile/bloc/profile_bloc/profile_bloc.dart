@@ -7,13 +7,10 @@ import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../services/profile_repository.dart';
 
-part 'events/profile_event.dart';
-
-part 'events/profile_load_event.dart';
-
-part 'events/user_load_event.dart';
-
 part 'profile_state.dart';
+part './events/profile_event.dart';
+part './events/profile_load_event.dart';
+part './events/user_load_event.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository;

@@ -4,9 +4,9 @@ import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/shared/widgets/switch_with_text.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../positions/bloc/my_position_bloc.dart';
-import '../../../../positions/bloc/my_position_event.dart';
-import '../../../../positions/bloc/my_position_state.dart';
+import '../../../../positions/bloc/my_position/my_position_bloc.dart';
+import '../../../../positions/bloc/my_position/my_position_event.dart';
+import '../../../../positions/bloc/my_position/my_position_state.dart';
 
 class EventPositionSwitch extends StatelessWidget {
   final EventDetails eventDetails;

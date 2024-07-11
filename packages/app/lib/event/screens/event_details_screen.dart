@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/auth/services/auth_session_repository.dart';
 import 'package:hollybike/event/fragments/details/event_details_images.dart';
 import 'package:hollybike/event/fragments/details/event_details_infos.dart';
 import 'package:hollybike/event/fragments/details/event_details_map.dart';
@@ -8,6 +10,7 @@ import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
 import 'package:hollybike/event/widgets/details/event_edit_floating_button.dart';
+import 'package:hollybike/profile/services/profile_repository.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_container.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
@@ -19,7 +22,7 @@ import 'package:provider/provider.dart';
 import '../../app/app_router.gr.dart';
 import '../../auth/services/auth_persistence.dart';
 import '../../image/services/image_repository.dart';
-import '../../positions/bloc/user_positions_bloc.dart';
+import '../../positions/bloc/user_positions/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/pinned_header_delegate.dart';
 import '../bloc/event_details_bloc/event_details_bloc.dart';
@@ -320,10 +323,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
       ),
       BlocProvider(
         create: (context) => UserPositionsBloc(
-          authPersistence: Provider.of<AuthPersistence>(
+          authSessionRepository: RepositoryProvider.of<AuthSessionRepository>(
             context,
-            listen: false,
           ),
+          profileRepository: RepositoryProvider.of<ProfileRepository>(
+            context,
+          ),
+          currentSession: BlocProvider.of<AuthBloc>(context).state.authSession,
         ),
         child: EventDetailsMap(
           eventId: eventDetails.event.id,

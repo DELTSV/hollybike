@@ -4,8 +4,8 @@ import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart'
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/widgets/details/status/event_details_status.dart';
 
-import '../../../../positions/bloc/my_position_bloc.dart';
-import '../../../../positions/bloc/my_position_event.dart';
+import '../../../../positions/bloc/my_position/my_position_bloc.dart';
+import '../../../../positions/bloc/my_position/my_position_event.dart';
 import '../../../bloc/event_details_bloc/event_details_event.dart';
 import '../../../types/event_status_state.dart';
 

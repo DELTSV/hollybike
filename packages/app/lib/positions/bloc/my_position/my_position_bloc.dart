@@ -6,12 +6,12 @@ import 'dart:ui';
 import 'package:background_locator_2/background_locator.dart';
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
-import 'package:hollybike/positions/bloc/my_position_event.dart';
-import 'package:hollybike/positions/bloc/my_position_state.dart';
+import 'package:hollybike/positions/bloc/my_position/my_position_state.dart';
 import 'package:hollybike/positions/service/my_position_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../service/my_position_repository.dart';
+import '../../service/my_position_repository.dart';
+import 'my_position_event.dart';
 
 class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
   final EventRepository eventRepository;

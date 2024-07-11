@@ -4,11 +4,10 @@ import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/event/widgets/map/journey_map.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
-import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
-import 'package:hollybike/positions/bloc/user_positions_state.dart';
 import 'package:provider/provider.dart';
 
-import '../../../positions/bloc/user_positions_event.dart';
+import '../../../positions/bloc/user_positions/user_positions_bloc.dart';
+import '../../../positions/bloc/user_positions/user_positions_state.dart';
 import '../../widgets/map/empty_journey_map.dart';
 
 class EventDetailsMap extends StatefulWidget {
