@@ -41,8 +41,9 @@ class NotificationService(
 
 	suspend fun send(users: List<User>, notification: Body, caller: User) {
 		users.forEach {
-			if(caller.id != it.id)
-			send(it, notification)
+			if(caller.id != it.id){
+				send(it, notification)
+			}
 		}
 	}
 
