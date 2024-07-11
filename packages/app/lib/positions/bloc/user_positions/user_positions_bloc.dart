@@ -182,4 +182,12 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
       }
     }
   }
+
+  UserLoadEvent? getPositionUser(WebsocketReceivePosition position) {
+    try {
+      return state.usersLoadEvent.firstWhere((user) => user.id == position.userId);
+    } catch (_) {
+      return null;
+    }
+  }
 }

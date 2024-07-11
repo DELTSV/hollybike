@@ -259,10 +259,16 @@ class _JourneyMapState extends State<JourneyMap> {
     UserPositionsState userPositionsState,
   ) async {
     final colorScheme = Theme.of(context).colorScheme;
+    final icon = await rootBundle.load(
+      "assets/images/placeholder_map_pin.png",
+    );
+
     final options = await Future.wait(
       userPositionsState.userPositions.map((position) async {
-        final icon = await rootBundle
-            .load("assets/images/placeholder_profile_picture.jpg");
+        final user = BlocProvider.of<UserPositionsBloc>(context)
+            .getPositionUser(position);
+        if (user is! UserLoadSuccessEvent) return null;
+
         return PointAnnotationOptions(
           geometry: Point(
             coordinates: Position(
@@ -271,8 +277,8 @@ class _JourneyMapState extends State<JourneyMap> {
             ),
           ),
           image: icon.buffer.asUint8List(),
-          iconSize: 0.3,
           iconAnchor: IconAnchor.BOTTOM,
+          textField: user.user.username,
           textAnchor: TextAnchor.TOP,
           textSize: 12,
           textHaloWidth: 2,
@@ -283,6 +289,8 @@ class _JourneyMapState extends State<JourneyMap> {
     );
 
     await pointManager.deleteAll();
-    await pointManager.createMulti(options);
+    await pointManager.createMulti(
+      options.whereType<PointAnnotationOptions>().toList(),
+    );
   }
 }

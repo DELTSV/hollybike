@@ -36,13 +36,6 @@ class UserPositionsState {
     );
   }
 
-  UserLoadEvent? getPositionUser(WebsocketReceivePosition position) {
-    try {
-      return usersLoadEvent.firstWhere((user) => user.id == position.userId);
-    } catch (_) {
-      return null;
-    }
-  }
 }
 
 class UserPositionsInitial extends UserPositionsState {}
