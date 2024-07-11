@@ -32,6 +32,7 @@ class Profile {
         username: username,
         scope: scope,
         status: status,
+        profilePicture: profilePicture,
       );
 
   static Profile fromResponseJson(List<int> response) {
