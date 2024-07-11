@@ -22,6 +22,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.math.sqrt
 
 class UserEventPositionService(
 	private val db: Database,
@@ -108,6 +109,23 @@ class UserEventPositionService(
 		participation.journey
 	}
 
+	fun removeUserJourney(user: User, event: Event) {
+		transaction(db) {
+			val participation = EventParticipation.find {
+				(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
+			}.firstOrNull() ?: return@transaction
+			participation.journey = null
+		}
+	}
+
+	private fun calculateTotalAcceleration(
+		accelerationX: Double,
+		accelerationY: Double,
+		accelerationZ: Double
+	): Double = sqrt(accelerationX * accelerationX + accelerationY * accelerationY + accelerationZ * accelerationZ)
+
+	private fun convertToGForce(acceleration: Double): Double = acceleration / 9.81
+
 	suspend fun terminateUserJourney(user: User, event: Event): UserJourney {
 		val coord = mutableListOf<GeoJsonCoordinates>()
 		val times = mutableListOf<JsonPrimitive>()
@@ -119,7 +137,9 @@ class UserEventPositionService(
 		var prevAltitude: Double? = null
 		var maxSpeed = Double.NEGATIVE_INFINITY
 		var totalSpeed = 0.0
-		var totalSpeedCount = 0
+		var totalCount = 0
+		var maxAcceleration = Double.NEGATIVE_INFINITY
+		var totalAcceleration = 0.0
 
 		transaction(db) {
 			UserEventPosition.find {
@@ -149,7 +169,15 @@ class UserEventPositionService(
 					maxSpeed = pos.speed
 				}
 				totalSpeed += pos.speed
-				totalSpeedCount++
+
+				val acceleration = calculateTotalAcceleration(pos.accelerationX, pos.accelerationY, pos.accelerationZ)
+
+				if (acceleration > maxAcceleration) {
+					maxAcceleration = acceleration
+				}
+				totalAcceleration += acceleration
+
+				totalCount++
 			}
 
 			UsersEventsPositions.deleteWhere {
@@ -157,7 +185,9 @@ class UserEventPositionService(
 			}
 		}
 
-		val avgSpeed = totalSpeed / totalSpeedCount
+		val avgSpeed = totalSpeed / totalCount
+		val avgGForce = convertToGForce(totalAcceleration / totalCount)
+		val maxGForce = convertToGForce(maxAcceleration)
 		val totalTime = (Instant.parse(times.last().content) - Instant.parse(times.first().content)).inWholeSeconds
 		val geojson = Feature(
 			geometry = LineString(coord),
@@ -185,6 +215,8 @@ class UserEventPositionService(
 				this.maxElevation = maxElevation
 				this.totalTime = totalTime
 				this.maxSpeed = maxSpeed
+				this.avgGForce = avgGForce
+				this.maxGForce = maxGForce
 			}.apply {
 				participation.journey = this
 			}

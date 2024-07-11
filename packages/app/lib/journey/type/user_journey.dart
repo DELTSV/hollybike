@@ -13,14 +13,17 @@ class UserJourney with _$UserJourney {
   const factory UserJourney({
     required int id,
     required String file,
-    @JsonKey(name: 'avg_speed') required int? avgSpeed,
+    @JsonKey(name: 'avg_speed') required double? avgSpeed,
     @JsonKey(name: 'total_distance') required int? totalDistance,
-    @JsonKey(name: 'min_elevation') required int? minElevation,
-    @JsonKey(name: 'max_elevation') required int? maxElevation,
-    @JsonKey(name: 'total_elevation_gain') required int? totalElevationGain,
-    @JsonKey(name: 'total_elevation_loss') required int? totalElevationLoss,
+    @JsonKey(name: 'min_elevation') required double? minElevation,
+    @JsonKey(name: 'max_elevation') required double? maxElevation,
+    @JsonKey(name: 'total_elevation_gain') required double? totalElevationGain,
+    @JsonKey(name: 'total_elevation_loss') required double? totalElevationLoss,
     @JsonKey(name: 'total_time') required int? totalTime,
-    @JsonKey(name: 'max_speed') required int? maxSpeed,
+    @JsonKey(name: 'max_speed') required double? maxSpeed,
+    @JsonKey(name: 'avg_g_force') required double? avgGForce,
+    @JsonKey(name: 'max_g_force') required double? maxGForce,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
   }) = _UserJourney;
 
   get distanceLabel {

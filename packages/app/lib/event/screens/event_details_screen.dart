@@ -76,7 +76,7 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
 class _EventDetailsScreenState extends State<EventDetailsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController = TabController(
-    length: 4,
+    length: 5,
     vsync: this,
     initialIndex: 0,
   );
@@ -201,59 +201,56 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                 suffix: _renderActions(state),
               ),
               floatingActionButton: _getFloatingButton(),
-              body: DefaultTabController(
-                length: 5,
-                child: NestedScrollView(
-                  controller: _scrollController,
-                  headerSliverBuilder: (
-                    BuildContext context,
-                    bool innerBoxIsScrolled,
-                  ) {
-                    return <Widget>[
-                      SliverToBoxAdapter(
-                        child: EventDetailsHeader(
-                          event: state.eventDetails?.event.toMinimalEvent() ??
-                              widget.event,
-                          animate: _animate,
-                          uniqueKey: widget.uniqueKey,
-                        ),
+              body: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder: (
+                  BuildContext context,
+                  bool innerBoxIsScrolled,
+                ) {
+                  return <Widget>[
+                    SliverToBoxAdapter(
+                      child: EventDetailsHeader(
+                        event: state.eventDetails?.event.toMinimalEvent() ??
+                            widget.event,
+                        animate: _animate,
+                        uniqueKey: widget.uniqueKey,
                       ),
-                      SliverOverlapAbsorber(
-                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                          context,
-                        ),
-                        sliver: SliverPersistentHeader(
-                          pinned: true,
-                          delegate: PinnedHeaderDelegate(
-                            height: 50,
-                            child: Container(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              child: TabBar(
-                                controller: _tabController,
-                                labelColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                indicatorColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                tabs: const [
-                                  Tab(icon: Icon(Icons.info)),
-                                  Tab(icon: Icon(Icons.photo_library_rounded)),
-                                  Tab(
-                                    icon: Icon(
-                                      Icons.add_photo_alternate_rounded,
-                                    ),
+                    ),
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context,
+                      ),
+                      sliver: SliverPersistentHeader(
+                        pinned: true,
+                        delegate: PinnedHeaderDelegate(
+                          height: 50,
+                          child: Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            child: TabBar(
+                              controller: _tabController,
+                              labelColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              indicatorColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              tabs: const [
+                                Tab(icon: Icon(Icons.info)),
+                                Tab(icon: Icon(Icons.photo_library_rounded)),
+                                Tab(
+                                  icon: Icon(
+                                    Icons.add_photo_alternate_rounded,
                                   ),
-                                  Tab(icon: Icon(Icons.explore_rounded)),
-                                  Tab(icon: Icon(Icons.map_rounded)),
-                                ],
-                              ),
+                                ),
+                                Tab(icon: Icon(Icons.explore_rounded)),
+                                Tab(icon: Icon(Icons.map_rounded)),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                    ];
-                  },
-                  body: _tabTabContent(),
-                ),
+                    ),
+                  ];
+                },
+                body: _tabTabContent(),
               ),
             ),
           );

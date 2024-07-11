@@ -1,5 +1,6 @@
 package hollybike.api.routing.resources
 
+import hollybike.api.routing.resources.Events.Id.Participations.User.Journey
 import io.ktor.resources.*
 
 @Resource("/events")
@@ -62,6 +63,9 @@ class Events(val api: API = API()) {
 				class Journey(val me: Me) {
 					@Resource("terminate")
 					class Terminate(val journey: Journey)
+
+					@Resource("file")
+					class File(val journey: Journey)
 				}
 			}
 
