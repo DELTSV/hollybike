@@ -1,7 +1,12 @@
+import 'dart:ffi';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/journey/type/user_journey.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
+import 'package:hollybike/shared/utils/add_separators.dart';
+import 'package:lottie/lottie.dart';
 import '../../../shared/utils/dates.dart';
 import '../../../shared/widgets/gradient_progress_bar.dart';
 
@@ -23,21 +28,34 @@ class EventParticipationJourneyModal extends StatefulWidget {
   });
 
   @override
-  State<EventParticipationJourneyModal> createState() => _EventParticipationJourneyModalState();
+  State<EventParticipationJourneyModal> createState() =>
+      _EventParticipationJourneyModalState();
 }
 
-class _EventParticipationJourneyModalState extends State<EventParticipationJourneyModal> {
+class _EventParticipationJourneyModalState
+    extends State<EventParticipationJourneyModal> {
   late final double _betterPercentage;
+  bool _isSolo = false;
+  int _betterThanCount = 0;
 
   @override
   void initState() {
     super.initState();
     final isBetterThan = widget.journey.isBetterThan;
 
+    if (isBetterThan.isEmpty) {
+      _isSolo = true;
+      _betterPercentage = 0.0;
+      return;
+    }
+
     _betterPercentage = isBetterThan.entries.fold(0.0, (acc, entry) {
-      final isBetter = entry.value;
-      return acc + isBetter;
-    }) / isBetterThan.length;
+          final isBetter = entry.value;
+          return acc + isBetter;
+        }) /
+        isBetterThan.length;
+
+    _betterThanCount = isBetterThan.values.where((element) => element == 100).length;
   }
 
   @override
@@ -96,25 +114,27 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% des participants !",
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
+                        _getIsBetterLabel(isCurrentUser),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
+                  ..._buildBetterThanCount(isCurrentUser),
                   _JourneyStatRow(
                     firstStat: _JourneyStatCard(
                       title: 'Dénivelé gains et pertes',
                       stats: [
                         _StatItem(
                           icon: Icons.north_east_rounded,
-                          label: '${widget.journey.totalElevationGain?.round()} m',
+                          label:
+                              '${widget.journey.totalElevationGain?.round()} m',
+                          value: getBetterThan('total_elevation_gain'),
                         ),
                         _StatItem(
                           icon: Icons.south_east_rounded,
-                          label: '${widget.journey.totalElevationLoss?.round()} m',
+                          label:
+                              '${widget.journey.totalElevationLoss?.round()} m',
+                          value: getBetterThan('total_elevation_loss'),
                         ),
                       ],
                     ),
@@ -124,10 +144,12 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
                         _StatItem(
                           icon: Icons.speed_rounded,
                           label: widget.journey.maxSpeedLabel,
+                          value: getBetterThan('max_speed'),
                         ),
                         _StatItem(
                           icon: Icons.speed_rounded,
                           label: widget.journey.avgSpeedLabel,
+                          value: getBetterThan('avg_speed'),
                         ),
                       ],
                     ),
@@ -140,10 +162,12 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
                         _StatItem(
                           icon: Icons.vertical_align_bottom_rounded,
                           label: '${widget.journey.minElevation?.round()} m',
+                          value: getBetterThan('min_elevation'),
                         ),
                         _StatItem(
                           icon: Icons.terrain_rounded,
                           label: '${widget.journey.maxElevation?.round()} m',
+                          value: getBetterThan('max_elevation'),
                         ),
                       ],
                     ),
@@ -153,10 +177,12 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
                         _StatItem(
                           icon: Icons.gps_fixed_rounded,
                           label: widget.journey.maxGForceLabel,
+                          value: getBetterThan('max_g_force'),
                         ),
                         _StatItem(
                           icon: Icons.gps_fixed_rounded,
                           label: widget.journey.avgGForceLabel,
+                          value: getBetterThan('avg_g_force'),
                         ),
                       ],
                     ),
@@ -168,6 +194,68 @@ class _EventParticipationJourneyModalState extends State<EventParticipationJourn
           ),
         ),
       ),
+    );
+  }
+
+  List<Widget> _buildBetterThanCount(bool isCurrentUser) {
+    if (_betterThanCount == 0) {
+      return [];
+    }
+
+    return [
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Lottie.asset(
+              "assets/lottie/lottie_medal.json",
+              width: 35,
+              repeat: true,
+            ),
+            const SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                _getIsBetterThanCountText(isCurrentUser),
+                style: Theme.of(context).textTheme.bodyMedium,
+                softWrap: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      const SizedBox(height: 16),
+    ];
+  }
+
+  String _getIsBetterThanCountText(bool isCurrentUser) {
+    if (isCurrentUser) {
+      return 'Vous êtes le meilleur dans $_betterThanCount catégories !';
+    } else if (widget.username != null) {
+      return '${widget.username} est le meilleur dans $_betterThanCount catégories !';
+    } else {
+      return 'Le participant est le meilleur dans $_betterThanCount catégories !';
+    }
+  }
+
+  double? getBetterThan(String key) {
+    if (widget.journey.isBetterThan.containsKey(key)) {
+      return widget.journey.isBetterThan[key];
+    }
+
+    return null;
+  }
+
+  Widget _getIsBetterLabel(bool isCurrentUser) {
+    return Text(
+      _isSolo
+          ? "Vous êtes le seul à avoir terminé le parcours !"
+          : "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% des participants !",
+      style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 
@@ -329,21 +417,25 @@ class _JourneyStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.bodySmall,
-            softWrap: true,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.bodySmall,
+              softWrap: true,
+            ),
           ),
           const SizedBox(height: 8),
           const Spacer(),
-          ...stats,
+          ...addSeparators(stats, const SizedBox(height: 8)),
         ],
       ),
     );
@@ -353,20 +445,69 @@ class _JourneyStatCard extends StatelessWidget {
 class _StatItem extends StatelessWidget {
   final IconData icon;
   final String label;
+  final double? value;
 
   const _StatItem({
     required this.icon,
     required this.label,
+    required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Stack(
       children: [
-        Icon(icon, size: 20),
-        const SizedBox(width: 4),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+          ),
+          child: Column(
+            children: _getStats(context),
+          ),
+        ),
+
+        if (value == 100)
+          Positioned(
+            left: 9,
+            top: -2,
+            child: Lottie.asset(
+              "assets/lottie/lottie_medal.json",
+              width: 15,
+              repeat: true,
+            ),
+          ),
       ],
     );
+  }
+
+  List<Widget> _getStats(BuildContext context) {
+    final widgets = <Widget>[
+      Row(
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 4),
+          Text(label, style: Theme.of(context).textTheme.bodySmall),
+        ],
+      ),
+    ];
+
+    if (value != null) {
+      widgets.addAll([
+        const SizedBox(height: 2),
+        GradientProgressBar(
+          animateStart: true,
+          maxValue: 100,
+          value: value!,
+          height: 3,
+          colors: [
+            Colors.red.shade400,
+            Colors.yellow.shade400,
+            Colors.green.shade400,
+          ],
+        ),
+      ]);
+    }
+
+    return widgets;
   }
 }

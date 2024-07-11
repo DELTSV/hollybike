@@ -5,6 +5,7 @@ class GradientProgressBar extends StatefulWidget {
   final double value;
   final List<Color> colors;
   final bool animateStart;
+  final double height;
 
   const GradientProgressBar({
     super.key,
@@ -12,6 +13,7 @@ class GradientProgressBar extends StatefulWidget {
     required this.value,
     required this.colors,
     required this.animateStart,
+    this.height = 10,
   });
 
   @override
@@ -71,7 +73,7 @@ class _GradientProgressBarState extends State<GradientProgressBar>
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 10,
+      height: widget.height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.1),
