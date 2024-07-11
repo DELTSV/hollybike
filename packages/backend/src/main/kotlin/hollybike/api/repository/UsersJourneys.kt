@@ -1,6 +1,7 @@
 package hollybike.api.repository
 
 import hollybike.api.signatureService
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -19,7 +20,7 @@ object UsersJourneys: IntIdTable("users_journeys", "id_user_journey") {
 	val maxGForce = double("max_g_force").nullable()
 	val totalTime = long("total_time").nullable()
 	val maxSpeed = double("max_speed").nullable()
-	val createdAt = timestamp("created_at")
+	val createdAt = timestamp("created_at").default(Clock.System.now())
 }
 
 class UserJourney(id: EntityID<Int>) : IntEntity(id) {
