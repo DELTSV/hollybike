@@ -63,9 +63,6 @@ class Events(val api: API = API()) {
 				class Journey(val me: Me) {
 					@Resource("terminate")
 					class Terminate(val journey: Journey)
-
-					@Resource("file")
-					class File(val journey: Journey)
 				}
 			}
 

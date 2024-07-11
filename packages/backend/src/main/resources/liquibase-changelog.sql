@@ -458,3 +458,36 @@ ALTER TABLE users_journeys
     ADD COLUMN IF NOT EXISTS created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     ADD COLUMN IF NOT EXISTS avg_g_force DOUBLE PRECISION DEFAULT NULL,
     ADD COLUMN IF NOT EXISTS max_g_force DOUBLE PRECISION DEFAULT NULL;
+
+--changeset loic:16
+
+ALTER TABLE event_participations
+    DROP CONSTRAINT event_participation_user_journey_fk;
+
+ALTER TABLE event_participations
+    ADD CONSTRAINT event_participation_user_journey_fk FOREIGN KEY (journey) REFERENCES users_journeys(id_user_journey) ON DELETE SET NULL;
+
+--changeset loic:17
+
+ALTER TABLE users_events_positions
+    DROP CONSTRAINT users_events_positions_event_fkey;
+
+ALTER TABLE users_events_positions
+    ADD CONSTRAINT users_events_positions_event_fkey FOREIGN KEY (event) REFERENCES events(id_event) ON DELETE CASCADE;
+
+ALTER TABLE users_events_positions
+    DROP CONSTRAINT users_events_positions_user_fkey;
+
+ALTER TABLE users_events_positions
+    ADD CONSTRAINT users_events_positions_user_fkey FOREIGN KEY ("user") REFERENCES users(id_user) ON DELETE CASCADE;
+
+--changeset loic:18
+
+ALTER TABLE users_journeys
+    ADD COLUMN IF NOT EXISTS "user" INTEGER DEFAULT NULL REFERENCES users(id_user);
+
+ALTER TABLE users_journeys
+    DROP CONSTRAINT IF EXISTS users_journeys_user_fkey;
+
+ALTER TABLE users_journeys
+    ADD CONSTRAINT users_journeys_user_fkey FOREIGN KEY ("user") REFERENCES users(id_user) ON DELETE CASCADE;

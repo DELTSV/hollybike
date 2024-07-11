@@ -67,10 +67,9 @@ class EventController(
 				pendEvent()
 				getMetaData()
 				getParticipantJourney()
-				getMyJourneyFile()
 				getParticipantJourneyFile()
+				resetEventJourney()
 				terminateEventJourney()
-				removeEventJourney()
 			}
 		}
 	}
@@ -337,7 +336,7 @@ class EventController(
 				return@post
 			}
 
-			userEventPositionService.getUserJourney(call.user, event)?.let {
+			userEventPositionService.getUserJourneyFromEvent(call.user, event)?.let {
 				call.respond(HttpStatusCode.Conflict, "Trajet déjà terminé")
 			} ?: run {
 				val journey = userEventPositionService.terminateUserJourney(call.user, event)
@@ -352,14 +351,16 @@ class EventController(
 		}
 	}
 
-	private fun Route.removeEventJourney() {
+	private fun Route.resetEventJourney() {
 		delete<Events.Id.Participations.Me.Journey> {
 			val event = eventService.getEvent(call.user, it.me.participations.eventId.id) ?: run {
 				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
 				return@delete
 			}
 
-			userEventPositionService.removeUserJourney(call.user, event)
+			userEventPositionService.removeUserJourneyFromEvent(call.user, event)
+
+			call.respond(HttpStatusCode.NoContent)
 		}
 	}
 
@@ -374,7 +375,7 @@ class EventController(
 				return@get
 			}
 
-			val journey = userEventPositionService.getUserJourney(user, event) ?: run {
+			val journey = userEventPositionService.getUserJourneyFromEvent(user, event) ?: run {
 				call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
 				return@get
 			}
@@ -388,19 +389,18 @@ class EventController(
 		}
 	}
 
+	@Deprecated("Use getUserJourneyFile instead")
 	private suspend fun getParticipantJourneyFile(call: ApplicationCall, eventId: Int, userId: Int) {
 		val event = eventService.getEvent(call.user, eventId) ?: run {
-			call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
-			return
-		}
-		val user = userService.getUser(call.user, userId) ?: run {
-			call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
-			return
+			return call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
 		}
 
-		val journey = userEventPositionService.getUserJourney(user, event) ?: run {
-			call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
-			return
+		val user = userService.getUser(call.user, userId) ?: run {
+			return call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+		}
+
+		val journey = userEventPositionService.getUserJourneyFromEvent(user, event) ?: run {
+			return call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
 		}
 
 		val data = storageService.retrieve(journey.journey) ?: run {
@@ -415,12 +415,6 @@ class EventController(
 			call.respond(xml.encodeToString(geojson.toGpx()))
 		} else {
 			call.respond(HttpStatusCode.BadRequest, "Il manque un format de retour")
-		}
-	}
-
-	private fun Route.getMyJourneyFile() {
-		get<Events.Id.Participations.Me.Journey.File> {
-			getParticipantJourneyFile(call, it.journey.me.participations.eventId.id, call.user.id.value)
 		}
 	}
 

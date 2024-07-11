@@ -50,6 +50,11 @@ class WeatherForecastBloc
         weatherForecast,
       );
 
+      if (groupedWeatherForecast.dailyWeather.isEmpty) {
+        emit(WeatherForecastFailure(state, errorMessage: 'Aucune donnée'));
+        return;
+      }
+
       emit(WeatherForecastSuccess(
         state.copyWith(weatherForecast: groupedWeatherForecast),
       ));
