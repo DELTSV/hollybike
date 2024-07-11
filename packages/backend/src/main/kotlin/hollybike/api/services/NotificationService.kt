@@ -39,15 +39,19 @@ class NotificationService(
 		getUserChannel(user.id.value).emit(TNotification(notification, user.id.value, n.id.value))
 	}
 
-	suspend fun send(users: List<User>, notification: Body) {
-		users.forEach { send(it, notification) }
+	suspend fun send(users: List<User>, notification: Body, caller: User) {
+		users.forEach {
+			if(caller.id != it.id){
+				send(it, notification)
+			}
+		}
 	}
 
-	suspend fun sendToAssociation(associationId: Int, notification: Body) {
+	suspend fun sendToAssociation(associationId: Int, notification: Body, caller: User) {
 		val users = transaction(db) {
 			User.find { (Users.association eq associationId) and (Users.status neq EUserStatus.Disabled.value) }.toList()
 		}
-		send(users, notification)
+		send(users, notification, caller)
 	}
 
 	private fun authorizeGet(caller: User, target: Notification): Boolean = when(caller.scope) {

@@ -4,8 +4,7 @@ import hollybike.api.json
 import hollybike.api.repository.*
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.journey.*
-import hollybike.api.types.websocket.UserReceivePosition
-import hollybike.api.types.websocket.UserSendPosition
+import hollybike.api.types.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,19 +28,19 @@ class UserEventPositionService(
 	private val scope: CoroutineScope,
 	private val storageService: StorageService
 ) {
-	private val receiveChannels: MutableMap<Pair<Int, Int>, Channel<UserSendPosition>> = mutableMapOf()
+	private val receiveChannels: MutableMap<Pair<Int, Int>, Channel<Body>> = mutableMapOf()
 
-	private val sendChannels: MutableMap<Int, MutableSharedFlow<UserReceivePosition>> = mutableMapOf()
+	private val sendChannels: MutableMap<Int, MutableSharedFlow<Body>> = mutableMapOf()
 
 	val lastPosition: MutableMap<Int, MutableMap<Int, UserEventPosition>> = mutableMapOf()
 
-	fun getSendChannel(eventId: Int): MutableSharedFlow<UserReceivePosition> {
+	fun getSendChannel(eventId: Int): MutableSharedFlow<Body> {
 		return sendChannels[eventId] ?: run {
-			MutableSharedFlow<UserReceivePosition>(15, 15).apply { sendChannels[eventId] = this }
+			MutableSharedFlow<Body>(15, 15).apply { sendChannels[eventId] = this }
 		}
 	}
 
-	private suspend fun send(eventId: Int, position: UserEventPosition) {
+	private suspend fun sendPosition(eventId: Int, position: UserEventPosition) {
 		getSendChannel(eventId).emit(
 			UserReceivePosition(
 				position.latitude,
@@ -54,12 +53,18 @@ class UserEventPositionService(
 		)
 	}
 
-	suspend fun getReceiveChannel(eventId: Int, userId: Int): Channel<UserSendPosition> {
+	private suspend fun sendStopPosition(eventId: Int, user: Int) {
+		getSendChannel(eventId).emit(
+			StopUserReceivePosition(user)
+		)
+	}
+
+	suspend fun getReceiveChannel(eventId: Int, userId: Int): Channel<Body> {
 		return receiveChannels[eventId to userId] ?: run {
 			lastPosition[eventId] ?: run {
 				lastPosition[eventId] = mutableMapOf()
 			}
-			Channel<UserSendPosition>(Channel.BUFFERED).apply {
+			Channel<Body>(Channel.BUFFERED).apply {
 				scope.launch {
 					listenChannel(eventId, userId)
 				}
@@ -68,7 +73,7 @@ class UserEventPositionService(
 		}
 	}
 
-	private suspend fun Channel<UserSendPosition>.listenChannel(eventId: Int, userId: Int) {
+	private suspend fun Channel<Body>.listenChannel(eventId: Int, userId: Int) {
 		val event = transaction(db) { Event.findById(eventId) } ?: return
 		val user = transaction(db) { User.findById(userId) } ?: return
 		val participation = transaction(db) {
@@ -77,28 +82,34 @@ class UserEventPositionService(
 			}.firstOrNull()
 		} ?: return
 		for (message in this) {
-			val entity = transaction(db) {
-				transaction(db) {
-					UserEventPosition.new {
-						this.user = user
-						this.event = event
-						this.participation = participation
-						this.latitude = message.latitude
-						this.longitude = message.longitude
-						this.altitude = message.altitude
-						this.time = message.time
-						this.speed = message.speed
-						this.heading = message.heading
-						this.accelerationX = message.accelerationX
-						this.accelerationY = message.accelerationY
-						this.accelerationZ = message.accelerationZ
-						this.accuracy = message.accuracy
-						this.speedAccuracy = message.speedAccuracy
-					}
-				}.load(UserEventPosition::user)
+			println(message)
+			if(message is UserSendPosition) {
+				val entity = transaction(db) {
+					transaction(db) {
+						UserEventPosition.new {
+							this.user = user
+							this.event = event
+							this.participation = participation
+							this.latitude = message.latitude
+							this.longitude = message.longitude
+							this.altitude = message.altitude
+							this.time = message.time
+							this.speed = message.speed
+							this.heading = message.heading
+							this.accelerationX = message.accelerationX
+							this.accelerationY = message.accelerationY
+							this.accelerationZ = message.accelerationZ
+							this.accuracy = message.accuracy
+							this.speedAccuracy = message.speedAccuracy
+						}
+					}.load(UserEventPosition::user)
+				}
+				lastPosition[eventId]!![userId] = entity
+				sendPosition(eventId, entity)
+			} else if(message is StopUserSendPosition) {
+				lastPosition[eventId]!!.remove(userId)
+				sendStopPosition(eventId, userId)
 			}
-			lastPosition[eventId]!![userId] = entity
-			send(eventId, entity)
 		}
 	}
 

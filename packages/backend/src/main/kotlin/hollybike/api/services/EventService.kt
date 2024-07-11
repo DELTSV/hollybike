@@ -278,7 +278,7 @@ class EventService(
 			?: return@transaction null
 	}
 
-	suspend fun createEvent(
+	fun createEvent(
 		caller: User,
 		name: String,
 		description: String?,
@@ -309,21 +309,6 @@ class EventService(
 			Result.success(
 				createdEvent.load(Event::participants)
 			)
-		}.apply {
-			onSuccess { e ->
-				notificationService.sendToAssociation(
-					association.id.value,
-					NewEventNotification(
-						e.id.value,
-						e.name,
-						e.description,
-						e.startDateTime,
-						e.signedImage,
-						e.owner.id.value,
-						e.owner.username
-					)
-				)
-			}
 		}
 	}
 
@@ -378,7 +363,13 @@ class EventService(
 				}
 		}.apply {
 			onSuccess { event ->
-				notificationService.send(event.participants.map { it.user }.toList(), UpdateEventNotification(event))
+				if(event.status != EEventStatus.Pending) {
+					notificationService.send(
+						event.participants.filter { it.role == EEventRole.Organizer }.map { it.user }.toList(),
+						UpdateEventNotification(event),
+						caller
+					)
+				}
 			}
 		}
 	}
@@ -400,6 +391,8 @@ class EventService(
 		if (status == event.status) {
 			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Event déjà ${status.name.lowercase()}"))
 		}
+
+		val oldStatus = event.status
 
 		when (status) {
 			EEventStatus.Pending -> {
@@ -426,7 +419,12 @@ class EventService(
 
 		event.status = status
 
-		notificationService.send(event.participants.map { it.user }.toList(), EventStatusUpdateNotification(event))
+		if(status != EEventStatus.Pending && oldStatus != EEventStatus.Pending) {
+			notificationService.send(event.participants.map { it.user }.toList(), EventStatusUpdateNotification(event, oldStatus), caller)
+		}
+		if(status == EEventStatus.Scheduled) {
+			notificationService.sendToAssociation(caller.association.id.value, NewEventNotification(event), caller)
+		}
 
 		Result.success(Unit)
 	}
@@ -455,7 +453,9 @@ class EventService(
 			return@newSuspendedTransaction Result.failure(EventActionDeniedException("Seul le propriétaire peut supprimer l'événement"))
 		}
 
-		notificationService.send(event.participants.map { it.user }.toList(), DeleteEventNotification(event))
+		if(event.status == EEventStatus.Pending) {
+			notificationService.send(event.participants.map { it.user }.toList(), DeleteEventNotification(event), caller)
+		}
 
 		Result.success(event.delete())
 	}

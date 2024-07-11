@@ -1,5 +1,6 @@
 package hollybike.api.types.websocket
 
+import hollybike.api.repository.Event
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,4 +15,14 @@ data class NewEventNotification(
 	val image: String? = null,
 	val ownerId: Int,
 	val owneName: String
-): Body
+): Body {
+	constructor(entity: Event): this(
+		entity.id.value,
+		entity.name,
+		entity.description,
+		entity.startDateTime,
+		entity.image,
+		entity.owner.id.value,
+		entity.owner.username
+	)
+}

@@ -230,3 +230,9 @@ fun Application.webSocket(route: String, body: WebSocketConfig.() -> Unit) {
 		}
 	}
 }
+
+suspend inline fun <reified T: Body>WebSocketCall.on(crossinline body: suspend WebSocketCall.(T) -> Unit) = run {
+	if(this.body is T) {
+		body(this.body)
+	}
+}

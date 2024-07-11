@@ -44,3 +44,13 @@ data class UserReceivePosition(
 		data.user.id.value
 	)
 }
+
+@Serializable
+@SerialName("stop-send-user-position")
+data object StopUserSendPosition : Body
+
+@Serializable
+@SerialName("stop-receive-user-position")
+data class StopUserReceivePosition(
+	val user: Int
+): Body

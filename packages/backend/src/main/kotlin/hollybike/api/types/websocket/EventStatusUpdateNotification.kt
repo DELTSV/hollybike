@@ -12,13 +12,16 @@ data class EventStatusUpdateNotification(
 	val name: String,
 	val description: String? = null,
 	val image: String? = null,
-	val status: EEventStatus
+	val status: EEventStatus,
+	@SerialName("old_status")
+	val oldStatus: EEventStatus
 ): Body {
-	constructor(event: Event): this(
+	constructor(event: Event, oldStatus: EEventStatus): this(
 		event.id.value,
 		event.name,
 		event.description,
 		event.image,
-		event.status
+		event.status,
+		oldStatus
 	)
 }
