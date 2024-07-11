@@ -10,9 +10,9 @@ import '../widgets/profile_page/profile_page.dart';
 
 @RoutePage()
 class ProfileScreen extends StatelessWidget {
-  final String? id;
+  final String? urlId;
 
-  const ProfileScreen({super.key, @PathParam('id') this.id});
+  const ProfileScreen({super.key, @PathParam('id') this.urlId});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +24,37 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) => ProfilePage(
-          id: id == null ? null : int.parse(id as String),
-          profile: id == null
-              ? null
-              : bloc.getProfileById(
-                  int.parse(id as String),
-                ),
-          association: bloc.currentProfile?.association,
-        ),
+        builder: (context, bloc, state) {
+          try {
+            return buildProfilePage(context, bloc, state);
+          } catch (_) {
+            return const ProfilePage(
+              profile: null,
+              association: null,
+            );
+          }
+        },
       ),
+    );
+  }
+
+  Widget buildProfilePage(
+    BuildContext context,
+    ProfileBloc bloc,
+    ProfileState state,
+  ) {
+    final id = urlId == null ? int.parse(urlId as String) : null;
+    if (id == null) throw Error();
+
+    final currentProfile = bloc.currentProfile;
+    final user = bloc.getUserById(id);
+    if (user is! UserLoadSuccessEvent ||
+        currentProfile is! ProfileLoadSuccessEvent) throw Error();
+
+    return ProfilePage(
+      id: id,
+      profile: user.user,
+      association: currentProfile.profile.association,
     );
   }
 }

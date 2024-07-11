@@ -11,20 +11,17 @@ class ProfileApi {
 
   ProfileApi({required this.client});
 
-  Future<Profile> getSessionProfile(AuthSession session) async {
-    final AuthSession(:host, :token) = session;
-
+  Future<Profile> getProfile(AuthSession profileSession) async {
+    final AuthSession(:host, :token) = profileSession;
     final response = await client.dio.get("$host/api/users/me",
         options: Options(
           headers: {'Authorization': "Bearer $token"},
         ));
-
     return Profile.fromJson(response.data);
   }
 
-  Future<MinimalUser> getIdProfile(int id) async {
-    final response = await client.dio.get("/profiles/$id");
-
+  Future<MinimalUser> getUserById(int userId) async {
+    final response = await client.dio.get("/profiles/$userId");
     return MinimalUser.fromJson(response.data);
   }
 
@@ -42,7 +39,6 @@ class ProfileApi {
         "query": query,
       },
     );
-
     return PaginatedList.fromJson(response.data, MinimalUser.fromJson);
   }
 }

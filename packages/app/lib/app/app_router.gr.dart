@@ -132,12 +132,12 @@ abstract class $AppRouter extends _i13.RootStackRouter {
     ProfileRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<ProfileRouteArgs>(
-          orElse: () => ProfileRouteArgs(id: pathParams.optString('id')));
+          orElse: () => ProfileRouteArgs(urlId: pathParams.optString('id')));
       return _i13.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i10.ProfileScreen(
           key: args.key,
-          id: args.id,
+          urlId: args.urlId,
         ),
       );
     },
@@ -485,15 +485,15 @@ class MeRoute extends _i13.PageRouteInfo<void> {
 class ProfileRoute extends _i13.PageRouteInfo<ProfileRouteArgs> {
   ProfileRoute({
     _i14.Key? key,
-    String? id,
+    String? urlId,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           ProfileRoute.name,
           args: ProfileRouteArgs(
             key: key,
-            id: id,
+            urlId: urlId,
           ),
-          rawPathParams: {'id': id},
+          rawPathParams: {'id': urlId},
           initialChildren: children,
         );
 
@@ -506,16 +506,16 @@ class ProfileRoute extends _i13.PageRouteInfo<ProfileRouteArgs> {
 class ProfileRouteArgs {
   const ProfileRouteArgs({
     this.key,
-    this.id,
+    this.urlId,
   });
 
   final _i14.Key? key;
 
-  final String? id;
+  final String? urlId;
 
   @override
   String toString() {
-    return 'ProfileRouteArgs{key: $key, id: $id}';
+    return 'ProfileRouteArgs{key: $key, urlId: $urlId}';
   }
 }
 

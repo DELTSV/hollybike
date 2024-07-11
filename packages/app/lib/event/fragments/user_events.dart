@@ -16,12 +16,13 @@ class UserEvents extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvidedBuilder<ProfileBloc, ProfileState>(
       builder: (context, bloc, state) {
-        if (bloc.currentProfile == null) return const Text("loading");
+        final currentProfile = bloc.currentProfile;
+        if (currentProfile is! ProfileLoadSuccessEvent) return const Text("loading");
 
         return BlocProvider<UserEventsBloc>(
           create: (context) => UserEventsBloc(
             eventRepository: RepositoryProvider.of<EventRepository>(context),
-            userId: bloc.currentProfile!.id,
+            userId: currentProfile.profile.id,
           )..add(SubscribeToEvents()),
           child: Builder(
             builder: (context) {

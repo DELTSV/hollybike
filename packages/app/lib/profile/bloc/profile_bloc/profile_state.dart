@@ -1,100 +1,49 @@
 part of 'profile_bloc.dart';
 
 @immutable
-abstract class ProfileState {
-  final Map<AuthSession, Profile> sessionProfiles;
-  final Map<AuthSession, List<MinimalUser>> profiles;
+class ProfileState {
+  final List<ProfileLoadEvent> profilesLoad;
+  final List<UserLoadEvent> usersLoad;
   final AuthSession? currentSession;
 
   const ProfileState({
-    required this.sessionProfiles,
-    required this.profiles,
+    required this.profilesLoad,
+    required this.usersLoad,
     required this.currentSession,
   });
-
-  Profile? get currentProfile => sessionProfiles[currentSession];
-
-  Profile? findSessionProfile(AuthSession session) {
-    if (sessionProfiles.isEmpty) return null;
-
-    try {
-      return sessionProfiles.entries
-          .firstWhere(
-            (element) =>
-                element.key.token == session.token &&
-                element.key.host == session.host,
-          )
-          .value;
-    } catch (_) {
-      return null;
-    }
-  }
 }
 
-class ProfileInitial extends ProfileState {
-  ProfileInitial()
+class InitialProfileState extends ProfileState {
+  InitialProfileState()
       : super(
-          sessionProfiles: <AuthSession, Profile>{},
-          profiles: <AuthSession, List<MinimalUser>>{},
-          currentSession: null,
-        );
+    profilesLoad: <ProfileLoadEvent>[],
+    usersLoad: <UserLoadEvent>[],
+    currentSession: null,
+  );
 }
 
-class CurrentSessionChange extends ProfileState {
-  CurrentSessionChange({required ProfileState oldState, AuthSession? session})
-      : super(
-          sessionProfiles: oldState.sessionProfiles,
-          profiles: oldState.profiles,
-          currentSession: session,
-        );
-}
-
-class SessionProfileSaving extends ProfileState {
-  SessionProfileSaving({
+class ChangedSessionProfileState extends ProfileState {
+  ChangedSessionProfileState({
     required ProfileState oldState,
-    required Profile profile,
-    required AuthSession session,
+    required super.currentSession,
   }) : super(
-          sessionProfiles: <AuthSession, Profile>{
-            ...oldState.sessionProfiles,
-            ...{session: profile},
-          },
-          profiles: oldState.profiles,
-          currentSession: oldState.currentSession,
-        );
+    profilesLoad: oldState.profilesLoad,
+    usersLoad: oldState.usersLoad,
+  );
 }
 
-class ProfileSaving extends ProfileState {
-  ProfileSaving({
+class UpdateLoadEventProfileState extends ProfileState {
+  UpdateLoadEventProfileState({
     required ProfileState oldState,
-    required MinimalUser profile,
-    required AuthSession session,
+    ProfileLoadEvent? profileLoadEvent,
+    UserLoadEvent? userLoadEvent,
   }) : super(
-          sessionProfiles: oldState.sessionProfiles,
-          profiles: {
-            ...oldState.profiles,
-            ..._getNewSessionProfileList(oldState, session, profile),
-          },
-          currentSession: oldState.currentSession,
-        );
-
-  static Map<AuthSession, List<MinimalUser>> _getNewSessionProfileList(
-    ProfileState oldState,
-    AuthSession session,
-    MinimalUser profile,
-  ) {
-    final oldSessionProfileList = oldState.profiles[session];
-    if (oldSessionProfileList == null) {
-      return {
-        session: [profile],
-      };
-    }
-
-    return {
-      session: [
-        ...oldSessionProfileList,
-        profile,
-      ],
-    };
-  }
+    profilesLoad: oldState.profilesLoad.copyUpdatedFromNullable(
+      profileLoadEvent,
+    ),
+    usersLoad: oldState.usersLoad.copyUpdatedFromNullable(
+      userLoadEvent,
+    ),
+    currentSession: oldState.currentSession,
+  );
 }

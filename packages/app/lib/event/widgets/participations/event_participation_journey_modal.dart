@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/journey/type/user_journey.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:lottie/lottie.dart';
 import '../../../shared/utils/dates.dart';
+import '../../../shared/widgets/bloc_provided_builder.dart';
 import '../../../shared/widgets/gradient_progress_bar.dart';
 
 enum JourneyModalAction {
@@ -52,7 +52,8 @@ class _EventParticipationJourneyModalState
         }) /
         isBetterThan.length;
 
-    _betterThanCount = isBetterThan.values.where((element) => element == 100).length;
+    _betterThanCount =
+        isBetterThan.values.where((element) => element == 100).length;
   }
 
   @override
@@ -66,10 +67,13 @@ class _EventParticipationJourneyModalState
           right: 16,
         ),
         child: SafeArea(
-          child: BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, state) {
-              final currentProfile = state.currentProfile;
-              final isCurrentUser = currentProfile?.id == widget.userId;
+          child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
+            builder: (context, bloc, state) {
+              final currentProfile = bloc.currentProfile;
+              final isCurrentUser = (currentProfile is ProfileLoadSuccessEvent
+                      ? currentProfile.profile.id
+                      : null) ==
+                  widget.userId;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -224,7 +228,6 @@ class _EventParticipationJourneyModalState
           ],
         ),
       ),
-
       const SizedBox(height: 16),
     ];
   }
@@ -462,7 +465,6 @@ class _StatItem extends StatelessWidget {
             children: _getStats(context),
           ),
         ),
-
         if (value == 100)
           Positioned(
             left: 9,

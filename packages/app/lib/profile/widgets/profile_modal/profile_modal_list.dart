@@ -65,7 +65,7 @@ class ProfileModalList extends StatelessWidget {
       bool isCurrentSession = session.getIndexInList(sessions) == 0;
       return AsyncRenderer(
         future: RepositoryProvider.of<ProfileRepository>(context)
-            .getSessionProfile(session),
+            .getProfile(session),
         builder: (profile) => ProfileCard(
           session: session,
           profile: profile,

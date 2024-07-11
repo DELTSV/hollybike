@@ -13,7 +13,6 @@ import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.da
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import '../../../profile/bloc/profile_bloc/profile_bloc.dart';
 import '../../../shared/utils/waiter.dart';
 
 class JourneyMap extends StatefulWidget {
@@ -259,11 +258,9 @@ class _JourneyMapState extends State<JourneyMap> {
     PointAnnotationManager pointManager,
     UserPositionsState userPositionsState,
   ) async {
-    final profileBloc = BlocProvider.of<ProfileBloc>(context);
     final colorScheme = Theme.of(context).colorScheme;
     final options = await Future.wait(
         userPositionsState.userPositions.map((position) async {
-      final user = profileBloc.getProfileById(position.userId);
       final icon = await rootBundle
           .load("assets/images/placeholder_profile_picture.jpg");
       return PointAnnotationOptions(
@@ -278,7 +275,6 @@ class _JourneyMapState extends State<JourneyMap> {
         iconAnchor: IconAnchor.BOTTOM,
         textAnchor: TextAnchor.TOP,
         textSize: 12,
-        textField: user?.username,
         textHaloWidth: 2,
         textHaloColor: colorScheme.primary.value,
         textColor: colorScheme.onPrimary.value,
