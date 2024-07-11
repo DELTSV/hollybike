@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
 
-import '../../../../positions/bloc/my_position_bloc.dart';
-import '../../../../positions/bloc/my_position_state.dart';
+import '../../../../positions/bloc/my_position/my_position_bloc.dart';
+import '../../../../positions/bloc/my_position/my_position_state.dart';
 import '../position/event_position_switch.dart';
 import 'event_cancelled_status.dart';
 import 'event_finished_status.dart';

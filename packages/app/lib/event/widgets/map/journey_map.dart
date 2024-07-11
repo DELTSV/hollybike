@@ -7,12 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geojson_vi/geojson_vi.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
-import 'package:hollybike/positions/bloc/user_positions_bloc.dart';
-import 'package:hollybike/positions/bloc/user_positions_state.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import '../../../positions/bloc/user_positions/user_positions_bloc.dart';
+import '../../../positions/bloc/user_positions/user_positions_state.dart';
 import '../../../shared/utils/waiter.dart';
 
 class JourneyMap extends StatefulWidget {
@@ -259,29 +259,38 @@ class _JourneyMapState extends State<JourneyMap> {
     UserPositionsState userPositionsState,
   ) async {
     final colorScheme = Theme.of(context).colorScheme;
+    final icon = await rootBundle.load(
+      "assets/images/placeholder_map_pin.png",
+    );
+
     final options = await Future.wait(
-        userPositionsState.userPositions.map((position) async {
-      final icon = await rootBundle
-          .load("assets/images/placeholder_profile_picture.jpg");
-      return PointAnnotationOptions(
-        geometry: Point(
-          coordinates: Position(
-            position.longitude,
-            position.latitude,
+      userPositionsState.userPositions.map((position) async {
+        final user = BlocProvider.of<UserPositionsBloc>(context)
+            .getPositionUser(position);
+        if (user is! UserLoadSuccessEvent) return null;
+
+        return PointAnnotationOptions(
+          geometry: Point(
+            coordinates: Position(
+              position.longitude,
+              position.latitude,
+            ),
           ),
-        ),
-        image: icon.buffer.asUint8List(),
-        iconSize: 0.3,
-        iconAnchor: IconAnchor.BOTTOM,
-        textAnchor: TextAnchor.TOP,
-        textSize: 12,
-        textHaloWidth: 2,
-        textHaloColor: colorScheme.primary.value,
-        textColor: colorScheme.onPrimary.value,
-      );
-    }).toList());
+          image: icon.buffer.asUint8List(),
+          iconAnchor: IconAnchor.BOTTOM,
+          textField: user.user.username,
+          textAnchor: TextAnchor.TOP,
+          textSize: 12,
+          textHaloWidth: 2,
+          textHaloColor: colorScheme.primary.value,
+          textColor: colorScheme.onPrimary.value,
+        );
+      }).toList(),
+    );
 
     await pointManager.deleteAll();
-    await pointManager.createMulti(options);
+    await pointManager.createMulti(
+      options.whereType<PointAnnotationOptions>().toList(),
+    );
   }
 }
