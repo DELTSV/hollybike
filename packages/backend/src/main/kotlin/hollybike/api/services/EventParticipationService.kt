@@ -5,6 +5,7 @@ import hollybike.api.exceptions.EventActionDeniedException
 import hollybike.api.exceptions.EventNotFoundException
 import hollybike.api.exceptions.NotParticipatingToEventException
 import hollybike.api.repository.*
+import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.event.participation.EEventRole
 import hollybike.api.types.websocket.AddedToEventNotification
 import hollybike.api.types.websocket.RemovedFromEventNotification
@@ -223,7 +224,9 @@ class EventParticipationService(
 
 		val users = User.find { Users.id inList userIds }
 
-		notificationService.send(users.toList(), AddedToEventNotification(event.id.value, event.name))
+		if(event.status == EEventStatus.Pending) {
+			notificationService.send(users.toList(), AddedToEventNotification(event.id.value, event.name), caller)
+		}
 
 		Result.success(
 			users.map { user ->
