@@ -12,6 +12,7 @@ import hollybike.api.types.event.EEventStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.websocket.DeleteEventNotification
 import hollybike.api.types.websocket.EventStatusUpdateNotification
+import hollybike.api.types.websocket.NewEventNotification
 import hollybike.api.types.websocket.UpdateEventNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
@@ -418,8 +419,11 @@ class EventService(
 
 		event.status = status
 
-		if(status != EEventStatus.Pending) {
+		if(status != EEventStatus.Pending && oldStatus != EEventStatus.Pending) {
 			notificationService.send(event.participants.map { it.user }.toList(), EventStatusUpdateNotification(event, oldStatus), caller)
+		}
+		if(status == EEventStatus.Scheduled) {
+			notificationService.sendToAssociation(caller.association.id.value, NewEventNotification(event), caller)
 		}
 
 		Result.success(Unit)
