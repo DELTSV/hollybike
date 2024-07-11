@@ -29,7 +29,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
@@ -68,8 +67,10 @@ class EventController(
 				pendEvent()
 				getMetaData()
 				getParticipantJourney()
+				getMyJourneyFile()
 				getParticipantJourneyFile()
 				terminateEventJourney()
+				removeEventJourney()
 			}
 		}
 	}
@@ -134,7 +135,10 @@ class EventController(
 							callerParticipation,
 							participants,
 							participantsCount,
-							eventExpenses
+							eventExpenses,
+							userEventPositionService.getIsBetterThanForUserJourney(
+								callerParticipation?.journey
+							)
 						)
 					)
 				}.onFailure {
@@ -337,8 +341,25 @@ class EventController(
 				call.respond(HttpStatusCode.Conflict, "Trajet déjà terminé")
 			} ?: run {
 				val journey = userEventPositionService.terminateUserJourney(call.user, event)
-				call.respond(HttpStatusCode.Created, TUserJourney(journey))
+				call.respond(
+					HttpStatusCode.Created,
+					TUserJourney(
+						journey,
+						userEventPositionService.getIsBetterThanForUserJourney(journey)
+					)
+				)
 			}
+		}
+	}
+
+	private fun Route.removeEventJourney() {
+		delete<Events.Id.Participations.Me.Journey> {
+			val event = eventService.getEvent(call.user, it.me.participations.eventId.id) ?: run {
+				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
+				return@delete
+			}
+
+			userEventPositionService.removeUserJourney(call.user, event)
 		}
 	}
 
@@ -358,39 +379,54 @@ class EventController(
 				return@get
 			}
 
-			call.respond(TUserJourney(journey))
+			call.respond(
+				TUserJourney(
+					journey,
+					userEventPositionService.getIsBetterThanForUserJourney(journey)
+				)
+			)
+		}
+	}
+
+	private suspend fun getParticipantJourneyFile(call: ApplicationCall, eventId: Int, userId: Int) {
+		val event = eventService.getEvent(call.user, eventId) ?: run {
+			call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
+			return
+		}
+		val user = userService.getUser(call.user, userId) ?: run {
+			call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
+			return
+		}
+
+		val journey = userEventPositionService.getUserJourney(user, event) ?: run {
+			call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
+			return
+		}
+
+		val data = storageService.retrieve(journey.journey) ?: run {
+			return call.respond(HttpStatusCode.NotFound, "Le fichier n'existe pas")
+		}
+
+		val geojson = json.decodeFromString<GeoJson>(data.toString(Charsets.UTF_8))
+
+		if (call.request.accept()?.contains("geo+json") == true) {
+			call.respond(json.encodeToString(geojson))
+		} else if (call.request.accept()?.contains("gpx") == true) {
+			call.respond(xml.encodeToString(geojson.toGpx()))
+		} else {
+			call.respond(HttpStatusCode.BadRequest, "Il manque un format de retour")
+		}
+	}
+
+	private fun Route.getMyJourneyFile() {
+		get<Events.Id.Participations.Me.Journey.File> {
+			getParticipantJourneyFile(call, it.journey.me.participations.eventId.id, call.user.id.value)
 		}
 	}
 
 	private fun Route.getParticipantJourneyFile() {
 		get<Events.Id.Participations.User.Journey.File> {
-			val event = eventService.getEvent(call.user, it.journey.user.user.eventId.id) ?: run {
-				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
-				return@get
-			}
-			val user = userService.getUser(call.user, it.journey.user.userId) ?: run {
-				call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
-				return@get
-			}
-
-			val journey = userEventPositionService.getUserJourney(user, event) ?: run {
-				call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
-				return@get
-			}
-
-			val data = storageService.retrieve(journey.journey) ?: run {
-				return@get call.respond(HttpStatusCode.NotFound, "Le fichier n'existe pas")
-			}
-
-			val geojson = json.decodeFromString<GeoJson>(data.toString(Charsets.UTF_8))
-
-			if (call.request.accept()?.contains("geo+json") == true) {
-				call.respond(json.encodeToString(geojson))
-			} else if (call.request.accept()?.contains("gpx") == true) {
-				call.respond(xml.encodeToString(geojson.toGpx()))
-			} else {
-				call.respond(HttpStatusCode.BadRequest, "Il manque un format de retour")
-			}
+			getParticipantJourneyFile(call, it.journey.user.user.eventId.id, it.journey.user.userId)
 		}
 	}
 }

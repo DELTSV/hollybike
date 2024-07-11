@@ -33,15 +33,10 @@ class EventMyJourney extends StatelessWidget {
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: EventParticipationJourneyContent(
-        existingJourney: eventDetails.callerParticipation!.journey!,
-      ),
+    return EventParticipationJourneyContent(
+      existingJourney: eventDetails.callerParticipation!.journey!,
+      color: Theme.of(context).colorScheme.primary,
+      userId: eventDetails.callerParticipation!.userId,
     );
   }
 }

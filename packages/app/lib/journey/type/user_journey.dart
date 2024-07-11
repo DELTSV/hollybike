@@ -13,33 +13,29 @@ class UserJourney with _$UserJourney {
   const factory UserJourney({
     required int id,
     required String file,
-    @JsonKey(name: 'avg_speed') required int? avgSpeed,
+    @JsonKey(name: 'avg_speed') required double? avgSpeed,
     @JsonKey(name: 'total_distance') required int? totalDistance,
-    @JsonKey(name: 'min_elevation') required int? minElevation,
-    @JsonKey(name: 'max_elevation') required int? maxElevation,
-    @JsonKey(name: 'total_elevation_gain') required int? totalElevationGain,
-    @JsonKey(name: 'total_elevation_loss') required int? totalElevationLoss,
+    @JsonKey(name: 'min_elevation') required double? minElevation,
+    @JsonKey(name: 'max_elevation') required double? maxElevation,
+    @JsonKey(name: 'total_elevation_gain') required double? totalElevationGain,
+    @JsonKey(name: 'total_elevation_loss') required double? totalElevationLoss,
     @JsonKey(name: 'total_time') required int? totalTime,
-    @JsonKey(name: 'max_speed') required int? maxSpeed,
+    @JsonKey(name: 'max_speed') required double? maxSpeed,
+    @JsonKey(name: 'avg_g_force') required double? avgGForce,
+    @JsonKey(name: 'max_g_force') required double? maxGForce,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'is_better_than') required Map<String, double> isBetterThan,
   }) = _UserJourney;
 
   get distanceLabel {
     return MinimalJourney.getDistanceLabel(totalDistance);
   }
 
-  get avgSpeedLabel {
-    if (avgSpeed == null) {
-      return '';
-    }
-    return '${(avgSpeed! * 3.6).round()} km/h';
-  }
+  get avgSpeedLabel => _speedLabel(avgSpeed);
+  get maxSpeedLabel => _speedLabel(maxSpeed);
 
-  get maxSpeedLabel {
-    if (maxSpeed == null) {
-      return '';
-    }
-    return '${(maxSpeed! * 3.6).round()} km/h';
-  }
+  get avgGForceLabel => _gForceLabel(avgGForce);
+  get maxGForceLabel => _gForceLabel(maxGForce);
 
   get totalTimeLabel {
     if (totalTime == null) {
@@ -53,6 +49,20 @@ class UserJourney with _$UserJourney {
     }
 
     return '$hours h $minutes min';
+  }
+
+  String _speedLabel(double? speed) {
+    if (speed == null) {
+      return '';
+    }
+    return '${(speed * 3.6).round()} km/h';
+  }
+
+  String _gForceLabel(double? gForce) {
+    if (gForce == null) {
+      return '';
+    }
+    return '${gForce.toStringAsFixed(2)} G';
   }
 
   factory UserJourney.fromJson(JsonMap json) => _$UserJourneyFromJson(json);

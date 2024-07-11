@@ -107,3 +107,22 @@ String formatPastTime(DateTime date) {
     return "il y a quelques secondes";
   }
 }
+
+String formatTimeDate(DateTime date) {
+  final now = DateTime.now();
+  final difference = now.difference(date).inDays;
+
+  String formattedDate;
+
+  if (difference == 0) {
+    formattedDate = "aujourd'hui";
+  } else if (difference == 1) {
+    formattedDate = "hier";
+  } else {
+    formattedDate = "le ${DateFormat.yMMMMd('fr_FR').format(date)}";
+  }
+
+  final time = "${date.hour}h${date.minute.toString().padLeft(2, '0')}";
+
+  return "$formattedDate à $time";
+}

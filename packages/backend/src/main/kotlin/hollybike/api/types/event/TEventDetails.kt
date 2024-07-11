@@ -24,12 +24,13 @@ data class TEventDetails(
 		callerParticipation: EventParticipation?,
 		participants: List<EventParticipation>,
 		participantsCount: Long,
-		expenses: List<Expense>?
+		expenses: List<Expense>?,
+		isBetterThan: Map<String, Double>
 	) : this(
 		event = TEvent(event, expenses != null),
-		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it) },
+		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it, isBetterThan) },
 		journey = event.journey?.let { TJourneyPartial(it) },
-		previewParticipants = participants.map { TEventParticipation(it) },
+		previewParticipants = participants.map { TEventParticipation(it, emptyMap()) },
 		previewParticipantsCount = participantsCount,
 		expenses = expenses?.map { TExpense(it) },
 		totalExpense = expenses?.sumOf { it.amount }

@@ -13,12 +13,12 @@ data class TEventCallerParticipation(
 	val journey: TUserJourney? = null,
 	val hasRecordedPositions: Boolean
 ) {
-	constructor(entity: EventParticipation) : this(
+	constructor(entity: EventParticipation, isBetterThan: Map<String, Double>) : this(
 		role = entity.role,
 		userId = entity.user.id.value,
 		isImagesPublic = entity.isImagesPublic,
 		joinedDateTime = entity.joinedDateTime,
-		journey = entity.journey?.let { TUserJourney(it) },
+		journey = entity.journey?.let { TUserJourney(it, isBetterThan) },
 		hasRecordedPositions = entity.hasRecordedPositions
 	)
 }

@@ -23,21 +23,29 @@ mixin _$UserJourney {
   int get id => throw _privateConstructorUsedError;
   String get file => throw _privateConstructorUsedError;
   @JsonKey(name: 'avg_speed')
-  int? get avgSpeed => throw _privateConstructorUsedError;
+  double? get avgSpeed => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_distance')
   int? get totalDistance => throw _privateConstructorUsedError;
   @JsonKey(name: 'min_elevation')
-  int? get minElevation => throw _privateConstructorUsedError;
+  double? get minElevation => throw _privateConstructorUsedError;
   @JsonKey(name: 'max_elevation')
-  int? get maxElevation => throw _privateConstructorUsedError;
+  double? get maxElevation => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_elevation_gain')
-  int? get totalElevationGain => throw _privateConstructorUsedError;
+  double? get totalElevationGain => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_elevation_loss')
-  int? get totalElevationLoss => throw _privateConstructorUsedError;
+  double? get totalElevationLoss => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_time')
   int? get totalTime => throw _privateConstructorUsedError;
   @JsonKey(name: 'max_speed')
-  int? get maxSpeed => throw _privateConstructorUsedError;
+  double? get maxSpeed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'avg_g_force')
+  double? get avgGForce => throw _privateConstructorUsedError;
+  @JsonKey(name: 'max_g_force')
+  double? get maxGForce => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_better_than')
+  Map<String, double> get isBetterThan => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -54,14 +62,18 @@ abstract class $UserJourneyCopyWith<$Res> {
   $Res call(
       {int id,
       String file,
-      @JsonKey(name: 'avg_speed') int? avgSpeed,
+      @JsonKey(name: 'avg_speed') double? avgSpeed,
       @JsonKey(name: 'total_distance') int? totalDistance,
-      @JsonKey(name: 'min_elevation') int? minElevation,
-      @JsonKey(name: 'max_elevation') int? maxElevation,
-      @JsonKey(name: 'total_elevation_gain') int? totalElevationGain,
-      @JsonKey(name: 'total_elevation_loss') int? totalElevationLoss,
+      @JsonKey(name: 'min_elevation') double? minElevation,
+      @JsonKey(name: 'max_elevation') double? maxElevation,
+      @JsonKey(name: 'total_elevation_gain') double? totalElevationGain,
+      @JsonKey(name: 'total_elevation_loss') double? totalElevationLoss,
       @JsonKey(name: 'total_time') int? totalTime,
-      @JsonKey(name: 'max_speed') int? maxSpeed});
+      @JsonKey(name: 'max_speed') double? maxSpeed,
+      @JsonKey(name: 'avg_g_force') double? avgGForce,
+      @JsonKey(name: 'max_g_force') double? maxGForce,
+      @JsonKey(name: 'created_at') DateTime createdAt,
+      @JsonKey(name: 'is_better_than') Map<String, double> isBetterThan});
 }
 
 /// @nodoc
@@ -87,6 +99,10 @@ class _$UserJourneyCopyWithImpl<$Res, $Val extends UserJourney>
     Object? totalElevationLoss = freezed,
     Object? totalTime = freezed,
     Object? maxSpeed = freezed,
+    Object? avgGForce = freezed,
+    Object? maxGForce = freezed,
+    Object? createdAt = null,
+    Object? isBetterThan = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -100,7 +116,7 @@ class _$UserJourneyCopyWithImpl<$Res, $Val extends UserJourney>
       avgSpeed: freezed == avgSpeed
           ? _value.avgSpeed
           : avgSpeed // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalDistance: freezed == totalDistance
           ? _value.totalDistance
           : totalDistance // ignore: cast_nullable_to_non_nullable
@@ -108,19 +124,19 @@ class _$UserJourneyCopyWithImpl<$Res, $Val extends UserJourney>
       minElevation: freezed == minElevation
           ? _value.minElevation
           : minElevation // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       maxElevation: freezed == maxElevation
           ? _value.maxElevation
           : maxElevation // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalElevationGain: freezed == totalElevationGain
           ? _value.totalElevationGain
           : totalElevationGain // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalElevationLoss: freezed == totalElevationLoss
           ? _value.totalElevationLoss
           : totalElevationLoss // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalTime: freezed == totalTime
           ? _value.totalTime
           : totalTime // ignore: cast_nullable_to_non_nullable
@@ -128,7 +144,23 @@ class _$UserJourneyCopyWithImpl<$Res, $Val extends UserJourney>
       maxSpeed: freezed == maxSpeed
           ? _value.maxSpeed
           : maxSpeed // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
+      avgGForce: freezed == avgGForce
+          ? _value.avgGForce
+          : avgGForce // ignore: cast_nullable_to_non_nullable
+              as double?,
+      maxGForce: freezed == maxGForce
+          ? _value.maxGForce
+          : maxGForce // ignore: cast_nullable_to_non_nullable
+              as double?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      isBetterThan: null == isBetterThan
+          ? _value.isBetterThan
+          : isBetterThan // ignore: cast_nullable_to_non_nullable
+              as Map<String, double>,
     ) as $Val);
   }
 }
@@ -144,14 +176,18 @@ abstract class _$$UserJourneyImplCopyWith<$Res>
   $Res call(
       {int id,
       String file,
-      @JsonKey(name: 'avg_speed') int? avgSpeed,
+      @JsonKey(name: 'avg_speed') double? avgSpeed,
       @JsonKey(name: 'total_distance') int? totalDistance,
-      @JsonKey(name: 'min_elevation') int? minElevation,
-      @JsonKey(name: 'max_elevation') int? maxElevation,
-      @JsonKey(name: 'total_elevation_gain') int? totalElevationGain,
-      @JsonKey(name: 'total_elevation_loss') int? totalElevationLoss,
+      @JsonKey(name: 'min_elevation') double? minElevation,
+      @JsonKey(name: 'max_elevation') double? maxElevation,
+      @JsonKey(name: 'total_elevation_gain') double? totalElevationGain,
+      @JsonKey(name: 'total_elevation_loss') double? totalElevationLoss,
       @JsonKey(name: 'total_time') int? totalTime,
-      @JsonKey(name: 'max_speed') int? maxSpeed});
+      @JsonKey(name: 'max_speed') double? maxSpeed,
+      @JsonKey(name: 'avg_g_force') double? avgGForce,
+      @JsonKey(name: 'max_g_force') double? maxGForce,
+      @JsonKey(name: 'created_at') DateTime createdAt,
+      @JsonKey(name: 'is_better_than') Map<String, double> isBetterThan});
 }
 
 /// @nodoc
@@ -175,6 +211,10 @@ class __$$UserJourneyImplCopyWithImpl<$Res>
     Object? totalElevationLoss = freezed,
     Object? totalTime = freezed,
     Object? maxSpeed = freezed,
+    Object? avgGForce = freezed,
+    Object? maxGForce = freezed,
+    Object? createdAt = null,
+    Object? isBetterThan = null,
   }) {
     return _then(_$UserJourneyImpl(
       id: null == id
@@ -188,7 +228,7 @@ class __$$UserJourneyImplCopyWithImpl<$Res>
       avgSpeed: freezed == avgSpeed
           ? _value.avgSpeed
           : avgSpeed // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalDistance: freezed == totalDistance
           ? _value.totalDistance
           : totalDistance // ignore: cast_nullable_to_non_nullable
@@ -196,19 +236,19 @@ class __$$UserJourneyImplCopyWithImpl<$Res>
       minElevation: freezed == minElevation
           ? _value.minElevation
           : minElevation // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       maxElevation: freezed == maxElevation
           ? _value.maxElevation
           : maxElevation // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalElevationGain: freezed == totalElevationGain
           ? _value.totalElevationGain
           : totalElevationGain // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalElevationLoss: freezed == totalElevationLoss
           ? _value.totalElevationLoss
           : totalElevationLoss // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
       totalTime: freezed == totalTime
           ? _value.totalTime
           : totalTime // ignore: cast_nullable_to_non_nullable
@@ -216,7 +256,23 @@ class __$$UserJourneyImplCopyWithImpl<$Res>
       maxSpeed: freezed == maxSpeed
           ? _value.maxSpeed
           : maxSpeed // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as double?,
+      avgGForce: freezed == avgGForce
+          ? _value.avgGForce
+          : avgGForce // ignore: cast_nullable_to_non_nullable
+              as double?,
+      maxGForce: freezed == maxGForce
+          ? _value.maxGForce
+          : maxGForce // ignore: cast_nullable_to_non_nullable
+              as double?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      isBetterThan: null == isBetterThan
+          ? _value._isBetterThan
+          : isBetterThan // ignore: cast_nullable_to_non_nullable
+              as Map<String, double>,
     ));
   }
 }
@@ -234,8 +290,14 @@ class _$UserJourneyImpl extends _UserJourney {
       @JsonKey(name: 'total_elevation_gain') required this.totalElevationGain,
       @JsonKey(name: 'total_elevation_loss') required this.totalElevationLoss,
       @JsonKey(name: 'total_time') required this.totalTime,
-      @JsonKey(name: 'max_speed') required this.maxSpeed})
-      : super._();
+      @JsonKey(name: 'max_speed') required this.maxSpeed,
+      @JsonKey(name: 'avg_g_force') required this.avgGForce,
+      @JsonKey(name: 'max_g_force') required this.maxGForce,
+      @JsonKey(name: 'created_at') required this.createdAt,
+      @JsonKey(name: 'is_better_than')
+      required final Map<String, double> isBetterThan})
+      : _isBetterThan = isBetterThan,
+        super._();
 
   factory _$UserJourneyImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserJourneyImplFromJson(json);
@@ -246,32 +308,49 @@ class _$UserJourneyImpl extends _UserJourney {
   final String file;
   @override
   @JsonKey(name: 'avg_speed')
-  final int? avgSpeed;
+  final double? avgSpeed;
   @override
   @JsonKey(name: 'total_distance')
   final int? totalDistance;
   @override
   @JsonKey(name: 'min_elevation')
-  final int? minElevation;
+  final double? minElevation;
   @override
   @JsonKey(name: 'max_elevation')
-  final int? maxElevation;
+  final double? maxElevation;
   @override
   @JsonKey(name: 'total_elevation_gain')
-  final int? totalElevationGain;
+  final double? totalElevationGain;
   @override
   @JsonKey(name: 'total_elevation_loss')
-  final int? totalElevationLoss;
+  final double? totalElevationLoss;
   @override
   @JsonKey(name: 'total_time')
   final int? totalTime;
   @override
   @JsonKey(name: 'max_speed')
-  final int? maxSpeed;
+  final double? maxSpeed;
+  @override
+  @JsonKey(name: 'avg_g_force')
+  final double? avgGForce;
+  @override
+  @JsonKey(name: 'max_g_force')
+  final double? maxGForce;
+  @override
+  @JsonKey(name: 'created_at')
+  final DateTime createdAt;
+  final Map<String, double> _isBetterThan;
+  @override
+  @JsonKey(name: 'is_better_than')
+  Map<String, double> get isBetterThan {
+    if (_isBetterThan is EqualUnmodifiableMapView) return _isBetterThan;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_isBetterThan);
+  }
 
   @override
   String toString() {
-    return 'UserJourney(id: $id, file: $file, avgSpeed: $avgSpeed, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss, totalTime: $totalTime, maxSpeed: $maxSpeed)';
+    return 'UserJourney(id: $id, file: $file, avgSpeed: $avgSpeed, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss, totalTime: $totalTime, maxSpeed: $maxSpeed, avgGForce: $avgGForce, maxGForce: $maxGForce, createdAt: $createdAt, isBetterThan: $isBetterThan)';
   }
 
   @override
@@ -296,7 +375,15 @@ class _$UserJourneyImpl extends _UserJourney {
             (identical(other.totalTime, totalTime) ||
                 other.totalTime == totalTime) &&
             (identical(other.maxSpeed, maxSpeed) ||
-                other.maxSpeed == maxSpeed));
+                other.maxSpeed == maxSpeed) &&
+            (identical(other.avgGForce, avgGForce) ||
+                other.avgGForce == avgGForce) &&
+            (identical(other.maxGForce, maxGForce) ||
+                other.maxGForce == maxGForce) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            const DeepCollectionEquality()
+                .equals(other._isBetterThan, _isBetterThan));
   }
 
   @JsonKey(ignore: true)
@@ -312,7 +399,11 @@ class _$UserJourneyImpl extends _UserJourney {
       totalElevationGain,
       totalElevationLoss,
       totalTime,
-      maxSpeed);
+      maxSpeed,
+      avgGForce,
+      maxGForce,
+      createdAt,
+      const DeepCollectionEquality().hash(_isBetterThan));
 
   @JsonKey(ignore: true)
   @override
@@ -330,19 +421,23 @@ class _$UserJourneyImpl extends _UserJourney {
 
 abstract class _UserJourney extends UserJourney {
   const factory _UserJourney(
-          {required final int id,
-          required final String file,
-          @JsonKey(name: 'avg_speed') required final int? avgSpeed,
-          @JsonKey(name: 'total_distance') required final int? totalDistance,
-          @JsonKey(name: 'min_elevation') required final int? minElevation,
-          @JsonKey(name: 'max_elevation') required final int? maxElevation,
-          @JsonKey(name: 'total_elevation_gain')
-          required final int? totalElevationGain,
-          @JsonKey(name: 'total_elevation_loss')
-          required final int? totalElevationLoss,
-          @JsonKey(name: 'total_time') required final int? totalTime,
-          @JsonKey(name: 'max_speed') required final int? maxSpeed}) =
-      _$UserJourneyImpl;
+      {required final int id,
+      required final String file,
+      @JsonKey(name: 'avg_speed') required final double? avgSpeed,
+      @JsonKey(name: 'total_distance') required final int? totalDistance,
+      @JsonKey(name: 'min_elevation') required final double? minElevation,
+      @JsonKey(name: 'max_elevation') required final double? maxElevation,
+      @JsonKey(name: 'total_elevation_gain')
+      required final double? totalElevationGain,
+      @JsonKey(name: 'total_elevation_loss')
+      required final double? totalElevationLoss,
+      @JsonKey(name: 'total_time') required final int? totalTime,
+      @JsonKey(name: 'max_speed') required final double? maxSpeed,
+      @JsonKey(name: 'avg_g_force') required final double? avgGForce,
+      @JsonKey(name: 'max_g_force') required final double? maxGForce,
+      @JsonKey(name: 'created_at') required final DateTime createdAt,
+      @JsonKey(name: 'is_better_than')
+      required final Map<String, double> isBetterThan}) = _$UserJourneyImpl;
   const _UserJourney._() : super._();
 
   factory _UserJourney.fromJson(Map<String, dynamic> json) =
@@ -354,28 +449,40 @@ abstract class _UserJourney extends UserJourney {
   String get file;
   @override
   @JsonKey(name: 'avg_speed')
-  int? get avgSpeed;
+  double? get avgSpeed;
   @override
   @JsonKey(name: 'total_distance')
   int? get totalDistance;
   @override
   @JsonKey(name: 'min_elevation')
-  int? get minElevation;
+  double? get minElevation;
   @override
   @JsonKey(name: 'max_elevation')
-  int? get maxElevation;
+  double? get maxElevation;
   @override
   @JsonKey(name: 'total_elevation_gain')
-  int? get totalElevationGain;
+  double? get totalElevationGain;
   @override
   @JsonKey(name: 'total_elevation_loss')
-  int? get totalElevationLoss;
+  double? get totalElevationLoss;
   @override
   @JsonKey(name: 'total_time')
   int? get totalTime;
   @override
   @JsonKey(name: 'max_speed')
-  int? get maxSpeed;
+  double? get maxSpeed;
+  @override
+  @JsonKey(name: 'avg_g_force')
+  double? get avgGForce;
+  @override
+  @JsonKey(name: 'max_g_force')
+  double? get maxGForce;
+  @override
+  @JsonKey(name: 'created_at')
+  DateTime get createdAt;
+  @override
+  @JsonKey(name: 'is_better_than')
+  Map<String, double> get isBetterThan;
   @override
   @JsonKey(ignore: true)
   _$$UserJourneyImplCopyWith<_$UserJourneyImpl> get copyWith =>
