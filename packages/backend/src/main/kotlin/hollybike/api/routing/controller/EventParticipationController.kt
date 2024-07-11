@@ -6,6 +6,7 @@ import hollybike.api.repository.eventParticipationMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Events
 import hollybike.api.services.EventParticipationService
+import hollybike.api.services.UserEventPositionService
 import hollybike.api.types.event.participation.TCreateParticipations
 import hollybike.api.types.event.participation.TEventParticipation
 import hollybike.api.types.event.image.TUpdateImagesVisibility
@@ -26,7 +27,8 @@ import kotlin.math.ceil
 
 class EventParticipationController(
 	application: Application,
-	private val eventParticipationService: EventParticipationService
+	private val eventParticipationService: EventParticipationService,
+	private val userEventPositionService: UserEventPositionService
 ) {
 	init {
 		application.routing {
@@ -105,7 +107,15 @@ class EventParticipationController(
 				return@get
 			}
 
-			call.respond(TLists(participations.map { TEventParticipation(it) }, searchParam, participationCount))
+			call.respond(
+				TLists(
+					participations.map {
+						TEventParticipation(it, userEventPositionService.getIsBetterThanForUserJourney(it.journey))
+					},
+					searchParam,
+					participationCount
+				)
+			)
 		}
 	}
 
@@ -124,7 +134,12 @@ class EventParticipationController(
 				data.participations.eventId.id,
 				update.isImagesPublic
 			).onSuccess {
-				call.respond(TEventParticipation(it))
+				call.respond(
+					TEventParticipation(
+						it,
+						userEventPositionService.getIsBetterThanForUserJourney(it.journey)
+					)
+				)
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
 			}
@@ -134,7 +149,10 @@ class EventParticipationController(
 	private fun Route.participateEvent() {
 		post<Events.Id.Participations> { data ->
 			eventParticipationService.participateEvent(call.user, data.eventId.id).onSuccess {
-				call.respond(HttpStatusCode.Created, TEventParticipation(it))
+				call.respond(
+					HttpStatusCode.Created,
+					TEventParticipation(it, userEventPositionService.getIsBetterThanForUserJourney(it.journey))
+				)
 			}.onFailure {
 				eventParticipationService.handleEventExceptions(it, call)
 			}
@@ -164,7 +182,12 @@ class EventParticipationController(
 			eventParticipationService.addParticipantsToEvent(call.user, data.participations.eventId.id, users)
 				.onSuccess { participations ->
 					call.respond(
-						participations.map { TEventParticipation(it) }
+						participations.map {
+							TEventParticipation(
+								it,
+								userEventPositionService.getIsBetterThanForUserJourney(it.journey)
+							)
+						}
 					)
 				}.onFailure {
 					eventParticipationService.handleEventExceptions(it, call)
@@ -190,7 +213,10 @@ class EventParticipationController(
 				data.promote.userId
 			)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it))
+					call.respond(
+						HttpStatusCode.OK,
+						TEventParticipation(it, userEventPositionService.getIsBetterThanForUserJourney(it.journey))
+					)
 				}.onFailure {
 					eventParticipationService.handleEventExceptions(it, call)
 				}
@@ -205,7 +231,10 @@ class EventParticipationController(
 				data.demote.userId
 			)
 				.onSuccess {
-					call.respond(HttpStatusCode.OK, TEventParticipation(it))
+					call.respond(
+						HttpStatusCode.OK,
+						TEventParticipation(it, userEventPositionService.getIsBetterThanForUserJourney(it.journey))
+					)
 				}.onFailure {
 					eventParticipationService.handleEventExceptions(it, call)
 				}

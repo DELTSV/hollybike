@@ -21,6 +21,9 @@ _$UserJourneyImpl _$$UserJourneyImplFromJson(Map<String, dynamic> json) =>
       avgGForce: (json['avg_g_force'] as num?)?.toDouble(),
       maxGForce: (json['max_g_force'] as num?)?.toDouble(),
       createdAt: DateTime.parse(json['created_at'] as String),
+      isBetterThan: (json['is_better_than'] as Map<String, dynamic>).map(
+        (k, e) => MapEntry(k, (e as num).toDouble()),
+      ),
     );
 
 Map<String, dynamic> _$$UserJourneyImplToJson(_$UserJourneyImpl instance) =>
@@ -38,4 +41,5 @@ Map<String, dynamic> _$$UserJourneyImplToJson(_$UserJourneyImpl instance) =>
       'avg_g_force': instance.avgGForce,
       'max_g_force': instance.maxGForce,
       'created_at': instance.createdAt.toIso8601String(),
+      'is_better_than': instance.isBetterThan,
     };

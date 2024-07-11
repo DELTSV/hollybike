@@ -135,7 +135,10 @@ class EventController(
 							callerParticipation,
 							participants,
 							participantsCount,
-							eventExpenses
+							eventExpenses,
+							userEventPositionService.getIsBetterThanForUserJourney(
+								callerParticipation?.journey
+							)
 						)
 					)
 				}.onFailure {
@@ -338,7 +341,13 @@ class EventController(
 				call.respond(HttpStatusCode.Conflict, "Trajet déjà terminé")
 			} ?: run {
 				val journey = userEventPositionService.terminateUserJourney(call.user, event)
-				call.respond(HttpStatusCode.Created, TUserJourney(journey))
+				call.respond(
+					HttpStatusCode.Created,
+					TUserJourney(
+						journey,
+						userEventPositionService.getIsBetterThanForUserJourney(journey)
+					)
+				)
 			}
 		}
 	}
@@ -370,7 +379,12 @@ class EventController(
 				return@get
 			}
 
-			call.respond(TUserJourney(journey))
+			call.respond(
+				TUserJourney(
+					journey,
+					userEventPositionService.getIsBetterThanForUserJourney(journey)
+				)
+			)
 		}
 	}
 

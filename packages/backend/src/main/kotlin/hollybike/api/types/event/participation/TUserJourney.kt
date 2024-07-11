@@ -30,9 +30,11 @@ data class TUserJourney(
 	@SerialName("max_speed")
 	val maxSpeed: Double? = null,
 	@SerialName("created_at")
-	val createdAt: Instant
+	val createdAt: Instant,
+	@SerialName("is_better_than")
+	val isBetterThan: Map<String, Double>
 ) {
-	constructor(journey: UserJourney): this (
+	constructor(journey: UserJourney, isBetterThan: Map<String, Double>): this (
 		journey.id.value,
 		journey.journeySigned,
 		journey.avgSpeed,
@@ -45,6 +47,7 @@ data class TUserJourney(
 		journey.maxGForce,
 		journey.totalTime,
 		journey.maxSpeed,
-		journey.createdAt
+		journey.createdAt,
+		isBetterThan
 	)
 }

@@ -118,6 +118,82 @@ class UserEventPositionService(
 		}
 	}
 
+	fun getIsBetterThanForUserJourney(userJourney: UserJourney?): Map<String, Double> = transaction(db) {
+		if (userJourney == null) {
+			return@transaction emptyMap()
+		}
+
+		val participation = EventParticipation.find {
+			(EventParticipations.journey eq userJourney.id) and (EventParticipations.isJoined eq true)
+		}.firstOrNull()
+
+		if (participation == null) {
+			return@transaction emptyMap()
+		}
+
+		val eventId = participation.event.id.value
+
+		val otherParticipations = EventParticipation.find {
+			(EventParticipations.event eq eventId) and
+				(EventParticipations.isJoined eq true) and
+				(EventParticipations.id neq participation.id)
+		}
+
+		val othersJourneys = otherParticipations.mapNotNull { it.journey }
+
+		if (othersJourneys.isEmpty()) {
+			return@transaction emptyMap()
+		}
+
+		val hasBest = mutableMapOf<String, Double>()
+
+		fun calculatePercentage(value: Double?, otherValues: List<Double>, key: String) {
+			if (value != null) {
+				val countBetter = otherValues.count { it < value }
+				val percentage = (countBetter.toDouble() / otherValues.size.toDouble()) * 100
+				hasBest[key] = percentage
+			}
+		}
+
+		fun getValueForKey(journey: UserJourney, key: String): Double? {
+			return when (key) {
+				"total_distance" -> journey.totalDistance
+				"total_time" -> journey.totalTime?.toDouble()
+				"max_speed" -> journey.maxSpeed
+				"avg_speed" -> journey.avgSpeed
+				"min_elevation" -> journey.minElevation
+				"max_elevation" -> journey.maxElevation
+				"total_elevation_gain" -> journey.totalElevationGain
+				"total_elevation_loss" -> journey.totalElevationLoss
+				"avg_g_force" -> journey.avgGForce
+				"max_g_force" -> journey.maxGForce
+				else -> null
+			}
+		}
+
+		val valueMapping = mapOf(
+			"total_distance" to userJourney.totalDistance,
+			"total_time" to userJourney.totalTime?.toDouble(),
+			"max_speed" to userJourney.maxSpeed,
+			"avg_speed" to userJourney.avgSpeed,
+			"min_elevation" to userJourney.minElevation,
+			"max_elevation" to userJourney.maxElevation,
+			"total_elevation_gain" to userJourney.totalElevationGain,
+			"total_elevation_loss" to userJourney.totalElevationLoss,
+			"avg_g_force" to userJourney.avgGForce,
+			"max_g_force" to userJourney.maxGForce
+		)
+
+		for ((key, value) in valueMapping) {
+			if (value != null) {
+				val otherValues = othersJourneys.mapNotNull { getValueForKey(it, key) }
+				calculatePercentage(value, otherValues, key)
+			}
+		}
+
+		hasBest
+	}
+
 	private fun calculateTotalAcceleration(
 		accelerationX: Double,
 		accelerationY: Double,
