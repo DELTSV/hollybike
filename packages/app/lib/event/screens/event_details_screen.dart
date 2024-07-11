@@ -17,10 +17,8 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
-import 'package:provider/provider.dart';
 
 import '../../app/app_router.gr.dart';
-import '../../auth/services/auth_persistence.dart';
 import '../../image/services/image_repository.dart';
 import '../../positions/bloc/user_positions/user_positions_bloc.dart';
 import '../../shared/widgets/app_toast.dart';
