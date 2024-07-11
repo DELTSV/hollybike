@@ -43,7 +43,8 @@ class ProfileScreen extends StatelessWidget {
     ProfileBloc bloc,
     ProfileState state,
   ) {
-    final id = urlId == null ? int.parse(urlId as String) : null;
+    final id = urlId == null ? null : int.parse(urlId as String);
+    print("id $urlId");
     if (id == null) throw Error();
 
     final currentProfile = bloc.currentProfile;
