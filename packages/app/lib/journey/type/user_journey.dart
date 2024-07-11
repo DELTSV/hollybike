@@ -30,19 +30,11 @@ class UserJourney with _$UserJourney {
     return MinimalJourney.getDistanceLabel(totalDistance);
   }
 
-  get avgSpeedLabel {
-    if (avgSpeed == null) {
-      return '';
-    }
-    return '${(avgSpeed! * 3.6).round()} km/h';
-  }
+  get avgSpeedLabel => _speedLabel(avgSpeed);
+  get maxSpeedLabel => _speedLabel(maxSpeed);
 
-  get maxSpeedLabel {
-    if (maxSpeed == null) {
-      return '';
-    }
-    return '${(maxSpeed! * 3.6).round()} km/h';
-  }
+  get avgGForceLabel => _gForceLabel(avgGForce);
+  get maxGForceLabel => _gForceLabel(maxGForce);
 
   get totalTimeLabel {
     if (totalTime == null) {
@@ -56,6 +48,20 @@ class UserJourney with _$UserJourney {
     }
 
     return '$hours h $minutes min';
+  }
+
+  String _speedLabel(double? speed) {
+    if (speed == null) {
+      return '';
+    }
+    return '${(speed * 3.6).round()} km/h';
+  }
+
+  String _gForceLabel(double? gForce) {
+    if (gForce == null) {
+      return '';
+    }
+    return '${gForce.toStringAsFixed(2)} G';
   }
 
   factory UserJourney.fromJson(JsonMap json) => _$UserJourneyFromJson(json);

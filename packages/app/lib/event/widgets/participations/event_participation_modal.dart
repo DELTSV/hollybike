@@ -82,25 +82,13 @@ class EventParticipationModal extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              _buildParticipationJourney(),
+              EventParticipationJourney(
+                journey: participation.journey,
+                username: participation.user.username,
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildParticipationJourney() {
-    if (participation.journey != null) {
-      return EventParticipationJourney(
-        existingJourney: participation.journey!,
-      );
-    }
-
-    return SizedBox(
-      height: 105,
-      child: EventParticipationJourneyEmpty(
-        username: participation.user.username,
       ),
     );
   }
