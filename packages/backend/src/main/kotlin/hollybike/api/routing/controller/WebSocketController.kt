@@ -67,6 +67,11 @@ class WebSocketController(
 						userEventPositionService.getReceiveChannel(parameters["id"]!!.toInt(), it.id.value).send(this.body)
 					}
 				}
+				is StopUserSendPosition -> {
+					user?.let {
+						userEventPositionService.getReceiveChannel(parameters["id"]!!.toInt(), it.id.value).send(this.body)
+					}
+				}
 				else -> {}
 			}
 		}
