@@ -196,7 +196,7 @@ class _JourneyMapState extends State<JourneyMap> {
       await map.easeTo(
         CameraOptions(
           center: cameraOptions.center,
-          zoom: cameraOptions.zoom! + 0.3,
+          zoom: (cameraOptions.zoom ?? 0) + 0.3,
           bearing: cameraOptions.bearing,
           pitch: cameraOptions.pitch,
         ),

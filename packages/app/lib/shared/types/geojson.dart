@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/shared/types/json_map.dart';
 
 part 'geojson.freezed.dart';
+
 part 'geojson.g.dart';
 
 @freezed
@@ -41,13 +42,19 @@ class GeoJSON with _$GeoJSON {
     return calculateBbox(coordinates);
   }
 
-  static List<double> calculateBbox(List<Coordinate> coordinates) {
+  static List<double> calculateBbox(
+    List<Coordinate> coordinates, {
+    double verticalPaddingPercentage = 0.2,
+    double horizontalPaddingPercentage = 0.5,
+  }) {
     double min(double a, double b) => (a < b) ? a : b;
     double max(double a, double b) => (a > b) ? a : b;
 
     List<double> bbox = [
-      double.infinity, double.infinity,
-      double.negativeInfinity, double.negativeInfinity
+      double.infinity,
+      double.infinity,
+      double.negativeInfinity,
+      double.negativeInfinity
     ];
 
     for (var coordinate in coordinates) {
@@ -56,6 +63,20 @@ class GeoJSON with _$GeoJSON {
       bbox[2] = max(bbox[2], coordinate.longitude);
       bbox[3] = max(bbox[3], coordinate.latitude);
     }
+
+    double width = bbox[2] - bbox[0];
+    double height = bbox[3] - bbox[1];
+
+    final realWidth = width == 0 ? 0.1 : width;
+    final realHeight = height == 0 ? 0.1 : height;
+
+    double paddingWidth = realWidth * horizontalPaddingPercentage;
+    double paddingHeight = realHeight * verticalPaddingPercentage;
+
+    bbox[0] -= paddingWidth;
+    bbox[1] -= paddingHeight;
+    bbox[2] += paddingWidth;
+    bbox[3] += paddingHeight;
 
     return bbox;
   }
