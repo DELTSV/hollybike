@@ -27,7 +27,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
   @override
   void initState() {
     super.initState();
-    _refreshEvents(context);
+    _refreshEvents();
     widget.scrollController.addListener(_listenToScroll);
   }
 
@@ -40,13 +40,13 @@ class _ProfileEventsState extends State<ProfileEvents> {
   @override
   Widget build(BuildContext context) {
     return ThemedRefreshIndicator(
-      onRefresh: () => _refreshEvents(context),
+      onRefresh: () => _refreshEvents(),
       child: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthConnected) {
-                _refreshEvents(context);
+                _refreshEvents();
               }
             },
           ),
@@ -81,6 +81,7 @@ class _ProfileEventsState extends State<ProfileEvents> {
               child: EventsSectionsList(
                 events: state.events,
                 hasMore: state.hasMore,
+                physics: const ClampingScrollPhysics(),
               ),
             );
           },
@@ -94,15 +95,15 @@ class _ProfileEventsState extends State<ProfileEvents> {
         0.8 * widget.scrollController.position.maxScrollExtent;
 
     if (widget.scrollController.position.pixels > nextPageTrigger) {
-      _loadNextPage(context);
+      _loadNextPage();
     }
   }
 
-  void _loadNextPage(BuildContext context) {
+  void _loadNextPage() {
     context.read<UserEventsBloc>().add(LoadEventsNextPage());
   }
 
-  Future<void> _refreshEvents(BuildContext context) {
+  Future<void> _refreshEvents() {
     context.read<UserEventsBloc>().add(RefreshUserEvents());
 
     return context.read<UserEventsBloc>().firstWhenNotLoading;

@@ -5,7 +5,7 @@ import 'package:hollybike/image/bloc/image_list_bloc.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 import 'package:hollybike/image/type/event_image.dart';
-import 'package:hollybike/profile/bloc/profile_image_bloc/profile_images_event.dart';
+import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_event.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
 class ProfileImagesBloc extends ImageListBloc<ProfileImagesEvent> {

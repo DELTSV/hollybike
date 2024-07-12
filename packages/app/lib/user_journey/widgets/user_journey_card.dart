@@ -10,6 +10,7 @@ class UserJourneyCard extends StatelessWidget {
   final MinimalUser? user;
   final Color color;
   final bool isCurrentEvent;
+  final void Function()? onDeleted;
 
   const UserJourneyCard({
     super.key,
@@ -17,6 +18,7 @@ class UserJourneyCard extends StatelessWidget {
     required this.color,
     this.user,
     this.isCurrentEvent = false,
+    this.onDeleted,
   });
 
   @override
@@ -35,6 +37,7 @@ class UserJourneyCard extends StatelessWidget {
       color: color,
       user: user,
       isCurrentEvent: isCurrentEvent,
+      onDeleted: onDeleted,
     );
   }
 }

@@ -12,6 +12,7 @@ class UserJourneyContent extends StatelessWidget {
   final MinimalUser? user;
   final Color color;
   final bool isCurrentEvent;
+  final void Function()? onDeleted;
 
   const UserJourneyContent({
     super.key,
@@ -19,6 +20,7 @@ class UserJourneyContent extends StatelessWidget {
     this.user,
     this.color = Colors.transparent,
     required this.isCurrentEvent,
+    this.onDeleted,
   });
 
   @override
@@ -144,6 +146,7 @@ class UserJourneyContent extends StatelessWidget {
                       journey: existingJourney,
                       user: user,
                       isCurrentEvent: isCurrentEvent,
+                      onDeleted: onDeleted,
                     );
 
                     if (eventDetailsBloc == null) {

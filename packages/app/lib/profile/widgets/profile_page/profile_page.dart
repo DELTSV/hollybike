@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/association/types/association.dart';
+import 'package:hollybike/event/bloc/events_bloc/events_event.dart';
+import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 import 'package:hollybike/event/fragments/profile_events.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
+import 'package:hollybike/image/services/image_repository.dart';
+import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_bloc.dart';
+import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_event.dart';
+import 'package:hollybike/profile/bloc/profile_journeys_bloc/profile_journeys_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
 import 'package:hollybike/profile/widgets/profile_description/profile_description.dart';
 import 'package:hollybike/profile/widgets/profile_images.dart';
+import 'package:hollybike/profile/widgets/profile_journeys.dart';
 import 'package:hollybike/profile/widgets/profile_page/placeholder_profile_page.dart';
 import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
+import 'package:hollybike/user_journey/services/user_journey_repository.dart';
 
-import '../../../event/bloc/events_bloc/events_event.dart';
-import '../../../event/bloc/events_bloc/user_events_bloc.dart';
-import '../../../event/services/event/event_repository.dart';
-import '../../../image/services/image_repository.dart';
-import '../../bloc/profile_image_bloc/profile_images_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   final int? id;
@@ -54,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (context, scrolled) => [
@@ -81,8 +85,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     labelColor: Theme.of(context).colorScheme.secondary,
                     indicatorColor: Theme.of(context).colorScheme.secondary,
                     tabs: const [
-                      Tab(icon: Icon(Icons.event)),
-                      Tab(icon: Icon(Icons.image)),
+                      Tab(icon: Icon(Icons.event_rounded)),
+                      Tab(icon: Icon(Icons.image_rounded)),
+                      Tab(icon: Icon(Icons.route_rounded)),
                     ],
                   ),
                 ),
@@ -112,6 +117,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
+        BlocProvider(
+          create: (context) => ProfileJourneysBloc(
+            userId: widget.profile!.id,
+            userJourneyRepository: RepositoryProvider.of<UserJourneyRepository>(
+              context,
+            ),
+          ),
+        ),
       ],
       child: TabBarView(
         children: [
@@ -125,6 +138,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ProfileImages(
             scrollController: _scrollController,
           ),
+          ProfileJourneys(
+            user: widget.profile as MinimalUser,
+            scrollController: _scrollController,
+          )
         ],
       ),
     );

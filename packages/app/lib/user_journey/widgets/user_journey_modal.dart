@@ -31,12 +31,14 @@ class UserJourneyModal extends StatefulWidget {
   final UserJourney journey;
   final bool isCurrentEvent;
   final MinimalUser? user;
+  final void Function()? onDeleted;
 
   const UserJourneyModal({
     super.key,
     required this.journey,
     required this.isCurrentEvent,
     this.user,
+    this.onDeleted,
   });
 
   @override
@@ -69,6 +71,32 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
         isBetterThan.values.where((element) => element == 100).length;
   }
 
+  Widget _eventBlocNullable(
+    BuildContext context,
+    Widget Function(BuildContext, bool isLoading) builder,
+  ) {
+    final eventDetailsBloc = context.readOrNull<EventDetailsBloc>();
+
+    if (eventDetailsBloc == null) {
+      return builder(context, false);
+    } else {
+      return BlocConsumer(
+        listener: (context, state) {
+          if (state is UserJourneyReset) {
+            Navigator.of(context).pop();
+            Toast.showSuccessToast(context, 'Parcours réinitialisé');
+          }
+        },
+        builder: (context, state) {
+          return builder(
+            context,
+            state is EventOperationInProgress,
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -82,18 +110,13 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
         eventRepository: RepositoryProvider.of<EventRepository>(context),
         journeyId: widget.journey.id,
       ),
-      child: BlocConsumer(
-        listener: (context, state) {
-          if (state is UserJourneyReset) {
-            Navigator.of(context).pop();
-            Toast.showSuccessToast(context, 'Parcours réinitialisé');
-          }
-        },
-        bloc: context.readOrNull<EventDetailsBloc>(),
-        builder: (context, eventState) {
+      child: _eventBlocNullable(
+        context,
+        (context, isEventLoading) {
           return BlocConsumer<UserJourneyDetailsBloc, UserJourneyDetailsState>(
             listener: (context, state) {
               if (state is UserJourneyDeleted) {
+                widget.onDeleted?.call();
                 Navigator.of(context).pop();
                 Toast.showSuccessToast(
                   context,
@@ -110,9 +133,8 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
               }
             },
             builder: (context, userJourneyState) {
-              final isLoading =
-                  userJourneyState is UserJourneyOperationInProgress ||
-                      eventState is EventOperationInProgress;
+              final isLoading = userJourneyState is UserJourneyOperationInProgress ||
+                  isEventLoading;
 
               print('isLoading: $isLoading');
 
