@@ -4,7 +4,6 @@ import hollybike.api.database.now
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.Mapper
-import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
