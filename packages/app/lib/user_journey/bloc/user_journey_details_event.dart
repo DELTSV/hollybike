@@ -8,5 +8,7 @@ class DeleteUserJourney extends UserJourneyDetailsEvent {
 }
 
 class DownloadUserJourney extends UserJourneyDetailsEvent {
-  DownloadUserJourney();
+  final String fileName;
+
+  DownloadUserJourney({required this.fileName});
 }

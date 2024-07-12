@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'package:hollybike/event/widgets/event_loading_profile_picture.dart';
 import 'package:hollybike/event/widgets/participations/event_participation_actions_menu.dart';
@@ -91,9 +92,12 @@ class EventParticipationCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) {
-        return EventParticipationModal(
-          participation: participation,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<EventDetailsBloc>(),
+          child: EventParticipationModal(
+            participation: participation,
+          ),
         );
       },
     );

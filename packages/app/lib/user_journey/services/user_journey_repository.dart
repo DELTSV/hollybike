@@ -35,8 +35,8 @@ class UserJourneyRepository {
     return pageResult;
   }
 
-  Future<List<int>> getUserJourneyFile(int userJourneyId) {
-    return userJourneyApi.getUserJourneyFile(userJourneyId);
+  Future<void> downloadUserJourneyFile(int userJourneyId, String fileName) {
+    return userJourneyApi.downloadUserJourneyFile(userJourneyId, fileName);
   }
 
   Future<void> deleteUserJourney(int userJourneyId) {

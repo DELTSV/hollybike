@@ -352,7 +352,7 @@ class EventController(
 	}
 
 	private fun Route.resetEventJourney() {
-		patch<Events.Id.Participations.Me.Journey.Terminate> {
+		patch<Events.Id.Participations.Me.Journey.Reset> {
 			val event = eventService.getEvent(call.user, it.journey.me.participations.eventId.id) ?: run {
 				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
 				return@patch

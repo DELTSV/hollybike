@@ -8,12 +8,14 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:io' as _i19;
+import 'dart:io' as _i20;
 
 import 'package:auto_route/auto_route.dart' as _i13;
 import 'package:flutter/material.dart' as _i14;
 import 'package:hollybike/auth/screens/login_screen.dart' as _i8;
 import 'package:hollybike/auth/screens/signup_screen.dart' as _i12;
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart'
+    as _i18;
 import 'package:hollybike/event/screens/event_details_screen.dart' as _i2;
 import 'package:hollybike/event/screens/events_screen.dart' as _i4;
 import 'package:hollybike/event/screens/participations/event_candidates_screen.dart'
@@ -24,7 +26,7 @@ import 'package:hollybike/event/types/event_details.dart' as _i16;
 import 'package:hollybike/event/types/minimal_event.dart' as _i15;
 import 'package:hollybike/event/types/participation/event_participation.dart'
     as _i17;
-import 'package:hollybike/image/bloc/image_list_bloc.dart' as _i18;
+import 'package:hollybike/image/bloc/image_list_bloc.dart' as _i19;
 import 'package:hollybike/image/screens/image_gallery_page_view_screen.dart'
     as _i5;
 import 'package:hollybike/journey/screen/import_gpx_tool_screen.dart' as _i6;
@@ -71,6 +73,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
           key: args.key,
           eventDetails: args.eventDetails,
           participationPreview: args.participationPreview,
+          eventDetailsBloc: args.eventDetailsBloc,
         )),
       );
     },
@@ -257,6 +260,7 @@ class EventParticipationsRoute
     _i14.Key? key,
     required _i16.EventDetails eventDetails,
     required List<_i17.EventParticipation> participationPreview,
+    _i18.EventDetailsBloc? eventDetailsBloc,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
@@ -264,6 +268,7 @@ class EventParticipationsRoute
             key: key,
             eventDetails: eventDetails,
             participationPreview: participationPreview,
+            eventDetailsBloc: eventDetailsBloc,
           ),
           initialChildren: children,
         );
@@ -279,6 +284,7 @@ class EventParticipationsRouteArgs {
     this.key,
     required this.eventDetails,
     required this.participationPreview,
+    this.eventDetailsBloc,
   });
 
   final _i14.Key? key;
@@ -287,9 +293,11 @@ class EventParticipationsRouteArgs {
 
   final List<_i17.EventParticipation> participationPreview;
 
+  final _i18.EventDetailsBloc? eventDetailsBloc;
+
   @override
   String toString() {
-    return 'EventParticipationsRouteArgs{key: $key, eventDetails: $eventDetails, participationPreview: $participationPreview}';
+    return 'EventParticipationsRouteArgs{key: $key, eventDetails: $eventDetails, participationPreview: $participationPreview, eventDetailsBloc: $eventDetailsBloc}';
   }
 }
 
@@ -316,7 +324,7 @@ class ImageGalleryViewRoute
     required int imageIndex,
     required void Function() onLoadNextPage,
     required void Function() onRefresh,
-    required _i18.ImageListBloc<dynamic> bloc,
+    required _i19.ImageListBloc<dynamic> bloc,
     List<_i13.PageRouteInfo>? children,
   }) : super(
           ImageGalleryViewRoute.name,
@@ -353,7 +361,7 @@ class ImageGalleryViewRouteArgs {
 
   final void Function() onRefresh;
 
-  final _i18.ImageListBloc<dynamic> bloc;
+  final _i19.ImageListBloc<dynamic> bloc;
 
   @override
   String toString() {
@@ -367,7 +375,7 @@ class ImportGpxToolRoute extends _i13.PageRouteInfo<ImportGpxToolRouteArgs> {
   ImportGpxToolRoute({
     _i14.Key? key,
     required String url,
-    required void Function(_i19.File) onGpxDownloaded,
+    required void Function(_i20.File) onGpxDownloaded,
     required void Function() onClose,
     List<_i13.PageRouteInfo>? children,
   }) : super(
@@ -399,7 +407,7 @@ class ImportGpxToolRouteArgs {
 
   final String url;
 
-  final void Function(_i19.File) onGpxDownloaded;
+  final void Function(_i20.File) onGpxDownloaded;
 
   final void Function() onClose;
 

@@ -1,18 +1,20 @@
+import 'package:dio/dio.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
+import 'package:hollybike/shared/types/paginated_list.dart';
+import 'package:hollybike/shared/http/downloader.dart';
 import 'package:hollybike/user_journey/type/user_journey.dart';
-
-import '../../shared/types/paginated_list.dart';
 
 class UserJourneyApi {
   final DioClient client;
+  final Downloader downloader;
 
-  UserJourneyApi({required this.client});
+  UserJourneyApi({required this.client, required this.downloader});
 
   Future<PaginatedList<UserJourney>> getUserJourneys(
-      int page,
-      int userJourneysPerPage,
-      int userId,
-      ) async {
+    int page,
+    int userJourneysPerPage,
+    int userId,
+  ) async {
     final response = await client.dio.get(
       '/user-journeys/user/$userId',
       queryParameters: {
@@ -25,12 +27,15 @@ class UserJourneyApi {
     return PaginatedList.fromJson(response.data, UserJourney.fromJson);
   }
 
-  Future<List<int>> getUserJourneyFile(int userJourneyId) async {
-    final response = await client.dio.get(
+  Future<void> downloadUserJourneyFile(int userJourneyId, String fileName) async {
+    await downloader.downloadFile(
       '/user-journeys/$userJourneyId/file',
+      fileName,
+      authenticate: true,
+      extraHeaders: {
+        'Accept': 'gpx',
+      },
     );
-
-    return List<int>.from(response.data);
   }
 
   Future<void> deleteUserJourney(int userJourneyId) async {

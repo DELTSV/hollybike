@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:hollybike/user_journey/bloc/user_journey_details_event.dart';
 import 'package:hollybike/user_journey/bloc/user_journey_details_state.dart';
@@ -27,11 +29,12 @@ class UserJourneyDetailsBloc
 
     try {
       await userJourneyRepository.deleteUserJourney(journeyId);
-      emit(UserJourneyOperationSuccess(state));
+      emit(UserJourneyDeleted(state));
     } catch (e) {
+      log('Failed to delete user journey', error: e);
       emit(UserJourneyOperationFailure(
         state,
-        errorMessage: 'Une erreur est survenue.',
+        errorMessage: 'Ecchec de la suppression du parcours.',
       ));
       return;
     }
@@ -44,16 +47,22 @@ class UserJourneyDetailsBloc
     emit(UserJourneyOperationInProgress(state));
 
     try {
-      final fileData =
-          await userJourneyRepository.getUserJourneyFile(journeyId);
+      await userJourneyRepository.downloadUserJourneyFile(
+        journeyId,
+        event.fileName,
+      );
 
-      print('File data: $fileData');
-
-      emit(UserJourneyOperationSuccess(state));
+      emit(
+        UserJourneyOperationSuccess(
+          state,
+          successMessage: 'Parcours téléchargé.',
+        ),
+      );
     } catch (e) {
+      log('Failed to download user journey file', error: e);
       emit(UserJourneyOperationFailure(
         state,
-        errorMessage: 'Une erreur est survenue.',
+        errorMessage: 'Echec du téléchargement du parcours.',
       ));
       return;
     }

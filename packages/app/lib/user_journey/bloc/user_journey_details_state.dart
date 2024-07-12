@@ -32,14 +32,24 @@ class UserJourneyOperationInProgress extends UserJourneyDetailsState {
 }
 
 class UserJourneyOperationSuccess extends UserJourneyDetailsState {
-  UserJourneyOperationSuccess(UserJourneyDetailsState state)
+  final String successMessage;
+
+  UserJourneyOperationSuccess(
+    UserJourneyDetailsState state, {
+    required this.successMessage,
+  }) : super.state(state.copyWith(status: UserJourneyDetailsStatus.success));
+}
+
+class UserJourneyDeleted extends UserJourneyDetailsState {
+  UserJourneyDeleted(UserJourneyDetailsState state)
       : super.state(state.copyWith(status: UserJourneyDetailsStatus.success));
 }
 
 class UserJourneyOperationFailure extends UserJourneyDetailsState {
   final String errorMessage;
 
-  UserJourneyOperationFailure(UserJourneyDetailsState state,
-      {required this.errorMessage})
-      : super.state(state.copyWith(status: UserJourneyDetailsStatus.error));
+  UserJourneyOperationFailure(
+    UserJourneyDetailsState state, {
+    required this.errorMessage,
+  }) : super.state(state.copyWith(status: UserJourneyDetailsStatus.error));
 }

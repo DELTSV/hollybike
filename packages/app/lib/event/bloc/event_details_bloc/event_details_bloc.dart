@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
@@ -228,10 +229,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     try {
       await _eventRepository.resetUserJourney(eventId);
 
-      emit(EventOperationSuccess(
-        state,
-        successMessage: 'Trajet réinitialisé',
-      ));
+      emit(UserJourneyReset(state));
     } catch (e) {
       log('Error while resetting user journey', error: e);
       emit(EventOperationFailure(

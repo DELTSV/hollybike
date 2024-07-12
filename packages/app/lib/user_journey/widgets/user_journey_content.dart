@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 import 'package:hollybike/user_journey/type/user_journey.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
@@ -9,12 +11,14 @@ class UserJourneyContent extends StatelessWidget {
   final UserJourney existingJourney;
   final MinimalUser? user;
   final Color color;
+  final bool isCurrentEvent;
 
   const UserJourneyContent({
     super.key,
     required this.existingJourney,
     this.user,
     this.color = Colors.transparent,
+    required this.isCurrentEvent,
   });
 
   @override
@@ -134,9 +138,21 @@ class UserJourneyContent extends StatelessWidget {
                   isScrollControlled: true,
                   context: context,
                   builder: (_) {
-                    return UserJourneyModal(
+                    final eventDetailsBloc = context.readOrNull<EventDetailsBloc>();
+
+                    final modal = UserJourneyModal(
                       journey: existingJourney,
                       user: user,
+                      isCurrentEvent: isCurrentEvent,
+                    );
+
+                    if (eventDetailsBloc == null) {
+                      return modal;
+                    }
+
+                    return BlocProvider<EventDetailsBloc>.value(
+                      value: eventDetailsBloc,
+                      child: modal,
                     );
                   },
                 );
@@ -146,5 +162,15 @@ class UserJourneyContent extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+extension ReadOrNull on BuildContext {
+  T? readOrNull<T>() {
+    try {
+      return read<T>();
+    } on ProviderNotFoundException catch (_) {
+      return null;
+    }
   }
 }

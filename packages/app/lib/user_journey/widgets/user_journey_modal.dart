@@ -1,25 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_event.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
+import 'package:hollybike/shared/widgets/app_toast.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
+import 'package:hollybike/user_journey/bloc/user_journey_details_bloc.dart';
+import 'package:hollybike/user_journey/bloc/user_journey_details_event.dart';
+import 'package:hollybike/user_journey/bloc/user_journey_details_state.dart';
+import 'package:hollybike/user_journey/services/user_journey_repository.dart';
 import 'package:hollybike/user_journey/type/user_journey.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
+import 'package:hollybike/user_journey/widgets/user_journey_content.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import '../../event/bloc/event_details_bloc/event_details_bloc.dart';
 import '../../shared/utils/dates.dart';
 import '../../shared/widgets/bloc_provided_builder.dart';
 import '../../shared/widgets/gradient_progress_bar.dart';
 
 enum JourneyModalAction {
   resetJourney,
+  deleteJourney,
   downloadJourney,
 }
 
 class UserJourneyModal extends StatefulWidget {
   final UserJourney journey;
+  final bool isCurrentEvent;
   final MinimalUser? user;
 
   const UserJourneyModal({
     super.key,
     required this.journey,
+    required this.isCurrentEvent,
     this.user,
   });
 
@@ -55,8 +69,57 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => UserJourneyDetailsBloc(
+        userJourneyRepository:
+            RepositoryProvider.of<UserJourneyRepository>(context),
+        journeyId: widget.journey.id,
+      ),
+      child: BlocConsumer(
+        listener: (context, state) {
+          if (state is UserJourneyReset) {
+            Navigator.of(context).pop();
+            Toast.showSuccessToast(context, 'Parcours réinitialisé');
+          }
+        },
+        bloc: context.readOrNull<EventDetailsBloc>(),
+        builder: (context, eventState) {
+          return BlocConsumer<UserJourneyDetailsBloc, UserJourneyDetailsState>(
+            listener: (context, state) {
+              if (state is UserJourneyDeleted) {
+                Navigator.of(context).pop();
+                Toast.showSuccessToast(
+                  context,
+                  'Parcours supprimé',
+                );
+              }
+
+              if (state is UserJourneyOperationSuccess) {
+                Toast.showSuccessToast(context, state.successMessage);
+              }
+
+              if (state is UserJourneyOperationFailure) {
+                Toast.showErrorToast(context, state.errorMessage);
+              }
+            },
+            builder: (context, userJourneyState) {
+              final isLoading =
+                  userJourneyState is UserJourneyOperationInProgress ||
+                      eventState is EventOperationInProgress;
+
+              print('isLoading: $isLoading');
+
+              return _buildContent(isLoading);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildContent(bool isLoading) {
     return Container(
-      decoration: _modalDecoration(context),
+      decoration: _modalDecoration(),
       child: Padding(
         padding: const EdgeInsets.only(
           top: 16,
@@ -65,7 +128,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
         ),
         child: SafeArea(
           child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-            builder: (context, bloc, state) {
+            builder: (context, bloc, _) {
               final currentProfileEvent = bloc.currentProfile;
               final currentUserId =
                   (currentProfileEvent is ProfileLoadSuccessEvent
@@ -79,7 +142,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHeader(context, isCurrentUser),
+                  _buildHeader(context, isCurrentUser, isLoading),
                   const SizedBox(height: 16),
                   _JourneyInfoRow(
                     icon: Icons.history,
@@ -265,7 +328,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
     }
   }
 
-  BoxDecoration _modalDecoration(BuildContext context) {
+  BoxDecoration _modalDecoration() {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.primary,
       borderRadius: const BorderRadius.only(
@@ -275,24 +338,17 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isCurrentUser) {
+  Widget _buildHeader(BuildContext context, bool isCurrentUser, isLoading) {
     return isCurrentUser
-        ? _buildCurrentUserHeader(context)
-        : _buildOtherUserHeader(context);
+        ? _buildCurrentUserHeader(context, isLoading)
+        : _buildOtherUserHeader();
   }
 
-  Widget _buildCurrentUserHeader(BuildContext context) {
+  Widget _buildCurrentUserHeader(BuildContext context, bool isLoading) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        PopupMenuButton(
-          onSelected: (value) {
-            // Handle modal action
-          },
-          itemBuilder: (context) {
-            return _buildJourneyActions();
-          },
-        ),
+        _buildActionButton(context, isLoading),
         const Spacer(),
         ElevatedButton(
           onPressed: () => {},
@@ -302,7 +358,54 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
     );
   }
 
-  Widget _buildOtherUserHeader(BuildContext context) {
+  Widget _buildActionButton(BuildContext context, bool isLoading) {
+    return SizedBox(
+      height: 40,
+      child: AnimatedCrossFade(
+        firstChild: PopupMenuButton(
+          onSelected: (action) => _handleModalAction(context, action),
+          itemBuilder: (context) => _buildJourneyActions(),
+        ),
+        secondChild: const Padding(
+          padding: EdgeInsets.all(5.0),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        crossFadeState:
+            isLoading ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
+  void _handleModalAction(BuildContext context, JourneyModalAction action) {
+    switch (action) {
+      case JourneyModalAction.resetJourney:
+        context.read<EventDetailsBloc>().add(ResetUserJourney());
+        break;
+      case JourneyModalAction.deleteJourney:
+        context.read<UserJourneyDetailsBloc>().add(DeleteUserJourney());
+        break;
+      case JourneyModalAction.downloadJourney:
+        context.read<UserJourneyDetailsBloc>().add(DownloadUserJourney(
+              fileName: _getJourneyFileName(),
+            ));
+        break;
+    }
+  }
+
+  String _getJourneyFileName() {
+    final date =
+        DateFormat('dd-MM-yyyy').format(widget.journey.createdAt.toLocal());
+
+    final uniqueKey = DateTime.now().microsecondsSinceEpoch.toString();
+
+    return 'parcours_${date}_$uniqueKey.gpx';
+  }
+
+  Widget _buildOtherUserHeader() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -325,17 +428,38 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   }
 
   List<PopupMenuItem> _buildJourneyActions() {
-    return [
-      const PopupMenuItem(
-        value: JourneyModalAction.resetJourney,
-        child: Row(
-          children: [
-            Icon(Icons.restart_alt_rounded),
-            SizedBox(width: 8),
-            Text('Réinitialiser le parcours'),
-          ],
+    final actions = <PopupMenuItem>[];
+
+    if (widget.isCurrentEvent) {
+      actions.add(
+        const PopupMenuItem(
+          value: JourneyModalAction.resetJourney,
+          child: Row(
+            children: [
+              Icon(Icons.restart_alt_rounded),
+              SizedBox(width: 8),
+              Text('Réinitialiser le parcours'),
+            ],
+          ),
         ),
-      ),
+      );
+    } else {
+      actions.add(
+        const PopupMenuItem(
+          value: JourneyModalAction.deleteJourney,
+          child: Row(
+            children: [
+              Icon(Icons.delete_rounded),
+              SizedBox(width: 8),
+              Text('Supprimer le parcours'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return [
+      ...actions,
       const PopupMenuItem(
         value: JourneyModalAction.downloadJourney,
         child: Row(

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app_router.gr.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_bloc.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_event.dart';
 import 'package:hollybike/event/bloc/event_participations_bloc/event_participations_state.dart';
@@ -23,11 +24,13 @@ class EventParticipationsScreen extends StatefulWidget
     implements AutoRouteWrapper {
   final EventDetails eventDetails;
   final List<EventParticipation> participationPreview;
+  final EventDetailsBloc? eventDetailsBloc;
 
   const EventParticipationsScreen({
     super.key,
     required this.eventDetails,
     required this.participationPreview,
+    this.eventDetailsBloc,
   });
 
   @override
@@ -36,15 +39,21 @@ class EventParticipationsScreen extends StatefulWidget
 
   @override
   Widget wrappedRoute(context) {
-    return BlocProvider<EventParticipationBloc>(
-      create: (context) => EventParticipationBloc(
-        eventId: eventDetails.event.id,
-        eventParticipationsRepository:
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<EventParticipationBloc>(
+          create: (context) => EventParticipationBloc(
+            eventId: eventDetails.event.id,
+            eventParticipationsRepository:
             RepositoryProvider.of<EventParticipationRepository>(
-          context,
+              context,
+            ),
+            eventRepository: RepositoryProvider.of<EventRepository>(context),
+          )..add(SubscribeToEventParticipations()),
         ),
-        eventRepository: RepositoryProvider.of<EventRepository>(context),
-      )..add(SubscribeToEventParticipations()),
+        if (eventDetailsBloc != null)
+          BlocProvider<EventDetailsBloc>.value(value: eventDetailsBloc!),
+      ],
       child: this,
     );
   }

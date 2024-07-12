@@ -61,6 +61,7 @@ class EventDetailsInfos extends StatelessWidget {
                             EventParticipationsRoute(
                               eventDetails: eventDetails,
                               participationPreview: previewParticipants,
+                              eventDetailsBloc: context.read<EventDetailsBloc>(),
                             ),
                           );
                         });

@@ -25,7 +25,9 @@ class EventMyJourney extends StatelessWidget {
 
   Widget _buildMyJourney(BuildContext context) {
     return UserJourneyCard(
+      isCurrentEvent: true,
       journey: eventDetails.callerParticipation?.journey,
+      color: Theme.of(context).colorScheme.primary,
     );
   }
 }
