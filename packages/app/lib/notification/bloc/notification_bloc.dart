@@ -11,8 +11,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/services/auth_repository.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/shared/utils/dates.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_published.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_updated.dart';
 import 'package:hollybike/shared/websocket/websocket_client.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../auth/types/auth_session.dart';
@@ -116,7 +120,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     }
   }
 
-  static Future<int?> onEventStatusUpdated(
+  static Future<int> onEventStatusUpdated(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
@@ -125,8 +129,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     log('Event status updated: ${data.name}, ${data.status}');
 
     const notificationDetails = AndroidNotificationDetails(
-      'hollybike-event-status-notifications',
-      'Status des événements',
+      'hollybike-event-updated-notifications',
+      'Mise à jour des événements',
       channelDescription:
           'Canal de notifications de Hollybike pour le status des événements',
       importance: Importance.max,
@@ -150,7 +154,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     return data.notificationId;
   }
 
-  static Future<int?> onAddedToEvent(
+  static Future<int> onAddedToEvent(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
@@ -180,7 +184,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     return data.notificationId;
   }
 
-  static Future<int?> onRemovedFromEvent(
+  static Future<int> onRemovedFromEvent(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
@@ -210,7 +214,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     return data.notificationId;
   }
 
-  static Future<int?> onEventDeleted(
+  static Future<int> onEventDeleted(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
@@ -232,6 +236,66 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       Random().nextInt(100),
       data.name,
       'L\'événement ${data.name} a été supprimé',
+      const NotificationDetails(
+        android: notificationDetails,
+      ),
+    );
+
+    return data.notificationId;
+  }
+
+  static Future<int> onEventUpdated(
+    WebsocketBody event,
+    FlutterLocalNotificationsPlugin notificationPlugin,
+  ) async {
+    final data = event as WebsocketEventUpdated;
+
+    log('Event updated: ${data.name}', name: 'Notifications');
+
+    const notificationDetails = AndroidNotificationDetails(
+      'hollybike-event-updated-notifications',
+      'Mise à jour des événements',
+      channelDescription:
+          'Canal de notifications de Hollybike pour les mises à jour des événements',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+
+    await notificationPlugin.show(
+      Random().nextInt(100),
+      data.name,
+      'L\'événement ${data.name} a été mis à jour',
+      const NotificationDetails(
+        android: notificationDetails,
+      ),
+    );
+
+    return data.notificationId;
+  }
+
+  static Future<int> onEventPublished(
+    WebsocketBody event,
+    FlutterLocalNotificationsPlugin notificationPlugin,
+  ) async {
+    final data = event as WebsocketEventPublished;
+
+    log('New event: ${data.name}', name: 'Notifications');
+
+    const notificationDetails = AndroidNotificationDetails(
+      'hollybike-event-creation-notifications',
+      'Création des événements',
+      channelDescription:
+          'Canal de notifications de Hollybike pour la création des événements',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+
+    await notificationPlugin.show(
+      Random().nextInt(100),
+      data.name,
+      'Nouvel événement ${data.name} publié, prévu pour ${formatTimeDate(data.date)}',
       const NotificationDetails(
         android: notificationDetails,
       ),
@@ -304,6 +368,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
             break;
           case 'DeleteEventNotification':
             notifBackId = await onEventDeleted(
+              message.data,
+              flutterLocalNotificationsPlugin,
+            );
+            break;
+          case 'UpdateEventNotification':
+            notifBackId = await onEventUpdated(
+              message.data,
+              flutterLocalNotificationsPlugin,
+            );
+            break;
+          case 'NewEventNotification':
+            notifBackId = await onEventPublished(
               message.data,
               flutterLocalNotificationsPlugin,
             );

@@ -6,7 +6,9 @@ import 'dart:math' as math;
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_added_to_event.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_event_deleted.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_published.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_event_status_updated.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_event_updated.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_removed_from_event.dart';
 import 'package:hollybike/shared/websocket/send/websocket_read_notification.dart';
 import 'package:hollybike/shared/websocket/send/websocket_stop_send_position.dart';
@@ -94,6 +96,10 @@ class WebsocketClient {
           return WebsocketRemovedFromEvent.fromJson(json);
         case 'DeleteEventNotification':
           return WebsocketEventDeleted.fromJson(json);
+        case 'UpdateEventNotification':
+          return WebsocketEventUpdated.fromJson(json);
+        case 'NewEventNotification':
+          return WebsocketEventPublished.fromJson(json);
         case 'error':
           return WebsocketError.fromJson(json);
       }
