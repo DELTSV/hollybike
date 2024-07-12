@@ -305,7 +305,7 @@ class UserEventPositionService(
 		val avgGForce = convertToGForce(totalAcceleration / totalCount)
 		val maxGForce = convertToGForce(maxAcceleration)
 		val totalTime = (Instant.parse(times.last().content) - Instant.parse(times.first().content)).inWholeSeconds
-		val geojson = Feature(
+		val geoJson = Feature(
 			geometry = LineString(coord),
 			properties = JsonObject(
 				mapOf(
@@ -315,9 +315,11 @@ class UserEventPositionService(
 			)
 		)
 
-		geojson.bbox = geojson.getBoundingBox()
+		geoJson.apply {
+			bbox = getBoundingBox()
+		}
 
-		val file = uploadUserJourney(geojson, event.id.value, user.id.value)
+		val file = uploadUserJourney(geoJson, event.id.value, user.id.value)
 
 		return transaction(db) {
 			val participation = EventParticipation.find {
