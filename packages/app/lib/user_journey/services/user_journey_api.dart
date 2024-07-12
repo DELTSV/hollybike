@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/shared/http/downloader.dart';

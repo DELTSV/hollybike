@@ -1,5 +1,6 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
+import 'package:hollybike/shared/utils/dowload_folder.dart';
 
 class Downloader {
   final AuthPersistence authPersistence;
@@ -25,10 +26,16 @@ class Downloader {
         ? {'Authorization': 'Bearer ${currentSession!.token}', ...extraHeaders}
         : extraHeaders;
 
+    final downloadPath = await getDownloadPath();
+
+    if (downloadPath == null) {
+      throw Exception('Download path not found');
+    }
+
     await FlutterDownloader.enqueue(
       url: url,
       headers: headers,
-      savedDir: "/storage/emulated/0/Download",
+      savedDir: downloadPath,
       fileName: fileName,
       showNotification: true,
       openFileFromNotification: true,
