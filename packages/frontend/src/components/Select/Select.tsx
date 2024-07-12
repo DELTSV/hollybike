@@ -96,8 +96,8 @@ export function Select(props: SelectProps) {
 				"rounded flex items-center justify-between border-2 px-2 py-2 h-9.5 relative",
 				visible && "rounded-b-none",
 				props.disabled === true ?
-					"border-overlay-0 bg-surface-0  text-subtext-0 cursor-default" :
-					"bg-surface-1 border-lavender cursor-pointer",
+					"border-surface-1 bg-base text-surface-1 cursor-default" :
+					"bg-mantle border-surface-1 cursor-pointer",
 			)}
 			onClick={(e) => {
 				if (input.current?.contains(e.target as Node) !== true && props.disabled !== true) {
@@ -111,8 +111,8 @@ export function Select(props: SelectProps) {
 			{ visible &&
                 <div
                     className={clsx(
-						"absolute top-full -left-0.5 bg-surface-1 flex flex-col",
-						"w-[calc(100%+4px)] border-2 border-lavender rounded-b",
+						"absolute top-full -left-0.5 bg-mantle flex flex-col",
+						"w-[calc(100%+4px)] border-2 border-surface-1 rounded-b",
 					)}
                 >
 					{ props.searchable &&

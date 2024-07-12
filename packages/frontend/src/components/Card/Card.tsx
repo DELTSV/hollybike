@@ -12,7 +12,7 @@ export function Card(props: CardProps) {
 		<div
 			onClick={props.onClick}
 			className={clsx(
-				"border-2 border-overlay-0 bg-base rounded hover:shadow transition-shadow px-2 py-1",
+				"bg-base rounded hover:shadow transition-shadow px-2 py-1",
 				props.className,
 			)}
 		>
