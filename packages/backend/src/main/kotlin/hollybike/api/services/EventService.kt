@@ -457,6 +457,20 @@ class EventService(
 			notificationService.send(event.participants.map { it.user }.toList(), DeleteEventNotification(event), caller)
 		}
 
+		event.image?.let {
+			storageService.delete(it)
+		}
+
+		EventImage.find { EventImages.event eq event.id }.forEach {
+			storageService.delete(it.path)
+		}
+
+		Expense.find { Expenses.event eq event.id }.forEach {
+			it.proof?.let { proof ->
+				storageService.delete(proof)
+			}
+		}
+
 		Result.success(event.delete())
 	}
 }

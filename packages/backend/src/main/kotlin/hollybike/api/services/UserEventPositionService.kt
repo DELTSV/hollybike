@@ -129,7 +129,10 @@ class UserEventPositionService(
 		participation.journey = null
 	}
 
-	fun deleteUserJourney(userJourney: UserJourney) = transaction(db) { userJourney.delete() }
+	suspend fun deleteUserJourney(userJourney: UserJourney) {
+		transaction(db) { userJourney.delete() }
+		storageService.delete(userJourney.journey)
+	}
 
 	fun getUserJourney(caller: User, userJourneyId: Int) = transaction(db) {
 		UserJourney.find { (UsersJourneys.id eq userJourneyId) and (UsersJourneys.user eq caller.id) }.firstOrNull()

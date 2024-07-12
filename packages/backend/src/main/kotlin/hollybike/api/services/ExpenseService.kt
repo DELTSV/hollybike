@@ -142,11 +142,14 @@ class ExpenseService(
 		return Result.success(expense)
 	}
 
-	fun deleteExpense(caller: User, expense: Expense): Result<Unit> {
+	suspend fun deleteExpense(caller: User, expense: Expense): Result<Unit> {
 		if(!authorizeGetOrUpdateOrDelete(caller, expense)) {
 			return Result.failure(NotAllowedException())
 		}
 		transaction(db) { expense.delete() }
+		expense.proof?.let {
+			storageService.delete(it)
+		}
 		return Result.success(Unit)
 	}
 

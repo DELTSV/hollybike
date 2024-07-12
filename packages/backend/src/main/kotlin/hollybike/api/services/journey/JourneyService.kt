@@ -178,6 +178,7 @@ class JourneyService(
 			return false
 		}
 		target.file?.let { storageService.delete(it) }
+		target.previewImage?.let { storageService.delete(it) }
 		transaction(db) { target.delete() }
 		return true
 	}

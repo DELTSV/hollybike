@@ -161,16 +161,22 @@ class AssociationService(
 		}
 	}
 
-	fun deleteAssociation(id: Int): Result<Unit> = transaction {
-		val association = Association.findById(id) ?: run {
-			return@transaction Result.failure(AssociationNotFound("Association $id inconnue"))
+	suspend fun deleteAssociation(id: Int): Result<Unit> {
+		val association = transaction(db) {
+			Association.findById(id)
+		} ?: run {
+			return Result.failure(AssociationNotFound("Association $id inconnue"))
 		}
 
 		User.find { Users.association eq association.id.value }.forEach { it.delete() }
 
 		association.delete()
 
-		return@transaction Result.success(Unit)
+		association.picture?.let {
+			storageService.delete(it)
+		}
+
+		return Result.success(Unit)
 	}
 
 	fun getAssociationUsersCount(caller: User, association: Association): Long? = transaction(db) {

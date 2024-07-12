@@ -172,7 +172,7 @@ class EventImageService(
 		return Result.success(createdImages.map { it.entity })
 	}
 
-	fun deleteImage(caller: User, imageId: Int): Result<Unit> {
+	suspend fun deleteImage(caller: User, imageId: Int): Result<Unit> {
 		val image = transaction(db) {
 			EventImage.find {
 				EventImages.id eq imageId
@@ -186,6 +186,8 @@ class EventImageService(
 		transaction(db) {
 			image.delete()
 		}
+
+		storageService.delete(image.path)
 
 		return Result.success(Unit)
 	}
