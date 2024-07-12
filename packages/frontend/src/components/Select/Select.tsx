@@ -110,30 +110,30 @@ export function Select(props: SelectProps) {
 			<ArrowDropDown className={clsx("transition", visible && "rotate-180")}/>
 			{ visible &&
                 <div
-                    className={clsx(
-						"absolute top-full -left-0.5 bg-mantle flex flex-col",
-						"w-[calc(100%+4px)] border-2 border-surface-1 rounded-b",
-					)}
+                	className={clsx(
+                		"absolute top-full -left-0.5 bg-mantle flex flex-col",
+                		"w-[calc(100%+4px)] border-2 border-surface-1 rounded-b",
+                	)}
                 >
-					{ props.searchable &&
+                	{ props.searchable &&
                         <input
-                            className={"bg-transparent m-1 p-1 border-2 border-lavender rounded focus:outline-none"}
-                            ref={input} value={search}
-                            onInput={e => setSearch(e.currentTarget.value)}
+                        	className={"bg-transparent m-1 p-1 border-2 border-lavender rounded focus:outline-none"}
+                        	ref={input} value={search}
+                        	onInput={e => setSearch(e.currentTarget.value)}
                         /> }
-					{ filteredOptions.map(o =>
-						<p
-							className={"p-2 cursor-pointer hover:bg-surface-0"}
-							onClick={(e) => {
-								props.onChange && props.onChange(o.value);
-								setVisible(false);
-								setText(o.name);
-								e.preventDefault();
-								e.stopPropagation();
-							}}
-						>
-							{ o.name }
-						</p>) }
+                	{ filteredOptions.map(o =>
+                		<p
+                			className={"p-2 cursor-pointer hover:bg-surface-0"}
+                			onClick={(e) => {
+                				props.onChange && props.onChange(o.value);
+                				setVisible(false);
+                				setText(o.name);
+                				e.preventDefault();
+                				e.stopPropagation();
+                			}}
+                		>
+                			{ o.name }
+                		</p>) }
                 </div> }
 			<select disabled={props.disabled} className={"hidden"} value={props.value}>
 				<option default={props.default === undefined}></option>

@@ -23,7 +23,7 @@ import { toast } from "react-toastify";
 import { useReload } from "../utils/useReload.ts";
 import { FileInput } from "../components/Input/FileInput.tsx";
 import { Modal } from "../components/Modal/Modal.tsx";
-import {Card} from "../components/Card/Card.tsx";
+import { Card } from "../components/Card/Card.tsx";
 
 export function ListJourneys() {
 	const { id } = useParams();

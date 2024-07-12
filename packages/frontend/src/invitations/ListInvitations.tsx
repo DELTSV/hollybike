@@ -1,8 +1,8 @@
-import {useSideBar} from "../sidebar/useSideBar.tsx";
-import {TInvitation} from "../types/TInvitation.ts";
-import {List} from "../components/List/List.tsx";
-import {Cell} from "../components/List/Cell.tsx";
-import {Button} from "../components/Button/Button.tsx";
+import { useSideBar } from "../sidebar/useSideBar.tsx";
+import { TInvitation } from "../types/TInvitation.ts";
+import { List } from "../components/List/List.tsx";
+import { Cell } from "../components/List/Cell.tsx";
+import { Button } from "../components/Button/Button.tsx";
 import {
 	Link, useNavigate, useParams,
 } from "react-router-dom";
@@ -12,33 +12,33 @@ import {
 import {
 	api, useApi,
 } from "../utils/useApi.ts";
-import {useReload} from "../utils/useReload.ts";
+import { useReload } from "../utils/useReload.ts";
 import {
 	useEffect, useMemo, useState,
 } from "preact/hooks";
-import {TAssociation} from "../types/TAssociation.ts";
-import {toast} from "react-toastify";
+import { TAssociation } from "../types/TAssociation.ts";
+import { toast } from "react-toastify";
 import {
 	dateToFrenchString, timeToFrenchString,
 } from "../components/Calendar/InputCalendar.tsx";
-import {QRCodeScanner} from "../icons/QRCodeScanner.tsx";
-import {ContentCopy} from "../icons/ContentCopy.tsx";
-import {Modal} from "../components/Modal/Modal.tsx";
-import {QRCodeSVG} from "qrcode.react";
-import {useRef} from "react";
-import {Input} from "../components/Input/Input.tsx";
-import {useUser} from "../user/useUser.tsx";
-import {EUserScope} from "../types/EUserScope.ts";
-import {Card} from "../components/Card/Card.tsx";
+import { QRCodeScanner } from "../icons/QRCodeScanner.tsx";
+import { ContentCopy } from "../icons/ContentCopy.tsx";
+import { Modal } from "../components/Modal/Modal.tsx";
+import { QRCodeSVG } from "qrcode.react";
+import { useRef } from "react";
+import { Input } from "../components/Input/Input.tsx";
+import { useUser } from "../user/useUser.tsx";
+import { EUserScope } from "../types/EUserScope.ts";
+import { Card } from "../components/Card/Card.tsx";
 
 export function ListInvitations() {
 	const {
 		association, setAssociation,
 	} = useSideBar();
 
-	const {user} = useUser();
+	const { user } = useUser();
 
-	const {id} = useParams();
+	const { id } = useParams();
 
 	useEffect(() => {
 		if (id) {
@@ -122,64 +122,70 @@ export function ListInvitations() {
 						},
 					]}
 					baseUrl={url} line={(i: TInvitation) => [
-					<Cell>
-						{i.role}
-					</Cell>,
-					<Cell>
-						{i.uses}
-					</Cell>,
-					<Cell>
-						{i.max_uses !== null ? i.max_uses : "Infini"}
-					</Cell>,
-					<Cell>
-						{i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
-							`${timeToFrenchString(new Date(i.expiration), true)}` : "Jamais"}
-					</Cell>,
-					<>
-						{user?.scope === EUserScope.Root &&
+						<Cell>
+							{ i.role }
+						</Cell>,
+						<Cell>
+							{ i.uses }
+						</Cell>,
+						<Cell>
+							{ i.max_uses !== null ? i.max_uses : "Infini" }
+						</Cell>,
+						<Cell>
+							{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
+							`${timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
+						</Cell>,
+						<>
+							{ user?.scope === EUserScope.Root &&
                             <Cell>
-                                <Link to={`/associations/${i.association.id}`}>
-									{i.association.name}
-                                </Link>
-                            </Cell>}
-					</>,
-					<Cell className={"flex"}>
-						{i.link !== undefined &&
+                            	<Link to={`/associations/${i.association.id}`}>
+                            		{ i.association.name }
+                            	</Link>
+                            </Cell> }
+						</>,
+						<Cell className={"flex"}>
+							{ i.link !== undefined &&
                             <div className={"flex gap-2"}>
-                                <QRCodeScanner
-                                    className={"cursor-pointer"}
-                                    onClick={() => {
-										setModalQrCode(true);
-										setQrCode(i.link!);
-									}}/>
-                                <LinkCell link={i.link}/>
-								{smtp.status === 200 && <MailOutlineRounded
-                                    className={"cursor-pointer"} onClick={() => {
-									setModalMail(true);
-									setInvitation(i.id);
-								}}/>}
-                            </div>}
-					</Cell>,
-					<Cell>
-						{i.status === "Enabled" &&
+                            	<QRCodeScanner
+                            		className={"cursor-pointer"}
+                            		onClick={() => {
+                            			setModalQrCode(true);
+                            			setQrCode(i.link!);
+                            		}}
+                            	/>
+                            	<LinkCell link={i.link}/>
+                            	{ smtp.status === 200 && <MailOutlineRounded
+                            		className={"cursor-pointer"} onClick={() => {
+                            			setModalMail(true);
+                            			setInvitation(i.id);
+                            		}}
+                            	/> }
+                            </div> }
+						</Cell>,
+						<Cell>
+							{ i.status === "Enabled" &&
                             <LinkOff
-                                className={"cursor-pointer"} onClick={() => {
-								api(`/invitation/${i.id}/disable`, {method: "PATCH"}).then((res) => {
-									if (res.status === 200) {
-										toast("Invitation désactivée", {type: "success"});
-										doReload();
-									} else if (res.status === 404) {
-										toast(res.message, {type: "warning"});
-									} else {
-										toast(res.message, {type: "error"});
-									}
-								});
-							}}/>}
-					</Cell>,
-				]}
-					action={<Button onClick={() => navigate("/invitations/new")}>
-						Créer une invitation
-					</Button>}/>
+                            	className={"cursor-pointer"} onClick={() => {
+                            		api(`/invitation/${i.id}/disable`, { method: "PATCH" }).then((res) => {
+                            			if (res.status === 200) {
+                            				toast("Invitation désactivée", { type: "success" });
+                            				doReload();
+                            			} else if (res.status === 404) {
+                            				toast(res.message, { type: "warning" });
+                            			} else {
+                            				toast(res.message, { type: "error" });
+                            			}
+                            		});
+                            	}}
+                            /> }
+						</Cell>,
+					]}
+					action={
+						<Button onClick={() => navigate("/invitations/new")}>
+							Créer une invitation
+						</Button>
+					}
+				/>
 			</Card>
 			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setModalQrCode} width={"w-auto"}>
 				<div className={"flex flex-col items-center justify-center m-4"}>
@@ -195,14 +201,14 @@ export function ListInvitations() {
 						onClick={() => {
 							api(`/invitation/${invitation}/send-mail`, {
 								method: "POST",
-								body: {dest: mail},
+								body: { dest: mail },
 							}).then((res) => {
 								if (res.status === 200) {
-									toast("Mail envoyé avec success", {type: "success"});
+									toast("Mail envoyé avec success", { type: "success" });
 									setMail("");
 									setModalMail(false);
 								} else {
-									toast(`Erreur: ${res.message}`, {type: "error"});
+									toast(`Erreur: ${res.message}`, { type: "error" });
 									doReload();
 								}
 							});
@@ -222,7 +228,7 @@ function LinkCell(props: { link: string }) {
 	const [copied, setCopied] = useState(false);
 	return (
 		<>
-			{copied ?
+			{ copied ?
 				<CheckCircleOutlineRounded className={"cursor-pointer text-green"}/> :
 				<ContentCopy
 					className={"cursor-pointer"}
@@ -231,7 +237,7 @@ function LinkCell(props: { link: string }) {
 							input.current.select();
 							input.current.setSelectionRange(0, 999999);
 							navigator.clipboard.writeText(input.current.value).then(() => {
-								toast("Lien copié", {type: "success"});
+								toast("Lien copié", { type: "success" });
 								setCopied(true);
 								setTimeout(() => {
 									setCopied(false);
@@ -239,7 +245,7 @@ function LinkCell(props: { link: string }) {
 							});
 						}
 					}}
-				/>}
+				/> }
 			<input className={"hidden"} value={props.link} ref={input}/>
 		</>
 	);

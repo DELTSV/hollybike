@@ -80,7 +80,7 @@ export function InputCalendar(props: CalendarProps) {
 			/>
 			{ view &&
                 <Card className={"absolute"}>
-                    <Calendar {...props} />
+                	<Calendar {...props} />
                 </Card> }
 		</div>
 	);
