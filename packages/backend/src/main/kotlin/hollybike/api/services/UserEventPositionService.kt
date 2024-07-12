@@ -184,9 +184,9 @@ class UserEventPositionService(
 		}
 	}
 
-	fun getIsBetterThanForUserJourney(userJourney: UserJourney?): Map<String, Double> = transaction(db) {
+	fun getIsBetterThanForUserJourney(userJourney: UserJourney?): Map<String, Double>? = transaction(db) {
 		if (userJourney == null) {
-			return@transaction emptyMap()
+			return@transaction null
 		}
 
 		val participation = EventParticipation.find {
@@ -194,7 +194,7 @@ class UserEventPositionService(
 		}.firstOrNull()
 
 		if (participation == null) {
-			return@transaction emptyMap()
+			return@transaction null
 		}
 
 		val eventId = participation.event.id.value

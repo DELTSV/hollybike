@@ -45,7 +45,7 @@ class _ImageGalleryState extends State<ImageGallery> {
   @override
   Widget build(BuildContext context) {
     if (widget.loading && widget.images.isEmpty) {
-      return const SliverToBoxAdapter(
+      return const SliverFillRemaining(
         child: SizedBox(
           height: 300,
           child: Center(
@@ -56,17 +56,13 @@ class _ImageGalleryState extends State<ImageGallery> {
     }
 
     if (widget.images.isEmpty) {
-      return SliverToBoxAdapter(
-        child: SizedBox(
-          height: 350,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.2,
-            ),
-            child: Center(
-              child: widget.emptyPlaceholder,
-            ),
-          ),
+      return SliverFillRemaining(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            widget.emptyPlaceholder,
+          ],
         ),
       );
     }

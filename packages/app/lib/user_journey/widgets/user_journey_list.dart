@@ -30,14 +30,6 @@ class UserJourneyList extends StatelessWidget {
           padding: const EdgeInsets.only(top: 16),
           sliver: SliverList.separated(
             itemBuilder: (context, index) {
-              if (index >= userJourneys.length) {
-                if (hasMore) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }
-
               final journey = userJourneys[index];
 
               return TweenAnimationBuilder(
@@ -68,7 +60,18 @@ class UserJourneyList extends StatelessWidget {
             separatorBuilder: (context, index) => const SizedBox(height: 16),
             itemCount: userJourneys.length + (hasMore ? 1 : 0),
           ),
-        )
+        ),
+        if (hasMore)
+          const SliverToBoxAdapter(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 16.0,
+                ),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ),
       ],
     );
   }

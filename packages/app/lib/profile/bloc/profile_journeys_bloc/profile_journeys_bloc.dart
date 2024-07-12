@@ -22,8 +22,10 @@ class ProfileJourneysBloc
     on<RefreshProfileJourneys>(_onRefreshUserJourneys);
   }
 
-  Future<void> _onLoadUserJourneysNextPage(LoadProfileJourneysNextPage event,
-      Emitter<ProfileJourneysState> emit,) async {
+  Future<void> _onLoadUserJourneysNextPage(
+    LoadProfileJourneysNextPage event,
+    Emitter<ProfileJourneysState> emit,
+  ) async {
     if (state.hasMore == false ||
         state.status == ProfileJourneysStatus.loading) {
       return;
@@ -33,7 +35,7 @@ class ProfileJourneysBloc
 
     try {
       PaginatedList<UserJourney> page =
-      await userJourneyRepository.fetchUserJourneys(
+          await userJourneyRepository.fetchUserJourneys(
         state.nextPage,
         numberOfUserJourneysPerRequest,
         userId,
@@ -54,13 +56,15 @@ class ProfileJourneysBloc
     }
   }
 
-  Future<void> _onRefreshUserJourneys(RefreshProfileJourneys event,
-      Emitter<ProfileJourneysState> emit,) async {
+  Future<void> _onRefreshUserJourneys(
+    RefreshProfileJourneys event,
+    Emitter<ProfileJourneysState> emit,
+  ) async {
     emit(ProfileJourneysPageLoadInProgress(state));
 
     try {
       PaginatedList<UserJourney> page =
-      await userJourneyRepository.refreshUserJourneys(
+          await userJourneyRepository.refreshUserJourneys(
         numberOfUserJourneysPerRequest,
         userId,
       );
@@ -73,7 +77,10 @@ class ProfileJourneysBloc
     } catch (e) {
       log('Error while refreshing user journeys', error: e);
       emit(ProfileJourneysPageLoadFailure(
-        state,
+        state.copyWith(
+          userJourneys: [],
+          hasMore: false,
+        ),
         errorMessage: 'Une erreur est survenue.',
       ));
       return;

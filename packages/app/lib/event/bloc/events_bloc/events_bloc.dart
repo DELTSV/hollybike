@@ -105,7 +105,9 @@ abstract class EventsBloc extends Bloc<EventsEvent, EventsState> {
   EventsState handleError(Object e, String logMessage) {
     log(logMessage, error: e);
     return EventPageLoadFailure(
-      state,
+      state.copyWith(
+        events: [],
+      ),
       errorMessage: 'Une erreur est survenue.',
     );
   }

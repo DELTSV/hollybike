@@ -30,14 +30,24 @@ class MeScreen extends StatelessWidget {
         builder: (context, bloc, state) {
           final currentProfile = bloc.currentProfile;
 
+          if (currentProfile is ProfileLoadingEvent) {
+            return const ProfilePage(
+              profileLoading: true,
+              profile: null,
+              association: null,
+            );
+          }
+
           if (currentProfile is ProfileLoadSuccessEvent) {
             return ProfilePage(
+              profileLoading: false,
               profile: currentProfile.profile.toMinimalUser(),
               association: currentProfile.profile.association,
             );
           }
 
           return const ProfilePage(
+            profileLoading: false,
             profile: null,
             association: null,
           );

@@ -6,6 +6,7 @@ import 'package:hollybike/event/bloc/events_bloc/user_events_bloc.dart';
 import 'package:hollybike/event/fragments/profile_events.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/image/services/image_repository.dart';
+import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_bloc.dart';
 import 'package:hollybike/profile/bloc/profile_journeys_bloc/profile_journeys_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
@@ -17,15 +18,16 @@ import 'package:hollybike/shared/widgets/pinned_header_delegate.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 import 'package:hollybike/user_journey/services/user_journey_repository.dart';
 
-
 class ProfilePage extends StatefulWidget {
   final int? id;
+  final bool profileLoading;
   final MinimalUser? profile;
   final Association? association;
 
   const ProfilePage({
     super.key,
     this.id,
+    required this.profileLoading,
     required this.profile,
     required this.association,
   });
@@ -50,9 +52,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.profile == null) {
+    if (widget.profileLoading) {
       return PlaceholderProfilePage(
         loadingProfileId: widget.id,
+      );
+    }
+
+    if (widget.profile == null) {
+      return const Center(
+        child: Text(
+          'Une erreur est survenue lors de la récupération du profil.',
+        ),
       );
     }
 
@@ -125,23 +135,39 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ],
-      child: TabBarView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: ProfileEvents(
-              userId: widget.profile!.id,
-              scrollController: _scrollController,
-            ),
-          ),
-          ProfileImages(
-            scrollController: _scrollController,
-          ),
-          ProfileJourneys(
-            user: widget.profile as MinimalUser,
-            scrollController: _scrollController,
-          )
-        ],
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          final currentProfileEvent = context.read<ProfileBloc>().currentProfile;
+
+          final currentProfile = currentProfileEvent is ProfileLoadSuccessEvent
+              ? currentProfileEvent.profile.toMinimalUser()
+              : null;
+
+          final isMe = currentProfile?.id == widget.profile?.id;
+
+          return TabBarView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 50),
+                child: ProfileEvents(
+                  isMe: isMe,
+                  username: widget.profile!.username,
+                  scrollController: _scrollController,
+                ),
+              ),
+              ProfileImages(
+                isMe: isMe,
+                username: widget.profile!.username,
+                scrollController: _scrollController,
+              ),
+              ProfileJourneys(
+                isMe: isMe,
+                user: widget.profile as MinimalUser,
+                scrollController: _scrollController,
+              )
+            ],
+          );
+        },
       ),
     );
   }

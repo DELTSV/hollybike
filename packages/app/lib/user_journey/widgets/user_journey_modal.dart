@@ -51,11 +51,19 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   late final double _betterPercentage;
   bool _isSolo = false;
   int _betterThanCount = 0;
+  bool _hasBetterThan = false;
 
   @override
   void initState() {
     super.initState();
     final isBetterThan = widget.journey.isBetterThan;
+
+    if (isBetterThan == null) {
+      _betterPercentage = 0.0;
+      return;
+    }
+
+    _hasBetterThan = true;
 
     if (isBetterThan.isEmpty) {
       _isSolo = true;
@@ -189,31 +197,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
                     bodyStyle: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GradientProgressBar(
-                          animateStart: true,
-                          maxValue: 100,
-                          value: _betterPercentage,
-                          colors: [
-                            Colors.red.shade400,
-                            Colors.yellow.shade400,
-                            Colors.green.shade400,
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        _getIsBetterLabel(isCurrentUser),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                  ..._buildBetterThanSummary(isCurrentUser),
                   ..._buildBetterThanCount(isCurrentUser),
                   _JourneyStatRow(
                     firstStat: _JourneyStatCard(
@@ -292,6 +276,40 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
     );
   }
 
+  List<Widget> _buildBetterThanSummary(bool isCurrentUser) {
+    if (!_hasBetterThan) {
+      return [];
+    }
+
+    return [
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GradientProgressBar(
+              animateStart: true,
+              maxValue: 100,
+              value: _betterPercentage,
+              colors: [
+                Colors.red.shade400,
+                Colors.yellow.shade400,
+                Colors.green.shade400,
+              ],
+            ),
+            const SizedBox(height: 8),
+            _getIsBetterLabel(isCurrentUser),
+          ],
+        ),
+      ),
+      const SizedBox(height: 16),
+    ];
+  }
+
   List<Widget> _buildBetterThanCount(bool isCurrentUser) {
     if (_betterThanCount == 0) {
       return [];
@@ -335,8 +353,8 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   }
 
   double? getBetterThan(String key) {
-    if (widget.journey.isBetterThan.containsKey(key)) {
-      return widget.journey.isBetterThan[key];
+    if (widget.journey.isBetterThan?.containsKey(key) == true) {
+      return widget.journey.isBetterThan![key];
     }
 
     return null;

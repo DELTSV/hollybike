@@ -10,13 +10,16 @@ import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_event.
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
-
 class ProfileImages extends StatelessWidget {
   final ScrollController scrollController;
+  final bool isMe;
+  final String username;
 
   const ProfileImages({
     super.key,
     required this.scrollController,
+    required this.isMe,
+    required this.username,
   });
 
   @override
@@ -61,8 +64,10 @@ class ProfileImages extends StatelessWidget {
           repeat: false,
           height: 150,
         ),
-        const Text(
-          "Aucune image disponible",
+        Text(
+          isMe
+              ? 'Vous n\'avez pas encore ajouté d\'images'
+              : '$username n\'a pas encore ajouté d\'images',
           textAlign: TextAlign.center,
         ),
       ],
