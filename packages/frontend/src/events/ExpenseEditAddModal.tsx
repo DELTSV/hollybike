@@ -75,9 +75,11 @@ export function ExpenseEditAddModal(props: ExpenseEditAddModalProps) {
 		}).then(async (res) => {
 			if (res.status === 201) {
 				if (proof !== null) {
-					apiRaw(`/expenses/${res.data?.id}/proof`, proof?.type, {
+					const fd = new FormData();
+					fd.append("file", proof);
+					apiRaw(`/expenses/${res.data?.id}/proof`, undefined, {
 						method: "PUT",
-						body: (await proof?.stream().getReader().read())?.value,
+						body: fd,
 					}).then((res) => {
 						if (res.status === 200) {
 							reset();
@@ -115,9 +117,11 @@ export function ExpenseEditAddModal(props: ExpenseEditAddModalProps) {
 			}).then(async (res) => {
 				if (res.status === 200) {
 					if (proof !== null) {
-						apiRaw(`/expenses/${res.data?.id}/proof`, proof?.type, {
+						const fd = new FormData();
+						fd.append("file", proof);
+						apiRaw(`/expenses/${res.data?.id}/proof`, undefined, {
 							method: "PUT",
-							body: (await proof?.stream().getReader().read())?.value,
+							body: fd,
 						}).then((res) => {
 							if (res.status === 200) {
 								reset();
