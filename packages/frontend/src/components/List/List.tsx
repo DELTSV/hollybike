@@ -103,8 +103,8 @@ export function List<T>(props: ListProps<T>) {
 				/>
 				{props.action}
 			</div>
-			<div className={"overflow-x-auto"}>
-				<table className={"rounded bg-mantle table-fixed min-w-full"}>
+			<div className={"overflow-x-auto rounded"}>
+				<table className={"bg-mantle table-fixed min-w-full"}>
 					<thead>
 					<tr className={"border-b-2 border-surface-2"}>
 						{props.columns.map((c) => {
