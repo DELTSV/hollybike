@@ -38,9 +38,11 @@ export function Head(props: HeadProps) {
 	]);
 	return (
 		<th
-			className={
-				clsx("text-center px-2 py-1", props.sortable && props.sort && props.setSortOrder && "cursor-pointer")
-			} onClick={onClick}
+			className={clsx(
+				"text-center px-2 py-1",
+				"whitespace-nowrap",
+				props.sortable && props.sort && props.setSortOrder && "cursor-pointer",
+			)} onClick={onClick}
 			style={{ width: props.width ?? "auto" }}
 		>
 			{ props.children }

@@ -1,5 +1,5 @@
-import { ComponentChildren } from "preact";
-import { clsx } from "clsx";
+import {ComponentChildren} from "preact";
+import {clsx} from "clsx";
 
 interface CellProps {
 	children: ComponentChildren,
@@ -9,9 +9,10 @@ interface CellProps {
 }
 
 export function Cell(props: CellProps) {
-	return (
-		<td onClick={props.onClick} className={clsx("text-center px-2 py-1", props.className)} key={props.key}>
-			{ props.children }
-		</td>
-	);
+	return <td onClick={props.onClick} className={clsx(
+		"text-center p-2 whitespace-nowrap",
+		props.className
+	)} key={props.key}>
+		{props.children}
+	</td>;
 }
