@@ -421,8 +421,7 @@ class EventService(
 
 		if(status != EEventStatus.Pending && oldStatus != EEventStatus.Pending) {
 			notificationService.send(event.participants.map { it.user }.toList(), EventStatusUpdateNotification(event, oldStatus), caller)
-		}
-		if(status == EEventStatus.Scheduled) {
+		} else if(oldStatus == EEventStatus.Pending && status == EEventStatus.Scheduled) {
 			notificationService.sendToAssociation(caller.association.id.value, NewEventNotification(event), caller)
 		}
 
