@@ -8,10 +8,12 @@ import 'package:hollybike/shared/websocket/recieve/websocket_added_to_event.dart
 import 'package:hollybike/shared/websocket/recieve/websocket_event_deleted.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_event_status_updated.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_removed_from_event.dart';
+import 'package:hollybike/shared/websocket/send/websocket_stop_send_position.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
 
 import 'recieve/websocket_error.dart';
 import 'recieve/websocket_receive_position.dart';
+import 'recieve/websocket_stop_receive_position.dart';
 import 'recieve/websocket_subscribed.dart';
 import 'send/websocket_send_position.dart';
 import 'send/websocket_subscribe.dart';
@@ -81,6 +83,8 @@ class WebsocketClient {
           return WebsocketSubscribed.fromJson(json);
         case 'receive-user-position':
           return WebsocketReceivePosition.fromJson(json);
+        case 'stop-receive-user-position':
+          return WebsocketStopReceivePosition.fromJson(json);
         case 'EventStatusUpdateNotification':
           return WebsocketEventStatusUpdated.fromJson(json);
         case 'AddedToEventNotification':
@@ -97,8 +101,19 @@ class WebsocketClient {
     });
   }
 
-  Stream<WebsocketMessage>? get stream =>
-      _client?.asBroadcastStream().map((event) => parseMessage(event));
+  Stream<WebsocketMessage>? get stream {
+    final stream = _client?.asBroadcastStream().map((event) {
+      try {
+        log('Received message: $event');
+        return parseMessage(event);
+      } catch (e) {
+        log('Error parsing message: $e');
+        return null;
+      }
+    });
+
+    return stream?.where((event) => event != null).cast<WebsocketMessage>();
+  }
 
   bool get isConnected => _client != null;
 
@@ -139,6 +154,23 @@ class WebsocketClient {
 
     final jsonObject = message.toJson(
       (obj) => (obj as WebsocketSendPosition).toJson(),
+    );
+
+    final jsonString = jsonEncode(jsonObject);
+
+    _send(jsonString);
+  }
+
+  void stopSendPositions(String channel) {
+    log('Stop sending user position');
+
+    final message = WebsocketMessage(
+      channel: channel,
+      data: const WebsocketStopSendPosition(),
+    );
+
+    final jsonObject = message.toJson(
+      (obj) => (obj as WebsocketStopSendPosition).toJson(),
     );
 
     final jsonString = jsonEncode(jsonObject);

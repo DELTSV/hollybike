@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/positions/bloc/user_positions/user_positions_state.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
+import 'package:hollybike/shared/websocket/recieve/websocket_stop_receive_position.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
 import 'package:hollybike/shared/websocket/websocket_client.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
@@ -88,7 +89,16 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
             state.userPositions,
             message.data as WebsocketReceivePosition,
           );
+
           _updateUsersProfiles(newPositions);
+          return UserPositionsUpdated(state, newPositions);
+        case 'stop-receive-user-position':
+          final event = message.data as WebsocketStopReceivePosition;
+
+          final newPositions = state.userPositions
+              .where((position) => position.userId != event.userId)
+              .toList();
+
           return UserPositionsUpdated(state, newPositions);
         default:
           return UserPositionsError(state, 'Error: Unknown message type');

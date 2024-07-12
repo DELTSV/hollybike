@@ -326,7 +326,7 @@ class _JourneyMapState extends State<JourneyMap> {
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List,
       iconAnchor: IconAnchor.BOTTOM,
-      textField: user.user.username,
+      textField: '${user.user.username}\n${(missingPosition.speed * 3.6).round()} km/h',
       textAnchor: TextAnchor.TOP,
       textSize: 12,
       textHaloWidth: 2,
@@ -362,6 +362,8 @@ class _JourneyMapState extends State<JourneyMap> {
       point.image = (profilePicture is UserPictureLoadSuccessEvent
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List;
+
+      point.textField = '${user.user.username}\n${(positionToUpdate.speed * 3.6).round()} km/h';
     }
 
     await pointManager.update(point);

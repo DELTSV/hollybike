@@ -126,6 +126,8 @@ class MyPositionServiceRepository {
     final SendPort? send = IsolateNameServer.lookupPortByName(isolateName);
     send?.send(null);
 
+    _client?.stopSendPositions(_channel);
+
     _client?.close();
   }
 
