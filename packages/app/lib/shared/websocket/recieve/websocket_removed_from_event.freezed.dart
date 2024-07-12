@@ -22,6 +22,8 @@ WebsocketRemovedFromEvent _$WebsocketRemovedFromEventFromJson(
 /// @nodoc
 mixin _$WebsocketRemovedFromEvent {
   String get type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'notification_id')
+  int get notificationId => throw _privateConstructorUsedError;
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
@@ -37,7 +39,11 @@ abstract class $WebsocketRemovedFromEventCopyWith<$Res> {
           $Res Function(WebsocketRemovedFromEvent) then) =
       _$WebsocketRemovedFromEventCopyWithImpl<$Res, WebsocketRemovedFromEvent>;
   @useResult
-  $Res call({String type, int id, String name});
+  $Res call(
+      {String type,
+      @JsonKey(name: 'notification_id') int notificationId,
+      int id,
+      String name});
 }
 
 /// @nodoc
@@ -55,6 +61,7 @@ class _$WebsocketRemovedFromEventCopyWithImpl<$Res,
   @override
   $Res call({
     Object? type = null,
+    Object? notificationId = null,
     Object? id = null,
     Object? name = null,
   }) {
@@ -63,6 +70,10 @@ class _$WebsocketRemovedFromEventCopyWithImpl<$Res,
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as int,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -84,7 +95,11 @@ abstract class _$$WebsocketRemovedFromEventImplCopyWith<$Res>
       __$$WebsocketRemovedFromEventImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String type, int id, String name});
+  $Res call(
+      {String type,
+      @JsonKey(name: 'notification_id') int notificationId,
+      int id,
+      String name});
 }
 
 /// @nodoc
@@ -101,6 +116,7 @@ class __$$WebsocketRemovedFromEventImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? type = null,
+    Object? notificationId = null,
     Object? id = null,
     Object? name = null,
   }) {
@@ -109,6 +125,10 @@ class __$$WebsocketRemovedFromEventImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as int,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -126,6 +146,7 @@ class __$$WebsocketRemovedFromEventImplCopyWithImpl<$Res>
 class _$WebsocketRemovedFromEventImpl implements _WebsocketRemovedFromEvent {
   const _$WebsocketRemovedFromEventImpl(
       {this.type = "RemovedFromEventNotification",
+      @JsonKey(name: 'notification_id') required this.notificationId,
       required this.id,
       required this.name});
 
@@ -136,13 +157,16 @@ class _$WebsocketRemovedFromEventImpl implements _WebsocketRemovedFromEvent {
   @JsonKey()
   final String type;
   @override
+  @JsonKey(name: 'notification_id')
+  final int notificationId;
+  @override
   final int id;
   @override
   final String name;
 
   @override
   String toString() {
-    return 'WebsocketRemovedFromEvent(type: $type, id: $id, name: $name)';
+    return 'WebsocketRemovedFromEvent(type: $type, notificationId: $notificationId, id: $id, name: $name)';
   }
 
   @override
@@ -151,13 +175,15 @@ class _$WebsocketRemovedFromEventImpl implements _WebsocketRemovedFromEvent {
         (other.runtimeType == runtimeType &&
             other is _$WebsocketRemovedFromEventImpl &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, type, id, name);
+  int get hashCode => Object.hash(runtimeType, type, notificationId, id, name);
 
   @JsonKey(ignore: true)
   @override
@@ -177,6 +203,7 @@ class _$WebsocketRemovedFromEventImpl implements _WebsocketRemovedFromEvent {
 abstract class _WebsocketRemovedFromEvent implements WebsocketRemovedFromEvent {
   const factory _WebsocketRemovedFromEvent(
       {final String type,
+      @JsonKey(name: 'notification_id') required final int notificationId,
       required final int id,
       required final String name}) = _$WebsocketRemovedFromEventImpl;
 
@@ -185,6 +212,9 @@ abstract class _WebsocketRemovedFromEvent implements WebsocketRemovedFromEvent {
 
   @override
   String get type;
+  @override
+  @JsonKey(name: 'notification_id')
+  int get notificationId;
   @override
   int get id;
   @override

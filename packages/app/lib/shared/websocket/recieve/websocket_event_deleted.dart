@@ -12,6 +12,7 @@ class WebsocketEventDeleted
     implements WebsocketBody {
   const factory WebsocketEventDeleted({
     @Default("DeleteEventNotification") String type,
+    @JsonKey(name: 'notification_id') required int notificationId,
     required String name,
     String? description,
   }) = _WebsocketEventDeleted;

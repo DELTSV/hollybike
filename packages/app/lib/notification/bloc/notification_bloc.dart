@@ -80,6 +80,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   Future<FlutterBackgroundService> initializeService() async {
     final service = FlutterBackgroundService();
 
+    log('Initializing notification service', name: 'Notifications');
+
     await service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
@@ -87,7 +89,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         autoStartOnBoot: true,
         isForegroundMode: true,
         initialNotificationTitle: 'Service de notifications HollyBike',
-        initialNotificationContent: 'Ce service permet de recevoir des notifications en temps réel.',
+        initialNotificationContent:
+            'Ce service permet de recevoir des notifications en temps réel.',
       ),
       iosConfiguration: IosConfiguration(
         autoStart: true,
@@ -107,13 +110,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final data = event as WebsocketSubscribed;
 
     if (data.subscribed) {
-      log('Subscribed to notifications');
+      log('Subscribed to notifications', name: 'Notifications');
     } else {
-      log('Failed to subscribe to notifications');
+      log('Failed to subscribe to notifications', name: 'Notifications');
     }
   }
 
-  static void onEventStatusUpdated(
+  static Future<int?> onEventStatusUpdated(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
@@ -143,15 +146,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         android: notificationDetails,
       ),
     );
+
+    return data.notificationId;
   }
 
-  static void onAddedToEvent(
+  static Future<int?> onAddedToEvent(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
     final data = event as WebsocketAddedToEvent;
 
-    log('Added to event: ${data.name}');
+    log('Added to event: ${data.name}', name: 'Notifications');
 
     const notificationDetails = AndroidNotificationDetails(
       'hollybike-event-participation-notifications',
@@ -171,15 +176,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         android: notificationDetails,
       ),
     );
+
+    return data.notificationId;
   }
 
-  static void onRemovedFromEvent(
+  static Future<int?> onRemovedFromEvent(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
     final data = event as WebsocketRemovedFromEvent;
 
-    log('Removed from event: ${data.name}');
+    log('Removed from event: ${data.name}', name: 'Notifications');
 
     const notificationDetails = AndroidNotificationDetails(
       'hollybike-event-participation-notifications',
@@ -199,15 +206,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         android: notificationDetails,
       ),
     );
+
+    return data.notificationId;
   }
 
-  static void onEventDeleted(
+  static Future<int?> onEventDeleted(
     WebsocketBody event,
     FlutterLocalNotificationsPlugin notificationPlugin,
   ) async {
     final data = event as WebsocketEventDeleted;
 
-    log('Event deleted: ${data.name}');
+    log('Event deleted: ${data.name}', name: 'Notifications');
 
     const notificationDetails = AndroidNotificationDetails(
       'hollybike-event-deletion-notifications',
@@ -227,6 +236,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         android: notificationDetails,
       ),
     );
+
+    return data.notificationId;
   }
 
   @pragma('vm:entry-point')
@@ -266,30 +277,54 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
       webSocket?.subscribe('notification');
 
-      webSocket?.listen((message) {
+      webSocket?.listen((message) async {
+        int? notifBackId;
+
         switch (message.data.type) {
           case 'subscribed':
             onSubscribed(message.data);
             break;
           case 'EventStatusUpdateNotification':
-            onEventStatusUpdated(message.data, flutterLocalNotificationsPlugin);
+            notifBackId = await onEventStatusUpdated(
+              message.data,
+              flutterLocalNotificationsPlugin,
+            );
             break;
           case 'AddedToEventNotification':
-            onAddedToEvent(message.data, flutterLocalNotificationsPlugin);
+            notifBackId = await onAddedToEvent(
+              message.data,
+              flutterLocalNotificationsPlugin,
+            );
             break;
           case 'RemovedFromEventNotification':
-            onRemovedFromEvent(message.data, flutterLocalNotificationsPlugin);
+            notifBackId = await onRemovedFromEvent(
+              message.data,
+              flutterLocalNotificationsPlugin,
+            );
             break;
           case 'DeleteEventNotification':
-            onEventDeleted(message.data, flutterLocalNotificationsPlugin);
+            notifBackId = await onEventDeleted(
+              message.data,
+              flutterLocalNotificationsPlugin,
+            );
             break;
+          default:
+            log(
+              'Unknown message type: ${message.data.type}',
+              name: 'Notifications',
+            );
+            break;
+        }
+
+        if (notifBackId != null) {
+          webSocket?.sendReadNotification('notification', notifBackId);
         }
       });
 
       void retryConnection() {
         Future.delayed(const Duration(seconds: 10), () async {
           try {
-            log('Retrying connection');
+            log('Retrying connection', name: 'Notifications');
 
             final currentSession = await authPersistence.currentSession;
 
@@ -299,14 +334,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
             connectWebSocket(currentSession.token, currentSession.host);
           } catch (e) {
-            log('Error: $e', stackTrace: StackTrace.current);
+            log(
+              'Error: $e',
+              stackTrace: StackTrace.current,
+              name: 'Notifications',
+            );
             retryConnection(); // Retry again if an error occurs
           }
         });
       }
 
       webSocket?.onDisconnect(() {
-        log('Notification websocket disconnected');
+        log('Notification websocket disconnected', name: 'Notifications');
 
         webSocket = null;
 

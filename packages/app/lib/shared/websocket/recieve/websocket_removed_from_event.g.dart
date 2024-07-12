@@ -10,6 +10,7 @@ _$WebsocketRemovedFromEventImpl _$$WebsocketRemovedFromEventImplFromJson(
         Map<String, dynamic> json) =>
     _$WebsocketRemovedFromEventImpl(
       type: json['type'] as String? ?? "RemovedFromEventNotification",
+      notificationId: (json['notification_id'] as num).toInt(),
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
     );
@@ -18,6 +19,7 @@ Map<String, dynamic> _$$WebsocketRemovedFromEventImplToJson(
         _$WebsocketRemovedFromEventImpl instance) =>
     <String, dynamic>{
       'type': instance.type,
+      'notification_id': instance.notificationId,
       'id': instance.id,
       'name': instance.name,
     };

@@ -22,6 +22,8 @@ WebsocketAddedToEvent _$WebsocketAddedToEventFromJson(
 /// @nodoc
 mixin _$WebsocketAddedToEvent {
   String get type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'notification_id')
+  int get notificationId => throw _privateConstructorUsedError;
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
@@ -37,7 +39,11 @@ abstract class $WebsocketAddedToEventCopyWith<$Res> {
           $Res Function(WebsocketAddedToEvent) then) =
       _$WebsocketAddedToEventCopyWithImpl<$Res, WebsocketAddedToEvent>;
   @useResult
-  $Res call({String type, int id, String name});
+  $Res call(
+      {String type,
+      @JsonKey(name: 'notification_id') int notificationId,
+      int id,
+      String name});
 }
 
 /// @nodoc
@@ -55,6 +61,7 @@ class _$WebsocketAddedToEventCopyWithImpl<$Res,
   @override
   $Res call({
     Object? type = null,
+    Object? notificationId = null,
     Object? id = null,
     Object? name = null,
   }) {
@@ -63,6 +70,10 @@ class _$WebsocketAddedToEventCopyWithImpl<$Res,
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as int,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -84,7 +95,11 @@ abstract class _$$WebsocketAddedToEventImplCopyWith<$Res>
       __$$WebsocketAddedToEventImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String type, int id, String name});
+  $Res call(
+      {String type,
+      @JsonKey(name: 'notification_id') int notificationId,
+      int id,
+      String name});
 }
 
 /// @nodoc
@@ -100,6 +115,7 @@ class __$$WebsocketAddedToEventImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? type = null,
+    Object? notificationId = null,
     Object? id = null,
     Object? name = null,
   }) {
@@ -108,6 +124,10 @@ class __$$WebsocketAddedToEventImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
+              as int,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -125,6 +145,7 @@ class __$$WebsocketAddedToEventImplCopyWithImpl<$Res>
 class _$WebsocketAddedToEventImpl implements _WebsocketAddedToEvent {
   const _$WebsocketAddedToEventImpl(
       {this.type = "AddedToEventNotification",
+      @JsonKey(name: 'notification_id') required this.notificationId,
       required this.id,
       required this.name});
 
@@ -135,13 +156,16 @@ class _$WebsocketAddedToEventImpl implements _WebsocketAddedToEvent {
   @JsonKey()
   final String type;
   @override
+  @JsonKey(name: 'notification_id')
+  final int notificationId;
+  @override
   final int id;
   @override
   final String name;
 
   @override
   String toString() {
-    return 'WebsocketAddedToEvent(type: $type, id: $id, name: $name)';
+    return 'WebsocketAddedToEvent(type: $type, notificationId: $notificationId, id: $id, name: $name)';
   }
 
   @override
@@ -150,13 +174,15 @@ class _$WebsocketAddedToEventImpl implements _WebsocketAddedToEvent {
         (other.runtimeType == runtimeType &&
             other is _$WebsocketAddedToEventImpl &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, type, id, name);
+  int get hashCode => Object.hash(runtimeType, type, notificationId, id, name);
 
   @JsonKey(ignore: true)
   @override
@@ -176,6 +202,7 @@ class _$WebsocketAddedToEventImpl implements _WebsocketAddedToEvent {
 abstract class _WebsocketAddedToEvent implements WebsocketAddedToEvent {
   const factory _WebsocketAddedToEvent(
       {final String type,
+      @JsonKey(name: 'notification_id') required final int notificationId,
       required final int id,
       required final String name}) = _$WebsocketAddedToEventImpl;
 
@@ -184,6 +211,9 @@ abstract class _WebsocketAddedToEvent implements WebsocketAddedToEvent {
 
   @override
   String get type;
+  @override
+  @JsonKey(name: 'notification_id')
+  int get notificationId;
   @override
   int get id;
   @override

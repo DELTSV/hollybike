@@ -8,6 +8,7 @@ import 'package:hollybike/shared/websocket/recieve/websocket_added_to_event.dart
 import 'package:hollybike/shared/websocket/recieve/websocket_event_deleted.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_event_status_updated.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_removed_from_event.dart';
+import 'package:hollybike/shared/websocket/send/websocket_read_notification.dart';
 import 'package:hollybike/shared/websocket/send/websocket_stop_send_position.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
 
@@ -67,7 +68,7 @@ class WebsocketClient {
       return;
     }
 
-    log('Sending message: $message');
+    log('Sending message: $message', name: 'WebsocketClient._send');
 
     _client?.add(message);
   }
@@ -104,10 +105,10 @@ class WebsocketClient {
   Stream<WebsocketMessage>? get stream {
     final stream = _client?.asBroadcastStream().map((event) {
       try {
-        log('Received message: $event');
+        log('Received message: $event', name: 'WebsocketClient.stream');
         return parseMessage(event);
       } catch (e) {
-        log('Error parsing message: $e');
+        log('Error parsing message: $e', name: 'WebsocketClient.stream');
         return null;
       }
     });
@@ -120,15 +121,19 @@ class WebsocketClient {
   void listen(void Function(WebsocketMessage) onData) {
     _client?.listen((data) {
       try {
+        log('Received message: $data', name: 'WebsocketClient.listen');
         onData(parseMessage(data));
       } catch (e) {
-        log('Error parsing message: $e');
+        log('Error parsing message: $e', name: 'WebsocketClient.listen');
       }
     });
   }
 
   void subscribe(String channel) {
-    log('Subscribing to channel: $channel');
+    log(
+      'Subscribing to channel: $channel',
+      name: 'WebsocketClient.subscribe',
+    );
 
     final message = WebsocketMessage(
       channel: channel,
@@ -145,7 +150,10 @@ class WebsocketClient {
   }
 
   void sendUserPosition(String channel, WebsocketSendPosition position) {
-    log('Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}, ${position.speed}');
+    log(
+      'Sending user position: ${position.latitude}, ${position.longitude}, ${position.altitude}, ${position.time}, ${position.speed}',
+      name: 'WebsocketClient.sendUserPosition',
+    );
 
     final message = WebsocketMessage(
       channel: channel,
@@ -161,8 +169,31 @@ class WebsocketClient {
     _send(jsonString);
   }
 
+  void sendReadNotification(String channel, int notificationId) {
+    log(
+      'Sending read notification',
+      name: 'WebsocketClient.sendReadNotification',
+    );
+
+    final message = WebsocketMessage(
+      channel: channel,
+      data: WebsocketReadNotification(notificationId: notificationId),
+    );
+
+    final jsonObject = message.toJson(
+      (obj) => (obj as WebsocketReadNotification).toJson(),
+    );
+
+    final jsonString = jsonEncode(jsonObject);
+
+    _send(jsonString);
+  }
+
   void stopSendPositions(String channel) {
-    log('Stop sending user position');
+    log(
+      'Stop sending user position',
+      name: 'WebsocketClient.stopSendPositions',
+    );
 
     final message = WebsocketMessage(
       channel: channel,
