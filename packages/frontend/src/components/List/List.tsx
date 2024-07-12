@@ -56,13 +56,6 @@ export function List<T>(props: ListProps<T>) {
 		return undefined;
 	}, [sort, setSort]);
 
-	const onPageChange = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
-		const p = parseInt(e.currentTarget.value);
-		if (!isNaN(p) && p > 0 && p <= (data.data?.total_page ?? 1)) {
-			setPage(parseInt(e.currentTarget.value) - 1);
-		}
-	}, []);
-
 	const orderQuery = useMemo(() => {
 		const sortStrings = Object.values(sort)
 			.filter(s => s.order !== "none")
@@ -93,6 +86,15 @@ export function List<T>(props: ListProps<T>) {
 			props.reload,
 		],
 	);
+
+	const onPageChange = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
+		const p = parseInt(e.currentTarget.value);
+		console.log(p);
+		console.log(data.data?.total_page);
+		if (!isNaN(p) && p > 0 && p <= (data.data?.total_page ?? 1)) {
+			setPage(parseInt(e.currentTarget.value) - 1);
+		}
+	}, [setPage, data.data?.total_page]);
 
 	return (
 		<div className={"flex flex-col grow gap-2 overflow-x-auto"}>
