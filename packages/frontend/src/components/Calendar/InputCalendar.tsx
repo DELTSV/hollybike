@@ -79,9 +79,9 @@ export function InputCalendar(props: CalendarProps) {
 				rightIcon={<CalendarTodayRounded onClick={() => setView(prev => !prev)} />}
 			/>
 			{ view &&
-				<Card className={"absolute"}>
-					<Calendar {...props} />
-				</Card> }
+                <Card className={"absolute"}>
+                	<Calendar {...props} />
+                </Card> }
 		</div>
 	);
 }
@@ -148,3 +148,4 @@ function frenchStringToDate(s: string, time: boolean, seconds: boolean): Date | 
 	}
 	return d;
 }
+

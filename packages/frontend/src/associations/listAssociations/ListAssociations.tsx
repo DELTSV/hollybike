@@ -7,6 +7,7 @@ import { Cell } from "../../components/List/Cell.tsx";
 import { OpenInNew } from "@material-ui/icons";
 import { Button } from "../../components/Button/Button.tsx";
 import { useSideBar } from "../../sidebar/useSideBar.tsx";
+import { Card } from "../../components/Card/Card.tsx";
 
 export function ListAssociations() {
 	const { user } = useUser();
@@ -24,11 +25,13 @@ export function ListAssociations() {
 	}, [user, navigate]);
 
 	return (
-		<div className={"flex flex-col gap-2 w-full"}>
-			<Button className={"mx-2 self-start"} onClick={() => navigate("/associations/new")}>
-				Créer une association
-			</Button>
+		<Card>
 			<List
+				action={
+					<Button onClick={() => navigate("/associations/new")}>
+						Créer une association
+					</Button>
+				}
 				baseUrl={"/associations"} columns={[
 					{
 						name: "Nom",
@@ -55,9 +58,13 @@ export function ListAssociations() {
 							<img className={"max-h-10"} src={d.picture} alt={`Image de l'association ${d.name}`}/> :
 							<p>Aucune image</p> }
 					</Cell>,
-					<Cell className={"cursor-pointer"} onClick={() => navigate(`/associations/${d.id}`)}><OpenInNew/></Cell>,
+					<Cell
+						className={"cursor-pointer"}
+						  onClick={() => navigate(`/associations/${d.id}`)}
+					><OpenInNew/>
+					</Cell>,
 				]}
 			/>
-		</div>
+		</Card>
 	);
 }

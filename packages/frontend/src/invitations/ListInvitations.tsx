@@ -29,6 +29,7 @@ import { useRef } from "react";
 import { Input } from "../components/Input/Input.tsx";
 import { useUser } from "../user/useUser.tsx";
 import { EUserScope } from "../types/EUserScope.ts";
+import { Card } from "../components/Card/Card.tsx";
 
 export function ListInvitations() {
 	const {
@@ -42,7 +43,9 @@ export function ListInvitations() {
 	useEffect(() => {
 		if (id) {
 			api<TAssociation>(`/associations/${id}`).then((res) => {
-				if (res.status === 200 && res.data !== null && res.data !== undefined) { setAssociation(res.data); }
+				if (res.status === 200 && res.data !== null && res.data !== undefined) {
+					setAssociation(res.data);
+				}
 			});
 		} else {
 			setAssociation(undefined);
@@ -73,107 +76,117 @@ export function ListInvitations() {
 	const [invitation, setInvitation] = useState(-1);
 
 	const filter = useMemo(() => {
-		if (id !== undefined) { return `association=eq:${id}&status=neq:-1`; } else { return "status=neq:-1"; }
+		if (id !== undefined) {
+			return `association=eq:${id}&status=neq:-1`;
+		} else {
+			return "status=neq:-1";
+		}
 	}, [id]);
 
 	return (
-		<div className={"flex flex-col gap-2 w-full"}>
-			<Button className={"mx-2 self-start"} onClick={() => navigate("/invitations/new")}>Créer une invitation</Button>
-			<List
-				reload={reload} filter={filter}
-				columns={[
-					{
-						name: "Rôle",
-						id: "name",
-					},
-					{
-						name: "Utilisations",
-						id: "uses",
-					},
-					{
-						name: "Utilisations max",
-						id: "max_uses",
-					},
-					{
-						name: "Expiration",
-						id: "expiration",
-					},
-					{
-						name: "Association",
-						id: "association",
-						visible: user?.scope === EUserScope.Root,
-					},
-					{
-						name: "Lien",
-						id: "link",
-						width: "90px",
-					},
-					{
-						name: "Désactiver",
-						id: "",
-						width: "150px",
-					},
-				]}
-				baseUrl={url} line={(i: TInvitation) => [
-					<Cell>
-						{ i.role }
-					</Cell>,
-					<Cell>
-						{ i.uses }
-					</Cell>,
-					<Cell>
-						{ i.max_uses !== null ? i.max_uses : "Infini" }
-					</Cell>,
-					<Cell>
-						{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
-							`${ timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
-					</Cell>,
-					<>
-						{ user?.scope === EUserScope.Root &&
+		<>
+			<Card>
+				<List
+					reload={reload} filter={filter}
+					columns={[
+						{
+							name: "Rôle",
+							id: "name",
+						},
+						{
+							name: "Utilisations",
+							id: "uses",
+						},
+						{
+							name: "Utilisations max",
+							id: "max_uses",
+						},
+						{
+							name: "Expiration",
+							id: "expiration",
+						},
+						{
+							name: "Association",
+							id: "association",
+							visible: user?.scope === EUserScope.Root,
+						},
+						{
+							name: "Lien",
+							id: "link",
+							width: "90px",
+						},
+						{
+							name: "Désactiver",
+							id: "",
+							width: "150px",
+						},
+					]}
+					baseUrl={url} line={(i: TInvitation) => [
 						<Cell>
-							<Link to={`/associations/${i.association.id}`}>
-								{ i.association.name }
-							</Link>
-						</Cell> }
-					</>,
-					<Cell className={"flex"}>
-						{ i.link !== undefined &&
-							<div className={"flex gap-2"}>
-								<QRCodeScanner
-									className={"cursor-pointer"}
-									onClick={() => {
-										setModalQrCode(true);
-										setQrCode(i.link!);
-									}}
-								/>
-								<LinkCell link={i.link}/>
-								{ smtp.status === 200 && <MailOutlineRounded
-									className={"cursor-pointer"} onClick={() => {
-										setModalMail(true);
-										setInvitation(i.id);
-									}}
-								/> }
-							</div> }
-					</Cell>,
-					<Cell>
-						{ i.status === "Enabled" &&
-						<LinkOff
-							className={"cursor-pointer"} onClick={() => {
-								api(`/invitation/${i.id}/disable`, { method: "PATCH" }).then((res) => {
-									if (res.status === 200) {
-										toast("Invitation désactivée", { type: "success" });
-										doReload();
-									} else if (res.status === 404) {
-										toast(res.message, { type: "warning" });
-									} else {
-										toast(res.message, { type: "error" });
-									}
-								});
-							}}
-						/> }
-					</Cell>,
-				]}
-			/>
+							{ i.role }
+						</Cell>,
+						<Cell>
+							{ i.uses }
+						</Cell>,
+						<Cell>
+							{ i.max_uses !== null ? i.max_uses : "Infini" }
+						</Cell>,
+						<Cell>
+							{ i.expiration !== null ? `${dateToFrenchString(new Date(i.expiration))} ` +
+							`${timeToFrenchString(new Date(i.expiration), true)}` : "Jamais" }
+						</Cell>,
+						<>
+							{ user?.scope === EUserScope.Root &&
+                            <Cell>
+                            	<Link to={`/associations/${i.association.id}`}>
+                            		{ i.association.name }
+                            	</Link>
+                            </Cell> }
+						</>,
+						<Cell className={"flex"}>
+							{ i.link !== undefined &&
+                            <div className={"flex gap-2"}>
+                            	<QRCodeScanner
+                            		className={"cursor-pointer"}
+                            		onClick={() => {
+                            			setModalQrCode(true);
+                            			setQrCode(i.link!);
+                            		}}
+                            	/>
+                            	<LinkCell link={i.link}/>
+                            	{ smtp.status === 200 && <MailOutlineRounded
+                            		className={"cursor-pointer"} onClick={() => {
+                            			setModalMail(true);
+                            			setInvitation(i.id);
+                            		}}
+                            	/> }
+                            </div> }
+						</Cell>,
+						<Cell>
+							{ i.status === "Enabled" &&
+                            <LinkOff
+                            	className={"cursor-pointer"} onClick={() => {
+                            		api(`/invitation/${i.id}/disable`, { method: "PATCH" }).then((res) => {
+                            			if (res.status === 200) {
+                            				toast("Invitation désactivée", { type: "success" });
+                            				doReload();
+                            			} else if (res.status === 404) {
+                            				toast(res.message, { type: "warning" });
+                            			} else {
+                            				toast(res.message, { type: "error" });
+                            			}
+                            		});
+                            	}}
+                            /> }
+						</Cell>,
+					]}
+					action={
+						<Button onClick={() => navigate("/invitations/new")}>
+							Créer une invitation
+						</Button>
+					}
+				/>
+			</Card>
 			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setModalQrCode} width={"w-auto"}>
 				<div className={"flex flex-col items-center justify-center m-4"}>
 					<div className={"bg-white p-4 rounded"}>
@@ -205,18 +218,18 @@ export function ListInvitations() {
 					</Button>
 				</form>
 			</Modal>
-		</div>
+		</>
 	);
 }
 
-function LinkCell(props: {link: string}) {
+function LinkCell(props: { link: string }) {
 	const input = useRef<HTMLInputElement>(null);
 
 	const [copied, setCopied] = useState(false);
 	return (
 		<>
 			{ copied ?
-				<CheckCircleOutlineRounded className={"cursor-pointer text-green"}/>:
+				<CheckCircleOutlineRounded className={"cursor-pointer text-green"}/> :
 				<ContentCopy
 					className={"cursor-pointer"}
 					onClick={() => {

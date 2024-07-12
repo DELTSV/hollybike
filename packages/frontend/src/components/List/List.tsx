@@ -27,12 +27,12 @@ interface ListProps<T> {
 
 export function List<T>(props: ListProps<T>) {
 	const sortFilterColumns = useApi<TMetaData>(`${props.baseUrl}/meta-data`);
-	const [sort, setSort] = useState<{[name: string]: Sort}>({});
+	const [sort, setSort] = useState<{ [name: string]: Sort }>({});
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(0);
 
 	useEffect(() => {
-		const sortMap: {[name: string]: Sort} = {};
+		const sortMap: { [name: string]: Sort } = {};
 		Object.keys(sortFilterColumns.data ?? []).forEach((c) => {
 			sortMap[c] = {
 				column: c,
@@ -61,7 +61,7 @@ export function List<T>(props: ListProps<T>) {
 			.filter(s => s.order !== "none")
 			.map(s => `sort=${s.column}.${s.order}`);
 		if (sortStrings.length > 0) {
-			return `&${ sortStrings.join("&")}`;
+			return `&${sortStrings.join("&")}`;
 		} else {
 			return "";
 		}
@@ -97,46 +97,48 @@ export function List<T>(props: ListProps<T>) {
 	}, [setPage, data.data?.total_page]);
 
 	return (
-		<div className={"flex flex-col grow gap-2 overflow-x-auto"}>
-			<div className={"flex justify-between"}>
+		<div className={"flex flex-col grow gap-4"}>
+			<div className={"flex justify-between align-bottom"}>
 				<Input
 					value={search} onInput={e => setSearch(e.currentTarget.value ?? "")}
 					placeholder={"Recherche"} className={"self-start"} leftIcon={<Search/>}
 				/>
 				{ props.action }
 			</div>
-			<table className={"rounded bg-surface-1 table-fixed"}>
-				<thead>
-					<tr>
-						{ props.columns.map((c) => {
-							const sortColumn = sort[c.id];
-							if (c.visible !== false) {
-								return (
-									<Head
-										sortable={sortColumn !== undefined}
-										sort={sortColumn}
-										setSortOrder={setOrder(c.id)}
-										width={c.width}
-									>
-										{ c.name }
-									</Head>
-								);
-							} else {
-								return null;
-							}
-						}) }
-					</tr>
-				</thead>
-				<tbody>
-					{ data.data?.data?.map(d =>
-						<tr className={"border-t-2 border-surface-2"}>
-							{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }
-						</tr>) }
-				</tbody>
-			</table>
+			<div className={"overflow-x-auto rounded"}>
+				<table className={"bg-mantle table-fixed min-w-full"}>
+					<thead>
+						<tr className={"border-b-2 border-surface-2"}>
+							{ props.columns.map((c) => {
+								const sortColumn = sort[c.id];
+								if (c.visible !== false) {
+									return (
+										<Head
+											sortable={sortColumn !== undefined}
+											sort={sortColumn}
+											setSortOrder={setOrder(c.id)}
+											width={c.width}
+										>
+											{ c.name }
+										</Head>
+									);
+								} else {
+									return null;
+								}
+							}) }
+						</tr>
+					</thead>
+					<tbody>
+						{ data.data?.data?.map(d =>
+							<tr className={"[&:nth-of-type(odd)]:bg-crust"}>
+								{ props.line(d).filter((_, i) => props.columns[i]?.visible !== false) }
+							</tr>) }
+					</tbody>
+				</table>
+			</div>
 			<div className={"flex items-center gap-4"}>
 				<Button onClick={() => setPage(prev => prev === 0 ? 0 : prev - 1)}>
-						Page Précédente
+					Page Précédente
 				</Button>
 				<p className={"flex gap-1"}>
 					<input className={"bg-transparent w-6 text-right"} value={page + 1} onInput={onPageChange}/>
@@ -146,7 +148,7 @@ export function List<T>(props: ListProps<T>) {
 				<Button
 					onClick={() => setPage(prev => prev === (data.data?.total_page ?? 1) - 1 ? prev : prev + 1)}
 				>
-						Page Suivante
+					Page Suivante
 				</Button>
 			</div>
 		</div>

@@ -10,7 +10,9 @@
     width: 200px;
     padding: 8px 16px;
     border-radius: 4px;
-    @apply bg-surface-0;
+    @apply bg-base;
+    @apply shadow-md;
+    @apply shadow-black/50;
 
     svg {
         transition: 0.4s rotate;
@@ -30,7 +32,9 @@
     border-radius: 0 0 4px 4px;
     transition: 0.25s all;
     z-index: 1;
-    @apply bg-surface-0;
+    @apply bg-base;
+    @apply shadow-lg;
+    @apply shadow-black/50;
 
     > * {
         transition-duration: 0.1s;
@@ -54,6 +58,6 @@
     cursor: pointer;
     padding: 8px 16px;
     &:hover {
-        @apply bg-base/10;
+        @apply bg-surface-0;
     }
 }

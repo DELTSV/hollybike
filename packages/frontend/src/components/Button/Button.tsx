@@ -19,10 +19,10 @@ export function Button(props: ButtonProps) {
 			type={props.type}
 			onClick={props.onClick} className={
 				clsx(
-					"px-2 py-1 rounded border-2 transition-transform bg-surface-0 flex items-center gap-4",
+					"px-2 py-1 rounded-full transition-transform bg-text flex items-center gap-4",
 					props.className,
-					disabled ? "cursor-default border-overlay-0 text-subtext-0" :
-						"cursor-pointer hover:scale-105 text-subtext-1 border-lavender"
+					disabled ? "cursor-default bg-surface-2 text-surface-0" :
+						"cursor-pointer hover:scale-105 text-crust"
 					,
 				)
 			}

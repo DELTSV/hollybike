@@ -10,7 +10,13 @@ interface CellProps {
 
 export function Cell(props: CellProps) {
 	return (
-		<td onClick={props.onClick} className={clsx("text-center px-2 py-1", props.className)} key={props.key}>
+		<td
+			onClick={props.onClick} className={clsx(
+				"text-center p-2 whitespace-nowrap",
+				props.className,
+			)}
+			key={props.key}
+		>
 			{ props.children }
 		</td>
 	);

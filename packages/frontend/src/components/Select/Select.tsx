@@ -96,8 +96,8 @@ export function Select(props: SelectProps) {
 				"rounded flex items-center justify-between border-2 px-2 py-2 h-9.5 relative",
 				visible && "rounded-b-none",
 				props.disabled === true ?
-					"border-overlay-0 bg-surface-0  text-subtext-0 cursor-default" :
-					"bg-surface-1 border-lavender cursor-pointer",
+					"border-surface-1 bg-base text-surface-1 cursor-default" :
+					"bg-mantle border-surface-1 cursor-pointer",
 			)}
 			onClick={(e) => {
 				if (input.current?.contains(e.target as Node) !== true && props.disabled !== true) {
@@ -109,32 +109,32 @@ export function Select(props: SelectProps) {
 			<p>{ text }</p>
 			<ArrowDropDown className={clsx("transition", visible && "rotate-180")}/>
 			{ visible &&
-				<div
-					className={clsx(
-						"absolute top-full -left-0.5 bg-surface-1 flex flex-col",
-						"w-[calc(100%+4px)] border-2 border-lavender rounded-b",
-					)}
-				>
-					{ props.searchable &&
-						<input
-							className={"bg-transparent m-1 p-1 border-2 border-lavender rounded focus:outline-none"}
-							ref={input} value={search}
-							onInput={e => setSearch(e.currentTarget.value)}
-						/> }
-					{ filteredOptions.map(o =>
-						<p
-							className={"p-2 cursor-pointer hover:bg-surface-0"}
-							onClick={(e) => {
-								props.onChange && props.onChange(o.value);
-								setVisible(false);
-								setText(o.name);
-								e.preventDefault();
-								e.stopPropagation();
-							}}
-						>
-							{ o.name }
-						</p>) }
-				</div> }
+                <div
+                	className={clsx(
+                		"absolute top-full -left-0.5 bg-mantle flex flex-col",
+                		"w-[calc(100%+4px)] border-2 border-surface-1 rounded-b",
+                	)}
+                >
+                	{ props.searchable &&
+                        <input
+                        	className={"bg-transparent m-1 p-1 border-2 border-lavender rounded focus:outline-none"}
+                        	ref={input} value={search}
+                        	onInput={e => setSearch(e.currentTarget.value)}
+                        /> }
+                	{ filteredOptions.map(o =>
+                		<p
+                			className={"p-2 cursor-pointer hover:bg-surface-0"}
+                			onClick={(e) => {
+                				props.onChange && props.onChange(o.value);
+                				setVisible(false);
+                				setText(o.name);
+                				e.preventDefault();
+                				e.stopPropagation();
+                			}}
+                		>
+                			{ o.name }
+                		</p>) }
+                </div> }
 			<select disabled={props.disabled} className={"hidden"} value={props.value}>
 				<option default={props.default === undefined}></option>
 				{ props.options.map((o, i) =>

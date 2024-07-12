@@ -44,8 +44,8 @@ export function FileInput(props: FileInputProps) {
 	return (
 		<label
 			className={clsx(
-				"border-2 rounded cursor-pointer bg-surface-1",
-				"border-lavender p-2 h-9.5 flex items-center justify-start",
+				"border-2 rounded cursor-pointer bg-mantle",
+				"border-surface-1 p-2 h-9.5 flex items-center justify-start",
 				textCss,
 			)}
 			for={id}

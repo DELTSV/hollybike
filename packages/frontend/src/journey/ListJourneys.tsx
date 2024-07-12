@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { useReload } from "../utils/useReload.ts";
 import { FileInput } from "../components/Input/FileInput.tsx";
 import { Modal } from "../components/Modal/Modal.tsx";
+import { Card } from "../components/Card/Card.tsx";
 
 export function ListJourneys() {
 	const { id } = useParams();
@@ -53,12 +54,7 @@ export function ListJourneys() {
 	const [journeyId, setJourneyId] = useState(-1);
 
 	return (
-		<div className={"w-full flex flex-col gap-2 mx-2"}>
-			<Link to={"/journeys/new"}>
-				<Button className={"self-start"} onClick={() => {}}>
-					Importer un trajet
-				</Button>
-			</Link>
+		<Card>
 			<List
 				reload={reload}
 				columns={[
@@ -156,6 +152,13 @@ export function ListJourneys() {
 					</Cell>,
 				]}
 				baseUrl={"/journeys"}
+				action={
+					<Link to={"/journeys/new"}>
+						<Button className={"self-start"} onClick={() => {}}>
+							Importer un trajet
+						</Button>
+					</Link>
+				}
 			/>
 			<Modal visible={modal} setVisible={setModal} title={"Importer un fichier GPX ou GeoJSON"}>
 				<div className={"gap-2 items-center"}>
@@ -192,6 +195,6 @@ export function ListJourneys() {
 					</Button>
 				</div>
 			</Modal>
-		</div>
+		</Card>
 	);
 }
