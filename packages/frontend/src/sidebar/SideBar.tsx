@@ -39,7 +39,7 @@ export function SideBar() {
 		>
 			<aside
 				className={clsx(
-					"relative w-48 min-w-48 bg-base h-full rounded-xl shadow-lg shadow-black pointer-events-auto",
+					"relative w-48 min-w-48 bg-base h-full rounded-xl shadow-lg shadow-black/50 pointer-events-auto",
 					"flex-col flex md:translate-x-0 gap-2 p-2",
 					"transition-transform duration-200",
 					visible ? "translate-x-0" : "-translate-x-[calc(100%+4rem)]",

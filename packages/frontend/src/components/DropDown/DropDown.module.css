@@ -12,7 +12,7 @@
     border-radius: 4px;
     @apply bg-base;
     @apply shadow-md;
-    @apply shadow-black;
+    @apply shadow-black/50;
 
     svg {
         transition: 0.4s rotate;
@@ -34,7 +34,7 @@
     z-index: 1;
     @apply bg-base;
     @apply shadow-lg;
-    @apply shadow-black;
+    @apply shadow-black/50;
 
     > * {
         transition-duration: 0.1s;
