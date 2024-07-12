@@ -352,10 +352,10 @@ class EventController(
 	}
 
 	private fun Route.resetEventJourney() {
-		delete<Events.Id.Participations.Me.Journey> {
-			val event = eventService.getEvent(call.user, it.me.participations.eventId.id) ?: run {
+		patch<Events.Id.Participations.Me.Journey.Terminate> {
+			val event = eventService.getEvent(call.user, it.journey.me.participations.eventId.id) ?: run {
 				call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
-				return@delete
+				return@patch
 			}
 
 			userEventPositionService.removeUserJourneyFromEvent(call.user, event)

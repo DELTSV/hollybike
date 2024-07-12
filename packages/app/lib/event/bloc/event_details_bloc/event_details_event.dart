@@ -49,6 +49,10 @@ class TerminateUserJourney extends EventDetailsEvent {
   TerminateUserJourney();
 }
 
+class ResetUserJourney extends EventDetailsEvent {
+  ResetUserJourney();
+}
+
 class EventStarted extends EventDetailsEvent {
   EventStarted();
 }

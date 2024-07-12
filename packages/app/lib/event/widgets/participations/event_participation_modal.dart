@@ -4,7 +4,7 @@ import 'package:hollybike/event/types/participation/event_participation.dart';
 import 'package:hollybike/shared/utils/dates.dart';
 
 import '../event_loading_profile_picture.dart';
-import 'event_participation_journey.dart';
+import '../../../user_journey/widgets/user_journey_card.dart';
 
 class EventParticipationModal extends StatelessWidget {
   final EventParticipation participation;
@@ -81,7 +81,7 @@ class EventParticipationModal extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              EventParticipationJourney(
+              UserJourneyCard(
                 journey: participation.journey,
                 user: participation.user,
               ),

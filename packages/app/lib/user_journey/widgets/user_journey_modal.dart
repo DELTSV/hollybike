@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/journey/type/user_journey.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
+import 'package:hollybike/user_journey/type/user_journey.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:lottie/lottie.dart';
-import '../../../shared/utils/dates.dart';
-import '../../../shared/widgets/bloc_provided_builder.dart';
-import '../../../shared/widgets/gradient_progress_bar.dart';
+import '../../shared/utils/dates.dart';
+import '../../shared/widgets/bloc_provided_builder.dart';
+import '../../shared/widgets/gradient_progress_bar.dart';
 
 enum JourneyModalAction {
   resetJourney,
   downloadJourney,
 }
 
-class EventParticipationJourneyModal extends StatefulWidget {
+class UserJourneyModal extends StatefulWidget {
   final UserJourney journey;
-  final int userId;
-  final String? username;
+  final MinimalUser? user;
 
-  const EventParticipationJourneyModal({
+  const UserJourneyModal({
     super.key,
     required this.journey,
-    required this.userId,
-    this.username,
+    this.user,
   });
 
   @override
-  State<EventParticipationJourneyModal> createState() =>
-      _EventParticipationJourneyModalState();
+  State<UserJourneyModal> createState() => _UserJourneyModalState();
 }
 
-class _EventParticipationJourneyModalState
-    extends State<EventParticipationJourneyModal> {
+class _UserJourneyModalState extends State<UserJourneyModal> {
   late final double _betterPercentage;
   bool _isSolo = false;
   int _betterThanCount = 0;
@@ -69,11 +66,14 @@ class _EventParticipationJourneyModalState
         child: SafeArea(
           child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
             builder: (context, bloc, state) {
-              final currentProfile = bloc.currentProfile;
-              final isCurrentUser = (currentProfile is ProfileLoadSuccessEvent
-                      ? currentProfile.profile.id
-                      : null) ==
-                  widget.userId;
+              final currentProfileEvent = bloc.currentProfile;
+              final currentUserId =
+                  (currentProfileEvent is ProfileLoadSuccessEvent
+                      ? currentProfileEvent.profile.id
+                      : null);
+
+              final isCurrentUser =
+                  widget.user?.id == null || (currentUserId == widget.user?.id);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -235,10 +235,8 @@ class _EventParticipationJourneyModalState
   String _getIsBetterThanCountText(bool isCurrentUser) {
     if (isCurrentUser) {
       return 'Vous êtes le meilleur dans $_betterThanCount catégories !';
-    } else if (widget.username != null) {
-      return '${widget.username} est le meilleur dans $_betterThanCount catégories !';
     } else {
-      return 'Le participant est le meilleur dans $_betterThanCount catégories !';
+      return '${widget.user?.username} est le meilleur dans $_betterThanCount catégories !';
     }
   }
 
@@ -262,10 +260,8 @@ class _EventParticipationJourneyModalState
   String _getIsBetterMeanText(bool isCurrentUser) {
     if (isCurrentUser) {
       return 'Vous avez fait mieux que';
-    } else if (widget.username != null) {
-      return '${widget.username} a fait mieux que';
     } else {
-      return 'Le participant a fait mieux que';
+      return '${widget.user?.username} a fait mieux que';
     }
   }
 
@@ -319,7 +315,7 @@ class _EventParticipationJourneyModalState
         const SizedBox(width: 16),
         Flexible(
           child: Text(
-            'Parcours de ${widget.username}',
+            'Parcours de ${widget.user?.username}',
             style: Theme.of(context).textTheme.titleMedium,
             softWrap: true,
           ),

@@ -63,6 +63,9 @@ class Events(val api: API = API()) {
 				class Journey(val me: Me) {
 					@Resource("terminate")
 					class Terminate(val journey: Journey)
+
+					@Resource("reset")
+					class Reset(val journey: Journey)
 				}
 			}
 

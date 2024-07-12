@@ -26,6 +26,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<DeleteEvent>(_onDeleteEvent);
     on<CancelEvent>(_onCancelEvent);
     on<TerminateUserJourney>(_onTerminateUserJourney);
+    on<ResetUserJourney>(_onResetUserJourney);
     on<EventStarted>(_onEventStarted);
   }
 
@@ -214,6 +215,28 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
       emit(EventOperationFailure(
         state,
         errorMessage: 'Impossible de terminer le trajet',
+      ));
+    }
+  }
+
+  Future<void> _onResetUserJourney(
+    ResetUserJourney event,
+    Emitter<EventDetailsState> emit,
+  ) async {
+    emit(EventOperationInProgress(state));
+
+    try {
+      await _eventRepository.resetUserJourney(eventId);
+
+      emit(EventOperationSuccess(
+        state,
+        successMessage: 'Trajet réinitialisé',
+      ));
+    } catch (e) {
+      log('Error while resetting user journey', error: e);
+      emit(EventOperationFailure(
+        state,
+        errorMessage: 'Impossible de réinitialiser le trajet',
       ));
     }
   }

@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:hollybike/journey/type/user_journey.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
+import 'package:hollybike/user_journey/type/user_journey.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 
-import 'event_participation_journey_modal.dart';
+import 'user_journey_modal.dart';
 
-class EventParticipationJourneyContent extends StatelessWidget {
+class UserJourneyContent extends StatelessWidget {
   final UserJourney existingJourney;
-  final int userId;
-  final String? username;
+  final MinimalUser? user;
   final Color color;
 
-  const EventParticipationJourneyContent({
+  const UserJourneyContent({
     super.key,
     required this.existingJourney,
-    required this.userId,
-    this.username,
+    this.user,
     this.color = Colors.transparent,
   });
 
@@ -49,60 +48,11 @@ class EventParticipationJourneyContent extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
-                // Column(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: addSeparators(
-                //     [
-                //       Row(
-                //         children: [
-                //           const Icon(
-                //             Icons.north_east_rounded,
-                //             size: 20,
-                //           ),
-                //           const SizedBox(width: 4),
-                //           Text(
-                //             '${existingJourney.totalElevationGain} m',
-                //             style: Theme.of(context).textTheme.bodySmall,
-                //           ),
-                //         ],
-                //       ),
-                //       Row(
-                //         children: [
-                //           const Icon(
-                //             Icons.south_east_rounded,
-                //             size: 20,
-                //           ),
-                //           const SizedBox(width: 4),
-                //           Text(
-                //             '${existingJourney.totalElevationLoss} m',
-                //             style: Theme.of(context).textTheme.bodySmall,
-                //           ),
-                //         ],
-                //       ),
-                //     ],
-                //     const SizedBox(height: 3),
-                //   ),
-                // ),
-                // const SizedBox(width: 16),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: addSeparators(
                     [
-                      // Row(
-                      //   children: [
-                      //     const Icon(
-                      //       Icons.vertical_align_bottom_rounded,
-                      //       size: 20,
-                      //     ),
-                      //     const SizedBox(width: 5),
-                      //     Text(
-                      //       '${existingJourney.minElevation} m',
-                      //       style: Theme.of(context).textTheme.bodySmall,
-                      //     ),
-                      //   ],
-                      // ),
                       Row(
                         children: [
                           const Icon(
@@ -165,19 +115,6 @@ class EventParticipationJourneyContent extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // Row(
-                      //   children: [
-                      //     const Icon(
-                      //       Icons.speed_rounded,
-                      //       size: 20,
-                      //     ),
-                      //     const SizedBox(width: 5),
-                      //     Text(
-                      //       existingJourney.avgSpeedLabel,
-                      //       style: Theme.of(context).textTheme.bodySmall,
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                     const SizedBox(height: 3),
                   ),
@@ -197,10 +134,9 @@ class EventParticipationJourneyContent extends StatelessWidget {
                   isScrollControlled: true,
                   context: context,
                   builder: (_) {
-                    return EventParticipationJourneyModal(
+                    return UserJourneyModal(
                       journey: existingJourney,
-                      userId: userId,
-                      username: username,
+                      user: user,
                     );
                   },
                 );
