@@ -20,7 +20,7 @@ export function EventDetail() {
 		reload, doReload,
 	} = useReload();
 	const { id } = useParams();
-	const event = useApi<TEvent>(`/events/${id}`);
+	const event = useApi<TEvent>(`/events/${id}`, [reload]);
 	const [eventData, setEventData] = useState<TEvent>(dummyEvent);
 	const eventDetail = useApi<TEventDetail>(`/events/${id}/details`, [reload]);
 
@@ -34,7 +34,7 @@ export function EventDetail() {
 				"2xl:grid-flow-col 2xl:grid-cols-[700px_1fr] 2xl:grid-rows-2",
 			)}
 		>
-			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")}/>
+			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")} doReload={doReload}/>
 			<EventJourney eventDetail={eventDetail.data} doReload={doReload}/>
 			<EventParticipant event={eventDetail.data?.event ?? dummyEvent}/>
 			<div className={"flex gap-2 flex-col 2xl:flex-row"}>

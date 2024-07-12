@@ -11,11 +11,15 @@ import {
 } from "preact/hooks";
 import { ButtonDanger } from "../components/Button/ButtonDanger.tsx";
 import { useNavigate } from "react-router-dom";
+import { EEventStatus } from "../types/EEventStatus.ts";
+import { DoReload } from "../utils/useReload.ts";
+
 
 interface EventInfoProps {
 	eventData: TEvent,
 	setEventData: Dispatch<StateUpdater<TEvent>>,
-	id: number
+	id: number,
+	doReload: DoReload
 }
 
 export function EventInfo(props: EventInfoProps) {
@@ -88,6 +92,8 @@ export function EventInfo(props: EventInfoProps) {
 				type={"number"}
 				onInput={e => setBudgetText(e.currentTarget.value)}
 			/>
+			<p>Statut</p>
+			<EventStatus status={eventData.status} id={eventData.id} doReload={props.doReload}/>
 			<Button
 				className={"justify-self-center"}
 				onClick={() => {
@@ -136,4 +142,71 @@ export function EventInfo(props: EventInfoProps) {
 			</ButtonDanger>
 		</Card>
 	);
+}
+
+interface EventStatusProps {
+	status: EEventStatus,
+	id: number,
+	doReload: DoReload
+}
+
+function EventStatus(props: EventStatusProps) {
+	if (props.status === EEventStatus.Pending) {
+		return (
+			<Button
+				onClick={async () => {
+					const resp = await api(`/events/${props.id}/schedule`, { method: "PATCH" });
+					if (resp.status === 200) {
+						toast("Évènement publié", { type: "success" });
+						props.doReload();
+					} else {
+						toast(resp.message, { type: "error" });
+					}
+				}}
+			>Publier
+			</Button>
+		);
+	}
+	if (props.status === EEventStatus.Scheduled) {
+		return (
+			<ButtonDanger
+				onClick={async () => {
+					const resp = await api(`/events/${props.id}/cancel`, { method: "PATCH" });
+					if (resp.status === 200) {
+						toast("Évènement annulé", { type: "warning" });
+						props.doReload();
+					} else {
+						toast(resp.message, { type: "error" });
+					}
+				}}
+			>Annuler
+			</ButtonDanger>
+		);
+	}
+	if (props.status === EEventStatus.Cancelled) {
+		return (
+			<Button
+				onClick={async () => {
+					const resp = await api(`/events/${props.id}/pend`, { method: "PATCH" });
+					if (resp.status === 200) {
+						toast("Évènement rétabli", { type: "success" });
+						props.doReload();
+					} else {
+						toast(resp.message, { type: "error" });
+					}
+				}}
+			>Rétablir
+			</Button>
+		);
+	}
+
+	if (props.status === EEventStatus.Now) {
+		return <p>En cours</p>;
+	}
+
+	if (props.status === EEventStatus.Finished) {
+		return <p>Terminé</p>;
+	}
+
+	return null;
 }
