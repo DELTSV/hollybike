@@ -35,6 +35,7 @@ class EventsSectionsList extends StatelessWidget {
     final sections = getEventSections(events);
 
     return CustomScrollView(
+      controller: controller,
       physics: physics,
       slivers: sections
           .map(
