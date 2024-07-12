@@ -69,6 +69,7 @@ class EventDetailsMyImages extends StatelessWidget {
                     onLoadNextPage: () => _loadNextPage(context),
                     images: state.images,
                     loading: state is ImageListPageLoadInProgress,
+                    error: state is ImageListPageLoadFailure,
                     onImageTap: (image) {
                       context.router.push(
                         ImageGalleryViewRoute(

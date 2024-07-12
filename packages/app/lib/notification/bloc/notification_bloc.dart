@@ -16,7 +16,6 @@ import 'package:hollybike/shared/websocket/recieve/websocket_event_published.dar
 import 'package:hollybike/shared/websocket/recieve/websocket_event_updated.dart';
 import 'package:hollybike/shared/websocket/websocket_client.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../auth/types/auth_session.dart';

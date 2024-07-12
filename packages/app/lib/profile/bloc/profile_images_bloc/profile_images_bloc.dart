@@ -47,7 +47,9 @@ class ProfileImagesBloc extends ImageListBloc<ProfileImagesEvent> {
     } catch (e) {
       log('Error while loading next page of images', error: e);
       emit(ImageListPageLoadFailure(
-        state,
+        state.copyWith(
+          hasMore: false,
+        ),
         errorMessage: 'Une erreur est survenue.',
       ));
       return;
@@ -75,7 +77,9 @@ class ProfileImagesBloc extends ImageListBloc<ProfileImagesEvent> {
     } catch (e) {
       log('Error while refreshing images', error: e);
       emit(ImageListPageLoadFailure(
-        state,
+        state.copyWith(
+          hasMore: false,
+        ),
         errorMessage: 'Une erreur est survenue.',
       ));
       return;

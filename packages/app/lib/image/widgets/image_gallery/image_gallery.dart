@@ -8,6 +8,7 @@ class ImageGallery extends StatefulWidget {
   final ScrollController scrollController;
   final List<EventImage> images;
   final bool loading;
+  final bool error;
   final void Function(EventImage) onImageTap;
   final void Function() onRefresh;
   final void Function() onLoadNextPage;
@@ -18,6 +19,7 @@ class ImageGallery extends StatefulWidget {
     required this.scrollController,
     required this.images,
     required this.loading,
+    required this.error,
     required this.onRefresh,
     required this.onLoadNextPage,
     required this.onImageTap,
@@ -44,13 +46,24 @@ class _ImageGalleryState extends State<ImageGallery> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.error) {
+      return const SliverFillRemaining(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 48),
+          child: Center(
+            child: Text(
+              'Une erreur est survenue lors du chargement des images. Veuillez réessayer.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    }
+
     if (widget.loading && widget.images.isEmpty) {
       return const SliverFillRemaining(
-        child: SizedBox(
-          height: 300,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+        child: Center(
+          child: CircularProgressIndicator(),
         ),
       );
     }
