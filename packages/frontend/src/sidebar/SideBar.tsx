@@ -34,6 +34,7 @@ export function SideBar() {
 					visible ? "bg-crust/90" : "bg-transparent pointer-events-none",
 				)
 			}
+			style={{zIndex: 8_000}}
 			onClick={() => setVisible(false)}
 		>
 			<aside

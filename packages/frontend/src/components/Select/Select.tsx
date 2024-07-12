@@ -5,6 +5,9 @@ import {
 import { ArrowDropDown } from "@material-ui/icons";
 import { clsx } from "clsx";
 import { useRef } from "react";
+import {
+	decInputCount, inputCount,
+} from "../InputCount.ts";
 
 export interface Option {
 	value: string | number,
@@ -23,6 +26,11 @@ interface SelectProps {
 }
 
 export function Select(props: SelectProps) {
+	const id = useMemo(() => {
+		const tmp = inputCount;
+		decInputCount();
+		return tmp;
+	}, []);
 	const [text, setText] = useState(props.placeholder);
 
 	const [visible, setVisible] = useState(false);
@@ -96,22 +104,23 @@ export function Select(props: SelectProps) {
 					setVisible(prev => !prev);
 				}
 			}} ref={container}
+			style={`z-index: ${id}`}
 		>
 			<p>{ text }</p>
 			<ArrowDropDown className={clsx("transition", visible && "rotate-180")}/>
 			{ visible &&
-				<div
-					className={clsx(
+                <div
+                    className={clsx(
 						"absolute top-full -left-0.5 bg-surface-1 flex flex-col",
 						"w-[calc(100%+4px)] border-2 border-lavender rounded-b",
 					)}
-				>
+                >
 					{ props.searchable &&
-						<input
-							className={"bg-transparent m-1 p-1 border-2 border-lavender rounded focus:outline-none"}
-							ref={input} value={search}
-							onInput={e => setSearch(e.currentTarget.value)}
-						/> }
+                        <input
+                            className={"bg-transparent m-1 p-1 border-2 border-lavender rounded focus:outline-none"}
+                            ref={input} value={search}
+                            onInput={e => setSearch(e.currentTarget.value)}
+                        /> }
 					{ filteredOptions.map(o =>
 						<p
 							className={"p-2 cursor-pointer hover:bg-surface-0"}
@@ -125,7 +134,7 @@ export function Select(props: SelectProps) {
 						>
 							{ o.name }
 						</p>) }
-				</div> }
+                </div> }
 			<select disabled={props.disabled} className={"hidden"} value={props.value}>
 				<option default={props.default === undefined}></option>
 				{ props.options.map((o, i) =>

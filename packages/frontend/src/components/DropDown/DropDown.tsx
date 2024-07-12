@@ -47,6 +47,7 @@ export function DropDown({
 		<section
 			ref={dropdown}
 			className={style.dropdown}
+			style={{ zIndex: 7_500 }}
 			onClick={() => visible ? close() : setVisible(true)}
 		>
 			<header className={style.button}>

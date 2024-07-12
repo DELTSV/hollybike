@@ -29,6 +29,7 @@
     transform-origin: top center;
     border-radius: 0 0 4px 4px;
     transition: 0.25s all;
+    z-index: 1;
     @apply bg-surface-0;
 
     > * {
