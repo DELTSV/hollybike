@@ -6,6 +6,7 @@ import 'package:hollybike/profile/bloc/profile_journeys_bloc/profile_journeys_st
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 import 'package:hollybike/user_journey/widgets/user_journey_card.dart';
+import 'package:hollybike/user_journey/widgets/user_journey_list.dart';
 
 class ProfileJourneys extends StatefulWidget {
   final MinimalUser user;
@@ -59,44 +60,10 @@ class _ProfileJourneysState extends State<ProfileJourneys> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ThemedRefreshIndicator(
             onRefresh: _onRefresh,
-            child: CustomScrollView(
-              slivers: [
-                SliverOverlapInjector(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.only(top: 16),
-                  sliver: SliverList.separated(
-                    itemBuilder: (context, index) {
-                      if (index >= state.userJourneys.length) {
-                        if (state.hasMore) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }
-
-                      final journey = state.userJourneys[index];
-                      return UserJourneyCard(
-                        showDate: true,
-                        journey: journey,
-                        color: Theme.of(context).cardColor,
-                        user: widget.user,
-                        onDeleted: () {
-                          context.read<ProfileJourneysBloc>().add(
-                                RefreshProfileJourneys(),
-                              );
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 16),
-                    itemCount:
-                        state.userJourneys.length + (state.hasMore ? 1 : 0),
-                  ),
-                )
-              ],
+            child: UserJourneyList(
+              hasMore: state.hasMore,
+              userJourneys: state.userJourneys,
+              user: widget.user,
             ),
           ),
         );
