@@ -24,6 +24,7 @@ import {
 	EUserScope, scopes, scopesName,
 } from "../../types/EUserScope.ts";
 import { useUser } from "../useUser.tsx";
+import { ListUserJourney } from "./ListUserJourney.tsx";
 
 const emptyUser: TUser = {
 	id: -1,
@@ -62,98 +63,101 @@ export function UserDetail() {
 		})), [self]);
 
 	return (
-		<Card>
-			<div className={"grid gap-2 grid-cols-2"}>
-				<p>Nom de l'utilisateur</p>
-				<Input
-					value={userData.username} onInput={e => setUserData(prev => ({
-						...prev!,
-						username: e.currentTarget.value,
-					}))}
-				/>
-				<p>Fonction</p>
-				<Input
-					placeholder={"Fonction"}
-					value={userData.role ?? ""}
-					onInput={e => setUserData(prev => ({
-						...prev!,
-						role: e.currentTarget.value,
-					}))}
-				/>
-				<p>Email</p>
-				<Input
-					value={userData.email} onInput={e => setUserData(prev => ({
-						...prev!,
-						email: e.currentTarget.value,
-					}))}
-				/>
-				<p>Mot de passe</p>
-				<Input
-					placeholder={"·······"}
-					type={passwordVisible ? "text" : "password"}
-					value={password} onInput={e => setPassword(e.currentTarget.value) }
-					rightIcon={passwordVisible ?
-						<VisibilityOff className={"cursor-pointer"} onClick={() => setPasswordVisible(false)}/> :
-						<Visibility className={"cursor-pointer"} onClick={() => setPasswordVisible(true)}/>}
-				/>
-				<p>Rôle</p>
-				<Select
-					value={userData.scope}
-					onChange={v => setUserData(prev => ({
-						...prev,
-						scope: (v ?? "User") as EUserScope,
-					}))}
-					options={scopeOptions}
-					default={userData.scope}
-				/>
-				<p>Statut</p>
-				<Select
-					value={userData.status}
-					onChange={v => setUserData(prev => ({
-						...prev,
-						status: (v ?? "Enabled") as EUserStatus,
-					}))}
-					options={[
-						{
-							name: "Activé",
-							value: EUserStatus.Enabled,
-						},
-						{
-							name: "Désactivé",
-							value: EUserStatus.Disabled,
-						},
-					]}
-					default={userData.status}
-				/>
-			</div>
-			<Button
-				onClick={() => {
-					const data: TUserUpdate = {
-						username: userData.username,
-						email: userData.email,
-						password: password.length !== 0 ? password : undefined,
-						status: userData.status,
-						scope: userData.scope,
-						association: userData.association.id,
-						role: userData.role,
-					};
-					api(`/users/${ userData.id}`, {
-						method: "PATCH",
-						body: data,
-					}).then((res) => {
-						if (res.status === 200) {
-							doReload();
-							toast("L'utilisateur à été mis à jour", { type: "success" });
-						} else if (res.status === 404) {
-							toast(res.message, { type: "warning" });
-						} else {
-							toast(`Erreur: ${res.message}`, { type: "error" });
-						}
-					});
-				}}
-			>
-				Sauvegarder
-			</Button>
-		</Card>
+		<div className={"flex items-start gap-2"}>
+			<Card>
+				<div className={"grid gap-2 grid-cols-2"}>
+					<p>Nom de l'utilisateur</p>
+					<Input
+						value={userData.username} onInput={e => setUserData(prev => ({
+							...prev!,
+							username: e.currentTarget.value,
+						}))}
+					/>
+					<p>Fonction</p>
+					<Input
+						placeholder={"Fonction"}
+						value={userData.role ?? ""}
+						onInput={e => setUserData(prev => ({
+							...prev!,
+							role: e.currentTarget.value,
+						}))}
+					/>
+					<p>Email</p>
+					<Input
+						value={userData.email} onInput={e => setUserData(prev => ({
+							...prev!,
+							email: e.currentTarget.value,
+						}))}
+					/>
+					<p>Mot de passe</p>
+					<Input
+						placeholder={"·······"}
+						type={passwordVisible ? "text" : "password"}
+						value={password} onInput={e => setPassword(e.currentTarget.value) }
+						rightIcon={passwordVisible ?
+							<VisibilityOff className={"cursor-pointer"} onClick={() => setPasswordVisible(false)}/> :
+							<Visibility className={"cursor-pointer"} onClick={() => setPasswordVisible(true)}/>}
+					/>
+					<p>Rôle</p>
+					<Select
+						value={userData.scope}
+						onChange={v => setUserData(prev => ({
+							...prev,
+							scope: (v ?? "User") as EUserScope,
+						}))}
+						options={scopeOptions}
+						default={userData.scope}
+					/>
+					<p>Statut</p>
+					<Select
+						value={userData.status}
+						onChange={v => setUserData(prev => ({
+							...prev,
+							status: (v ?? "Enabled") as EUserStatus,
+						}))}
+						options={[
+							{
+								name: "Activé",
+								value: EUserStatus.Enabled,
+							},
+							{
+								name: "Désactivé",
+								value: EUserStatus.Disabled,
+							},
+						]}
+						default={userData.status}
+					/>
+				</div>
+				<Button
+					onClick={() => {
+						const data: TUserUpdate = {
+							username: userData.username,
+							email: userData.email,
+							password: password.length !== 0 ? password : undefined,
+							status: userData.status,
+							scope: userData.scope,
+							association: userData.association.id,
+							role: userData.role,
+						};
+						api(`/users/${ userData.id}`, {
+							method: "PATCH",
+							body: data,
+						}).then((res) => {
+							if (res.status === 200) {
+								doReload();
+								toast("L'utilisateur à été mis à jour", { type: "success" });
+							} else if (res.status === 404) {
+								toast(res.message, { type: "warning" });
+							} else {
+								toast(`Erreur: ${res.message}`, { type: "error" });
+							}
+						});
+					}}
+				>
+					Sauvegarder
+				</Button>
+			</Card>
+			<ListUserJourney/>
+		</div>
 	);
 }
