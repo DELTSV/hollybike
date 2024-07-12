@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class DeleteEventNotification(
 	val name: String,
 	val description: String? = null,
-): Body {
+): NotificationBody(0) {
 	constructor(event: Event): this(
 		event.name,
 		event.description

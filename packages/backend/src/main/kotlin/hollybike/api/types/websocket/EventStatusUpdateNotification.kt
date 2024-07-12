@@ -15,7 +15,7 @@ data class EventStatusUpdateNotification(
 	val status: EEventStatus,
 	@SerialName("old_status")
 	val oldStatus: EEventStatus
-): Body {
+): NotificationBody(0) {
 	constructor(event: Event, oldStatus: EEventStatus): this(
 		event.id.value,
 		event.name,

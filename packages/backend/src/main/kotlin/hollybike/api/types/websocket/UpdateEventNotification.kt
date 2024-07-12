@@ -17,7 +17,7 @@ data class UpdateEventNotification(
 	val ownerId: Int,
 	@SerialName("owner_name")
 	val ownerName: String
-): Body {
+): NotificationBody(0) {
 	constructor(entity: Event): this(
 		entity.id.value,
 		entity.name,

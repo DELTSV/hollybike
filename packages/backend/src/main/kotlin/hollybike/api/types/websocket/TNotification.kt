@@ -2,6 +2,7 @@ package hollybike.api.types.websocket
 
 import hollybike.api.json
 import hollybike.api.repository.Notification
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,3 +17,9 @@ data class TNotification(
 		notification.id.value
 	)
 }
+
+@Serializable
+sealed class NotificationBody(
+	@SerialName("notification_id")
+	var notificationId: Int
+): Body

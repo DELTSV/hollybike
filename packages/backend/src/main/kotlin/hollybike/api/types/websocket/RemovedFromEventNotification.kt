@@ -8,4 +8,4 @@ import kotlinx.serialization.Serializable
 data class RemovedFromEventNotification(
 	val id: Int,
 	val name: String
-): Body
+): NotificationBody(0)

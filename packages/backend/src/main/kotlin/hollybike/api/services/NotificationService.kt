@@ -7,7 +7,7 @@ import hollybike.api.repository.User
 import hollybike.api.repository.Users
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
-import hollybike.api.types.websocket.Body
+import hollybike.api.types.websocket.NotificationBody
 import hollybike.api.types.websocket.TNotification
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
@@ -29,25 +29,26 @@ class NotificationService(
 		return new
 	}
 
-	suspend fun send(user: User, notification: Body) {
+	suspend fun send(user: User, notification: NotificationBody) {
 		val n = transaction(db) {
 			Notification.new {
 				this.user = user
 				this.data = json.encodeToString(notification)
 			}
 		}
+		notification.notificationId = n.id.value
 		getUserChannel(user.id.value).emit(TNotification(notification, user.id.value, n.id.value))
 	}
 
-	suspend fun send(users: List<User>, notification: Body, caller: User) {
+	suspend fun send(users: List<User>, notification: NotificationBody, caller: User) {
 		users.forEach {
-			if(caller.id != it.id){
+//			if(caller.id != it.id){
 				send(it, notification)
-			}
+//			}
 		}
 	}
 
-	suspend fun sendToAssociation(associationId: Int, notification: Body, caller: User) {
+	suspend fun sendToAssociation(associationId: Int, notification: NotificationBody, caller: User) {
 		val users = transaction(db) {
 			User.find { (Users.association eq associationId) and (Users.status neq EUserStatus.Disabled.value) }.toList()
 		}
