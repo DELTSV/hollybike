@@ -4,10 +4,10 @@ import { Card } from "../components/Card/Card.tsx";
 import { distanceToHumanReadable } from "../utils/distanceToHumanReadable.ts";
 import { TUserJourney } from "../types/TUserJourney.ts";
 import Map, {
-	Layer, LineLayer, MapRef, Source,
+	Layer, LineLayer, MapGeoJSONFeature, MapRef, Source,
 } from "react-map-gl";
 import {
-	useCallback, useState,
+	useCallback, useEffect, useState,
 } from "preact/hooks";
 import { useRef } from "react";
 
@@ -36,6 +36,16 @@ export function UserJourney() {
 		latitude: 44.3392763,
 		zoom: 4,
 	});
+	const [data, setData] = useState<MapGeoJSONFeature>();
+
+	useEffect(() => {
+		if (journey.data && journey.data.file) {
+			fetch(journey.data.file).then( async (res) => {
+				const data = await res.json();
+				setData(data);
+			});
+		}
+	}, [journey, setData]);
 
 	const onLoad = useCallback(() => {
 		if (mapRef.current !== null) {
@@ -45,6 +55,22 @@ export function UserJourney() {
 			});
 		}
 	}, [mapRef]);
+
+	useEffect(() => {
+		if (data && data.bbox && mapRef.current) {
+			if (data.bbox.length == 4) {
+				mapRef.current.fitBounds(data.bbox, { padding: 40 });
+			} else if (data.bbox.length === 6) {
+				const bounds: [number, number, number, number] = [
+					data.bbox[0],
+					data.bbox[1],
+					data.bbox[3],
+					data.bbox[4],
+				];
+				mapRef.current.fitBounds(bounds, { padding: 40 });
+			}
+		}
+	}, [data, mapRef]);
 
 	return (
 		<div className={"mx-2 flex flex-col gap-2"}>

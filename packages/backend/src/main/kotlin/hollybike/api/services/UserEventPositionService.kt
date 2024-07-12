@@ -315,6 +315,8 @@ class UserEventPositionService(
 			)
 		)
 
+		geojson.bbox = geojson.getBoundingBox()
+
 		val file = uploadUserJourney(geojson, event.id.value, user.id.value)
 
 		return transaction(db) {
