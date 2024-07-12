@@ -26,8 +26,9 @@ export function SideBar() {
 		<div
 			className={
 				clsx(
-					"w-screen md:w-48 fixed md:static left-0 h-screen bg-mantle/80 md:block",
-					visible ? "block" : "hidden",
+					"w-screen md:w-48 fixed md:static left-0 h-screen md:bg-transparent",
+					"transition-background duration-200",
+					visible ? "bg-mantle/80" : "bg-transparent pointer-events-none",
 				)
 			} style={{ zIndex: 5_000 }}
 			onClick={() => setVisible(false)}
@@ -35,8 +36,9 @@ export function SideBar() {
 			<aside
 				className={clsx(
 					"w-48 min-w-48 bg-gradient-to-b from-crust to-mantle h-full",
-					"flex-col md:flex",
-					visible && "flex" || "hidden",
+					"flex-col flex md:translate-x-0",
+					"transition-transform duration-200",
+					visible && "translate-x-0" || "-translate-x-full",
 				)}
 			>
 				{ content }
