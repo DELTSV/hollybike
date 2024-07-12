@@ -48,11 +48,11 @@ class UserJourneyController(
 	}
 
 	private fun Route.getUserUserJourneys() {
-		get<UserJourneys.User> {
+		get<UserJourneys.User> { data ->
 			val searchParam = call.request.queryParameters.getSearchParam(emptyMap())
 
-			val userJourneys = userEventPositionService.getUserUserJourneys(call.user.id.value, searchParam)
-			val totalUserJourneys = userEventPositionService.countUserUserJourneys(call.user.id.value, searchParam)
+			val userJourneys = userEventPositionService.getUserJourneys(data.id, searchParam)
+			val totalUserJourneys = userEventPositionService.countUserJourneys(data.id, searchParam)
 
 			call.respond(
 				TLists(

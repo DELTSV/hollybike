@@ -135,17 +135,16 @@ class UserEventPositionService(
 		UserJourney.find { (UsersJourneys.id eq userJourneyId) and (UsersJourneys.user eq caller.id) }.firstOrNull()
 	}
 
-	fun getUserUserJourneys(userId: Int, searchParams: SearchParam): List<UserJourney> = transaction(db) {
+	fun getUserJourneys(userId: Int, searchParams: SearchParam): List<UserJourney> = transaction(db) {
 		UserJourney.wrapRows(
 			UsersJourneys
 				.selectAll()
 				.where(UsersJourneys.user eq userId)
-				.orderBy(UsersJourneys.createdAt, SortOrder.DESC).
-				applyParam(searchParams)
+				.applyParam(searchParams)
 		).toList()
 	}
 
-	fun countUserUserJourneys(userId: Int, searchParams: SearchParam): Long = transaction(db) {
+	fun countUserJourneys(userId: Int, searchParams: SearchParam): Long = transaction(db) {
 		UsersJourneys
 			.selectAll().where { UsersJourneys.user eq userId }
 			.applyParam(searchParams, pagination = false)

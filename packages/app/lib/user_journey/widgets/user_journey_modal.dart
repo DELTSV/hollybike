@@ -343,10 +343,18 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   Widget _getIsBetterLabel(bool isCurrentUser) {
     return Text(
       _isSolo
-          ? "Vous êtes le seul à avoir terminé le parcours !"
+          ? _getIsBetterThanMeanSoloText(isCurrentUser)
           : "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% des participants !",
       style: Theme.of(context).textTheme.bodyMedium,
     );
+  }
+
+  String _getIsBetterThanMeanSoloText(bool isCurrentUser) {
+    if (isCurrentUser) {
+      return 'Vous êtes le/la seul·e à avoir terminé le parcours !';
+    } else {
+      return '${widget.user?.username} est le/la seul·e à avoir terminé le parcours !';
+    }
   }
 
   String _getIsBetterMeanText(bool isCurrentUser) {
