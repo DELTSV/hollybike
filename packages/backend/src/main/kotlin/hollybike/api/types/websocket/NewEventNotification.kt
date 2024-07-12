@@ -13,8 +13,10 @@ data class NewEventNotification(
 	val description: String? = null,
 	val start: Instant,
 	val image: String? = null,
+	@SerialName("owner_id")
 	val ownerId: Int,
-	val owneName: String
+	@SerialName("owner_name")
+	val ownerName: String
 ): NotificationBody(0) {
 	constructor(entity: Event): this(
 		entity.id.value,
