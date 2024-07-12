@@ -11,6 +11,7 @@
 import 'dart:io' as _i21;
 
 import 'package:auto_route/auto_route.dart' as _i14;
+import 'package:flutter/foundation.dart' as _i22;
 import 'package:flutter/material.dart' as _i15;
 import 'package:hollybike/auth/screens/login_screen.dart' as _i8;
 import 'package:hollybike/auth/screens/signup_screen.dart' as _i12;
@@ -600,7 +601,7 @@ class SignupRouteArgs {
 /// [_i13.UserJourneyMapScreen]
 class UserJourneyMapRoute extends _i14.PageRouteInfo<UserJourneyMapRouteArgs> {
   UserJourneyMapRoute({
-    _i15.Key? key,
+    _i22.Key? key,
     required String fileUrl,
     required String title,
     List<_i14.PageRouteInfo>? children,
@@ -627,7 +628,7 @@ class UserJourneyMapRouteArgs {
     required this.title,
   });
 
-  final _i15.Key? key;
+  final _i22.Key? key;
 
   final String fileUrl;
 

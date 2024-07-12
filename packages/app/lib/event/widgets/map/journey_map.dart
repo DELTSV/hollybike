@@ -251,6 +251,9 @@ class _JourneyMapState extends State<JourneyMap> {
             .getPositionUser(position);
         if (user is! UserLoadSuccessEvent) return null;
 
+        final profilePicture =
+            BlocProvider.of<UserPositionsBloc>(context).getUserPicture(user);
+
         return PointAnnotationOptions(
           geometry: Point(
             coordinates: Position(
@@ -258,7 +261,9 @@ class _JourneyMapState extends State<JourneyMap> {
               position.latitude,
             ),
           ),
-          image: icon.buffer.asUint8List(),
+          image: profilePicture is UserPictureLoadSuccessEvent
+              ? profilePicture.image as Uint8List
+              : icon.buffer.asUint8List(),
           iconAnchor: IconAnchor.BOTTOM,
           textField: user.user.username,
           textAnchor: TextAnchor.TOP,

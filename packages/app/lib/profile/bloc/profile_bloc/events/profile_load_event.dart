@@ -16,12 +16,6 @@ abstract class ProfileLoadEvent extends ProfileEvent {
 
 class ProfileLoadingEvent extends ProfileLoadEvent {
   const ProfileLoadingEvent({required super.session});
-
-  ProfileLoadSuccessEvent succeeded(Profile profile) =>
-      ProfileLoadSuccessEvent(session: session, profile: profile);
-
-  ProfileLoadErrorEvent failed(Error error) =>
-      ProfileLoadErrorEvent(session: session, error: error);
 }
 
 class ProfileLoadSuccessEvent extends ProfileLoadEvent {
@@ -41,23 +35,3 @@ class ProfileLoadErrorEvent extends ProfileLoadEvent {
     required this.error,
   });
 }
-
-extension ProfileLoadEventFactories on ProfileLoadEvent {
-  static ProfileLoadingEvent loading({
-    required AuthSession session,
-  }) =>
-      ProfileLoadingEvent(session: session);
-
-  static ProfileLoadSuccessEvent success({
-    required AuthSession session,
-    required Profile profile,
-  }) =>
-      ProfileLoadSuccessEvent(session: session, profile: profile);
-
-  static ProfileLoadErrorEvent error({
-    required AuthSession session,
-    required Error error,
-  }) =>
-      ProfileLoadErrorEvent(session: session, error: error);
-}
-
