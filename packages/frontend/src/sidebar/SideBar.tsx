@@ -8,7 +8,6 @@ import { TOnPremise } from "../types/TOnPremise.ts";
 import { clsx } from "clsx";
 import { CloseRounded } from "@material-ui/icons";
 import { Link } from "react-router-dom";
-import icon from "../icon.png";
 
 export function SideBar() {
 	const { user } = useUser();
@@ -52,7 +51,7 @@ export function SideBar() {
 							"relative justify-center items-center bg-logo",
 						)}
 					>
-						<img alt={"HOLLYBIKE"} className={"text-black text-3xl italic"} src={icon}/>
+						<img alt={"HOLLYBIKE"} className={"text-black text-3xl italic"} src={"/icon.png"}/>
 					</p>
 				</Link>
 				<button

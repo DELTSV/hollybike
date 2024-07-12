@@ -13,6 +13,7 @@ import { ReactElement } from "react";
 import { useSideBar } from "../sidebar/useSideBar.tsx";
 import "./Header.css";
 import { clsx } from "clsx";
+import icon from "../../public/icon.png";
 
 interface HeaderProps {
 	setTheme: (theme: Theme) => void
