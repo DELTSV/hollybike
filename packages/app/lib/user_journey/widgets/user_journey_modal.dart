@@ -405,9 +405,8 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   }
 
   String _getTitle() {
-    return widget.isCurrentEvent
-        ? 'Votre parcours'
-        : 'Parcours de ${widget.user?.username}';
+    final date = DateFormat('dd-MM-yyyy').format(widget.journey.createdAt.toLocal());
+    return 'Parcours du $date';
   }
 
   Widget _buildActionButton(BuildContext context, bool isLoading) {

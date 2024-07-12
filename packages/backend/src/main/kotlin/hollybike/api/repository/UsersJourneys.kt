@@ -1,6 +1,7 @@
 package hollybike.api.repository
 
 import hollybike.api.signatureService
+import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -42,3 +43,7 @@ class UserJourney(id: EntityID<Int>) : IntEntity(id) {
 
 	companion object : IntEntityClass<UserJourney>(UsersJourneys)
 }
+
+val userJourneyMapper: Mapper = mapOf(
+	"created_at" to UsersJourneys.createdAt,
+)

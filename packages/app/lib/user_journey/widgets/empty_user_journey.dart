@@ -4,17 +4,19 @@ import 'package:lottie/lottie.dart';
 
 class EmptyUserJourney extends StatelessWidget {
   final String? username;
+  final Color color;
 
   const EmptyUserJourney({
     super.key,
     this.username,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
       strokeWidth: 2,
-      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
+      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.3),
       borderType: BorderType.RRect,
       radius: const Radius.circular(14),
       dashPattern: const [5, 5],
@@ -22,7 +24,7 @@ class EmptyUserJourney extends StatelessWidget {
         height: double.infinity,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: color,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(

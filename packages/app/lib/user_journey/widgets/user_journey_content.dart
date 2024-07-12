@@ -13,6 +13,7 @@ class UserJourneyContent extends StatelessWidget {
   final Color color;
   final bool isCurrentEvent;
   final void Function()? onDeleted;
+  final bool showDate;
 
   const UserJourneyContent({
     super.key,
@@ -21,6 +22,7 @@ class UserJourneyContent extends StatelessWidget {
     this.color = Colors.transparent,
     required this.isCurrentEvent,
     this.onDeleted,
+    required this.showDate,
   });
 
   @override
@@ -33,100 +35,110 @@ class UserJourneyContent extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: IntrinsicHeight(
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showDate)
+                Text(
+                  'Trajet du ${existingJourney.dateLabel}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              IntrinsicHeight(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      existingJourney.distanceLabel,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      softWrap: true,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          existingJourney.distanceLabel,
+                          style: Theme.of(context).textTheme.titleMedium,
+                          softWrap: true,
+                        ),
+                        Text(
+                          existingJourney.totalTimeLabel,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          softWrap: true,
+                        ),
+                      ],
                     ),
-                    Text(
-                      existingJourney.totalTimeLabel,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      softWrap: true,
+                    const Spacer(),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: addSeparators(
+                        [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.north_east_rounded,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${existingJourney.totalElevationGain?.round()} m',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.terrain_rounded,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                '${existingJourney.maxElevation?.round()} m',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: 3),
+                      ),
                     ),
+                    const SizedBox(width: 16),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: addSeparators(
+                        [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.speed_rounded,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                existingJourney.maxSpeedLabel,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.gps_fixed_rounded,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                existingJourney.maxGForceLabel,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: 3),
+                      ),
+                    )
                   ],
                 ),
-                const Spacer(),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: addSeparators(
-                    [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.north_east_rounded,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${existingJourney.totalElevationGain?.round()} m',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.terrain_rounded,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            '${existingJourney.maxElevation?.round()} m',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(height: 3),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: addSeparators(
-                    [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.speed_rounded,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            existingJourney.maxSpeedLabel,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.gps_fixed_rounded,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            existingJourney.maxGForceLabel,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(height: 3),
-                  ),
-                )
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         Positioned.fill(

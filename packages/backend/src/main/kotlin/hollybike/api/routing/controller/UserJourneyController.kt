@@ -2,6 +2,7 @@ package hollybike.api.routing.controller
 
 import hollybike.api.json
 import hollybike.api.plugins.user
+import hollybike.api.repository.userJourneyMapper
 import hollybike.api.routing.resources.UserJourneys
 import hollybike.api.services.UserEventPositionService
 import hollybike.api.services.storage.StorageService
@@ -49,7 +50,7 @@ class UserJourneyController(
 
 	private fun Route.getUserUserJourneys() {
 		get<UserJourneys.User> { data ->
-			val searchParam = call.request.queryParameters.getSearchParam(emptyMap())
+			val searchParam = call.request.queryParameters.getSearchParam(userJourneyMapper)
 
 			val userJourneys = userEventPositionService.getUserJourneys(data.id, searchParam)
 			val totalUserJourneys = userEventPositionService.countUserJourneys(data.id, searchParam)

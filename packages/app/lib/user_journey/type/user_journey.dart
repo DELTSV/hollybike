@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 
 import '../../shared/types/json_map.dart';
 import '../../journey/type/minimal_journey.dart';
@@ -36,6 +37,16 @@ class UserJourney with _$UserJourney {
 
   get avgGForceLabel => _gForceLabel(avgGForce);
   get maxGForceLabel => _gForceLabel(maxGForce);
+
+  get dateLabel {
+    DateFormat dateFormat = DateFormat('d MMMM yyyy', 'fr_FR');
+    DateFormat timeFormat = DateFormat('HH\'h\'mm', 'fr_FR');
+
+    String formattedDate = dateFormat.format(createdAt.toLocal());
+    String formattedTime = timeFormat.format(createdAt.toLocal());
+
+    return '$formattedDate à $formattedTime';
+  }
 
   get totalTimeLabel {
     if (totalTime == null) {

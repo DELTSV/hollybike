@@ -79,6 +79,7 @@ class _ProfileJourneysState extends State<ProfileJourneys> {
 
                       final journey = state.userJourneys[index];
                       return UserJourneyCard(
+                        showDate: true,
                         journey: journey,
                         color: Theme.of(context).cardColor,
                         user: widget.user,
