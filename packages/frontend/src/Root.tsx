@@ -10,8 +10,8 @@ export function Root() {
 	return (
 		<div>
 			<div className={clsx(
-				"overflow-hidden mx-4 min-h-screen",
-				"md:ml-56",
+				"overflow-hidden min-h-screen m-4",
+				"flex flex-col gap-2 md:ml-56",
 				"transition-ml duration-200",
 			)}>
 				<Header setTheme={theme.set}/>

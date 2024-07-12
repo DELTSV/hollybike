@@ -75,7 +75,9 @@ export function SideBar() {
 						Fermer
 					</p>
 				</button>
-				{content}
+				<div className={clsx('h-full flex flex-col overflow-y-auto')}>
+					{content}
+				</div>
 			</aside>
 		</div>
 	);
