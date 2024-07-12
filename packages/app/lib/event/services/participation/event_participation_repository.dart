@@ -193,4 +193,24 @@ class EventParticipationRepository {
 
     return participations;
   }
+
+  void onUserJourneyRemoved(int userJourneyId) {
+    for (final counter in _eventParticipationsStreamMapper.counters) {
+      counter.add(
+          counter.value.map((participation) {
+            if (participation.journey?.id == userJourneyId) {
+              return EventParticipation(
+                isImagesPublic: participation.isImagesPublic,
+                user: participation.user,
+                role: participation.role,
+                joinedDateTime: participation.joinedDateTime,
+                journey: null,
+              );
+            }
+
+            return participation;
+          }).toList()
+      );
+    }
+  }
 }

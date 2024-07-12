@@ -517,7 +517,7 @@ class EventRepository {
     return userJourney;
   }
 
-  Future<void> resetUserJourney(
+  Future<UserJourney?> resetUserJourney(
     int eventId,
   ) async {
     await eventApi.resetUserJourney(eventId);
@@ -527,7 +527,7 @@ class EventRepository {
     final caller = details?.callerParticipation;
 
     if (caller == null) {
-      return;
+      return null;
     }
 
     _eventDetailsStreamMapper.add(
@@ -543,6 +543,8 @@ class EventRepository {
         ),
       ),
     );
+
+    return caller.journey;
   }
 
   onUserPositionSent(int eventId) {
@@ -756,6 +758,31 @@ class EventRepository {
                 : e)
             .toList(),
       );
+    }
+  }
+
+  void onUserJourneyRemoved(int userJourneyId) {
+    for (final counter in _eventDetailsStreamMapper.counters) {
+      final participation = counter.value?.callerParticipation;
+
+      if (participation == null) {
+        continue;
+      }
+
+      if (participation.journey?.id == userJourneyId) {
+        counter.add(
+          counter.value?.copyWith(
+            callerParticipation: EventCallerParticipation(
+              userId: participation.userId,
+              isImagesPublic: participation.isImagesPublic,
+              role: participation.role,
+              joinedDateTime: participation.joinedDateTime,
+              journey: null,
+              hasRecordedPositions: false,
+            ),
+          ),
+        );
+      }
     }
   }
 }

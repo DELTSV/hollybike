@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
+import 'package:hollybike/event/services/participation/event_participation_repository.dart';
 import 'package:hollybike/user_journey/bloc/user_journey_details_event.dart';
 import 'package:hollybike/user_journey/bloc/user_journey_details_state.dart';
 
@@ -10,12 +12,17 @@ class UserJourneyDetailsBloc
     extends Bloc<UserJourneyDetailsEvent, UserJourneyDetailsState> {
   final int numberOfUserJourneysPerRequest = 20;
 
-  final UserJourneyRepository userJourneyRepository;
   final int journeyId;
 
+  final UserJourneyRepository userJourneyRepository;
+  final EventRepository eventRepository;
+  final EventParticipationRepository eventParticipationRepository;
+
   UserJourneyDetailsBloc({
-    required this.userJourneyRepository,
     required this.journeyId,
+    required this.userJourneyRepository,
+    required this.eventRepository,
+    required this.eventParticipationRepository,
   }) : super(UserJourneyDetailsInitial()) {
     on<DeleteUserJourney>(_onDeleteUserJourney);
     on<DownloadUserJourney>(_onDownloadUserJourney);
@@ -29,6 +36,10 @@ class UserJourneyDetailsBloc
 
     try {
       await userJourneyRepository.deleteUserJourney(journeyId);
+
+      eventRepository.onUserJourneyRemoved(journeyId);
+      eventParticipationRepository.onUserJourneyRemoved(journeyId);
+
       emit(UserJourneyDeleted(state));
     } catch (e) {
       log('Failed to delete user journey', error: e);

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_event.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
+import 'package:hollybike/event/services/participation/event_participation_repository.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 import 'package:hollybike/user_journey/bloc/user_journey_details_bloc.dart';
@@ -73,6 +75,11 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
       create: (context) => UserJourneyDetailsBloc(
         userJourneyRepository:
             RepositoryProvider.of<UserJourneyRepository>(context),
+        eventParticipationRepository:
+            RepositoryProvider.of<EventParticipationRepository>(
+          context,
+        ),
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
         journeyId: widget.journey.id,
       ),
       child: BlocConsumer(

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:hollybike/event/services/participation/event_participation_repository.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
@@ -11,12 +12,15 @@ import 'event_details_state.dart';
 
 class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
   final EventRepository _eventRepository;
+  final EventParticipationRepository _eventParticipationRepository;
   final int eventId;
 
   EventDetailsBloc({
     required EventRepository eventRepository,
+    required EventParticipationRepository eventParticipationRepository,
     required this.eventId,
   })  : _eventRepository = eventRepository,
+        _eventParticipationRepository = eventParticipationRepository,
         super(const EventDetailsState()) {
     on<SubscribeToEvent>(_onSubscribeToEvent);
     on<LoadEventDetails>(_onLoadEventDetails);
@@ -227,7 +231,13 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     emit(EventOperationInProgress(state));
 
     try {
-      await _eventRepository.resetUserJourney(eventId);
+      final resetJourney = await _eventRepository.resetUserJourney(eventId);
+
+      if (resetJourney == null) {
+        log('User journey not initially set');
+      } else {
+        _eventParticipationRepository.onUserJourneyRemoved(resetJourney.id);
+      }
 
       emit(UserJourneyReset(state));
     } catch (e) {
