@@ -8,13 +8,14 @@ import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.da
 import 'package:hollybike/shared/websocket/recieve/websocket_subscribed.dart';
 import 'package:hollybike/shared/websocket/websocket_client.dart';
 import 'package:hollybike/shared/websocket/websocket_message.dart';
+import 'package:http/http.dart';
 
 import '../../../auth/types/auth_session.dart';
 import '../../../profile/services/profile_repository.dart';
 import '../../../user/types/minimal_user.dart';
 
 part 'events/user_load_event.dart';
-
+part 'events/user_picture_load_event.dart';
 part 'events/user_positions_event.dart';
 
 class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
@@ -28,6 +29,29 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
   }) : super(UserPositionsInitial()) {
     on<SubscribeToUserPositions>(_onSubscribeToUserPositions);
     on<UserLoadEvent>(_onUserLoadEvent);
+    on<UserLoadSuccessEvent>(_onUserSuccessLoadEvent);
+    on<UserPictureLoadEvent>(_onUserPictureLoadEvent);
+  }
+
+  UserLoadEvent? getPositionUser(WebsocketReceivePosition position) {
+    try {
+      return state.usersLoadEvent
+          .firstWhere((user) => user.id == position.userId);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  UserPictureLoadEvent? getUserPicture(UserLoadSuccessEvent user) {
+    final profilePicture = user.user.profilePicture;
+    if(profilePicture == null) return null;
+
+    try {
+      return state.usersPicturesLoadEvent
+          .firstWhere((picture) => picture.picturePath == profilePicture);
+    } catch (_) {
+      return null;
+    }
   }
 
   void _onSubscribeToUserPositions(
@@ -70,13 +94,6 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
           return UserPositionsError(state, 'Error: Unknown message type');
       }
     });
-  }
-
-  void _onUserLoadEvent(
-    UserLoadEvent event,
-    Emitter<UserPositionsState> emit,
-  ) {
-    emit(UserProfilesUpdated(state, event));
   }
 
   Future<Stream<WebsocketMessage>> _listenAndSubscribe(
@@ -183,11 +200,37 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
     }
   }
 
-  UserLoadEvent? getPositionUser(WebsocketReceivePosition position) {
-    try {
-      return state.usersLoadEvent.firstWhere((user) => user.id == position.userId);
-    } catch (_) {
-      return null;
-    }
+  void _onUserLoadEvent(
+    UserLoadEvent event,
+    Emitter<UserPositionsState> emit,
+  ) {
+    emit(UserProfilesUpdated(state, event));
+  }
+
+  void _onUserSuccessLoadEvent(
+    UserLoadSuccessEvent event,
+    Emitter<UserPositionsState> emit,
+  ) {
+    final picturePath = event.user.profilePicture;
+    if (picturePath == null ||
+        state.usersPicturesLoadEvent
+            .any((picture) => picture.picturePath == picturePath)) return;
+
+    get(Uri.parse(picturePath)).then(
+      (response) {
+        add(UserPictureLoadSuccessEvent(picturePath: picturePath, image: response.bodyBytes));
+      },
+      onError: (error) {
+        add(UserPictureLoadErrorEvent(picturePath: picturePath, error: error));
+      },
+    );
+    add(UserPictureLoadingEvent(picturePath: picturePath));
+  }
+
+  void _onUserPictureLoadEvent(
+    UserPictureLoadEvent event,
+    Emitter<UserPositionsState> emit,
+  ) {
+    emit(UserPicturesUpdated(state, event));
   }
 }

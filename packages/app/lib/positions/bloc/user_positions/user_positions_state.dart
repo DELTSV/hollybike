@@ -9,11 +9,13 @@ enum UserPositionsStatus { loading, success, error, initial }
 class UserPositionsState {
   final List<WebsocketReceivePosition> userPositions;
   final List<UserLoadEvent> usersLoadEvent;
+  final List<UserPictureLoadEvent> usersPicturesLoadEvent;
   final UserPositionsStatus status;
 
   const UserPositionsState({
     this.userPositions = const [],
     this.usersLoadEvent = const [],
+    this.usersPicturesLoadEvent = const [],
     this.status = UserPositionsStatus.initial,
   });
 
@@ -21,21 +23,24 @@ class UserPositionsState {
       : this(
           userPositions: state.userPositions,
           usersLoadEvent: state.usersLoadEvent,
+          usersPicturesLoadEvent: state.usersPicturesLoadEvent,
           status: state.status,
         );
 
   UserPositionsState copyWith({
     UserPositionsStatus? status,
     List<UserLoadEvent>? usersLoadEvent,
+    List<UserPictureLoadEvent>? usersPicturesLoadEvent,
     List<WebsocketReceivePosition>? userPositions,
   }) {
     return UserPositionsState(
       status: status ?? this.status,
-      usersLoadEvent: usersLoadEvent ?? this.usersLoadEvent,
       userPositions: userPositions ?? this.userPositions,
+      usersLoadEvent: usersLoadEvent ?? this.usersLoadEvent,
+      usersPicturesLoadEvent:
+          usersPicturesLoadEvent ?? this.usersPicturesLoadEvent,
     );
   }
-
 }
 
 class UserPositionsInitial extends UserPositionsState {}
@@ -71,6 +76,18 @@ class UserProfilesUpdated extends UserPositionsState {
   ) : super.state(
           oldState.copyWith(
             usersLoadEvent: oldState.usersLoadEvent.copyUpdated(userLoadEvent),
+          ),
+        );
+}
+
+class UserPicturesUpdated extends UserPositionsState {
+  UserPicturesUpdated(
+    UserPositionsState oldState,
+    UserPictureLoadEvent userPictureLoadEvent,
+  ) : super.state(
+          oldState.copyWith(
+            usersPicturesLoadEvent: oldState.usersPicturesLoadEvent
+                .copyUpdated(userPictureLoadEvent),
           ),
         );
 }

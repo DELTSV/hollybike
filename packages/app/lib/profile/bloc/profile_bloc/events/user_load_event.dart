@@ -18,18 +18,6 @@ abstract class UserLoadEvent extends ProfileEvent {
 
 class UserLoadingEvent extends UserLoadEvent {
   const UserLoadingEvent({required super.observerSession, required super.id});
-
-  UserLoadSuccessEvent succeeded(MinimalUser user) => UserLoadSuccessEvent(
-        observerSession: observerSession,
-        id: id,
-        user: user,
-      );
-
-  UserLoadErrorEvent failed(Error error) => UserLoadErrorEvent(
-        observerSession: observerSession,
-        id: id,
-        error: error,
-      );
 }
 
 class UserLoadSuccessEvent extends UserLoadEvent {
@@ -50,34 +38,4 @@ class UserLoadErrorEvent extends UserLoadEvent {
     required super.id,
     required this.error,
   });
-}
-
-extension UserLoadEventFactories on UserLoadEvent {
-  static UserLoadingEvent loading({
-    required AuthSession observerSession,
-    required int id,
-  }) =>
-      UserLoadingEvent(observerSession: observerSession, id: id);
-
-  static UserLoadSuccessEvent success({
-    required AuthSession observerSession,
-    required int id,
-    required MinimalUser user,
-  }) =>
-      UserLoadSuccessEvent(
-        observerSession: observerSession,
-        id: id,
-        user: user,
-      );
-
-  static UserLoadErrorEvent error({
-    required AuthSession observerSession,
-    required int id,
-    required Error error,
-  }) =>
-      UserLoadErrorEvent(
-        observerSession: observerSession,
-        id: id,
-        error: error,
-      );
 }

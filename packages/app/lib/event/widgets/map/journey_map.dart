@@ -49,6 +49,8 @@ final then = WebsocketReceivePosition(
 );
 
 class _JourneyMapState extends State<JourneyMap> {
+  late final List<int> placeholderProfilePicture;
+  Map<int, PointAnnotation> currentPositions = {};
   bool _mapLoading = true;
 
   @override
@@ -87,6 +89,18 @@ class _JourneyMapState extends State<JourneyMap> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    rootBundle
+        .load(
+      "assets/images/placeholder_map_pin.png",
+    )
+        .then((ressource) {
+      placeholderProfilePicture = ressource.buffer.asUint8List();
+    });
+  }
+
   Future<String> _getGeoJsonData(String fileUrl) async {
     final response = await http.get(Uri.parse(fileUrl));
     return response.body;
@@ -101,6 +115,9 @@ class _JourneyMapState extends State<JourneyMap> {
       _getGeoJsonData(widget.journey.file!),
     ).then((values) async {
       final (_, geoJsonRaw) = values;
+      setState(() {
+        currentPositions = {};
+      });
 
       await Future.wait([
         map.style.addSource(
@@ -159,12 +176,12 @@ class _JourneyMapState extends State<JourneyMap> {
           (pointManager) {
             final userPositionsBloc =
                 BlocProvider.of<UserPositionsBloc>(context);
-            _updateMapPositions(
+            _updateMap(
               pointManager,
               userPositionsBloc.state,
             );
             userPositionsBloc.stream.listen(
-              (state) => _updateMapPositions(
+              (state) => _updateMap(
                 pointManager,
                 state,
               ),
@@ -236,43 +253,102 @@ class _JourneyMapState extends State<JourneyMap> {
     });
   }
 
-  void _updateMapPositions(
+  void _updateMap(
     PointAnnotationManager pointManager,
     UserPositionsState userPositionsState,
   ) async {
+    final missingPositions = <WebsocketReceivePosition>[];
+    final alreadyAddedPositions = <WebsocketReceivePosition>[];
+
+    for (final position in userPositionsState.userPositions) {
+      if (currentPositions.containsKey(position.userId)) {
+        alreadyAddedPositions.add(position);
+      } else {
+        missingPositions.add(position);
+      }
+    }
+
+    final addedPositions = (await Future.wait(
+      missingPositions
+          .map((position) => _addMapPosition(pointManager, position)),
+    ))
+        .whereType<MapEntry<int, PointAnnotation>>();
+
+    final updatedPositions = await Future.wait(
+      alreadyAddedPositions
+          .map((position) => _updateMapPosition(pointManager, position)),
+    );
+
+    setState(() {
+      currentPositions = Map.fromEntries(
+        [...addedPositions, ...updatedPositions],
+      );
+    });
+  }
+
+  Future<MapEntry<int, PointAnnotation>?> _addMapPosition(
+    PointAnnotationManager pointManager,
+    WebsocketReceivePosition missingPosition,
+  ) async {
     final colorScheme = Theme.of(context).colorScheme;
-    final icon = await rootBundle.load(
-      "assets/images/placeholder_map_pin.png",
+
+    final user = BlocProvider.of<UserPositionsBloc>(context)
+        .getPositionUser(missingPosition);
+    if (user is! UserLoadSuccessEvent) return null;
+
+    final profilePicture =
+        BlocProvider.of<UserPositionsBloc>(context).getUserPicture(user);
+
+    final options = PointAnnotationOptions(
+      geometry: Point(
+        coordinates: Position(
+          missingPosition.longitude,
+          missingPosition.latitude,
+        ),
+      ),
+      image: (profilePicture is UserPictureLoadSuccessEvent
+          ? profilePicture.image
+          : placeholderProfilePicture) as Uint8List,
+      iconAnchor: IconAnchor.BOTTOM,
+      textField: user.user.username,
+      textAnchor: TextAnchor.TOP,
+      textSize: 12,
+      textHaloWidth: 2,
+      textHaloColor: colorScheme.primary.value,
+      textColor: colorScheme.onPrimary.value,
+    );
+    final point = await pointManager.create(options);
+
+    return MapEntry(missingPosition.userId, point);
+  }
+
+  Future<MapEntry<int, PointAnnotation>> _updateMapPosition(
+    PointAnnotationManager pointManager,
+    WebsocketReceivePosition positionToUpdate,
+  ) async {
+    final point = currentPositions[positionToUpdate.userId];
+    if (point == null) {
+      throw Exception("Cannot find point for key $positionToUpdate");
+    }
+
+    point.geometry = Point(
+      coordinates: Position(
+        positionToUpdate.longitude,
+        positionToUpdate.latitude,
+      ),
     );
 
-    final options = await Future.wait(
-      userPositionsState.userPositions.map((position) async {
-        final user = BlocProvider.of<UserPositionsBloc>(context)
-            .getPositionUser(position);
-        if (user is! UserLoadSuccessEvent) return null;
+    final user = BlocProvider.of<UserPositionsBloc>(context)
+        .getPositionUser(positionToUpdate);
+    if (user is UserLoadSuccessEvent) {
+      final profilePicture =
+          BlocProvider.of<UserPositionsBloc>(context).getUserPicture(user);
+      point.image = (profilePicture is UserPictureLoadSuccessEvent
+          ? profilePicture.image
+          : placeholderProfilePicture) as Uint8List;
+    }
 
-        return PointAnnotationOptions(
-          geometry: Point(
-            coordinates: Position(
-              position.longitude,
-              position.latitude,
-            ),
-          ),
-          image: icon.buffer.asUint8List(),
-          iconAnchor: IconAnchor.BOTTOM,
-          textField: user.user.username,
-          textAnchor: TextAnchor.TOP,
-          textSize: 12,
-          textHaloWidth: 2,
-          textHaloColor: colorScheme.primary.value,
-          textColor: colorScheme.onPrimary.value,
-        );
-      }).toList(),
-    );
-
-    await pointManager.deleteAll();
-    await pointManager.createMulti(
-      options.whereType<PointAnnotationOptions>().toList(),
-    );
+    await pointManager.update(point);
+    return MapEntry(positionToUpdate.userId, point);
   }
 }
