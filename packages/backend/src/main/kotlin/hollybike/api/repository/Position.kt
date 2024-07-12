@@ -1,5 +1,7 @@
 package hollybike.api.repository
 
+import hollybike.api.database.now
+import hollybike.api.repository.Invitations.defaultExpression
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -17,7 +19,7 @@ object Positions: IntIdTable("positions", "id_position") {
 	val countryName = varchar("country_name", 255).nullable()
 	val countyName = varchar("county_name", 255).nullable()
 	val stateName = varchar("state_name", 255).nullable()
-	val createDateTime = timestamp("create_date_time").default(Clock.System.now())
+	val createDateTime = timestamp("create_date_time").defaultExpression(now())
 }
 
 class Position(id: EntityID<Int>) : IntEntity(id) {

@@ -1,5 +1,7 @@
 package hollybike.api.repository
 
+import hollybike.api.database.now
+import hollybike.api.repository.Invitations.defaultExpression
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
@@ -11,7 +13,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 object Notifications: IntIdTable("notifications", "id_notification") {
 	val user = reference("user", Users)
 	val data = text("data")
-	val creation = timestamp("creation").default(Clock.System.now())
+	val creation = timestamp("creation").defaultExpression(now())
 	val seen = bool("seen").default(false)
 }
 
