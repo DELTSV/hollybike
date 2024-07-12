@@ -7,6 +7,8 @@ import {useApi} from "../utils/useApi.ts";
 import {TOnPremise} from "../types/TOnPremise.ts";
 import {clsx} from "clsx";
 import {CloseRounded} from "@material-ui/icons";
+import {Link} from "react-router-dom";
+import icon from "../icon.png";
 
 export function SideBar() {
 	const {user} = useUser();
@@ -27,27 +29,38 @@ export function SideBar() {
 		<div
 			className={
 				clsx(
-					"absolute left-0 right-0 top-0 bottom-0 md:bg-transparent p-4",
+					"fixed left-0 right-0 top-0 bottom-0 md:bg-transparent p-4",
 					"transition-bg duration-200",
 					visible ? "bg-crust/90" : "bg-transparent pointer-events-none",
 				)
-			} style={{zIndex: 5_000}}
+			}
 			onClick={() => setVisible(false)}
 		>
 			<aside
 				className={clsx(
-					"w-48 min-w-48 bg-base h-full rounded-xl shadow-md",
+					"relative w-48 min-w-48 bg-base h-full rounded-xl shadow-md pointer-events-auto",
 					"flex-col flex md:translate-x-0 gap-2 p-2",
 					"transition-transform duration-200",
-					visible && "translate-x-0" || "-translate-x-[calc(100%+4rem)]",
+					visible ? "translate-x-0" : "-translate-x-[calc(100%+4rem)]",
 				)}
 			>
+				<Link className={"self-stretch"} to={"/"}>
+					<p
+						className={clsx(
+							"text-white flex overflow-hidden h-24 rounded",
+							"relative justify-center items-center bg-logo",
+						)}
+					>
+						<img alt={"HOLLYBIKE"} className={"text-black text-3xl italic"} src={icon}/>
+					</p>
+				</Link>
 				<button
 					className={clsx(
-						"bg-subtext-0 text-base fill-base rounded p-1",
+						"absolute bg-subtext-1 text-base fill-base rounded p-1",
 						"origin-top-left md:scale-0 md:-mb-10",
 						"transition-transform-w duration-200",
 						"flex gap-1 items-center w-8 hover:w-24",
+						"outline outline-base outline-8",
 						"group overflow-clip"
 					)}
 					onClick={() => setVisible(false)}

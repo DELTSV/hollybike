@@ -8,16 +8,16 @@ export function Root() {
 	const theme = useTheme();
 
 	return (
-		<div className={"flex flex-col h-full overflow-hidden"}>
-			<Header setTheme={theme.set}/>
+		<div>
 			<div className={clsx(
-				"overflow-hidden mx-4",
+				"overflow-hidden mx-4 min-h-screen",
 				"md:ml-56",
 				"transition-ml duration-200",
 			)}>
-				<SideBar/>
+				<Header setTheme={theme.set}/>
 				<Outlet/>
 			</div>
+			<SideBar/>
 		</div>
 	);
 }

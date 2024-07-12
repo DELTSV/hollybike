@@ -1,17 +1,14 @@
 import {
 	Calendar, CalendarProps, formatDateTimeComponent,
 } from "./Calendar.tsx";
-import { Input } from "../Input/Input.tsx";
+import {Input} from "../Input/Input.tsx";
 import {
 	useCallback,
-	useEffect, useMemo, useState,
+	useEffect, useState,
 } from "preact/hooks";
-import { CalendarTodayRounded } from "@material-ui/icons";
-import { Card } from "../Card/Card.tsx";
-import {
-	decInputCount, inputCount,
-} from "../InputCount.ts";
-import { useRef } from "react";
+import {CalendarTodayRounded} from "@material-ui/icons";
+import {Card} from "../Card/Card.tsx";
+import {useRef} from "react";
 
 export function InputCalendar(props: CalendarProps) {
 	const [textValue, setTextValue] = useState(dateToFrenchString(props.value));
@@ -47,12 +44,6 @@ export function InputCalendar(props: CalendarProps) {
 		props.seconds,
 	]);
 
-	const id = useMemo(() => {
-		const id = inputCount;
-		decInputCount();
-		return id;
-	}, []);
-
 	const container = useRef<HTMLDivElement>(null);
 
 	const handleOut = useCallback((e: MouseEvent) => {
@@ -72,16 +63,16 @@ export function InputCalendar(props: CalendarProps) {
 	}, [handleOut]);
 
 	return (
-		<div className={"relative"} style={`z-index: ${id}`} ref={container}>
+		<div className={"relative"} ref={container}>
 			<Input
 				value={textValue}
 				onInput={e => setTextValue(e.currentTarget.value)}
-				rightIcon={<CalendarTodayRounded onClick={() => setView(prev => !prev)} />}
+				rightIcon={<CalendarTodayRounded onClick={() => setView(prev => !prev)}/>}
 			/>
-			{ view &&
-				<Card className={"absolute"}>
-					<Calendar {...props} />
-				</Card> }
+			{view &&
+                <Card className={"absolute"}>
+                    <Calendar {...props} />
+                </Card>}
 		</div>
 	);
 }

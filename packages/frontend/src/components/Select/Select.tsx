@@ -5,9 +5,6 @@ import {
 import { ArrowDropDown } from "@material-ui/icons";
 import { clsx } from "clsx";
 import { useRef } from "react";
-import {
-	decInputCount, inputCount,
-} from "../InputCount.ts";
 
 export interface Option {
 	value: string | number,
@@ -26,11 +23,6 @@ interface SelectProps {
 }
 
 export function Select(props: SelectProps) {
-	const id = useMemo(() => {
-		const tmp = inputCount;
-		decInputCount();
-		return tmp;
-	}, []);
 	const [text, setText] = useState(props.placeholder);
 
 	const [visible, setVisible] = useState(false);
@@ -104,7 +96,6 @@ export function Select(props: SelectProps) {
 					setVisible(prev => !prev);
 				}
 			}} ref={container}
-			style={`z-index: ${id}`}
 		>
 			<p>{ text }</p>
 			<ArrowDropDown className={clsx("transition", visible && "rotate-180")}/>
