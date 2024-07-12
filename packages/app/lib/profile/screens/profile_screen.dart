@@ -24,16 +24,11 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       body: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-        builder: (context, bloc, state) {
-          try {
-            return buildProfilePage(context, bloc, state);
-          } catch (_) {
-            return const ProfilePage(
-              profile: null,
-              association: null,
-            );
-          }
-        },
+        builder: (context, bloc, state) => buildProfilePage(
+          context,
+          bloc,
+          state,
+        ),
       ),
     );
   }
@@ -44,17 +39,45 @@ class ProfileScreen extends StatelessWidget {
     ProfileState state,
   ) {
     final id = urlId == null ? null : int.parse(urlId as String);
-    if (id == null) throw Error();
+    if (id == null) return _buildError();
 
     final currentProfile = bloc.currentProfile;
-    final user = bloc.getUserById(id);
-    if (user is! UserLoadSuccessEvent ||
-        currentProfile is! ProfileLoadSuccessEvent) throw Error();
 
-    return ProfilePage(
-      id: id,
-      profile: user.user,
-      association: currentProfile.profile.association,
+    if (currentProfile is ProfileLoadingEvent) return _buildLoading();
+    if (currentProfile is ProfileLoadErrorEvent) return _buildError();
+
+    final user = bloc.getUserById(id);
+
+    if (user is UserLoadingEvent) return _buildLoading();
+    if (user is UserLoadErrorEvent) return _buildError();
+
+    if (currentProfile is ProfileLoadSuccessEvent && user is UserLoadSuccessEvent) {
+      return ProfilePage(
+        id: id,
+        profileLoading: false,
+        profile: user.user,
+        association: currentProfile.profile.association,
+      );
+    }
+
+    return const SizedBox();
+  }
+
+  Widget _buildError() {
+    return const ProfilePage(
+      id: null,
+      profileLoading: false,
+      profile: null,
+      association: null,
+    );
+  }
+
+  Widget _buildLoading() {
+    return const ProfilePage(
+      id: null,
+      profileLoading: true,
+      profile: null,
+      association: null,
     );
   }
 }

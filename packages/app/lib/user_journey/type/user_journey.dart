@@ -25,7 +25,7 @@ class UserJourney with _$UserJourney {
     @JsonKey(name: 'avg_g_force') required double? avgGForce,
     @JsonKey(name: 'max_g_force') required double? maxGForce,
     @JsonKey(name: 'created_at') required DateTime createdAt,
-    @JsonKey(name: 'is_better_than') required Map<String, double> isBetterThan,
+    @JsonKey(name: 'is_better_than') required Map<String, double>? isBetterThan,
   }) = _UserJourney;
 
   get distanceLabel {

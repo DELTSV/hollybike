@@ -5,15 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geojson_vi/geojson_vi.dart';
+import 'package:hollybike/shared/types/geojson.dart';
 import 'package:hollybike/shared/utils/waiter.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar.dart';
+import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
+import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-
-import '../../shared/widgets/bar/top_bar.dart';
-import '../../shared/widgets/bar/top_bar_action_icon.dart';
-import '../../shared/widgets/hud/hud.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -160,23 +159,19 @@ class _UserJourneyMapScreenState extends State<UserJourneyMapScreen> {
         ),
       ]);
 
-      final geoJson = GeoJSON.fromJSON(geoJsonRaw);
-
-      if (geoJson.bbox == null) {
-        throw Exception('No bounding box found in GeoJSON');
-      }
+      final bbox = GeoJSON.fromJsonString(geoJsonRaw).dynamicBBox();
 
       final bounds = CoordinateBounds(
         southwest: Point(
           coordinates: Position(
-            geoJson.bbox![0],
-            geoJson.bbox![1],
+            bbox[0],
+            bbox[1],
           ),
         ),
         northeast: Point(
           coordinates: Position(
-            geoJson.bbox![2],
-            geoJson.bbox![3],
+            bbox[2],
+            bbox[3],
           ),
         ),
         infiniteBounds: false,

@@ -10,13 +10,16 @@ import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_event.
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
-
 class ProfileImages extends StatelessWidget {
   final ScrollController scrollController;
+  final bool isMe;
+  final String username;
 
   const ProfileImages({
     super.key,
     required this.scrollController,
+    required this.isMe,
+    required this.username,
   });
 
   @override
@@ -35,13 +38,15 @@ class ProfileImages extends StatelessWidget {
               onLoadNextPage: () => _loadNextPage(context),
               images: state.images,
               loading: state is ImageListPageLoadInProgress,
+              error: state is ImageListPageLoadFailure,
               onImageTap: (image) {
                 context.router.push(
                   ImageGalleryViewRoute(
-                      imageIndex: state.images.indexOf(image),
-                      onLoadNextPage: () => _loadNextPage(context),
-                      onRefresh: () => _refreshImages(context),
-                      bloc: context.read<ProfileImagesBloc>()),
+                    imageIndex: state.images.indexOf(image),
+                    onLoadNextPage: () => _loadNextPage(context),
+                    onRefresh: () => _refreshImages(context),
+                    bloc: context.read<ProfileImagesBloc>(),
+                  ),
                 );
               },
             ),
@@ -61,8 +66,10 @@ class ProfileImages extends StatelessWidget {
           repeat: false,
           height: 150,
         ),
-        const Text(
-          "Aucune image disponible",
+        Text(
+          isMe
+              ? 'Vous n\'avez pas encore ajouté d\'images'
+              : '$username n\'a pas encore ajouté d\'images',
           textAlign: TextAlign.center,
         ),
       ],

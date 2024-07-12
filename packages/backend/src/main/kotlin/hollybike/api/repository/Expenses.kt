@@ -1,5 +1,7 @@
 package hollybike.api.repository
 
+import hollybike.api.database.now
+import hollybike.api.repository.Invitations.defaultExpression
 import hollybike.api.signatureService
 import hollybike.api.utils.search.Mapper
 import kotlinx.datetime.Clock
@@ -12,7 +14,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 object Expenses : IntIdTable("expenses", "id_expense") {
 	val name = varchar("name", 2_048)
 	val description = text("description").nullable().default(null)
-	val date = timestamp("date").default(Clock.System.now())
+	val date = timestamp("date").defaultExpression(now())
 	val amount = integer("amount")
 	val event = reference("event", Events)
 	val proof = varchar("proof", 2_048).nullable().default(null)

@@ -14,18 +14,21 @@ class EventDetailsTabScrollWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (BuildContext context) {
-        return CustomScrollView(
-          key: PageStorageKey<String>(scrollViewKey),
-          slivers: [
-            SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
-            _buildChild(),
-          ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: double.infinity,
+          child: CustomScrollView(
+            key: PageStorageKey<String>(scrollViewKey),
+            slivers: [
+              SliverOverlapInjector(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              _buildChild(),
+            ],
+          ),
         );
-      },
+      }
     );
   }
 

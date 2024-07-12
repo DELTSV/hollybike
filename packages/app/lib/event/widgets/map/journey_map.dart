@@ -5,48 +5,31 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geojson_vi/geojson_vi.dart';
 import 'package:hollybike/journey/type/minimal_journey.dart';
+import 'package:hollybike/positions/bloc/user_positions/user_positions_bloc.dart';
+import 'package:hollybike/positions/bloc/user_positions/user_positions_state.dart';
+import 'package:hollybike/shared/types/geojson.dart';
+import 'package:hollybike/shared/utils/waiter.dart';
 import 'package:hollybike/shared/websocket/recieve/websocket_receive_position.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import '../../../positions/bloc/user_positions/user_positions_bloc.dart';
-import '../../../positions/bloc/user_positions/user_positions_state.dart';
-import '../../../shared/utils/waiter.dart';
 
 class JourneyMap extends StatefulWidget {
-  final MinimalJourney journey;
+  final MinimalJourney? journey;
+  final List<WebsocketReceivePosition> userPositions;
   final void Function() onMapLoaded;
 
   const JourneyMap({
     super.key,
     required this.journey,
+    required this.userPositions,
     required this.onMapLoaded,
   });
 
   @override
   State<JourneyMap> createState() => _JourneyMapState();
 }
-
-final init = WebsocketReceivePosition(
-  type: "type",
-  latitude: 48.61333,
-  longitude: 2.2629,
-  altitude: 0,
-  time: DateTime.now(),
-  speed: 20,
-  userId: 90,
-);
-final then = WebsocketReceivePosition(
-  type: "type",
-  latitude: 48.61333,
-  longitude: 2.2619,
-  altitude: 0,
-  time: DateTime.now(),
-  speed: 20,
-  userId: 90,
-);
 
 class _JourneyMapState extends State<JourneyMap> {
   late final List<int> placeholderProfilePicture;
@@ -55,10 +38,6 @@ class _JourneyMapState extends State<JourneyMap> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.journey.file == null) {
-      return const Placeholder();
-    }
-
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
       child: Stack(
@@ -108,11 +87,13 @@ class _JourneyMapState extends State<JourneyMap> {
 
   void _onMapCreated(MapboxMap map) {
     final isDark = BlocProvider.of<ThemeBloc>(context).state.isDark;
+    final file = widget.journey?.file;
+
     waitConcurrently(
       map.loadStyleURI(isDark
           ? "mapbox://styles/mapbox/navigation-night-v1"
           : "mapbox://styles/mapbox/navigation-day-v1"),
-      _getGeoJsonData(widget.journey.file!),
+      file == null ? Future.value(null) : _getGeoJsonData(file),
     ).then((values) async {
       final (_, geoJsonRaw) = values;
       setState(() {
@@ -120,12 +101,13 @@ class _JourneyMapState extends State<JourneyMap> {
       });
 
       await Future.wait([
-        map.style.addSource(
-          GeoJsonSource(
-            id: 'tracks',
-            data: geoJsonRaw,
+        if (geoJsonRaw != null)
+          map.style.addSource(
+            GeoJsonSource(
+              id: 'tracks',
+              data: geoJsonRaw,
+            ),
           ),
-        ),
         map.style.setLights(
           AmbientLight(id: 'ambient-light', intensity: isDark ? 0.5 : 1),
           DirectionalLight(
@@ -181,58 +163,29 @@ class _JourneyMapState extends State<JourneyMap> {
               userPositionsBloc.state,
             );
             userPositionsBloc.stream.listen(
-              (state) => _updateMap(
-                pointManager,
-                state,
-              ),
+              (state) {
+                _updateMap(
+                  pointManager,
+                  state,
+                );
+
+                _setCameraOptions(
+                  geoJsonRaw,
+                  state.userPositions,
+                  map,
+                  updateMode: true,
+                );
+              },
             );
           },
         ),
       ]);
 
-      final geoJson = GeoJSON.fromJSON(geoJsonRaw);
-
-      if (geoJson.bbox == null) return;
-
-      final bounds = CoordinateBounds(
-        southwest: Point(
-          coordinates: Position(
-            geoJson.bbox![0],
-            geoJson.bbox![1],
-          ),
-        ),
-        northeast: Point(
-          coordinates: Position(
-            geoJson.bbox![2],
-            geoJson.bbox![3],
-          ),
-        ),
-        infiniteBounds: false,
+      final cameraOptions = await _setCameraOptions(
+        geoJsonRaw,
+        widget.userPositions,
+        map,
       );
-
-      final cameraOptions = await map.cameraForCoordinateBounds(
-        bounds,
-        MbxEdgeInsets(
-          top: 25,
-          left: 50,
-          right: 50,
-          bottom: 75,
-        ),
-        null,
-        30,
-        null,
-        null,
-      );
-
-      final cameraBounds = await map.coordinateBoundsForCamera(cameraOptions);
-
-      await map.setBounds(
-        CameraBoundsOptions(
-          bounds: cameraBounds,
-        ),
-      );
-
-      await map.setCamera(cameraOptions);
 
       setState(() {
         _mapLoading = false;
@@ -241,16 +194,79 @@ class _JourneyMapState extends State<JourneyMap> {
       widget.onMapLoaded();
 
       await map.easeTo(
-          CameraOptions(
-            center: cameraOptions.center,
-            zoom: cameraOptions.zoom! + 0.3,
-            bearing: cameraOptions.bearing,
-            pitch: cameraOptions.pitch,
-          ),
-          MapAnimationOptions(
-            duration: 600,
-          ));
+        CameraOptions(
+          center: cameraOptions.center,
+          zoom: (cameraOptions.zoom ?? 0) + 0.3,
+          bearing: cameraOptions.bearing,
+          pitch: cameraOptions.pitch,
+        ),
+        MapAnimationOptions(
+          duration: 600,
+        ),
+      );
     });
+  }
+
+  Future<CameraOptions> _setCameraOptions(
+    String? geoJsonRaw,
+    List<WebsocketReceivePosition> userPositions,
+    MapboxMap map, {
+    bool updateMode = false,
+  }) async {
+    final userCoordinates = userPositions
+        .map(
+          (position) => Coordinate(
+            longitude: position.longitude,
+            latitude: position.latitude,
+          ),
+        )
+        .toList();
+
+    final bbox = geoJsonRaw == null
+        ? GeoJSON.calculateBbox(userCoordinates)
+        : GeoJSON.fromJsonString(geoJsonRaw).dynamicBBox();
+
+    final bounds = CoordinateBounds(
+      southwest: Point(
+        coordinates: Position(
+          bbox[0],
+          bbox[1],
+        ),
+      ),
+      northeast: Point(
+        coordinates: Position(
+          bbox[2],
+          bbox[3],
+        ),
+      ),
+      infiniteBounds: false,
+    );
+
+    final cameraOptions = await map.cameraForCoordinateBounds(
+      bounds,
+      MbxEdgeInsets(
+        top: 25,
+        left: 50,
+        right: 50,
+        bottom: 75,
+      ),
+      null,
+      30,
+      null,
+      null,
+    );
+
+    await map.setBounds(
+      CameraBoundsOptions(
+        bounds: bounds,
+      ),
+    );
+
+    if (!updateMode) {
+      await map.setCamera(cameraOptions);
+    }
+
+    return cameraOptions;
   }
 
   void _updateMap(
@@ -310,7 +326,7 @@ class _JourneyMapState extends State<JourneyMap> {
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List,
       iconAnchor: IconAnchor.BOTTOM,
-      textField: user.user.username,
+      textField: '${user.user.username}\n${(missingPosition.speed * 3.6).round()} km/h',
       textAnchor: TextAnchor.TOP,
       textSize: 12,
       textHaloWidth: 2,
@@ -346,6 +362,8 @@ class _JourneyMapState extends State<JourneyMap> {
       point.image = (profilePicture is UserPictureLoadSuccessEvent
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List;
+
+      point.textField = '${user.user.username}\n${(positionToUpdate.speed * 3.6).round()} km/h';
     }
 
     await pointManager.update(point);

@@ -17,6 +17,8 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
   final EventRepository eventRepository;
   final MyPositionLocator myPositionLocator;
 
+  int posCount = 0;
+
   ReceivePort port = ReceivePort();
 
   MyPositionBloc({
@@ -59,12 +61,18 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
       eventId: isRunning ? eventId : null,
     )));
 
+    posCount = 0;
+
     port.listen(
       (_) {
         final eventId = state.eventId;
         if (eventId == null) return;
 
-        eventRepository.onUserPositionSent(eventId);
+        posCount++;
+
+        if (posCount >= 2) {
+          eventRepository.onUserPositionSent(eventId);
+        }
       },
     );
   }
@@ -105,6 +113,8 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
 
     final running = await BackgroundLocator.isServiceRunning();
 
+    posCount = 0;
+
     emit(MyPositionStarted(state.copyWith(
       isRunning: running,
       status: running ? MyPositionStatus.success : MyPositionStatus.error,
@@ -121,6 +131,8 @@ class MyPositionBloc extends Bloc<MyPositionEvent, MyPositionState> {
     await BackgroundLocator.unRegisterLocationUpdate();
 
     final running = await BackgroundLocator.isServiceRunning();
+
+    posCount = 0;
 
     emit(MyPositionStopped(state.copyWith(
       isRunning: running,

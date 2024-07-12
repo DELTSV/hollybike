@@ -1,9 +1,9 @@
 package hollybike.api.repository
 
+import hollybike.api.database.now
 import hollybike.api.types.invitation.EInvitationStatus
 import hollybike.api.types.user.EUserScope
 import hollybike.api.utils.search.Mapper
-import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -16,7 +16,7 @@ object Invitations: IntIdTable("invitations", "id_invitation") {
 	val association = reference("association", Associations)
 	val creator = reference("creator", Users)
 	val expiration = timestamp("expiration").nullable()
-	val creation = timestamp("creation").default(Clock.System.now())
+	val creation = timestamp("creation").defaultExpression(now())
 	val uses = integer("uses").default(0)
 	val maxUses = integer("max_uses").nullable().default(null)
 }

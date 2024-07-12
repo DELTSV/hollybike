@@ -1,5 +1,7 @@
 package hollybike.api.repository
 
+import hollybike.api.database.now
+import hollybike.api.repository.Invitations.defaultExpression
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -11,7 +13,7 @@ object Tokens: IntIdTable("tokens", "id_token") {
 	val token = varchar("token", 35)
 	val user = reference("user", Users)
 	val device = varchar("device", 40)
-	val lastUse = timestamp("last_use").default(Clock.System.now())
+	val lastUse = timestamp("last_use").defaultExpression(now())
 }
 
 class Token(id: EntityID<Int>) : IntEntity(id) {

@@ -23,6 +23,8 @@ WebsocketEventStatusUpdated _$WebsocketEventStatusUpdatedFromJson(
 mixin _$WebsocketEventStatusUpdated {
   String get type => throw _privateConstructorUsedError;
   int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'notification_id')
+  int get notificationId => throw _privateConstructorUsedError;
   EventStatusState get status => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
@@ -45,6 +47,7 @@ abstract class $WebsocketEventStatusUpdatedCopyWith<$Res> {
   $Res call(
       {String type,
       int id,
+      @JsonKey(name: 'notification_id') int notificationId,
       EventStatusState status,
       String name,
       String? description,
@@ -67,6 +70,7 @@ class _$WebsocketEventStatusUpdatedCopyWithImpl<$Res,
   $Res call({
     Object? type = null,
     Object? id = null,
+    Object? notificationId = null,
     Object? status = null,
     Object? name = null,
     Object? description = freezed,
@@ -80,6 +84,10 @@ class _$WebsocketEventStatusUpdatedCopyWithImpl<$Res,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
               as int,
       status: null == status
           ? _value.status
@@ -113,6 +121,7 @@ abstract class _$$WebsocketEventStatusUpdatedImplCopyWith<$Res>
   $Res call(
       {String type,
       int id,
+      @JsonKey(name: 'notification_id') int notificationId,
       EventStatusState status,
       String name,
       String? description,
@@ -134,6 +143,7 @@ class __$$WebsocketEventStatusUpdatedImplCopyWithImpl<$Res>
   $Res call({
     Object? type = null,
     Object? id = null,
+    Object? notificationId = null,
     Object? status = null,
     Object? name = null,
     Object? description = freezed,
@@ -147,6 +157,10 @@ class __$$WebsocketEventStatusUpdatedImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      notificationId: null == notificationId
+          ? _value.notificationId
+          : notificationId // ignore: cast_nullable_to_non_nullable
               as int,
       status: null == status
           ? _value.status
@@ -175,6 +189,7 @@ class _$WebsocketEventStatusUpdatedImpl
   const _$WebsocketEventStatusUpdatedImpl(
       {this.type = "EventStatusUpdateNotification",
       required this.id,
+      @JsonKey(name: 'notification_id') required this.notificationId,
       required this.status,
       required this.name,
       this.description,
@@ -190,6 +205,9 @@ class _$WebsocketEventStatusUpdatedImpl
   @override
   final int id;
   @override
+  @JsonKey(name: 'notification_id')
+  final int notificationId;
+  @override
   final EventStatusState status;
   @override
   final String name;
@@ -200,7 +218,7 @@ class _$WebsocketEventStatusUpdatedImpl
 
   @override
   String toString() {
-    return 'WebsocketEventStatusUpdated(type: $type, id: $id, status: $status, name: $name, description: $description, image: $image)';
+    return 'WebsocketEventStatusUpdated(type: $type, id: $id, notificationId: $notificationId, status: $status, name: $name, description: $description, image: $image)';
   }
 
   @override
@@ -210,6 +228,8 @@ class _$WebsocketEventStatusUpdatedImpl
             other is _$WebsocketEventStatusUpdatedImpl &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.notificationId, notificationId) ||
+                other.notificationId == notificationId) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
@@ -219,8 +239,8 @@ class _$WebsocketEventStatusUpdatedImpl
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, type, id, status, name, description, image);
+  int get hashCode => Object.hash(
+      runtimeType, type, id, notificationId, status, name, description, image);
 
   @JsonKey(ignore: true)
   @override
@@ -242,6 +262,7 @@ abstract class _WebsocketEventStatusUpdated
   const factory _WebsocketEventStatusUpdated(
       {final String type,
       required final int id,
+      @JsonKey(name: 'notification_id') required final int notificationId,
       required final EventStatusState status,
       required final String name,
       final String? description,
@@ -254,6 +275,9 @@ abstract class _WebsocketEventStatusUpdated
   String get type;
   @override
   int get id;
+  @override
+  @JsonKey(name: 'notification_id')
+  int get notificationId;
   @override
   EventStatusState get status;
   @override

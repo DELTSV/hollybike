@@ -12,6 +12,7 @@ class WebsocketAddedToEvent
     implements WebsocketBody {
   const factory WebsocketAddedToEvent({
     @Default("AddedToEventNotification") String type,
+    @JsonKey(name: 'notification_id') required int notificationId,
     required int id,
     required String name,
   }) = _WebsocketAddedToEvent;

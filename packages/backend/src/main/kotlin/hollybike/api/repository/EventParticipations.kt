@@ -22,7 +22,7 @@ class EventParticipation(id: EntityID<Int>) : IntEntity(id) {
 	val recordedPositions by UserEventPosition referrersOn UsersEventsPositions.participation
 
 	val hasRecordedPositions: Boolean
-		get() = !recordedPositions.empty()
+		get() = recordedPositions.count() >= 2
 
 	companion object : IntEntityClass<EventParticipation>(EventParticipations)
 }

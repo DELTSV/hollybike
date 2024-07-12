@@ -82,7 +82,7 @@ class _EventsListFragmentState<T extends EventsBloc>
           child: CircularProgressIndicator(),
         );
       case EventStatus.error:
-        return EventsListPlaceholder(
+        return ScrollablePlaceholder(
           padding: MediaQuery.of(context).size.width * 0.1,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -102,7 +102,7 @@ class _EventsListFragmentState<T extends EventsBloc>
           ),
         );
       case EventStatus.success:
-        return EventsListPlaceholder(
+        return ScrollablePlaceholder(
           padding: MediaQuery.of(context).size.width * 0.2,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

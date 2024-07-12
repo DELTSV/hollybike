@@ -8,6 +8,7 @@ class ImageGallery extends StatefulWidget {
   final ScrollController scrollController;
   final List<EventImage> images;
   final bool loading;
+  final bool error;
   final void Function(EventImage) onImageTap;
   final void Function() onRefresh;
   final void Function() onLoadNextPage;
@@ -18,6 +19,7 @@ class ImageGallery extends StatefulWidget {
     required this.scrollController,
     required this.images,
     required this.loading,
+    required this.error,
     required this.onRefresh,
     required this.onLoadNextPage,
     required this.onImageTap,
@@ -44,29 +46,36 @@ class _ImageGalleryState extends State<ImageGallery> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.loading && widget.images.isEmpty) {
-      return const SliverToBoxAdapter(
-        child: SizedBox(
-          height: 300,
+    if (widget.error) {
+      return const SliverFillRemaining(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 48),
           child: Center(
-            child: CircularProgressIndicator(),
+            child: Text(
+              'Une erreur est survenue lors du chargement des images. Veuillez réessayer.',
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       );
     }
 
+    if (widget.loading && widget.images.isEmpty) {
+      return const SliverFillRemaining(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     if (widget.images.isEmpty) {
-      return SliverToBoxAdapter(
-        child: SizedBox(
-          height: 350,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.2,
-            ),
-            child: Center(
-              child: widget.emptyPlaceholder,
-            ),
-          ),
+      return SliverFillRemaining(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            widget.emptyPlaceholder,
+          ],
         ),
       );
     }

@@ -32,9 +32,9 @@ data class TUserJourney(
 	@SerialName("created_at")
 	val createdAt: Instant,
 	@SerialName("is_better_than")
-	val isBetterThan: Map<String, Double>
+	val isBetterThan: Map<String, Double>? = null
 ) {
-	constructor(journey: UserJourney, isBetterThan: Map<String, Double>): this (
+	constructor(journey: UserJourney, isBetterThan: Map<String, Double>?): this (
 		journey.id.value,
 		journey.journeySigned,
 		journey.avgSpeed,

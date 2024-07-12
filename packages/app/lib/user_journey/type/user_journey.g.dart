@@ -21,7 +21,7 @@ _$UserJourneyImpl _$$UserJourneyImplFromJson(Map<String, dynamic> json) =>
       avgGForce: (json['avg_g_force'] as num?)?.toDouble(),
       maxGForce: (json['max_g_force'] as num?)?.toDouble(),
       createdAt: DateTime.parse(json['created_at'] as String),
-      isBetterThan: (json['is_better_than'] as Map<String, dynamic>).map(
+      isBetterThan: (json['is_better_than'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
     );

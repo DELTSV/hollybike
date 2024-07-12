@@ -14,6 +14,7 @@ class WebsocketEventStatusUpdated
   const factory WebsocketEventStatusUpdated({
     @Default("EventStatusUpdateNotification") String type,
     required int id,
+    @JsonKey(name: 'notification_id') required int notificationId,
     required EventStatusState status,
     required String name,
     String? description,

@@ -25,7 +25,7 @@ data class TEventDetails(
 		participants: List<EventParticipation>,
 		participantsCount: Long,
 		expenses: List<Expense>?,
-		isBetterThan: Map<String, Double>
+		isBetterThan: Map<String, Double>?
 	) : this(
 		event = TEvent(event, expenses != null),
 		callerParticipation = callerParticipation?.let { TEventCallerParticipation(it, isBetterThan) },

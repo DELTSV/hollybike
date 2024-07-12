@@ -168,9 +168,11 @@ class AssociationService(
 			return Result.failure(AssociationNotFound("Association $id inconnue"))
 		}
 
-		User.find { Users.association eq association.id.value }.forEach { it.delete() }
+		transaction(db) {
+			User.find { Users.association eq association.id.value }.forEach { it.delete() }
 
-		association.delete()
+			association.delete()
+		}
 
 		association.picture?.let {
 			storageService.delete(it)

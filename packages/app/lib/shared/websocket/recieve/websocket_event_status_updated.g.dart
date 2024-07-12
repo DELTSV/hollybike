@@ -11,6 +11,7 @@ _$WebsocketEventStatusUpdatedImpl _$$WebsocketEventStatusUpdatedImplFromJson(
     _$WebsocketEventStatusUpdatedImpl(
       type: json['type'] as String? ?? "EventStatusUpdateNotification",
       id: (json['id'] as num).toInt(),
+      notificationId: (json['notification_id'] as num).toInt(),
       status: $enumDecode(_$EventStatusStateEnumMap, json['status']),
       name: json['name'] as String,
       description: json['description'] as String?,
@@ -22,6 +23,7 @@ Map<String, dynamic> _$$WebsocketEventStatusUpdatedImplToJson(
     <String, dynamic>{
       'type': instance.type,
       'id': instance.id,
+      'notification_id': instance.notificationId,
       'status': _$EventStatusStateEnumMap[instance.status]!,
       'name': instance.name,
       'description': instance.description,

@@ -12,6 +12,7 @@ class WebsocketRemovedFromEvent
     implements WebsocketBody {
   const factory WebsocketRemovedFromEvent({
     @Default("RemovedFromEventNotification") String type,
+    @JsonKey(name: 'notification_id') required int notificationId,
     required int id,
     required String name,
   }) = _WebsocketRemovedFromEvent;
