@@ -67,7 +67,6 @@ class EventController(
 				pendEvent()
 				getMetaData()
 				getParticipantJourney()
-				getParticipantJourneyFile()
 				resetEventJourney()
 				terminateEventJourney()
 			}
@@ -386,41 +385,6 @@ class EventController(
 					userEventPositionService.getIsBetterThanForUserJourney(journey)
 				)
 			)
-		}
-	}
-
-	@Deprecated("Use getUserJourneyFile instead")
-	private suspend fun getParticipantJourneyFile(call: ApplicationCall, eventId: Int, userId: Int) {
-		val event = eventService.getEvent(call.user, eventId) ?: run {
-			return call.respond(HttpStatusCode.NotFound, "Évènement inconnu")
-		}
-
-		val user = userService.getUser(call.user, userId) ?: run {
-			return call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
-		}
-
-		val journey = userEventPositionService.getUserJourneyFromEvent(user, event) ?: run {
-			return call.respond(HttpStatusCode.NotFound, "Trajet non trouvé")
-		}
-
-		val data = storageService.retrieve(journey.journey) ?: run {
-			return call.respond(HttpStatusCode.NotFound, "Le fichier n'existe pas")
-		}
-
-		val geojson = json.decodeFromString<GeoJson>(data.toString(Charsets.UTF_8))
-
-		if (call.request.accept()?.contains("geo+json") == true) {
-			call.respond(json.encodeToString(geojson))
-		} else if (call.request.accept()?.contains("gpx") == true) {
-			call.respond(xml.encodeToString(geojson.toGpx()))
-		} else {
-			call.respond(HttpStatusCode.BadRequest, "Il manque un format de retour")
-		}
-	}
-
-	private fun Route.getParticipantJourneyFile() {
-		get<Events.Id.Participations.User.Journey.File> {
-			getParticipantJourneyFile(call, it.journey.user.user.eventId.id, it.journey.user.userId)
 		}
 	}
 }

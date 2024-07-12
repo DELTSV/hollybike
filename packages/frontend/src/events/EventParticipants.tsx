@@ -88,7 +88,7 @@ export function EventParticipant(props: EventParticipantsProps) {
 						<Cell>{ p.isImagePublic ? "Publiques" : "Privées" }</Cell>,
 						<Cell>
 							{ p.journey !== undefined ?
-								<Link to={`/events/${props.event.id}/participants/${p.user.id}/journey`}><OpenInNew/></Link> :
+								<Link to={`/user-journey/${p.journey.id}`}><OpenInNew/></Link> :
 								undefined }
 						</Cell>,
 						<Cell>

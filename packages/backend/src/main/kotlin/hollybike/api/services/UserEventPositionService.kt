@@ -4,6 +4,7 @@ import hollybike.api.json
 import hollybike.api.repository.*
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.journey.*
+import hollybike.api.types.user.EUserScope
 import hollybike.api.types.websocket.*
 import hollybike.api.types.websocket.UserReceivePosition
 import hollybike.api.types.websocket.UserSendPosition
@@ -114,6 +115,14 @@ class UserEventPositionService(
 		}
 	}
 
+	private fun authorizeGet(caller: User, target: UserJourney): Boolean = when(caller.scope) {
+		EUserScope.User -> target.user?.id == caller.id
+		EUserScope.Admin -> target.user?.association?.id == caller.association.id
+		EUserScope.Root -> true
+	}
+
+	private infix fun UserJourney?.getIfAllowed(caller: User): UserJourney? = this?.let { if(authorizeGet(caller, it)) it else null }
+
 	fun getUserJourneyFromEvent(user: User, event: Event): UserJourney? = transaction(db) {
 		val participation = EventParticipation.find {
 			(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
@@ -134,8 +143,10 @@ class UserEventPositionService(
 		storageService.delete(userJourney.journey)
 	}
 
-	fun getUserJourney(caller: User, userJourneyId: Int) = transaction(db) {
-		UserJourney.find { (UsersJourneys.id eq userJourneyId) and (UsersJourneys.user eq caller.id) }.firstOrNull()
+	fun getUserJourney(caller: User, userJourneyId: Int): UserJourney? {
+		return transaction(db) {
+			UserJourney.find { (UsersJourneys.id eq userJourneyId) and (UsersJourneys.user eq caller.id) }.firstOrNull()?.load(UserJourney::user, User::association)
+		} getIfAllowed caller
 	}
 
 	fun getUserJourneys(userId: Int, searchParams: SearchParam): List<UserJourney> = transaction(db) {

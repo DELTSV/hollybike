@@ -32,6 +32,7 @@ class UserJourneyController(
 		application.routing {
 			authenticate {
 				getUserUserJourneys()
+				getUserJourney()
 				deleteUserJourney()
 				getUserJourneyFile()
 			}
@@ -65,6 +66,16 @@ class UserJourneyController(
 					}, searchParam, totalUserJourneys
 				)
 			)
+		}
+	}
+
+	private fun Route.getUserJourney() {
+		get<UserJourneys.Id> {
+			val userJourney = userEventPositionService.getUserJourney(call.user, it.id) ?: run {
+				return@get call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
+			}
+
+			call.respond(HttpStatusCode.OK, TUserJourney(userJourney, userEventPositionService.getIsBetterThanForUserJourney(userJourney)))
 		}
 	}
 

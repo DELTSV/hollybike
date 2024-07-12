@@ -1,7 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useApi } from "../utils/useApi.ts";
-import { TUser } from "../types/TUser.ts";
-import { TEvent } from "../types/TEvent.ts";
 import { Card } from "../components/Card/Card.tsx";
 import { distanceToHumanReadable } from "../utils/distanceToHumanReadable.ts";
 import { TUserJourney } from "../types/TUserJourney.ts";
@@ -29,13 +27,9 @@ const layerStyle: LineLayer = {
 	},
 };
 
-export function EventParticipantJourney() {
-	const {
-		id, idparticipant,
-	} = useParams();
-	const user = useApi<TUser>(`/users/${idparticipant}`);
-	const event = useApi<TEvent>(`/events/${id}`);
-	const journey = useApi<TUserJourney>(`/events/${id}/participations/${idparticipant}/journey`);
+export function UserJourney() {
+	const { id } = useParams();
+	const journey = useApi<TUserJourney>(`/user-journeys/${id}`);
 	const mapRef = useRef<MapRef>(null);
 	const [viewState, setViewState] = useState({
 		longitude: 1.2084545,
@@ -54,7 +48,6 @@ export function EventParticipantJourney() {
 
 	return (
 		<div className={"mx-2 flex flex-col gap-2"}>
-			<h1>Trajet de { user.data?.username } lors de l'évènement { event.data?.name }</h1>
 			<Card className={"grid grid-cols-2"}>
 				<p>Distance totale</p>
 				<p>{ distanceToHumanReadable(journey.data?.total_distance) }</p>
