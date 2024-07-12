@@ -102,24 +102,6 @@ class _JourneyMapState extends State<JourneyMap> {
     ).then((values) async {
       final (_, geoJsonRaw) = values;
 
-      // map.style.addSource(
-      //   RasterDemSource(
-      //     id: 'mapbox-dem',
-      //     url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-      //     tileSize: 512,
-      //   ),
-      // );
-      //
-      // map.style.addLayer(
-      //   HillshadeLayer(
-      //     id: 'hillshade-layer',
-      //     sourceId: 'mapbox-dem',
-      //     hillshadeExaggeration: 1.5,
-      //   ),
-      // );
-      //
-      // map.style.setStyleTerrain('{ "source": "mapbox-dem", "exaggeration": 1.5 }');
-
       await Future.wait([
         map.style.addSource(
           GeoJsonSource(

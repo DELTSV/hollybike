@@ -11,6 +11,7 @@ import '../bloc/weather_forecast_bloc.dart';
 import '../bloc/weather_forecast_event.dart';
 import '../bloc/weather_forecast_state.dart';
 import '../services/weather_forecast_api.dart';
+import '../types/weather_forecast_grouped.dart';
 
 class WeatherForecastCardContent extends StatelessWidget {
   final Position destination;
@@ -62,7 +63,7 @@ class WeatherForecastCardContent extends StatelessWidget {
                       color: Theme.of(context).colorScheme.surfaceContainer,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: _buildForecast(context, state),
+                    child: _buildForecast(context, state.weatherForecast),
                   ),
                 ),
               ),
@@ -92,9 +93,10 @@ class WeatherForecastCardContent extends StatelessWidget {
     );
   }
 
-  Widget _buildForecast(BuildContext context, WeatherForecastState state) {
-    final weatherForecast = state.weatherForecast;
-
+  Widget _buildForecast(
+    BuildContext context,
+    WeatherForecastGrouped? weatherForecast,
+  ) {
     if (weatherForecast != null) {
       final firstDay = weatherForecast.dailyWeather.first;
 

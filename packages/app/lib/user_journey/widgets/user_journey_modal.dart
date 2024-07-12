@@ -1,36 +1,53 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:hollybike/journey/type/user_journey.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_event.dart';
+import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
+import 'package:hollybike/event/services/event/event_repository.dart';
+import 'package:hollybike/event/services/participation/event_participation_repository.dart';
+import 'package:hollybike/shared/widgets/app_toast.dart';
+import 'package:hollybike/user/types/minimal_user.dart';
+import 'package:hollybike/user_journey/bloc/user_journey_details_bloc.dart';
+import 'package:hollybike/user_journey/bloc/user_journey_details_event.dart';
+import 'package:hollybike/user_journey/bloc/user_journey_details_state.dart';
+import 'package:hollybike/user_journey/services/user_journey_repository.dart';
+import 'package:hollybike/user_journey/type/user_journey.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
+import 'package:hollybike/user_journey/widgets/user_journey_content.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import '../../../shared/utils/dates.dart';
-import '../../../shared/widgets/bloc_provided_builder.dart';
-import '../../../shared/widgets/gradient_progress_bar.dart';
+import '../../event/bloc/event_details_bloc/event_details_bloc.dart';
+import '../../shared/utils/dates.dart';
+import '../../shared/widgets/bloc_provided_builder.dart';
+import '../../shared/widgets/gradient_progress_bar.dart';
 
 enum JourneyModalAction {
   resetJourney,
+  deleteJourney,
   downloadJourney,
 }
 
-class EventParticipationJourneyModal extends StatefulWidget {
+class UserJourneyModal extends StatefulWidget {
   final UserJourney journey;
-  final int userId;
-  final String? username;
+  final bool isCurrentEvent;
+  final MinimalUser? user;
+  final void Function()? onDeleted;
 
-  const EventParticipationJourneyModal({
+  const UserJourneyModal({
     super.key,
     required this.journey,
-    required this.userId,
-    this.username,
+    required this.isCurrentEvent,
+    this.user,
+    this.onDeleted,
   });
 
   @override
-  State<EventParticipationJourneyModal> createState() =>
-      _EventParticipationJourneyModalState();
+  State<UserJourneyModal> createState() => _UserJourneyModalState();
 }
 
-class _EventParticipationJourneyModalState
-    extends State<EventParticipationJourneyModal> {
+class _UserJourneyModalState extends State<UserJourneyModal> {
   late final double _betterPercentage;
   bool _isSolo = false;
   int _betterThanCount = 0;
@@ -56,10 +73,84 @@ class _EventParticipationJourneyModalState
         isBetterThan.values.where((element) => element == 100).length;
   }
 
+  Widget _eventBlocNullable(
+    BuildContext context,
+    Widget Function(BuildContext, bool isLoading) builder,
+  ) {
+    final eventDetailsBloc = context.readOrNull<EventDetailsBloc>();
+
+    if (eventDetailsBloc == null) {
+      return builder(context, false);
+    } else {
+      return BlocConsumer(
+        bloc: eventDetailsBloc,
+        listener: (context, state) {
+          if (state is UserJourneyReset) {
+            Navigator.of(context).pop();
+            Toast.showSuccessToast(context, 'Parcours réinitialisé');
+          }
+        },
+        builder: (context, state) {
+          return builder(
+            context,
+            state is EventOperationInProgress,
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => UserJourneyDetailsBloc(
+        userJourneyRepository:
+            RepositoryProvider.of<UserJourneyRepository>(context),
+        eventParticipationRepository:
+            RepositoryProvider.of<EventParticipationRepository>(
+          context,
+        ),
+        eventRepository: RepositoryProvider.of<EventRepository>(context),
+        journeyId: widget.journey.id,
+      ),
+      child: _eventBlocNullable(
+        context,
+        (context, isEventLoading) {
+          return BlocConsumer<UserJourneyDetailsBloc, UserJourneyDetailsState>(
+            listener: (context, state) {
+              if (state is UserJourneyDeleted) {
+                widget.onDeleted?.call();
+                Navigator.of(context).pop();
+                Toast.showSuccessToast(
+                  context,
+                  'Parcours supprimé',
+                );
+              }
+
+              if (state is UserJourneyOperationSuccess) {
+                Toast.showSuccessToast(context, state.successMessage);
+              }
+
+              if (state is UserJourneyOperationFailure) {
+                Toast.showErrorToast(context, state.errorMessage);
+              }
+            },
+            builder: (context, userJourneyState) {
+              final isLoading =
+                  userJourneyState is UserJourneyOperationInProgress ||
+                      isEventLoading;
+
+              return _buildContent(isLoading);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildContent(bool isLoading) {
     return Container(
-      decoration: _modalDecoration(context),
+      decoration: _modalDecoration(),
       child: Padding(
         padding: const EdgeInsets.only(
           top: 16,
@@ -68,18 +159,21 @@ class _EventParticipationJourneyModalState
         ),
         child: SafeArea(
           child: BlocProvidedBuilder<ProfileBloc, ProfileState>(
-            builder: (context, bloc, state) {
-              final currentProfile = bloc.currentProfile;
-              final isCurrentUser = (currentProfile is ProfileLoadSuccessEvent
-                      ? currentProfile.profile.id
-                      : null) ==
-                  widget.userId;
+            builder: (context, bloc, _) {
+              final currentProfileEvent = bloc.currentProfile;
+              final currentUserId =
+                  (currentProfileEvent is ProfileLoadSuccessEvent
+                      ? currentProfileEvent.profile.id
+                      : null);
+
+              final isCurrentUser =
+                  widget.user?.id == null || (currentUserId == widget.user?.id);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHeader(context, isCurrentUser),
+                  _buildHeader(context, isCurrentUser, isLoading),
                   const SizedBox(height: 16),
                   _JourneyInfoRow(
                     icon: Icons.history,
@@ -235,10 +329,8 @@ class _EventParticipationJourneyModalState
   String _getIsBetterThanCountText(bool isCurrentUser) {
     if (isCurrentUser) {
       return 'Vous êtes le meilleur dans $_betterThanCount catégories !';
-    } else if (widget.username != null) {
-      return '${widget.username} est le meilleur dans $_betterThanCount catégories !';
     } else {
-      return 'Le participant est le meilleur dans $_betterThanCount catégories !';
+      return '${widget.user?.username} est le meilleur dans $_betterThanCount catégories !';
     }
   }
 
@@ -253,23 +345,29 @@ class _EventParticipationJourneyModalState
   Widget _getIsBetterLabel(bool isCurrentUser) {
     return Text(
       _isSolo
-          ? "Vous êtes le seul à avoir terminé le parcours !"
-          : "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% des participants !",
+          ? _getIsBetterThanMeanSoloText(isCurrentUser)
+          : "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% !",
       style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 
-  String _getIsBetterMeanText(bool isCurrentUser) {
+  String _getIsBetterThanMeanSoloText(bool isCurrentUser) {
     if (isCurrentUser) {
-      return 'Vous avez fait mieux que';
-    } else if (widget.username != null) {
-      return '${widget.username} a fait mieux que';
+      return 'Vous êtes le/la seul·e à avoir terminé le parcours !';
     } else {
-      return 'Le participant a fait mieux que';
+      return '${widget.user?.username} est le/la seul·e à avoir terminé le parcours !';
     }
   }
 
-  BoxDecoration _modalDecoration(BuildContext context) {
+  String _getIsBetterMeanText(bool isCurrentUser) {
+    if (isCurrentUser) {
+      return 'Votre score global est de';
+    } else {
+      return 'Le score global de ${widget.user?.username} est de';
+    }
+  }
+
+  BoxDecoration _modalDecoration() {
     return BoxDecoration(
       color: Theme.of(context).colorScheme.primary,
       borderRadius: const BorderRadius.only(
@@ -279,34 +377,86 @@ class _EventParticipationJourneyModalState
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isCurrentUser) {
+  Widget _buildHeader(BuildContext context, bool isCurrentUser, isLoading) {
     return isCurrentUser
-        ? _buildCurrentUserHeader(context)
-        : _buildOtherUserHeader(context);
+        ? _buildCurrentUserHeader(context, isLoading)
+        : _buildOtherUserHeader();
   }
 
-  Widget _buildCurrentUserHeader(BuildContext context) {
+  Widget _buildCurrentUserHeader(BuildContext context, bool isLoading) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        PopupMenuButton(
-          onSelected: (value) {
-            // Handle modal action
-          },
-          itemBuilder: (context) {
-            return _buildJourneyActions();
-          },
-        ),
+        _buildActionButton(context, isLoading),
         const Spacer(),
         ElevatedButton(
-          onPressed: () => {},
+          onPressed: () => {
+            context.router.push(
+              UserJourneyMapRoute(
+                fileUrl: widget.journey.file,
+                title: _getTitle(),
+              ),
+            ),
+          },
           child: const Text('Voir sur la carte'),
         ),
       ],
     );
   }
 
-  Widget _buildOtherUserHeader(BuildContext context) {
+  String _getTitle() {
+    final date = DateFormat('dd-MM-yyyy').format(widget.journey.createdAt.toLocal());
+    return 'Parcours du $date';
+  }
+
+  Widget _buildActionButton(BuildContext context, bool isLoading) {
+    return SizedBox(
+      height: 40,
+      child: AnimatedCrossFade(
+        firstChild: PopupMenuButton(
+          onSelected: (action) => _handleModalAction(context, action),
+          itemBuilder: (context) => _buildJourneyActions(),
+        ),
+        secondChild: const Padding(
+          padding: EdgeInsets.all(5.0),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        crossFadeState:
+            isLoading ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
+  void _handleModalAction(BuildContext context, JourneyModalAction action) {
+    switch (action) {
+      case JourneyModalAction.resetJourney:
+        context.read<EventDetailsBloc>().add(ResetUserJourney());
+        break;
+      case JourneyModalAction.deleteJourney:
+        context.read<UserJourneyDetailsBloc>().add(DeleteUserJourney());
+        break;
+      case JourneyModalAction.downloadJourney:
+        context.read<UserJourneyDetailsBloc>().add(DownloadUserJourney(
+              fileName: _getJourneyFileName(),
+            ));
+        break;
+    }
+  }
+
+  String _getJourneyFileName() {
+    final date =
+        DateFormat('dd-MM-yyyy').format(widget.journey.createdAt.toLocal());
+
+    final uniqueKey = DateTime.now().microsecondsSinceEpoch.toString();
+
+    return 'parcours_${date}_$uniqueKey.gpx';
+  }
+
+  Widget _buildOtherUserHeader() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -319,7 +469,7 @@ class _EventParticipationJourneyModalState
         const SizedBox(width: 16),
         Flexible(
           child: Text(
-            'Parcours de ${widget.username}',
+            'Parcours de ${widget.user?.username}',
             style: Theme.of(context).textTheme.titleMedium,
             softWrap: true,
           ),
@@ -329,17 +479,38 @@ class _EventParticipationJourneyModalState
   }
 
   List<PopupMenuItem> _buildJourneyActions() {
-    return [
-      const PopupMenuItem(
-        value: JourneyModalAction.resetJourney,
-        child: Row(
-          children: [
-            Icon(Icons.restart_alt_rounded),
-            SizedBox(width: 8),
-            Text('Réinitialiser le parcours'),
-          ],
+    final actions = <PopupMenuItem>[];
+
+    if (widget.isCurrentEvent) {
+      actions.add(
+        const PopupMenuItem(
+          value: JourneyModalAction.resetJourney,
+          child: Row(
+            children: [
+              Icon(Icons.restart_alt_rounded),
+              SizedBox(width: 8),
+              Text('Réinitialiser le parcours'),
+            ],
+          ),
         ),
-      ),
+      );
+    } else {
+      actions.add(
+        const PopupMenuItem(
+          value: JourneyModalAction.deleteJourney,
+          child: Row(
+            children: [
+              Icon(Icons.delete_rounded),
+              SizedBox(width: 8),
+              Text('Supprimer le parcours'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return [
+      ...actions,
       const PopupMenuItem(
         value: JourneyModalAction.downloadJourney,
         child: Row(

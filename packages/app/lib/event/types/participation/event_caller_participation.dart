@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../journey/type/user_journey.dart';
+import '../../../user_journey/type/user_journey.dart';
 import '../../../shared/types/json_map.dart';
 import 'event_role.dart';
 

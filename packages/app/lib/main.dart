@@ -23,7 +23,10 @@ import 'package:hollybike/profile/services/profile_repository.dart';
 import 'package:hollybike/search/bloc/search_bloc.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
+import 'package:hollybike/shared/http/downloader.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
+import 'package:hollybike/user_journey/services/user_journey_api.dart';
+import 'package:hollybike/user_journey/services/user_journey_repository.dart';
 import 'package:provider/provider.dart';
 
 import 'event/services/event/event_api.dart';
@@ -93,10 +96,21 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Provider(
       create: (context) => AuthPersistence(),
-      child: Provider(
-        create: (context) => DioClient(
-          authPersistence: Provider.of<AuthPersistence>(context, listen: false),
-        ),
+      child: MultiProvider(
+        providers: [
+          Provider(
+            create: (context) => DioClient(
+              authPersistence:
+                  Provider.of<AuthPersistence>(context, listen: false),
+            ),
+          ),
+          Provider(
+            create: (context) => Downloader(
+              authPersistence:
+                  Provider.of<AuthPersistence>(context, listen: false),
+            ),
+          ),
+        ],
         child: Builder(builder: (context) {
           return MultiRepositoryProvider(
             providers: [
@@ -142,6 +156,14 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => JourneyRepository(
                   journeyApi: JourneyApi(
                     client: RepositoryProvider.of<DioClient>(context),
+                  ),
+                ),
+              ),
+              RepositoryProvider(
+                create: (context) => UserJourneyRepository(
+                  userJourneyApi: UserJourneyApi(
+                    client: RepositoryProvider.of<DioClient>(context),
+                    downloader: RepositoryProvider.of<Downloader>(context),
                   ),
                 ),
               ),

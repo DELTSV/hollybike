@@ -5,6 +5,10 @@ import hollybike.api.repository.*
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.journey.*
 import hollybike.api.types.websocket.*
+import hollybike.api.types.websocket.UserReceivePosition
+import hollybike.api.types.websocket.UserSendPosition
+import hollybike.api.utils.search.SearchParam
+import hollybike.api.utils.search.applyParam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,11 +19,8 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.jetbrains.exposed.dao.load
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.math.sqrt
 
@@ -113,19 +114,59 @@ class UserEventPositionService(
 		}
 	}
 
-	fun getUserJourney(user: User, event: Event): UserJourney? = transaction(db) {
+	fun getUserJourneyFromEvent(user: User, event: Event): UserJourney? = transaction(db) {
 		val participation = EventParticipation.find {
 			(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
 		}.firstOrNull()?.load(EventParticipation::journey) ?: return@transaction null
 		participation.journey
 	}
 
-	fun removeUserJourney(user: User, event: Event) {
-		transaction(db) {
-			val participation = EventParticipation.find {
-				(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
-			}.firstOrNull() ?: return@transaction
-			participation.journey = null
+	fun removeUserJourneyFromEvent(user: User, event: Event) = transaction(db) {
+		val participation = EventParticipation.find {
+			(EventParticipations.user eq user.id) and (EventParticipations.event eq event.id)
+		}.firstOrNull() ?: return@transaction
+
+		participation.journey = null
+	}
+
+	fun deleteUserJourney(userJourney: UserJourney) = transaction(db) { userJourney.delete() }
+
+	fun getUserJourney(caller: User, userJourneyId: Int) = transaction(db) {
+		UserJourney.find { (UsersJourneys.id eq userJourneyId) and (UsersJourneys.user eq caller.id) }.firstOrNull()
+	}
+
+	fun getUserJourneys(userId: Int, searchParams: SearchParam): List<UserJourney> = transaction(db) {
+		UserJourney.wrapRows(
+			UsersJourneys
+				.selectAll()
+				.where(UsersJourneys.user eq userId)
+				.applyParam(searchParams)
+		).toList()
+	}
+
+	fun countUserJourneys(userId: Int, searchParams: SearchParam): Long = transaction(db) {
+		UsersJourneys
+			.selectAll().where { UsersJourneys.user eq userId }
+			.applyParam(searchParams, pagination = false)
+			.count()
+	}
+
+	private fun calculatePercentage(value: Double, otherValues: List<Double>): Double {
+		val countBetter = otherValues.count { it <= value }
+		return (countBetter.toDouble() / otherValues.size.toDouble()) * 100
+	}
+
+	private fun getValueForKey(journey: UserJourney, key: String): Double? {
+		return when (key) {
+			"max_speed" -> journey.maxSpeed
+			"avg_speed" -> journey.avgSpeed
+			"min_elevation" -> journey.minElevation
+			"max_elevation" -> journey.maxElevation
+			"total_elevation_gain" -> journey.totalElevationGain
+			"total_elevation_loss" -> journey.totalElevationLoss
+			"avg_g_force" -> journey.avgGForce
+			"max_g_force" -> journey.maxGForce
+			else -> null
 		}
 	}
 
@@ -158,33 +199,7 @@ class UserEventPositionService(
 
 		val hasBest = mutableMapOf<String, Double>()
 
-		fun calculatePercentage(value: Double?, otherValues: List<Double>, key: String) {
-			if (value != null) {
-				val countBetter = otherValues.count { it <= value }
-				val percentage = (countBetter.toDouble() / otherValues.size.toDouble()) * 100
-				hasBest[key] = percentage
-			}
-		}
-
-		fun getValueForKey(journey: UserJourney, key: String): Double? {
-			return when (key) {
-				"total_distance" -> journey.totalDistance
-				"total_time" -> journey.totalTime?.toDouble()
-				"max_speed" -> journey.maxSpeed
-				"avg_speed" -> journey.avgSpeed
-				"min_elevation" -> journey.minElevation
-				"max_elevation" -> journey.maxElevation
-				"total_elevation_gain" -> journey.totalElevationGain
-				"total_elevation_loss" -> journey.totalElevationLoss
-				"avg_g_force" -> journey.avgGForce
-				"max_g_force" -> journey.maxGForce
-				else -> null
-			}
-		}
-
 		val valueMapping = mapOf(
-			"total_distance" to userJourney.totalDistance,
-			"total_time" to userJourney.totalTime?.toDouble(),
 			"max_speed" to userJourney.maxSpeed,
 			"avg_speed" to userJourney.avgSpeed,
 			"min_elevation" to userJourney.minElevation,
@@ -196,10 +211,10 @@ class UserEventPositionService(
 		)
 
 		for ((key, value) in valueMapping) {
-			if (value != null) {
-				val otherValues = othersJourneys.mapNotNull { getValueForKey(it, key) }
-				calculatePercentage(value, otherValues, key)
-			}
+			value ?: continue
+
+			val otherValues = othersJourneys.mapNotNull { getValueForKey(it, key) }
+			hasBest[key] = calculatePercentage(value, otherValues)
 		}
 
 		hasBest
@@ -304,6 +319,7 @@ class UserEventPositionService(
 				this.maxSpeed = maxSpeed
 				this.avgGForce = avgGForce
 				this.maxGForce = maxGForce
+				this.user = user
 			}.apply {
 				participation.journey = this
 			}

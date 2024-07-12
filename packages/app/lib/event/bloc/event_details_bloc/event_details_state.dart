@@ -82,6 +82,11 @@ class DeleteEventSuccess extends EventDetailsState {
       : super.state(state.copyWith(status: EventDetailsStatus.success));
 }
 
+class UserJourneyReset extends EventDetailsState {
+  UserJourneyReset(EventDetailsState state)
+      : super.state(state.copyWith(status: EventDetailsStatus.success));
+}
+
 class DeleteEventFailure extends EventDetailsState {
   final String errorMessage;
 

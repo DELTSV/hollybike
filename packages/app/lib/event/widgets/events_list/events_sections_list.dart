@@ -18,12 +18,16 @@ class EventsSectionsList extends StatelessWidget {
   final List<MinimalEvent> events;
   final bool hasMore;
   final ScrollController? controller;
+  final ScrollPhysics physics;
 
   const EventsSectionsList({
     super.key,
     required this.events,
     required this.hasMore,
     this.controller,
+    this.physics = const BouncingScrollPhysics(
+      parent: AlwaysScrollableScrollPhysics(),
+    ),
   });
 
   @override
@@ -31,10 +35,7 @@ class EventsSectionsList extends StatelessWidget {
     final sections = getEventSections(events);
 
     return CustomScrollView(
-      controller: controller,
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
+      physics: physics,
       slivers: sections
           .map(
             (section) => SliverMainAxisGroup(

@@ -8,7 +8,9 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.journeysMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Journeys
+import hollybike.api.services.EventParticipationService
 import hollybike.api.services.PositionService
+import hollybike.api.services.UserEventPositionService
 import hollybike.api.services.journey.JourneyService
 import hollybike.api.types.association.TPartialAssociation
 import hollybike.api.types.journey.*
@@ -34,6 +36,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.datetime.Clock
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML

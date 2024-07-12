@@ -5,6 +5,7 @@ import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/fragments/details/event_details_images.dart';
 import 'package:hollybike/event/fragments/details/event_details_infos.dart';
 import 'package:hollybike/event/fragments/details/event_details_map.dart';
+import 'package:hollybike/event/services/participation/event_participation_repository.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/details/event_details_header.dart';
@@ -67,6 +68,8 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
     return BlocProvider(
       create: (context) => EventDetailsBloc(
         eventRepository: RepositoryProvider.of<EventRepository>(context),
+        eventParticipationRepository:
+            RepositoryProvider.of<EventParticipationRepository>(context),
         eventId: event.id,
       )..add(SubscribeToEvent()),
       child: this,
@@ -77,7 +80,7 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
 class _EventDetailsScreenState extends State<EventDetailsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController = TabController(
-    length: 5,
+    length: 4,
     vsync: this,
     initialIndex: 0,
   );
@@ -242,7 +245,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                                   ),
                                 ),
                                 Tab(icon: Icon(Icons.explore_rounded)),
-                                Tab(icon: Icon(Icons.map_rounded)),
                               ],
                             ),
                           ),
@@ -341,7 +343,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
-      const SizedBox(),
     ];
   }
 

@@ -6,12 +6,13 @@ import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/event/types/participation/event_caller_participation.dart';
 import 'package:hollybike/journey/type/journey.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/shared/utils/streams/stream_counter.dart';
 import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
-import '../../../journey/type/user_journey.dart';
+import '../../../user_journey/type/user_journey.dart';
 import '../../../shared/utils/streams/stream_mapper.dart';
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
@@ -508,11 +509,42 @@ class EventRepository {
       details.copyWith(
         callerParticipation: details.callerParticipation?.copyWith(
           journey: userJourney,
+          hasRecordedPositions: false,
         ),
       ),
     );
 
     return userJourney;
+  }
+
+  Future<UserJourney?> resetUserJourney(
+    int eventId,
+  ) async {
+    await eventApi.resetUserJourney(eventId);
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    final caller = details?.callerParticipation;
+
+    if (caller == null) {
+      return null;
+    }
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details?.copyWith(
+        callerParticipation: EventCallerParticipation(
+          userId: caller.userId,
+          isImagesPublic: caller.isImagesPublic,
+          role: caller.role,
+          joinedDateTime: caller.joinedDateTime,
+          journey: null,
+          hasRecordedPositions: false,
+        ),
+      ),
+    );
+
+    return caller.journey;
   }
 
   onUserPositionSent(int eventId) {
@@ -726,6 +758,31 @@ class EventRepository {
                 : e)
             .toList(),
       );
+    }
+  }
+
+  void onUserJourneyRemoved(int userJourneyId) {
+    for (final counter in _eventDetailsStreamMapper.counters) {
+      final participation = counter.value?.callerParticipation;
+
+      if (participation == null) {
+        continue;
+      }
+
+      if (participation.journey?.id == userJourneyId) {
+        counter.add(
+          counter.value?.copyWith(
+            callerParticipation: EventCallerParticipation(
+              userId: participation.userId,
+              isImagesPublic: participation.isImagesPublic,
+              role: participation.role,
+              joinedDateTime: participation.joinedDateTime,
+              journey: null,
+              hasRecordedPositions: false,
+            ),
+          ),
+        );
+      }
     }
   }
 }

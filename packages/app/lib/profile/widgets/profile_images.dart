@@ -5,11 +5,11 @@ import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/event/widgets/details/event_details_scroll_wrapper.dart';
 import 'package:hollybike/image/bloc/image_list_state.dart';
 import 'package:hollybike/image/widgets/image_gallery/image_gallery.dart';
-import 'package:hollybike/profile/bloc/profile_image_bloc/profile_images_bloc.dart';
+import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_bloc.dart';
+import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_event.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
-import '../bloc/profile_image_bloc/profile_images_event.dart';
 
 class ProfileImages extends StatelessWidget {
   final ScrollController scrollController;

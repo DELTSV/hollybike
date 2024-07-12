@@ -8,7 +8,7 @@ import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 
-import '../../../journey/type/user_journey.dart';
+import '../../../user_journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
@@ -132,6 +132,14 @@ class EventApi {
     );
 
     return UserJourney.fromJson(response.data);
+  }
+
+  Future<void> resetUserJourney(
+    int eventId,
+  ) async {
+    await client.dio.patch(
+      '/events/$eventId/participations/me/journey/reset',
+    );
   }
 
   Future<void> deleteExpense(int expenseId) async {

@@ -65,6 +65,7 @@ fun Application.api(storageService: StorageService, db: Database) {
 	EventParticipationController(this, eventParticipationService, userEventPositionService)
 	EventImageController(this, eventImageService)
 	JourneyController(this, journeyService, positionService)
+	UserJourneyController(this, userEventPositionService, storageService)
 	ProfileController(this, profileService)
 	WebSocketController(this, authVerifier, notificationService, userEventPositionService)
 	NotificationController(this, notificationService)
