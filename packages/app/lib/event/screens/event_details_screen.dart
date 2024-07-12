@@ -80,7 +80,7 @@ class EventDetailsScreen extends StatefulWidget implements AutoRouteWrapper {
 class _EventDetailsScreenState extends State<EventDetailsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController = TabController(
-    length: 5,
+    length: 4,
     vsync: this,
     initialIndex: 0,
   );
@@ -245,7 +245,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
                                   ),
                                 ),
                                 Tab(icon: Icon(Icons.explore_rounded)),
-                                Tab(icon: Icon(Icons.map_rounded)),
                               ],
                             ),
                           ),
@@ -344,7 +343,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           },
         ),
       ),
-      const SizedBox(),
     ];
   }
 
