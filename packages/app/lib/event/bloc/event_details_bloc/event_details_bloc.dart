@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:hollybike/event/services/participation/event_participation_repository.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/shared/utils/streams/stream_value.dart';

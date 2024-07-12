@@ -66,6 +66,12 @@ class AppRouter extends $AppRouter {
           path: '/search',
           transitionsBuilder: TransitionsBuilders.fadeIn,
         ),
+        CustomRoute(
+          guards: [AuthGuard(authPersistence: authPersistence)],
+          page: UserJourneyMapRoute.page,
+          path: '/user-journey-map',
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+        ),
         AutoRoute(
           page: LoginRoute.page,
           path: '/login',

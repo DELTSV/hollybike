@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_event.dart';
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_state.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
@@ -81,6 +83,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
       return builder(context, false);
     } else {
       return BlocConsumer(
+        bloc: eventDetailsBloc,
         listener: (context, state) {
           if (state is UserJourneyReset) {
             Navigator.of(context).pop();
@@ -133,10 +136,9 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
               }
             },
             builder: (context, userJourneyState) {
-              final isLoading = userJourneyState is UserJourneyOperationInProgress ||
-                  isEventLoading;
-
-              print('isLoading: $isLoading');
+              final isLoading =
+                  userJourneyState is UserJourneyOperationInProgress ||
+                      isEventLoading;
 
               return _buildContent(isLoading);
             },
@@ -344,7 +346,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
     return Text(
       _isSolo
           ? _getIsBetterThanMeanSoloText(isCurrentUser)
-          : "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% des participants !",
+          : "${_getIsBetterMeanText(isCurrentUser)} ${(_betterPercentage).round()}% !",
       style: Theme.of(context).textTheme.bodyMedium,
     );
   }
@@ -359,9 +361,9 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
 
   String _getIsBetterMeanText(bool isCurrentUser) {
     if (isCurrentUser) {
-      return 'Vous avez fait mieux que';
+      return 'Votre score global est de';
     } else {
-      return '${widget.user?.username} a fait mieux que';
+      return 'Le score global de ${widget.user?.username} est de';
     }
   }
 
@@ -388,11 +390,24 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
         _buildActionButton(context, isLoading),
         const Spacer(),
         ElevatedButton(
-          onPressed: () => {},
+          onPressed: () => {
+            context.router.push(
+              UserJourneyMapRoute(
+                fileUrl: widget.journey.file,
+                title: _getTitle(),
+              ),
+            ),
+          },
           child: const Text('Voir sur la carte'),
         ),
       ],
     );
+  }
+
+  String _getTitle() {
+    return widget.isCurrentEvent
+        ? 'Votre parcours'
+        : 'Parcours de ${widget.user?.username}';
   }
 
   Widget _buildActionButton(BuildContext context, bool isLoading) {

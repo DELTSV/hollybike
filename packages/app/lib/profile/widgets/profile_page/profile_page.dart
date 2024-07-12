@@ -7,7 +7,6 @@ import 'package:hollybike/event/fragments/profile_events.dart';
 import 'package:hollybike/event/services/event/event_repository.dart';
 import 'package:hollybike/image/services/image_repository.dart';
 import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_bloc.dart';
-import 'package:hollybike/profile/bloc/profile_images_bloc/profile_images_event.dart';
 import 'package:hollybike/profile/bloc/profile_journeys_bloc/profile_journeys_bloc.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner.dart';
 import 'package:hollybike/profile/widgets/profile_description/profile_description.dart';

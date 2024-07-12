@@ -158,8 +158,6 @@ class UserEventPositionService(
 
 	private fun getValueForKey(journey: UserJourney, key: String): Double? {
 		return when (key) {
-			"total_distance" -> journey.totalDistance
-			"total_time" -> journey.totalTime?.toDouble()
 			"max_speed" -> journey.maxSpeed
 			"avg_speed" -> journey.avgSpeed
 			"min_elevation" -> journey.minElevation
@@ -202,8 +200,6 @@ class UserEventPositionService(
 		val hasBest = mutableMapOf<String, Double>()
 
 		val valueMapping = mapOf(
-			"total_distance" to userJourney.totalDistance,
-			"total_time" to userJourney.totalTime?.toDouble(),
 			"max_speed" to userJourney.maxSpeed,
 			"avg_speed" to userJourney.avgSpeed,
 			"min_elevation" to userJourney.minElevation,

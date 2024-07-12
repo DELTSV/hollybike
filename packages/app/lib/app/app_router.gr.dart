@@ -8,25 +8,25 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:io' as _i20;
+import 'dart:io' as _i21;
 
-import 'package:auto_route/auto_route.dart' as _i13;
-import 'package:flutter/material.dart' as _i14;
+import 'package:auto_route/auto_route.dart' as _i14;
+import 'package:flutter/material.dart' as _i15;
 import 'package:hollybike/auth/screens/login_screen.dart' as _i8;
 import 'package:hollybike/auth/screens/signup_screen.dart' as _i12;
 import 'package:hollybike/event/bloc/event_details_bloc/event_details_bloc.dart'
-    as _i18;
+    as _i19;
 import 'package:hollybike/event/screens/event_details_screen.dart' as _i2;
 import 'package:hollybike/event/screens/events_screen.dart' as _i4;
 import 'package:hollybike/event/screens/participations/event_candidates_screen.dart'
     as _i1;
 import 'package:hollybike/event/screens/participations/event_participations_screen.dart'
     as _i3;
-import 'package:hollybike/event/types/event_details.dart' as _i16;
-import 'package:hollybike/event/types/minimal_event.dart' as _i15;
+import 'package:hollybike/event/types/event_details.dart' as _i17;
+import 'package:hollybike/event/types/minimal_event.dart' as _i16;
 import 'package:hollybike/event/types/participation/event_participation.dart'
-    as _i17;
-import 'package:hollybike/image/bloc/image_list_bloc.dart' as _i19;
+    as _i18;
+import 'package:hollybike/image/bloc/image_list_bloc.dart' as _i20;
 import 'package:hollybike/image/screens/image_gallery_page_view_screen.dart'
     as _i5;
 import 'package:hollybike/journey/screen/import_gpx_tool_screen.dart' as _i6;
@@ -34,17 +34,18 @@ import 'package:hollybike/profile/screens/me_screen.dart' as _i9;
 import 'package:hollybike/profile/screens/profile_screen.dart' as _i10;
 import 'package:hollybike/search/screens/search_screen.dart' as _i11;
 import 'package:hollybike/shared/routes/loading_route.dart' as _i7;
+import 'package:hollybike/user_journey/screens/user_journey_map.dart' as _i13;
 
-abstract class $AppRouter extends _i13.RootStackRouter {
+abstract class $AppRouter extends _i14.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
-  final Map<String, _i13.PageFactory> pagesMap = {
+  final Map<String, _i14.PageFactory> pagesMap = {
     EventCandidatesRoute.name: (routeData) {
       final args = routeData.argsAs<EventCandidatesRouteArgs>();
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.WrappedRoute(
+        child: _i14.WrappedRoute(
             child: _i1.EventCandidatesScreen(
           key: args.key,
           eventId: args.eventId,
@@ -53,9 +54,9 @@ abstract class $AppRouter extends _i13.RootStackRouter {
     },
     EventDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<EventDetailsRouteArgs>();
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.WrappedRoute(
+        child: _i14.WrappedRoute(
             child: _i2.EventDetailsScreen(
           key: args.key,
           event: args.event,
@@ -66,9 +67,9 @@ abstract class $AppRouter extends _i13.RootStackRouter {
     },
     EventParticipationsRoute.name: (routeData) {
       final args = routeData.argsAs<EventParticipationsRouteArgs>();
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.WrappedRoute(
+        child: _i14.WrappedRoute(
             child: _i3.EventParticipationsScreen(
           key: args.key,
           eventDetails: args.eventDetails,
@@ -78,16 +79,16 @@ abstract class $AppRouter extends _i13.RootStackRouter {
       );
     },
     EventsRoute.name: (routeData) {
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.WrappedRoute(child: const _i4.EventsScreen()),
+        child: _i14.WrappedRoute(child: const _i4.EventsScreen()),
       );
     },
     ImageGalleryViewRoute.name: (routeData) {
       final args = routeData.argsAs<ImageGalleryViewRouteArgs>();
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.WrappedRoute(
+        child: _i14.WrappedRoute(
             child: _i5.ImageGalleryViewScreen(
           key: args.key,
           imageIndex: args.imageIndex,
@@ -99,7 +100,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
     },
     ImportGpxToolRoute.name: (routeData) {
       final args = routeData.argsAs<ImportGpxToolRouteArgs>();
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i6.ImportGpxToolScreen(
           key: args.key,
@@ -110,14 +111,14 @@ abstract class $AppRouter extends _i13.RootStackRouter {
       );
     },
     LoadingRoute.name: (routeData) {
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i7.LoadingRoute(),
       );
     },
     LoginRoute.name: (routeData) {
       final args = routeData.argsAs<LoginRouteArgs>();
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i8.LoginScreen(
           key: args.key,
@@ -127,7 +128,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
       );
     },
     MeRoute.name: (routeData) {
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i9.MeScreen(),
       );
@@ -136,7 +137,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<ProfileRouteArgs>(
           orElse: () => ProfileRouteArgs(urlId: pathParams.optString('id')));
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i10.ProfileScreen(
           key: args.key,
@@ -145,7 +146,7 @@ abstract class $AppRouter extends _i13.RootStackRouter {
       );
     },
     SearchRoute.name: (routeData) {
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i11.SearchScreen(),
       );
@@ -153,12 +154,23 @@ abstract class $AppRouter extends _i13.RootStackRouter {
     SignupRoute.name: (routeData) {
       final args = routeData.argsAs<SignupRouteArgs>(
           orElse: () => const SignupRouteArgs());
-      return _i13.AutoRoutePage<dynamic>(
+      return _i14.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i12.SignupScreen(
           key: args.key,
           onAuthSuccess: args.onAuthSuccess,
           canPop: args.canPop,
+        ),
+      );
+    },
+    UserJourneyMapRoute.name: (routeData) {
+      final args = routeData.argsAs<UserJourneyMapRouteArgs>();
+      return _i14.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: _i13.UserJourneyMapScreen(
+          key: args.key,
+          fileUrl: args.fileUrl,
+          title: args.title,
         ),
       );
     },
@@ -168,11 +180,11 @@ abstract class $AppRouter extends _i13.RootStackRouter {
 /// generated route for
 /// [_i1.EventCandidatesScreen]
 class EventCandidatesRoute
-    extends _i13.PageRouteInfo<EventCandidatesRouteArgs> {
+    extends _i14.PageRouteInfo<EventCandidatesRouteArgs> {
   EventCandidatesRoute({
-    _i14.Key? key,
+    _i15.Key? key,
     required int eventId,
-    List<_i13.PageRouteInfo>? children,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           EventCandidatesRoute.name,
           args: EventCandidatesRouteArgs(
@@ -184,8 +196,8 @@ class EventCandidatesRoute
 
   static const String name = 'EventCandidatesRoute';
 
-  static const _i13.PageInfo<EventCandidatesRouteArgs> page =
-      _i13.PageInfo<EventCandidatesRouteArgs>(name);
+  static const _i14.PageInfo<EventCandidatesRouteArgs> page =
+      _i14.PageInfo<EventCandidatesRouteArgs>(name);
 }
 
 class EventCandidatesRouteArgs {
@@ -194,7 +206,7 @@ class EventCandidatesRouteArgs {
     required this.eventId,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
   final int eventId;
 
@@ -206,13 +218,13 @@ class EventCandidatesRouteArgs {
 
 /// generated route for
 /// [_i2.EventDetailsScreen]
-class EventDetailsRoute extends _i13.PageRouteInfo<EventDetailsRouteArgs> {
+class EventDetailsRoute extends _i14.PageRouteInfo<EventDetailsRouteArgs> {
   EventDetailsRoute({
-    _i14.Key? key,
-    required _i15.MinimalEvent event,
+    _i15.Key? key,
+    required _i16.MinimalEvent event,
     bool animate = true,
     String uniqueKey = "default",
-    List<_i13.PageRouteInfo>? children,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           EventDetailsRoute.name,
           args: EventDetailsRouteArgs(
@@ -226,8 +238,8 @@ class EventDetailsRoute extends _i13.PageRouteInfo<EventDetailsRouteArgs> {
 
   static const String name = 'EventDetailsRoute';
 
-  static const _i13.PageInfo<EventDetailsRouteArgs> page =
-      _i13.PageInfo<EventDetailsRouteArgs>(name);
+  static const _i14.PageInfo<EventDetailsRouteArgs> page =
+      _i14.PageInfo<EventDetailsRouteArgs>(name);
 }
 
 class EventDetailsRouteArgs {
@@ -238,9 +250,9 @@ class EventDetailsRouteArgs {
     this.uniqueKey = "default",
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
-  final _i15.MinimalEvent event;
+  final _i16.MinimalEvent event;
 
   final bool animate;
 
@@ -255,13 +267,13 @@ class EventDetailsRouteArgs {
 /// generated route for
 /// [_i3.EventParticipationsScreen]
 class EventParticipationsRoute
-    extends _i13.PageRouteInfo<EventParticipationsRouteArgs> {
+    extends _i14.PageRouteInfo<EventParticipationsRouteArgs> {
   EventParticipationsRoute({
-    _i14.Key? key,
-    required _i16.EventDetails eventDetails,
-    required List<_i17.EventParticipation> participationPreview,
-    _i18.EventDetailsBloc? eventDetailsBloc,
-    List<_i13.PageRouteInfo>? children,
+    _i15.Key? key,
+    required _i17.EventDetails eventDetails,
+    required List<_i18.EventParticipation> participationPreview,
+    _i19.EventDetailsBloc? eventDetailsBloc,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           EventParticipationsRoute.name,
           args: EventParticipationsRouteArgs(
@@ -275,8 +287,8 @@ class EventParticipationsRoute
 
   static const String name = 'EventParticipationsRoute';
 
-  static const _i13.PageInfo<EventParticipationsRouteArgs> page =
-      _i13.PageInfo<EventParticipationsRouteArgs>(name);
+  static const _i14.PageInfo<EventParticipationsRouteArgs> page =
+      _i14.PageInfo<EventParticipationsRouteArgs>(name);
 }
 
 class EventParticipationsRouteArgs {
@@ -287,13 +299,13 @@ class EventParticipationsRouteArgs {
     this.eventDetailsBloc,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
-  final _i16.EventDetails eventDetails;
+  final _i17.EventDetails eventDetails;
 
-  final List<_i17.EventParticipation> participationPreview;
+  final List<_i18.EventParticipation> participationPreview;
 
-  final _i18.EventDetailsBloc? eventDetailsBloc;
+  final _i19.EventDetailsBloc? eventDetailsBloc;
 
   @override
   String toString() {
@@ -303,8 +315,8 @@ class EventParticipationsRouteArgs {
 
 /// generated route for
 /// [_i4.EventsScreen]
-class EventsRoute extends _i13.PageRouteInfo<void> {
-  const EventsRoute({List<_i13.PageRouteInfo>? children})
+class EventsRoute extends _i14.PageRouteInfo<void> {
+  const EventsRoute({List<_i14.PageRouteInfo>? children})
       : super(
           EventsRoute.name,
           initialChildren: children,
@@ -312,20 +324,20 @@ class EventsRoute extends _i13.PageRouteInfo<void> {
 
   static const String name = 'EventsRoute';
 
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+  static const _i14.PageInfo<void> page = _i14.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i5.ImageGalleryViewScreen]
 class ImageGalleryViewRoute
-    extends _i13.PageRouteInfo<ImageGalleryViewRouteArgs> {
+    extends _i14.PageRouteInfo<ImageGalleryViewRouteArgs> {
   ImageGalleryViewRoute({
-    _i14.Key? key,
+    _i15.Key? key,
     required int imageIndex,
     required void Function() onLoadNextPage,
     required void Function() onRefresh,
-    required _i19.ImageListBloc<dynamic> bloc,
-    List<_i13.PageRouteInfo>? children,
+    required _i20.ImageListBloc<dynamic> bloc,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           ImageGalleryViewRoute.name,
           args: ImageGalleryViewRouteArgs(
@@ -340,8 +352,8 @@ class ImageGalleryViewRoute
 
   static const String name = 'ImageGalleryViewRoute';
 
-  static const _i13.PageInfo<ImageGalleryViewRouteArgs> page =
-      _i13.PageInfo<ImageGalleryViewRouteArgs>(name);
+  static const _i14.PageInfo<ImageGalleryViewRouteArgs> page =
+      _i14.PageInfo<ImageGalleryViewRouteArgs>(name);
 }
 
 class ImageGalleryViewRouteArgs {
@@ -353,7 +365,7 @@ class ImageGalleryViewRouteArgs {
     required this.bloc,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
   final int imageIndex;
 
@@ -361,7 +373,7 @@ class ImageGalleryViewRouteArgs {
 
   final void Function() onRefresh;
 
-  final _i19.ImageListBloc<dynamic> bloc;
+  final _i20.ImageListBloc<dynamic> bloc;
 
   @override
   String toString() {
@@ -371,13 +383,13 @@ class ImageGalleryViewRouteArgs {
 
 /// generated route for
 /// [_i6.ImportGpxToolScreen]
-class ImportGpxToolRoute extends _i13.PageRouteInfo<ImportGpxToolRouteArgs> {
+class ImportGpxToolRoute extends _i14.PageRouteInfo<ImportGpxToolRouteArgs> {
   ImportGpxToolRoute({
-    _i14.Key? key,
+    _i15.Key? key,
     required String url,
-    required void Function(_i20.File) onGpxDownloaded,
+    required void Function(_i21.File) onGpxDownloaded,
     required void Function() onClose,
-    List<_i13.PageRouteInfo>? children,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           ImportGpxToolRoute.name,
           args: ImportGpxToolRouteArgs(
@@ -391,8 +403,8 @@ class ImportGpxToolRoute extends _i13.PageRouteInfo<ImportGpxToolRouteArgs> {
 
   static const String name = 'ImportGpxToolRoute';
 
-  static const _i13.PageInfo<ImportGpxToolRouteArgs> page =
-      _i13.PageInfo<ImportGpxToolRouteArgs>(name);
+  static const _i14.PageInfo<ImportGpxToolRouteArgs> page =
+      _i14.PageInfo<ImportGpxToolRouteArgs>(name);
 }
 
 class ImportGpxToolRouteArgs {
@@ -403,11 +415,11 @@ class ImportGpxToolRouteArgs {
     required this.onClose,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
   final String url;
 
-  final void Function(_i20.File) onGpxDownloaded;
+  final void Function(_i21.File) onGpxDownloaded;
 
   final void Function() onClose;
 
@@ -419,8 +431,8 @@ class ImportGpxToolRouteArgs {
 
 /// generated route for
 /// [_i7.LoadingRoute]
-class LoadingRoute extends _i13.PageRouteInfo<void> {
-  const LoadingRoute({List<_i13.PageRouteInfo>? children})
+class LoadingRoute extends _i14.PageRouteInfo<void> {
+  const LoadingRoute({List<_i14.PageRouteInfo>? children})
       : super(
           LoadingRoute.name,
           initialChildren: children,
@@ -428,17 +440,17 @@ class LoadingRoute extends _i13.PageRouteInfo<void> {
 
   static const String name = 'LoadingRoute';
 
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+  static const _i14.PageInfo<void> page = _i14.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i8.LoginScreen]
-class LoginRoute extends _i13.PageRouteInfo<LoginRouteArgs> {
+class LoginRoute extends _i14.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i14.Key? key,
+    _i15.Key? key,
     required dynamic Function() onAuthSuccess,
     bool canPop = false,
-    List<_i13.PageRouteInfo>? children,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
@@ -451,8 +463,8 @@ class LoginRoute extends _i13.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static const _i13.PageInfo<LoginRouteArgs> page =
-      _i13.PageInfo<LoginRouteArgs>(name);
+  static const _i14.PageInfo<LoginRouteArgs> page =
+      _i14.PageInfo<LoginRouteArgs>(name);
 }
 
 class LoginRouteArgs {
@@ -462,7 +474,7 @@ class LoginRouteArgs {
     this.canPop = false,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
   final dynamic Function() onAuthSuccess;
 
@@ -476,8 +488,8 @@ class LoginRouteArgs {
 
 /// generated route for
 /// [_i9.MeScreen]
-class MeRoute extends _i13.PageRouteInfo<void> {
-  const MeRoute({List<_i13.PageRouteInfo>? children})
+class MeRoute extends _i14.PageRouteInfo<void> {
+  const MeRoute({List<_i14.PageRouteInfo>? children})
       : super(
           MeRoute.name,
           initialChildren: children,
@@ -485,16 +497,16 @@ class MeRoute extends _i13.PageRouteInfo<void> {
 
   static const String name = 'MeRoute';
 
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+  static const _i14.PageInfo<void> page = _i14.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i10.ProfileScreen]
-class ProfileRoute extends _i13.PageRouteInfo<ProfileRouteArgs> {
+class ProfileRoute extends _i14.PageRouteInfo<ProfileRouteArgs> {
   ProfileRoute({
-    _i14.Key? key,
+    _i15.Key? key,
     String? urlId,
-    List<_i13.PageRouteInfo>? children,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           ProfileRoute.name,
           args: ProfileRouteArgs(
@@ -507,8 +519,8 @@ class ProfileRoute extends _i13.PageRouteInfo<ProfileRouteArgs> {
 
   static const String name = 'ProfileRoute';
 
-  static const _i13.PageInfo<ProfileRouteArgs> page =
-      _i13.PageInfo<ProfileRouteArgs>(name);
+  static const _i14.PageInfo<ProfileRouteArgs> page =
+      _i14.PageInfo<ProfileRouteArgs>(name);
 }
 
 class ProfileRouteArgs {
@@ -517,7 +529,7 @@ class ProfileRouteArgs {
     this.urlId,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
   final String? urlId;
 
@@ -529,8 +541,8 @@ class ProfileRouteArgs {
 
 /// generated route for
 /// [_i11.SearchScreen]
-class SearchRoute extends _i13.PageRouteInfo<void> {
-  const SearchRoute({List<_i13.PageRouteInfo>? children})
+class SearchRoute extends _i14.PageRouteInfo<void> {
+  const SearchRoute({List<_i14.PageRouteInfo>? children})
       : super(
           SearchRoute.name,
           initialChildren: children,
@@ -538,17 +550,17 @@ class SearchRoute extends _i13.PageRouteInfo<void> {
 
   static const String name = 'SearchRoute';
 
-  static const _i13.PageInfo<void> page = _i13.PageInfo<void>(name);
+  static const _i14.PageInfo<void> page = _i14.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i12.SignupScreen]
-class SignupRoute extends _i13.PageRouteInfo<SignupRouteArgs> {
+class SignupRoute extends _i14.PageRouteInfo<SignupRouteArgs> {
   SignupRoute({
-    _i14.Key? key,
+    _i15.Key? key,
     dynamic Function()? onAuthSuccess,
     bool canPop = false,
-    List<_i13.PageRouteInfo>? children,
+    List<_i14.PageRouteInfo>? children,
   }) : super(
           SignupRoute.name,
           args: SignupRouteArgs(
@@ -561,8 +573,8 @@ class SignupRoute extends _i13.PageRouteInfo<SignupRouteArgs> {
 
   static const String name = 'SignupRoute';
 
-  static const _i13.PageInfo<SignupRouteArgs> page =
-      _i13.PageInfo<SignupRouteArgs>(name);
+  static const _i14.PageInfo<SignupRouteArgs> page =
+      _i14.PageInfo<SignupRouteArgs>(name);
 }
 
 class SignupRouteArgs {
@@ -572,7 +584,7 @@ class SignupRouteArgs {
     this.canPop = false,
   });
 
-  final _i14.Key? key;
+  final _i15.Key? key;
 
   final dynamic Function()? onAuthSuccess;
 
@@ -581,5 +593,48 @@ class SignupRouteArgs {
   @override
   String toString() {
     return 'SignupRouteArgs{key: $key, onAuthSuccess: $onAuthSuccess, canPop: $canPop}';
+  }
+}
+
+/// generated route for
+/// [_i13.UserJourneyMapScreen]
+class UserJourneyMapRoute extends _i14.PageRouteInfo<UserJourneyMapRouteArgs> {
+  UserJourneyMapRoute({
+    _i15.Key? key,
+    required String fileUrl,
+    required String title,
+    List<_i14.PageRouteInfo>? children,
+  }) : super(
+          UserJourneyMapRoute.name,
+          args: UserJourneyMapRouteArgs(
+            key: key,
+            fileUrl: fileUrl,
+            title: title,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'UserJourneyMapRoute';
+
+  static const _i14.PageInfo<UserJourneyMapRouteArgs> page =
+      _i14.PageInfo<UserJourneyMapRouteArgs>(name);
+}
+
+class UserJourneyMapRouteArgs {
+  const UserJourneyMapRouteArgs({
+    this.key,
+    required this.fileUrl,
+    required this.title,
+  });
+
+  final _i15.Key? key;
+
+  final String fileUrl;
+
+  final String title;
+
+  @override
+  String toString() {
+    return 'UserJourneyMapRouteArgs{key: $key, fileUrl: $fileUrl, title: $title}';
   }
 }
