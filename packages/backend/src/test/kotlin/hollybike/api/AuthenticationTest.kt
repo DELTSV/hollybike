@@ -85,7 +85,7 @@ class AuthenticationTest : IntegrationSpec({
 					setBody(
 						TSignup(
 							email = UserStore.new.value,
-							password = "test",
+							password = "Test1234",
 							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),
@@ -124,6 +124,31 @@ class AuthenticationTest : IntegrationSpec({
 			}
 		}
 
+		listOf("test", "TEST", "Test", "Test123").forEach { password ->
+			test("Should not sign up user if the password is invalid") {
+				onPremiseTestApp {
+					val invitation = generateInvitation(it, UserStore.admin1)
+
+					it.post("/api/auth/signin") {
+						contentType(ContentType.Application.Json)
+						setBody(
+							TSignup(
+								email = UserStore.new.value,
+								password = password,
+								username = "new_account",
+								verify = invitation["verify"]!!,
+								association = invitation["association"]!!.toInt(),
+								role = EUserScope.User,
+								invitation = invitation["invitation"]!!.toInt()
+							)
+						)
+					}.apply {
+						status shouldBe HttpStatusCode.BadRequest
+					}
+				}
+			}
+		}
+
 		test("Should not sign up the user if the email is already used") {
 			onPremiseTestApp {
 				val invitation = generateInvitation(it, UserStore.admin1)
@@ -133,7 +158,7 @@ class AuthenticationTest : IntegrationSpec({
 					setBody(
 						TSignup(
 							email = UserStore.user1.value,
-							password = "test",
+							password = "Test1234",
 							username = "new_account",
 							verify = invitation["verify"]!!,
 							association = invitation["association"]!!.toInt(),

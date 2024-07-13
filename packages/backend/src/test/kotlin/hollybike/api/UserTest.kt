@@ -382,8 +382,8 @@ class UserTest : IntegrationSpec({
 					setBody(
 						TUserUpdateSelf(
 							oldPassword = "test",
-							newPassword = "newpassword",
-							newPasswordAgain = "newpassword"
+							newPassword = "Test1234",
+							newPasswordAgain = "Test1234"
 						)
 					)
 				}.apply {
@@ -400,13 +400,13 @@ class UserTest : IntegrationSpec({
 					setBody(
 						TUserUpdateSelf(
 							oldPassword = "wrongpassword",
-							newPassword = "newpassword",
-							newPasswordAgain = "newpassword"
+							newPassword = "NewPassword1",
+							newPasswordAgain = "NewPassword1"
 						)
 					)
 				}.apply {
 					status shouldBe HttpStatusCode.Forbidden
-					bodyAsText() shouldBe "Mauvais old_password"
+					bodyAsText() shouldBe "Mauvais ancien mot de passe"
 				}
 			}
 		}
@@ -419,7 +419,7 @@ class UserTest : IntegrationSpec({
 					setBody(
 						TUserUpdateSelf(
 							oldPassword = "test",
-							newPassword = "newpassword",
+							newPassword = "NewPassword1",
 							newPasswordAgain = "differentpassword"
 						)
 					)
@@ -432,15 +432,15 @@ class UserTest : IntegrationSpec({
 
 		listOf(
 			TUserUpdateSelf(
-				newPassword = "newpassword",
+				newPassword = "NewPassword1",
 				newPasswordAgain = "differentpassword"
 			),
 			TUserUpdateSelf(
-				newPassword = "newpassword",
+				newPassword = "NewPassword1",
 			),
 			TUserUpdateSelf(
 				oldPassword = "test",
-				newPassword = "newpassword",
+				newPassword = "NewPassword1",
 			)
 		).forEach { update ->
 			test("Should not update my password because one element is missing") {
