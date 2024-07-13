@@ -117,6 +117,7 @@ class UserController(
 				call.respond(TUser(u))
 			}.onFailure { e ->
 				when (e) {
+					is PasswordInvalid -> call.respond(HttpStatusCode.BadRequest, e.message ?: "Mot de passe invalide")
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Utilisateur inconnu")
 				}
@@ -135,8 +136,8 @@ class UserController(
 						HttpStatusCode.BadRequest,
 						"Changer de mot de passe nécessite new_password, new_password_again et old_password"
 					)
-
-					is UserWrongPassword -> call.respond(HttpStatusCode.Forbidden, "Mauvais old_password")
+					is PasswordInvalid -> call.respond(HttpStatusCode.BadRequest, it.message ?: "Mot de passe invalide")
+					is UserWrongPassword -> call.respond(HttpStatusCode.Forbidden, "Mauvais ancien mot de passe")
 					is UserDifferentNewPassword -> call.respond(
 						HttpStatusCode.BadRequest,
 						"new_password et _new_password_again sont différent"
