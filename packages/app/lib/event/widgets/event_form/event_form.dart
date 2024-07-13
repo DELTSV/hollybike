@@ -19,7 +19,7 @@ class EventForm extends StatefulWidget {
   final void Function() onTouched;
 
   final String submitButtonText;
-
+  final bool canEditDates;
   final EventFormData? initialData;
 
   const EventForm({
@@ -28,6 +28,7 @@ class EventForm extends StatefulWidget {
     required this.onSubmit,
     required this.onClose,
     required this.submitButtonText,
+    required this.canEditDates,
     this.initialData,
   });
 
@@ -74,6 +75,75 @@ class _EventFormState extends State<EventForm> {
 
     _nameController.addListener(_onTouch);
     _descriptionController.addListener(_onTouch);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: widget.onClose,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _onSubmit();
+              },
+              child: Text(widget.submitButtonText),
+            )
+          ],
+        ),
+        Flexible(
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 15,
+                top: 12,
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    EventFormNameField(nameController: _nameController),
+                    const SizedBox(height: 15),
+                    EventFormDescriptionField(
+                      descriptionController: _descriptionController,
+                    ),
+                    ..._buildDatesRelatedFields(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildDatesRelatedFields() {
+    if (!widget.canEditDates) return const [];
+
+    return [
+      const SizedBox(height: 10),
+      SwitchWithText(
+        value: _selectEndDate,
+        text: "Définir une durée",
+        onChange: () {
+          _onSelectEndDateSwitchChanged(!_selectEndDate);
+        },
+      ),
+      const SizedBox(height: 15),
+      buildDatesInputs(),
+    ];
   }
 
   void _initInitialValues() {
@@ -216,42 +286,55 @@ class _EventFormState extends State<EventForm> {
           ? _descriptionController.text
           : null;
 
-      final startDate = _dateRange.start.copyWith(
-        hour: _startTime.hour,
-        minute: _startTime.minute,
-      );
+      final initialData = widget.initialData;
 
-      if (startDate.isBefore(DateTime.now())) {
-        showEventDateWarningDialog(
-          context,
-          "La date de début doit être dans le futur.",
+      if (widget.canEditDates) {
+        final startDate = _dateRange.start.copyWith(
+          hour: _startTime.hour,
+          minute: _startTime.minute,
         );
-        return;
-      }
 
-      final endDate = _selectEndDate
-          ? _dateRange.end.copyWith(
-              hour: _endTime.hour,
-              minute: _endTime.minute,
-            )
-          : null;
+        if (startDate.isBefore(DateTime.now())) {
+          showEventDateWarningDialog(
+            context,
+            "La date de début doit être dans le futur.",
+          );
+          return;
+        }
 
-      if (endDate != null && endDate.isBefore(startDate)) {
-        showEventDateWarningDialog(
-          context,
-          "La date de fin doit être postérieure à la date de début.",
+        final endDate = _selectEndDate
+            ? _dateRange.end.copyWith(
+          hour: _endTime.hour,
+          minute: _endTime.minute,
+        )
+            : null;
+
+        if (endDate != null && endDate.isBefore(startDate)) {
+          showEventDateWarningDialog(
+            context,
+            "La date de fin doit être postérieure à la date de début.",
+          );
+          return;
+        }
+
+        widget.onSubmit(
+          EventFormData(
+            name: _nameController.text,
+            description: description,
+            startDate: startDate,
+            endDate: endDate,
+          ),
         );
-        return;
+      } else if (initialData != null) {
+        widget.onSubmit(
+          EventFormData(
+            name: _nameController.text,
+            description: description,
+            startDate: initialData.startDate,
+            endDate: initialData.endDate,
+          ),
+        );
       }
-
-      widget.onSubmit(
-        EventFormData(
-          name: _nameController.text,
-          description: description,
-          startDate: startDate,
-          endDate: endDate,
-        ),
-      );
     }
   }
 
@@ -296,66 +379,6 @@ class _EventFormState extends State<EventForm> {
           label: "Heure",
           time: _startTime,
           onTimeChanged: _onStartTimeChanged,
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: widget.onClose,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _onSubmit();
-              },
-              child: Text(widget.submitButtonText),
-            )
-          ],
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: 15,
-                top: 12,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    EventFormNameField(nameController: _nameController),
-                    const SizedBox(height: 15),
-                    EventFormDescriptionField(
-                      descriptionController: _descriptionController,
-                    ),
-                    const SizedBox(height: 10),
-                    SwitchWithText(
-                      value: _selectEndDate,
-                      text: "Définir une durée",
-                      onChange: () {
-                        _onSelectEndDateSwitchChanged(!_selectEndDate);
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    buildDatesInputs(),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ),
       ],
     );

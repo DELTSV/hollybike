@@ -22,26 +22,35 @@ class EventPositionSwitch extends StatelessWidget {
       builder: (context, state) {
         final isLoading = state is MyPositionLoading;
 
-        if (eventDetails.callerParticipation == null ||
+        final isHidden = eventDetails.callerParticipation == null ||
             (eventDetails.callerParticipation?.journey != null &&
-                !state.isRunning)) {
-          return const SizedBox();
-        }
+                !state.isRunning);
 
-        return Container(
-          width: double.infinity,
-          color: Theme.of(context).colorScheme.primary,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: SizedBox(
-              child: SwitchWithText(
-                alignment: SwitchAlignment.right,
-                text: getSwitchLabel(state.isRunning),
-                value: state.isRunning,
-                onChange: () => _onSelected(
-                  context,
-                  state.isRunning,
-                  isLoading,
+        return AnimatedCrossFade(
+          duration: const Duration(milliseconds: 300),
+          crossFadeState: isHidden
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          firstChild: const SizedBox(),
+          secondChild: Container(
+            width: double.infinity,
+            color: Theme
+                .of(context)
+                .colorScheme
+                .primary,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: SizedBox(
+                child: SwitchWithText(
+                  alignment: SwitchAlignment.right,
+                  text: getSwitchLabel(state.isRunning),
+                  value: state.isRunning,
+                  onChange: () =>
+                      _onSelected(
+                        context,
+                        state.isRunning,
+                        isLoading,
+                      ),
                 ),
               ),
             ),
@@ -72,11 +81,11 @@ class EventPositionSwitch extends StatelessWidget {
   void _onStart(BuildContext context) async {
     if (await _checkLocationPermission() && context.mounted) {
       context.read<MyPositionBloc>().add(
-            EnableSendPosition(
-              eventId: eventDetails.event.id,
-              eventName: eventDetails.event.name,
-            ),
-          );
+        EnableSendPosition(
+          eventId: eventDetails.event.id,
+          eventName: eventDetails.event.name,
+        ),
+      );
     }
   }
 
@@ -89,7 +98,7 @@ class EventPositionSwitch extends StatelessWidget {
 
   void _cancelPositions(BuildContext context) {
     context.read<MyPositionBloc>().add(
-          DisableSendPositions(),
-        );
+      DisableSendPositions(),
+    );
   }
 }

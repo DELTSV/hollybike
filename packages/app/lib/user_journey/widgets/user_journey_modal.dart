@@ -423,7 +423,8 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   }
 
   String _getTitle() {
-    final date = DateFormat('dd-MM-yyyy').format(widget.journey.createdAt.toLocal());
+    final date =
+        DateFormat('dd-MM-yyyy').format(widget.journey.createdAt.toLocal());
     return 'Parcours du $date';
   }
 
@@ -452,10 +453,60 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
   void _handleModalAction(BuildContext context, JourneyModalAction action) {
     switch (action) {
       case JourneyModalAction.resetJourney:
-        context.read<EventDetailsBloc>().add(ResetUserJourney());
+        showDialog<void>(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: const Text('Êtes-vous sûr de réinitialiser le parcours ?'),
+              content: const Text(
+                'Le parcours sera discoscié de l\'événement mais restera disponible dans votre historique.',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.read<EventDetailsBloc>().add(ResetUserJourney());
+                  },
+                  child: const Text('Confirmer'),
+                ),
+              ],
+            );
+          },
+        );
         break;
       case JourneyModalAction.deleteJourney:
-        context.read<UserJourneyDetailsBloc>().add(DeleteUserJourney());
+        showDialog<void>(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: const Text('Êtes-vous sûr de supprimer le parcours ?'),
+              content: const Text(
+                'Le parcours sera définitivement supprimé.',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.read<UserJourneyDetailsBloc>().add(DeleteUserJourney());
+                  },
+                  child: const Text('Confirmer'),
+                ),
+              ],
+            );
+          },
+        );
         break;
       case JourneyModalAction.downloadJourney:
         context.read<UserJourneyDetailsBloc>().add(DownloadUserJourney(
