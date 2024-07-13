@@ -8,10 +8,7 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.journeysMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Journeys
-import hollybike.api.routing.resources.UserJourneys
-import hollybike.api.services.EventParticipationService
 import hollybike.api.services.PositionService
-import hollybike.api.services.UserEventPositionService
 import hollybike.api.services.journey.JourneyService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TPartialAssociation

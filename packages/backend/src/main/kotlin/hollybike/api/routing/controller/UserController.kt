@@ -32,7 +32,6 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
-import kotlinx.datetime.Instant
 
 class UserController(
 	application: Application,
