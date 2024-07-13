@@ -48,6 +48,7 @@ export function EventParticipant(props: EventParticipantsProps) {
 		<Card>
 			<List
 				action={<Button onClick={() => setVisible(true)}>Ajouter des participants</Button>}
+				if={props.event.id !== -1}
 				columns={[
 					{
 						name: "",

@@ -23,6 +23,7 @@ export function ModalAddParticipants(props: ModalAddParticipantsProps) {
 	const addCandidates = useCallback(() => {
 		api(`/events/${props.eventId}/participations/add-users`, {
 			method: "POST",
+			if: props.eventId !== -1,
 			body: { userIds: userIds },
 		}).then((res) => {
 			if (res.status === 200) {
@@ -46,6 +47,7 @@ export function ModalAddParticipants(props: ModalAddParticipantsProps) {
 		<Modal visible={props.visible} setVisible={props.setVisible}>
 			<List
 				action={<Button onClick={addCandidates}>Ajouter</Button>}
+				if={props.eventId !== -1}
 				columns={[
 					{
 						name: "Nom d'utlisateur",

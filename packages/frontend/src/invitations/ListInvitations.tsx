@@ -121,6 +121,7 @@ export function ListInvitations() {
 							width: "150px",
 						},
 					]}
+					if={association !== undefined}
 					baseUrl={url} line={(i: TInvitation) => [
 						<Cell>
 							{ i.role }
@@ -137,47 +138,47 @@ export function ListInvitations() {
 						</Cell>,
 						<>
 							{ user?.scope === EUserScope.Root &&
-                            <Cell>
-                            	<Link to={`/associations/${i.association.id}`}>
-                            		{ i.association.name }
-                            	</Link>
-                            </Cell> }
+								<Cell>
+									<Link to={`/associations/${i.association.id}`}>
+										{ i.association.name }
+									</Link>
+								</Cell> }
 						</>,
 						<Cell className={"flex"}>
 							{ i.link !== undefined &&
-                            <div className={"flex gap-2"}>
-                            	<QRCodeScanner
-                            		className={"cursor-pointer"}
-                            		onClick={() => {
-                            			setModalQrCode(true);
-                            			setQrCode(i.link!);
-                            		}}
-                            	/>
-                            	<LinkCell link={i.link}/>
-                            	{ smtp.status === 200 && <MailOutlineRounded
-                            		className={"cursor-pointer"} onClick={() => {
-                            			setModalMail(true);
-                            			setInvitation(i.id);
-                            		}}
-                            	/> }
-                            </div> }
+								<div className={"flex gap-2"}>
+									<QRCodeScanner
+										className={"cursor-pointer"}
+										onClick={() => {
+											setModalQrCode(true);
+											setQrCode(i.link!);
+										}}
+									/>
+									<LinkCell link={i.link}/>
+									{ smtp.status === 200 && <MailOutlineRounded
+										className={"cursor-pointer"} onClick={() => {
+											setModalMail(true);
+											setInvitation(i.id);
+										}}
+									/> }
+								</div> }
 						</Cell>,
 						<Cell>
 							{ i.status === "Enabled" &&
-                            <LinkOff
-                            	className={"cursor-pointer"} onClick={() => {
-                            		api(`/invitation/${i.id}/disable`, { method: "PATCH" }).then((res) => {
-                            			if (res.status === 200) {
-                            				toast("Invitation désactivée", { type: "success" });
-                            				doReload();
-                            			} else if (res.status === 404) {
-                            				toast(res.message, { type: "warning" });
-                            			} else {
-                            				toast(res.message, { type: "error" });
-                            			}
-                            		});
-                            	}}
-                            /> }
+								<LinkOff
+									className={"cursor-pointer"} onClick={() => {
+										api(`/invitation/${i.id}/disable`, { method: "PATCH" }).then((res) => {
+											if (res.status === 200) {
+												toast("Invitation désactivée", { type: "success" });
+												doReload();
+											} else if (res.status === 404) {
+												toast(res.message, { type: "warning" });
+											} else {
+												toast(res.message, { type: "error" });
+											}
+										});
+									}}
+								/> }
 						</Cell>,
 					]}
 					action={

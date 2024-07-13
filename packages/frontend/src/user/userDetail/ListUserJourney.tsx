@@ -12,6 +12,7 @@ export function ListUserJourney() {
 	return (
 		<Card>
 			<List
+				if={user !== null}
 				line={(uj: TUserJourney) => [
 					<Cell>
 						{ uj.total_elevation_gain }

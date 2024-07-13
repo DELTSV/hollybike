@@ -22,7 +22,7 @@ export function EventDetail() {
 	const { id } = useParams();
 	const event = useApi<TEvent>(`/events/${id}`, [reload]);
 	const [eventData, setEventData] = useState<TEvent>(dummyEvent);
-	const eventDetail = useApi<TEventDetail>(`/events/${id}/details`, [reload]);
+	const eventDetail = useApi<TEventDetail>(`/events/${id}/details`, [reload], { if: id !== undefined });
 
 	useEffect(() => {
 		if (event.status === 200 && event.data !== undefined) { setEventData(event.data); }

@@ -22,11 +22,12 @@ interface ListProps<T> {
 	perPage?: number,
 	reload?: Reload,
 	filter?: string,
-	action?: ComponentChildren
+	action?: ComponentChildren,
+	if?: boolean
 }
 
 export function List<T>(props: ListProps<T>) {
-	const sortFilterColumns = useApi<TMetaData>(`${props.baseUrl}/meta-data`);
+	const sortFilterColumns = useApi<TMetaData>(`${props.baseUrl}/meta-data`, [props.baseUrl], { if: props.if });
 	const [sort, setSort] = useState<{ [name: string]: Sort }>({});
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(0);
@@ -85,6 +86,7 @@ export function List<T>(props: ListProps<T>) {
 			orderQuery,
 			props.reload,
 		],
+		{ if: props.if },
 	);
 
 	const onPageChange = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
