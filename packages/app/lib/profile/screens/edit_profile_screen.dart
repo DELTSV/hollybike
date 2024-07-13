@@ -152,6 +152,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Toast.showSuccessToast(context, state.successMessage);
             Navigator.of(context).pop();
           }
+
+          if (state is ResetPasswordNotAvailable) {
+            showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Servce indisponible'),
+                  content: const Text(
+                    'La réinitialisation du mot de passe n\'est pas disponible, veuillez contactez un administrateur.',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ok'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         },
         builder: (context, state) {
           return Hud(
