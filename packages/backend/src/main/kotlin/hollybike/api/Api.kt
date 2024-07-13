@@ -38,11 +38,15 @@ fun Application.api(storageService: StorageService, db: Database) {
 
 	val positionService = PositionService(db, CoroutineScope(Dispatchers.Default))
 
+	val mailSender = attributes.conf.smtp?.let {
+		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
+	}
+
 	val notificationService = NotificationService(db)
 	val associationService = AssociationService(db, storageService)
 	val userService = UserService(db, storageService, associationService)
 	val invitationService = InvitationService(db)
-	val authService = AuthService(db, conf.security, invitationService, userService)
+	val authService = AuthService(db, conf.security, invitationService, userService, mailSender)
 	val eventService = EventService(db, storageService, notificationService)
 	val eventParticipationService = EventParticipationService(db, eventService, notificationService)
 	val imageMetadataService = ImageMetadataService()
@@ -51,14 +55,11 @@ fun Application.api(storageService: StorageService, db: Database) {
 	val profileService = ProfileService(db)
 	val userEventPositionService = UserEventPositionService(db, CoroutineScope(Dispatchers.Default), storageService)
 	val expenseService = ExpenseService(db, eventService, storageService)
-	val mailSender = attributes.conf.smtp?.let {
-		MailSender(it.url, it.port, it.username ?: "", it.password ?: "", it.sender)
-	}
 	val authVerifier = AuthVerifier(conf.security, db, log)
 
 	ApiController(this, mailSender, true)
 	AuthenticationController(this, authService)
-	UserController(this, userService, storageService)
+	UserController(this, userService, storageService, authService)
 	AssociationController(this, associationService, invitationService, authService, expenseService)
 	InvitationController(this, authService, invitationService, mailSender)
 	EventController(this, eventService, eventParticipationService, associationService, userService, userEventPositionService, expenseService, storageService)

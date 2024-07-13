@@ -31,6 +31,7 @@ import { useConfMode } from "./utils/useConfMode.tsx";
 import { CGU } from "./page/CGU.tsx";
 import { Invite } from "./page/Invite.tsx";
 import { UserJourney } from "./events/UserJourney.tsx";
+import { ChangePassword } from "./changePassword/ChangePassword.tsx";
 
 export function App() {
 	const [loaded, setLoaded] = useState(false);
@@ -144,6 +145,10 @@ export function App() {
 		{
 			path: "/invite",
 			element: <Invite/>,
+		},
+		{
+			path: "/change-password",
+			element: <ChangePassword/>,
 		},
 	]);
 

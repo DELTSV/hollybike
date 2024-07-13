@@ -17,6 +17,7 @@ interface InputProps {
 	className?: string,
 	leftIcon?: ComponentChildren
 	rightIcon?: ComponentChildren,
+	disabled?: boolean
 }
 
 export const Input = forwardRef((props: InputProps, ref: ForwardedRef<HTMLDivElement>) =>
@@ -29,6 +30,7 @@ export const Input = forwardRef((props: InputProps, ref: ForwardedRef<HTMLDivEle
 				{ props.leftIcon }
 			</i> }
 		<input
+			disabled={props.disabled === true}
 			onFocusIn={props.onFocusIn} onFocusOut={props.onFocusOut}
 			value={props.value} onInput={props.onInput} type={props.type} placeholder={props.placeholder}
 			className={clsx(
@@ -36,6 +38,7 @@ export const Input = forwardRef((props: InputProps, ref: ForwardedRef<HTMLDivEle
 				"focus-visible:outline-blue-500 border-surface-1",
 				"dark:focus-visible:outline-blue-700 outline-2 focus-visible:-outline-offset-1 focus-visible:outline",
 				"rounded border-2",
+				"disabled:text-subtext-0",
 				props.leftIcon && "border-l-0 rounded-l-none",
 				props.rightIcon && "border-r-0 rounded-r-none",
 			)}

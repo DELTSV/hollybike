@@ -2,6 +2,7 @@ package hollybike.api.services.auth
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import de.nycode.bcrypt.hash
 import de.nycode.bcrypt.verify
 import hollybike.api.ConfSecurity
 import hollybike.api.exceptions.*
@@ -9,12 +10,10 @@ import hollybike.api.database.lower
 import hollybike.api.repository.*
 import hollybike.api.services.UserService
 import hollybike.api.types.association.EAssociationsStatus
-import hollybike.api.types.auth.TAuthInfo
-import hollybike.api.types.auth.TLogin
-import hollybike.api.types.auth.TRefresh
-import hollybike.api.types.auth.TSignup
+import hollybike.api.types.auth.*
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
+import hollybike.api.utils.MailSender
 import hollybike.api.utils.isValidMail
 import io.ktor.util.*
 import kotlinx.datetime.*
@@ -34,7 +33,8 @@ class AuthService(
 	private val db: Database,
 	private val conf: ConfSecurity,
 	private val invitationService: InvitationService,
-	private val userService: UserService
+	private val userService: UserService,
+	private val mailSender: MailSender?
 ) {
 	private val key = SecretKeySpec(conf.secret.toByteArray(), "HmacSHA256")
 	private val mac = Mac.getInstance("HmacSHA256").apply {
@@ -105,7 +105,8 @@ class AuthService(
 		val refresh = randomString(35)
 		val device = login.device ?: UUID.randomUUID().toString()
 		transaction(db) {
-			Token.find { (Tokens.user eq user.id) and (Tokens.device eq device) }.firstOrNull()?.apply { token = refresh }
+			Token.find { (Tokens.user eq user.id) and (Tokens.device eq device) }.firstOrNull()
+				?.apply { token = refresh }
 				?: Token.new {
 					this.user = user
 					this.device = device
@@ -123,7 +124,7 @@ class AuthService(
 
 	private val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
 
-	private fun randomString(length: Int) : String {
+	private fun randomString(length: Int): String {
 		return (1..length)
 			.map { allowedChars.random() }
 			.joinToString("")
@@ -174,7 +175,7 @@ class AuthService(
 		val newRefresh = randomString(35)
 		return transaction(db) {
 			Token.find { Tokens.device eq refresh.device }.firstOrNull()?.let {
-				if(it.token == refresh.token) {
+				if (it.token == refresh.token) {
 					it.token = newRefresh
 					generateJWT(it.user.email, it.user.scope)
 				} else {
@@ -185,5 +186,38 @@ class AuthService(
 				TAuthInfo(it, newRefresh, refresh.device)
 			}
 		}
+	}
+
+	@OptIn(ExperimentalEncodingApi::class)
+	fun sendResetPassword(mail: String): Result<Unit> {
+		val user = transaction(db) { User.find { Users.email eq mail }.firstOrNull() } ?: run {
+			return Result.failure(UserNotFoundException())
+		}
+		val expire = Clock.System.now() + 1.days
+		val token = encoder.encode(mac.doFinal("$mail-${expire.epochSeconds}".toByteArray(Charsets.UTF_8)))
+		val link = "${conf.domain}/change-password?user=$mail&expire=${expire.epochSeconds}&token=$token"
+		mailSender?.passwordMail(link, user.username, user.email) ?: run {
+			return Result.failure(NoMailSenderException())
+		}
+		return Result.success(Unit)
+	}
+
+	@OptIn(ExperimentalEncodingApi::class)
+	fun resetPassword(mail: String, password: TResetPassword): Result<Unit> {
+		val user = transaction(db) { User.find { Users.email eq mail }.firstOrNull() } ?: run {
+			return Result.failure(UserNotFoundException())
+		}
+		val verify = encoder.encode(mac.doFinal("$mail-${password.expire}".toByteArray(Charsets.UTF_8)))
+		if(password.token != verify) {
+			return Result.failure(NotAllowedException())
+		}
+		if(password.newPassword != password.newPasswordConfirmation) {
+			return Result.failure(UserDifferentNewPassword())
+		}
+		if(Instant.fromEpochSeconds(password.expire) < Clock.System.now()) {
+			return Result.failure(LinkExpire())
+		}
+		transaction(db) { user.password = hash(password.newPassword).encodeBase64() }
+		return Result.success(Unit)
 	}
 }

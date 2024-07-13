@@ -122,7 +122,7 @@ class InvitationController(
 			invitationService.getValidInvitation(it.id.id)?.let { invitation ->
 				val link = authService.generateLink(host, invitation)
 				try {
-					mailSender?.linkMail(link, dest.dest, invitation.association.name)?.join()
+					mailSender?.linkMail(link, dest.dest, invitation.association.name, invitation.creator.username)?.join()
 					call.respond("Mail envoyé")
 				} catch (e: Exception) {
 					call.respond(HttpStatusCode.InternalServerError, e.message ?: "Erreur inconnue")

@@ -6,8 +6,10 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Users
 import hollybike.api.services.UserService
+import hollybike.api.services.auth.AuthService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TAssociation
+import hollybike.api.types.auth.TResetPassword
 import hollybike.api.types.lists.TLists
 import hollybike.api.types.shared.ImagePath
 import hollybike.api.types.user.EUserScope
@@ -30,11 +32,13 @@ import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
+import kotlinx.datetime.Instant
 
 class UserController(
 	application: Application,
 	private val userService: UserService,
-	private val storageService: StorageService
+	private val storageService: StorageService,
+	private val authService: AuthService
 ) {
 	init {
 		application.routing {
@@ -51,6 +55,8 @@ class UserController(
 				getAll()
 				getMetadata()
 			}
+			sendResetPassword()
+			resetPassword()
 		}
 	}
 
@@ -130,7 +136,7 @@ class UserController(
 						"Changer de mot de passe nécessite new_password, new_password_again et old_password"
 					)
 
-					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais old_password")
+					is UserWrongPassword -> call.respond(HttpStatusCode.Forbidden, "Mauvais old_password")
 					is UserDifferentNewPassword -> call.respond(
 						HttpStatusCode.BadRequest,
 						"new_password et _new_password_again sont différent"
@@ -211,6 +217,40 @@ class UserController(
 	private fun Route.getMetadata() {
 		get<Users.MetaData>(EUserScope.Admin) {
 			call.respond((userMapper + associationMapper).getMapperData())
+		}
+	}
+
+	private fun Route.sendResetPassword() {
+		post<Users.Password.Mail.Send> {
+			authService.sendResetPassword(it.mail.mail).onSuccess {
+				call.respond("Mail envoyé")
+			}.onFailure { e ->
+				when (e) {
+					is UserNotFoundException -> call.respond(
+						HttpStatusCode.NotFound,
+						"Le mail ${it.mail.mail} n'existe pas"
+					)
+					is NoMailSenderException -> call.respond(HttpStatusCode.ServiceUnavailable, "Aucun serveur de mail configurer. Veuillez contacter un administrateur.")
+					else -> call.respond(HttpStatusCode.InternalServerError)
+				}
+			}
+		}
+	}
+
+	private fun Route.resetPassword() {
+		put<Users.Password.Mail> {
+			val password = call.receive<TResetPassword>()
+			authService.resetPassword(it.mail, password).onSuccess {
+				call.respond("Mot de passe modifié")
+			}.onFailure { e ->
+				when(e) {
+					is UserDifferentNewPassword -> call.respond(HttpStatusCode.BadRequest, "Les mots de passe ne correspondent pas")
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Le mail ${it.mail} n'existe pas")
+					is LinkExpire -> call.respond(HttpStatusCode.Forbidden, "Le lien est expiré")
+					else -> call.respond(HttpStatusCode.InternalServerError)
+				}
+			}
 		}
 	}
 }

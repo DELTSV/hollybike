@@ -52,7 +52,7 @@ class InvitationService(
 				(Invitations.status eq EInvitationStatus.Enabled.value) and
 				(Invitations.maxUses.isNull() or (Invitations.uses less Invitations.maxUses)) and
 				(Invitations.expiration.isNull() or (Invitations.expiration greater Clock.System.now()))
-		}.singleOrNull()?.load(Invitation::association) ?: run {
+		}.singleOrNull()?.load(Invitation::association, Invitation::creator) ?: run {
 			Invitation.findById(id)?.status = EInvitationStatus.Disabled
 			return@transaction null
 		}

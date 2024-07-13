@@ -18,10 +18,10 @@
 		"s3Password": "minio-root-password"
 	},
 	"smtp": {
-		"url": "localhost",
-		"port": "1025",
-		"sender": "test@hollybike.fr",
-		"username": "mailhog",
-		"password": "mailhog"
+		"url": "smtp-relay.brevo.com",
+		"port": "587",
+		"sender": "hollybike@hollybike.fr",
+		"username": "7328e6001@smtp-brevo.com",
+		"password": "2NWtqZaDcXwx4bMj"
 	}
 }
