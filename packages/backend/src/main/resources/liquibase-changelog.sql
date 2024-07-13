@@ -491,3 +491,14 @@ ALTER TABLE users_journeys
 
 ALTER TABLE users_journeys
     ADD CONSTRAINT users_journeys_user_fkey FOREIGN KEY ("user") REFERENCES users(id_user) ON DELETE CASCADE;
+
+--changeset loic:19
+
+ALTER TABLE event_participations
+    DROP CONSTRAINT event_participation_user_journey_fk;
+
+ALTER TABLE event_participations
+    DROP CONSTRAINT event_participations_journey_fkey;
+
+ALTER TABLE event_participations
+    ADD CONSTRAINT event_participations_journey_fkey FOREIGN KEY (journey) REFERENCES users_journeys(id_user_journey) ON DELETE SET NULL;

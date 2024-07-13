@@ -45,7 +45,7 @@ class UserJourneyDetailsBloc
       log('Failed to delete user journey', error: e);
       emit(UserJourneyOperationFailure(
         state,
-        errorMessage: 'Ecchec de la suppression du parcours.',
+        errorMessage: 'Echec de la suppression du parcours.',
       ));
       return;
     }
