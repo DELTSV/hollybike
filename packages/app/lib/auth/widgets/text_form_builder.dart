@@ -176,6 +176,7 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
     if (config.hasControlField) {
       fields.add(ControlTextField(
         controller: controller?.controlEditingController,
+        controlledFieldController: controller?.editingController,
         controlledFieldTitle: config.label,
         focusNode: focusNode?.controlFocusNode,
         onEditingDone: next,

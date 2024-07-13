@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hollybike/event/widgets/expenses/currency_input.dart';
+import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
 
 class AddExpenseModal extends StatefulWidget {
   final void Function(
@@ -42,19 +43,9 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextFormField(
+            CommonTextField(
               controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Nom',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.onPrimary),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-              ),
+              title: 'Nom',
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value?.isEmpty == true) {
@@ -77,20 +68,10 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
               },
             ),
             const SizedBox(height: 16),
-            TextFormField(
+            CommonTextField(
               controller: _descriptionController,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              decoration: InputDecoration(
-                labelText: 'Description (optionnel)',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.onPrimary),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-              ),
+              title: 'Description (optionnel)',
             ),
           ],
         ),
