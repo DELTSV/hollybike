@@ -8,12 +8,14 @@ class EventFormModal extends StatefulWidget {
   final void Function(EventFormData) onSubmit;
   final String submitButtonText;
   final EventFormData? initialData;
+  final bool canEditDates;
 
   const EventFormModal({
     super.key,
     required this.onSubmit,
     required this.submitButtonText,
     this.initialData,
+    this.canEditDates = true,
   });
 
   @override
@@ -68,9 +70,12 @@ class _EventFormModalState extends State<EventFormModal> {
               right: 16,
             ),
             child: SafeArea(
-              child: SizedBox(
-                height: 335,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxHeight: 335,
+                ),
                 child: EventForm(
+                  canEditDates: widget.canEditDates,
                   submitButtonText: widget.submitButtonText,
                   initialData: widget.initialData,
                   onClose: () {

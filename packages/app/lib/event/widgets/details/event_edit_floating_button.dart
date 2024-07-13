@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:hollybike/event/types/event_status_state.dart';
 
 import '../../types/event.dart';
 import '../../types/event_form_data.dart';
@@ -39,8 +40,11 @@ class EventEditFloatingButton extends StatelessWidget {
       showModalBottomSheet<void>(
         context: context,
         enableDrag: false,
+        isScrollControlled: true,
         builder: (BuildContext context) {
           return EventFormModal(
+            canEditDates: event.status == EventStatusState.pending ||
+                event.status == EventStatusState.scheduled,
             initialData: EventFormData(
               name: event.name,
               description: event.description,
