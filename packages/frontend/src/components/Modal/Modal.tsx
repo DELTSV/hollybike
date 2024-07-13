@@ -44,7 +44,7 @@ export function Modal(props: ModalProps) {
 					<button
 						className={clsx(
 							"bg-subtext-1 text-base fill-base rounded p-1",
-							"w-8 hover:w-24",
+							"w-8 [&:has(svg:hover)]:w-24",
 							"transition-w duration-200 group",
 							"flex justify-end gap-1",
 						)}
@@ -54,7 +54,7 @@ export function Modal(props: ModalProps) {
 							className={clsx(
 								"translate-y-4 -translate-x-4 opacity-0",
 								"transition-transform-opacity duration-200",
-								"group-hover:translate-y-0 group-hover:translate-x-0 group-hover:opacity-100",
+								"group-[&:has(svg:hover)]:translate-y-0 group-[&:has(svg:hover)]:translate-x-0 group-[&:has(svg:hover)]:opacity-100",
 							)}
 						>
 							Fermer
