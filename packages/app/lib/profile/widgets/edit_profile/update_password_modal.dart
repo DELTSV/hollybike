@@ -5,7 +5,6 @@ import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/widgets/text_form_builder.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_event.dart';
-import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_state.dart';
 import 'package:hollybike/shared/widgets/dialog/closable_dialog.dart';
 
 class UpdatePasswordModal extends StatefulWidget {
