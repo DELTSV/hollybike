@@ -533,3 +533,10 @@ ALTER TABLE tokens
 
 ALTER TABLE invitations
     ADD COLUMN IF NOT EXISTS label VARCHAR(1000) DEFAULT null;
+
+--changeset denis:19
+ALTER TABLE invitations
+    DROP CONSTRAINT invitations_association_fkey;
+
+ALTER TABLE invitations
+    ADD CONSTRAINT invitations_association_fkey FOREIGN KEY (association) REFERENCES associations(id_association) ON DELETE CASCADE;

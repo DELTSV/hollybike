@@ -31,8 +31,6 @@ import io.ktor.server.routing.*
 import io.ktor.utils.io.charsets.*
 import kotlinx.datetime.*
 import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.format.DateTimeFormat
-import java.time.format.DateTimeFormatter
 import kotlin.math.ceil
 
 class AssociationController(

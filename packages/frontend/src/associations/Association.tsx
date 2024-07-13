@@ -1,4 +1,6 @@
-import { useParams } from "react-router-dom";
+import {
+	useNavigate, useParams,
+} from "react-router-dom";
 import {
 	api, apiRaw, useApi,
 } from "../utils/useApi.ts";
@@ -41,6 +43,8 @@ export function Association() {
 	const [file, setFile] = useState<File|null>(null);
 
 	const [visible, setVisible] = useState(false);
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (association.data) {
@@ -142,7 +146,14 @@ export function Association() {
 					<div className={"flex justify-around"}>
 						<ButtonDanger
 							onClick={() => {
-								api(`/associations/${association.data?.id}`, { method: "DELETE" });
+								api(`/associations/${association.data?.id}`, { method: "DELETE" }).then((res) => {
+									if (res.status === 200) {
+										toast("Association supprimé", { type: "success" });
+										navigate("/associations");
+									} else {
+										toast(res.message, { type: "error" });
+									}
+								});
 							}}
 						>
 							Oui, supprimer
