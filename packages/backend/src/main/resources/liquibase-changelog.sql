@@ -502,3 +502,30 @@ ALTER TABLE event_participations
 
 ALTER TABLE event_participations
     ADD CONSTRAINT event_participations_journey_fkey FOREIGN KEY (journey) REFERENCES users_journeys(id_user_journey) ON DELETE SET NULL;
+
+--changeset denis:17
+
+ALTER TABLE invitations
+    DROP CONSTRAINT invitations_creator_fkey;
+
+ALTER TABLE invitations
+    ADD CONSTRAINT invitations_creator_fkey FOREIGN KEY (creator) REFERENCES users(id_user) ON DELETE CASCADE;
+
+ALTER TABLE journeys
+    DROP CONSTRAINT journeys_creator_fkey;
+
+ALTER TABLE journeys
+    ADD CONSTRAINT journeys_creator_fkey FOREIGN KEY (creator) REFERENCES users(id_user) ON DELETE CASCADE;
+
+ALTER TABLE notifications
+    DROP CONSTRAINT notifications_user_fkey;
+
+ALTER TABLE notifications
+    ADD CONSTRAINT notifications_user_fkey FOREIGN KEY ("user") REFERENCES users(id_user) ON DELETE CASCADE;
+
+ALTER TABLE tokens
+    DROP CONSTRAINT tokens_user_fkey;
+
+ALTER TABLE tokens
+    ADD CONSTRAINT tokens_user_fkey FOREIGN KEY ("user") REFERENCES users(id_user) ON DELETE CASCADE;
+

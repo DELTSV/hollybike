@@ -53,6 +53,7 @@ class UserController(
 				uploadUserProfilePicture()
 				getAll()
 				getMetadata()
+				deleteUser()
 			}
 			sendResetPassword()
 			resetPassword()
@@ -247,6 +248,22 @@ class UserController(
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Le mail ${it.mail} n'existe pas")
 					is LinkExpire -> call.respond(HttpStatusCode.Forbidden, "Le lien est expiré")
+					else -> call.respond(HttpStatusCode.InternalServerError)
+				}
+			}
+		}
+	}
+
+	private fun Route.deleteUser() {
+		delete<Users.Id> {
+			val deleteUser = userService.getUser(call.user, it.id) ?: run {
+				return@delete call.respond(HttpStatusCode.NotFound, "L'utilisateur n'existe pas")
+			}
+			userService.deleteUser(call.user, deleteUser).onSuccess {
+				call.respond(HttpStatusCode.NoContent)
+			}.onFailure { e ->
+				when(e) {
+					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					else -> call.respond(HttpStatusCode.InternalServerError)
 				}
 			}

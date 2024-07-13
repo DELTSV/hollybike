@@ -4,10 +4,8 @@ import aws.smithy.kotlin.runtime.text.encoding.encodeBase64String
 import de.nycode.bcrypt.hash
 import de.nycode.bcrypt.verify
 import hollybike.api.exceptions.*
-import hollybike.api.repository.Association
-import hollybike.api.repository.Associations
-import hollybike.api.repository.User
-import hollybike.api.repository.Users
+import hollybike.api.repository.*
+import hollybike.api.services.image.EventImageService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
@@ -55,6 +53,12 @@ class UserService(
 		EUserScope.Root -> true
 		EUserScope.Admin -> caller.association.id == target.association.id
 		EUserScope.User -> caller.id == target.id
+	}
+
+	private fun authorizeDelete(caller: User, target: User): Boolean = when(caller.scope) {
+		EUserScope.Root -> true
+		EUserScope.Admin -> caller.association.id == target.association.id
+		EUserScope.User -> false
 	}
 
 	fun getUser(caller: User, id: Int): User? = transaction(db) {
@@ -200,5 +204,24 @@ class UserService(
 		return transaction(db) {
 			Users.innerJoin(Associations).selectAll().applyParam(param, false).count()
 		}
+	}
+
+	suspend fun deleteUser(caller: User, user: User): Result<Unit> {
+		if(!authorizeDelete(caller, user)) {
+			return Result.failure(NotAllowedException())
+		}
+		user.profilePicture?.let { storageService.delete(it) }
+		transaction(db) {
+			EventImage.find { EventImages.owner eq user.id }.toList()
+		}.forEach {
+			storageService.delete(it.path)
+		}
+		transaction(db) {
+			UserJourney.find { UsersJourneys.user eq user.id }.toList()
+		}.forEach {
+			storageService.delete(it.journey)
+		}
+		transaction(db) { user.delete() }
+		return Result.success(Unit)
 	}
 }

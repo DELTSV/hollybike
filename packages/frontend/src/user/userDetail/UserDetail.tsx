@@ -1,4 +1,6 @@
-import { useParams } from "react-router-dom";
+import {
+	useNavigate, useParams,
+} from "react-router-dom";
 import {
 	api, useApi,
 } from "../../utils/useApi.ts";
@@ -25,6 +27,7 @@ import {
 } from "../../types/EUserScope.ts";
 import { useUser } from "../useUser.tsx";
 import { ListUserJourney } from "./ListUserJourney.tsx";
+import { ButtonDanger } from "../../components/Button/ButtonDanger.tsx";
 
 const emptyUser: TUser = {
 	id: -1,
@@ -52,6 +55,8 @@ export function UserDetail() {
 	const [password, setPassword] = useState("");
 	const [passwordVisible, setPasswordVisible] = useState(false);
 
+	const [confirm, setConfirm] = useState(false);
+
 	useEffect(() => {
 		if (user.data !== undefined) { setUserData(user.data); }
 	}, [user]);
@@ -61,6 +66,8 @@ export function UserDetail() {
 			name: scopesName[s],
 			value: s,
 		})), [self]);
+
+	const navigate = useNavigate();
 
 	return (
 		<div className={"grid gap-2 grid-cols-2"}>
@@ -128,34 +135,61 @@ export function UserDetail() {
 						default={userData.status}
 					/>
 				</div>
-				<Button
-					onClick={() => {
-						const data: TUserUpdate = {
-							username: userData.username,
-							email: userData.email,
-							password: password.length !== 0 ? password : undefined,
-							status: userData.status,
-							scope: userData.scope,
-							association: userData.association.id,
-							role: userData.role,
-						};
-						api(`/users/${ userData.id}`, {
-							method: "PATCH",
-							body: data,
-						}).then((res) => {
-							if (res.status === 200) {
-								doReload();
-								toast("L'utilisateur à été mis à jour", { type: "success" });
-							} else if (res.status === 404) {
-								toast(res.message, { type: "warning" });
+				<div className={"flex justify-between mt-2"}>
+					<Button
+						onClick={() => {
+							const data: TUserUpdate = {
+								username: userData.username,
+								email: userData.email,
+								password: password.length !== 0 ? password : undefined,
+								status: userData.status,
+								scope: userData.scope,
+								association: userData.association.id,
+								role: userData.role,
+							};
+							api(`/users/${ userData.id}`, {
+								method: "PATCH",
+								body: data,
+							}).then((res) => {
+								if (res.status === 200) {
+									doReload();
+									toast("L'utilisateur à été mis à jour", { type: "success" });
+								} else if (res.status === 404) {
+									toast(res.message, { type: "warning" });
+								} else {
+									toast(`Erreur: ${res.message}`, { type: "error" });
+								}
+							});
+						}}
+					>
+						Sauvegarder
+					</Button>
+					<ButtonDanger
+						onClick={() => {
+							if (confirm) {
+								api(`/users/${user.data?.id}`, {
+									method: "DELETE",
+									if: user.data !== undefined,
+								}).then((res) => {
+									if (res.status === 204) {
+										toast("Utilisateur supprimé", { type: "success" });
+										navigate("/users");
+										setConfirm(false);
+									} else {
+										toast(res.message, { type: "error" });
+									}
+								});
 							} else {
-								toast(`Erreur: ${res.message}`, { type: "error" });
+								setConfirm(true);
+								setTimeout(() => {
+									setConfirm(false);
+								}, 5000);
 							}
-						});
-					}}
-				>
-					Sauvegarder
-				</Button>
+						}}
+					>
+						{ confirm ? "Confirmer" : "Supprimer l'utilisateur" }
+					</ButtonDanger>
+				</div>
 			</Card>
 			<ListUserJourney/>
 		</div>
