@@ -19,6 +19,9 @@ import { FileInput } from "../components/Input/FileInput.tsx";
 import { useReload } from "../utils/useReload.ts";
 import { AssociationData } from "./AssociationData.tsx";
 import { Report } from "./Report.tsx";
+import { ButtonDanger } from "../components/Button/ButtonDanger.tsx";
+import { Modal } from "../components/Modal/Modal.tsx";
+import { EUserScope } from "../types/EUserScope.ts";
 
 export function Association() {
 	const { user } = useUser();
@@ -36,6 +39,8 @@ export function Association() {
 	const { setAssociation } = useSideBar();
 
 	const [file, setFile] = useState<File|null>(null);
+
+	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
 		if (association.data) {
@@ -121,6 +126,33 @@ export function Association() {
 			</Card>
 			<AssociationData association={association.data}/>
 			<Report association={association.data ?? dummyAssociation}/>
+			<div/>
+			{ user?.scope === EUserScope.Root &&
+			<Card className={"border-red border-2 flex justify-between items-center"}>
+				<p className={"text-red"}>Zone de danger</p>
+				<ButtonDanger onClick={() => { setVisible(true); }}>
+					Supprimer
+				</ButtonDanger>
+				<Modal
+					visible={visible}
+					width={"xl:w-2/5"}
+					setVisible={setVisible}
+					title={`Supprimer l'association ${association.data?.name}`}
+				>
+					<div className={"flex justify-around"}>
+						<ButtonDanger
+							onClick={() => {
+								api(`/associations/${association.data?.id}`, { method: "DELETE" });
+							}}
+						>
+							Oui, supprimer
+						</ButtonDanger>
+						<Button onClick={() => { setVisible(false); }}>
+							Annuler
+						</Button>
+					</div>
+				</Modal>
+			</Card> }
 		</div>
 	);
 }
