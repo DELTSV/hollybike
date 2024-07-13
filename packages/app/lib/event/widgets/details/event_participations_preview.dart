@@ -65,7 +65,6 @@ class EventParticipationsPreview extends StatelessWidget {
                         child: UserProfilePicture(
                           url: participation.user.profilePicture,
                           radius: avatarRadius,
-                          userId: participation.user.id,
                         ),
                       ),
                     );

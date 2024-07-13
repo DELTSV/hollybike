@@ -40,7 +40,6 @@ class EventParticipationModal extends StatelessWidget {
                     UserProfilePicture(
                       url: participation.user.profilePicture,
                       radius: 20,
-                      userId: participation.user.id,
                     ),
                     const SizedBox(width: 16),
                     Column(

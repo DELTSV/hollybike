@@ -6,6 +6,7 @@ import '../../shared/types/json_map.dart';
 import 'minimal_journey.dart';
 
 part 'journey.freezed.dart';
+
 part 'journey.g.dart';
 
 @freezed
@@ -29,7 +30,8 @@ class Journey with _$Journey {
     required int? totalElevationLoss,
   }) = _Journey;
 
-  MinimalJourney toMinimalJourney() => MinimalJourney(
+  MinimalJourney toMinimalJourney() =>
+      MinimalJourney(
         id: id,
         file: file,
         previewImage: previewImage,

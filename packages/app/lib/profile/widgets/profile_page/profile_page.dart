@@ -23,6 +23,7 @@ class ProfilePage extends StatefulWidget {
   final bool profileLoading;
   final MinimalUser? profile;
   final Association? association;
+  final bool isMe;
 
   const ProfilePage({
     super.key,
@@ -30,6 +31,7 @@ class ProfilePage extends StatefulWidget {
     required this.profileLoading,
     required this.profile,
     required this.association,
+    this.isMe = false,
   });
 
   @override
@@ -38,11 +40,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -74,7 +71,10 @@ class _ProfilePageState extends State<ProfilePage> {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                ProfileBanner(profile: widget.profile as MinimalUser),
+                ProfileBanner(
+                  profile: widget.profile as MinimalUser,
+                  canEdit: widget.isMe,
+                ),
                 ProfileDescription(
                   profile: widget.profile as MinimalUser,
                   association: widget.association as Association,
@@ -137,7 +137,8 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-          final currentProfileEvent = context.read<ProfileBloc>().currentProfile;
+          final currentProfileEvent =
+              context.read<ProfileBloc>().currentProfile;
 
           final currentProfile = currentProfileEvent is ProfileLoadSuccessEvent
               ? currentProfileEvent.profile.toMinimalUser()

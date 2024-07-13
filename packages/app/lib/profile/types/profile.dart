@@ -40,6 +40,17 @@ class Profile {
     return Profile.fromJson(json);
   }
 
+  withProfilePicture(String profilePicture) => Profile(
+        id: id,
+        email: email,
+        username: username,
+        scope: scope,
+        status: status,
+        lastLogin: lastLogin,
+        association: association,
+        profilePicture: profilePicture,
+      );
+
   factory Profile.fromJson(Map<String, dynamic> json) {
     verifyObjectAttributesNotNull(
       json,

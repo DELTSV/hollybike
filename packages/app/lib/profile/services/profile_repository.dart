@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/services/profile_api.dart';
@@ -51,5 +52,19 @@ class ProfileRepository {
       eventsPerPage,
       query,
     );
+  }
+
+  Future<Profile> updateMyProfile(
+    String username,
+    String? description,
+    File? image,
+  ) async {
+    final updatedProfile = await profileApi.updateProfile(
+      username,
+      description,
+      image,
+    );
+
+    return updatedProfile;
   }
 }

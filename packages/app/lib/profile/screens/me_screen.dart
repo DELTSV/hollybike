@@ -43,6 +43,7 @@ class MeScreen extends StatelessWidget {
               profileLoading: false,
               profile: currentProfile.profile.toMinimalUser(),
               association: currentProfile.profile.association,
+              isMe: true,
             );
           }
 
