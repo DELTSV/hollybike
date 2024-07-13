@@ -73,7 +73,7 @@ export function UserJourney() {
 	}, [data, mapRef]);
 
 	return (
-		<div className={"mx-2 flex flex-col gap-2"}>
+		<div className={"mx-2 flex flex-col gap-2 grow"}>
 			<Card className={"grid grid-cols-2"}>
 				<p>Distance totale</p>
 				<p>{ distanceToHumanReadable(journey.data?.total_distance) }</p>
@@ -89,13 +89,13 @@ export function UserJourney() {
 					<p>Vitesse de pointe: { journey.data?.max_speed }</p>
 				</div>
 			</Card>
-			<Card className={"grow mb-2"}>
+			<Card className={"grow flex flex-col"}>
 				<Map
 					ref={mapRef}
 					{...viewState}
 					onMove={evt => setViewState(evt.viewState)}
 					style={{
-						height: "calc(100% - 48px)",
+						flexGrow: "1",
 						width: "100%",
 					}}
 

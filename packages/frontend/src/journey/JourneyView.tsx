@@ -82,10 +82,10 @@ export function JourneyView() {
 			<div>
 				<ArrowBack className={"cursor-pointer"} onClick={() => navigate(-1)}/>
 			</div>
-			<div className={"grow rounded overflow-hidden"}>
+			<div className={"grow rounded overflow-hidden flex flex-col"}>
 				<Map
 					{...viewState}
-					style={{ height: "calc(100% - 24px - 8px - 16px" }}
+					style={{ flexGrow: "1" }}
 					mapLib={import("mapbox-gl")}
 					mapStyle={"mapbox://styles/mapbox/navigation-night-v1"}
 					mapboxAccessToken={accessToken}
