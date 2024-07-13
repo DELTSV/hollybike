@@ -27,7 +27,7 @@ class ProfileBanner extends StatelessWidget {
           children: [
             ProfileBannerDecoration(
               profilePicture: ProfilePicture(
-                profile: profile,
+                user: profile,
                 size: 100,
               ),
             ),

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_event.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_state.dart';
 import 'package:hollybike/profile/services/profile_repository.dart';
@@ -10,6 +13,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     required this.profileRepository,
   }) : super(EditProfileInitial()) {
     on<SaveProfileChanges>(_onSaveProfileChanges);
+    on<ChangeProfilePassword>(_onChangeProfilePassword);
+    on<ResetPassword>(_onResetPassword);
   }
 
   Future<void> _onSaveProfileChanges(
@@ -26,8 +31,80 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       );
 
       profileRepository.invalidateCurrentProfile();
-      emit(EditProfileLoadSuccess(state));
+      emit(EditProfileLoadSuccess(
+        state,
+        successMessage: 'Profil mis à jour.',
+      ));
     } catch (e) {
+      emit(EditProfileLoadFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+    }
+  }
+
+  Future<void> _onChangeProfilePassword(
+    ChangeProfilePassword event,
+    Emitter<EditProfileState> emit,
+  ) async {
+    emit(EditProfileLoadInProgress(state));
+
+    try {
+      await profileRepository.updateMyPassword(
+        event.oldPassword,
+        event.newPassword,
+      );
+
+      emit(
+        EditProfileLoadSuccess(
+          state,
+          successMessage: 'Mot de passe mis à jour.',
+        ),
+      );
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 403) {
+          emit(EditProfileLoadFailure(
+            state,
+            errorMessage: 'Mot de passe incorrect.',
+          ));
+          return;
+        }
+      }
+
+      emit(EditProfileLoadFailure(
+        state,
+        errorMessage: 'Une erreur est survenue.',
+      ));
+    }
+  }
+
+  Future<void> _onResetPassword(
+    ResetPassword event,
+    Emitter<EditProfileState> emit,
+  ) async {
+    emit(EditProfileLoadInProgress(state));
+
+    try {
+      await profileRepository.resetPassword(
+        event.email,
+      );
+
+      emit(
+        EditProfileLoadSuccess(
+          state,
+          successMessage: 'Email envoyé.',
+        ),
+      );
+    } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 503) {
+          log('Reset password not available');
+          emit(ResetPasswordNotAvailable(state));
+          return;
+        }
+      }
+
       emit(EditProfileLoadFailure(
         state,
         errorMessage: 'Une erreur est survenue.',

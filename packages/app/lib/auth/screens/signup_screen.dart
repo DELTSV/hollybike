@@ -82,7 +82,7 @@ class SignupScreen extends StatelessWidget {
 
   String? _inputValidator(String? inputText) {
     if (inputText == null || inputText.isEmpty) {
-      return "Ce champs ne peut pas être vide.";
+      return "Ce champ ne peut pas être vide.";
     }
     return null;
   }

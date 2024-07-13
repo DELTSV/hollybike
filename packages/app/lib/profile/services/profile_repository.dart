@@ -95,4 +95,22 @@ class ProfileRepository {
 
     return updatedProfile;
   }
+
+  Future<void> updateMyPassword(
+    String oldPassword,
+    String newPassword,
+  ) {
+    return profileApi.updatePassword(
+      oldPassword,
+      newPassword,
+    );
+  }
+
+  Future<void> resetPassword(
+    String email,
+  ) {
+    return profileApi.resetPassword(
+      email,
+    );
+  }
 }

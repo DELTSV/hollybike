@@ -28,7 +28,7 @@ class SearchProfileCard extends StatelessWidget {
             child: Row(
               children: [
                 ProfilePicture(
-                  profile: profile,
+                  user: profile,
                   size: 50,
                 ),
                 const SizedBox.square(dimension: 8),

@@ -33,7 +33,9 @@ class EditProfileLoadInProgress extends EditProfileState {
 }
 
 class EditProfileLoadSuccess extends EditProfileState {
-  EditProfileLoadSuccess(EditProfileState state)
+  final String successMessage;
+
+  EditProfileLoadSuccess(EditProfileState state, {required this.successMessage})
       : super.state(state.copyWith(status: EditProfileStatus.success));
 }
 
@@ -43,4 +45,15 @@ class EditProfileLoadFailure extends EditProfileState {
   EditProfileLoadFailure(EditProfileState state,
       {required this.errorMessage})
       : super.state(state.copyWith(status: EditProfileStatus.error));
+}
+
+class ResetPasswordNotAvailable extends EditProfileState {
+  ResetPasswordNotAvailable(EditProfileState state)
+      : super.state(state.copyWith(status: EditProfileStatus.error));
+}
+
+class ResetPasswordSuccess extends EditProfileState {
+
+  ResetPasswordSuccess(EditProfileState state)
+      : super.state(state.copyWith(status: EditProfileStatus.success));
 }

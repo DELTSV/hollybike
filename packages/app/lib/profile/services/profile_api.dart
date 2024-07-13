@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/image_path_dto.dart';
+import 'package:hollybike/profile/types/update_password.dart';
 import 'package:hollybike/profile/types/update_profile.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
@@ -80,5 +81,25 @@ class ProfileApi {
     }
 
     return updatedProfile;
+  }
+
+  Future<void> updatePassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    await client.dio.patch(
+      "/users/me",
+      data: UpdatePassword(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+        newPasswordAgain: newPassword,
+      ).toJson(),
+    );
+  }
+
+  Future<void> resetPassword(String email) async {
+    await client.dio.post(
+      "/users/password/$email/send",
+    );
   }
 }

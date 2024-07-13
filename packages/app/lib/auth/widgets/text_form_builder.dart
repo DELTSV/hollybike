@@ -94,15 +94,18 @@ class _TextFormBuilderState extends State<TextFormBuilder> {
       return <Widget>[button];
     }
 
-    final linkDescription = FormTexts.toWidgetArray(texts.link!.description);
+    final linkDescription = FormTexts.toWidgetArray(
+      texts.link!.description,
+      style: Theme.of(context).textTheme.bodyMedium,
+    );
     final linkButton = <Widget>[
       GestureDetector(
         onTap: texts.link!.onDestinationClick,
         child: Text(
           texts.link!.buttonText,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.secondary,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
         ),
       )
     ];

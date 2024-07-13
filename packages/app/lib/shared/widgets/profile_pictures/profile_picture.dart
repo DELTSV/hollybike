@@ -5,7 +5,7 @@ import 'package:hollybike/shared/widgets/profile_pictures/profile_picture_contai
 import 'package:hollybike/user/types/minimal_user.dart';
 
 class ProfilePicture extends StatelessWidget {
-  final MinimalUser profile;
+  final MinimalUser user;
   final double size;
   final bool editMode;
   final void Function()? onTap;
@@ -13,7 +13,7 @@ class ProfilePicture extends StatelessWidget {
 
   const ProfilePicture({
     super.key,
-    required this.profile,
+    required this.user,
     this.size = 40,
     this.editMode = false,
     this.onTap,
@@ -30,7 +30,7 @@ class ProfilePicture extends StatelessWidget {
           HeroMode(
             enabled: !editMode,
             child: Hero(
-              tag: "user-${profile.id}-profile-picture",
+              tag: "user-${user.id}-profile-picture",
               child: ProfilePictureContainer(size: size, child: profilePicture),
             ),
           ),
@@ -64,7 +64,7 @@ class ProfilePicture extends StatelessWidget {
     }
 
     return Hero(
-      tag: "user-${profile.id}-profile-picture",
+      tag: "user-${user.id}-profile-picture",
       child: ProfilePictureContainer(size: size, child: profilePicture),
     );
   }
@@ -74,10 +74,10 @@ class ProfilePicture extends StatelessWidget {
       return Image.file(file!);
     }
 
-    if (profile.profilePicture == null) {
+    if (user.profilePicture == null) {
       return Image.asset("assets/images/placeholder_profile_picture.jpg");
     }
 
-    return Image.network(profile.profilePicture!);
+    return Image.network(user.profilePicture!);
   }
 }

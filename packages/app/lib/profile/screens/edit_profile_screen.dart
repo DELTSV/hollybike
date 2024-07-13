@@ -8,6 +8,8 @@ import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_event.dart
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_state.dart';
 import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/profile/services/profile_repository.dart';
+import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/profile/widgets/edit_profile/update_password_modal.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner_background.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner_decoration.dart';
 import 'package:hollybike/profile/widgets/profile_picture_image_picker.dart';
@@ -17,7 +19,6 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/shared/widgets/profile_pictures/profile_picture.dart';
-import 'package:hollybike/user/types/minimal_user.dart';
 
 @RoutePage()
 class EditProfileScreen extends StatefulWidget implements AutoRouteWrapper {
@@ -38,7 +39,7 @@ class EditProfileScreen extends StatefulWidget implements AutoRouteWrapper {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  MinimalUser? _currentProfile;
+  Profile? _currentProfile;
   late final TextEditingController _usernameController;
   late final TextEditingController _descriptionController;
   final _formKey = GlobalKey<FormState>();
@@ -58,7 +59,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (currentProfileEvent is ProfileLoadSuccessEvent) {
       _usernameController.text = currentProfileEvent.profile.username;
-      _currentProfile = currentProfileEvent.profile.toMinimalUser();
+      _currentProfile = currentProfileEvent.profile;
     }
   }
 
@@ -120,7 +121,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: BlocConsumer<EditProfileBloc, EditProfileState>(
         listener: (context, state) {
           if (_overlay != null) {
-            _overlay!.remove();
+            _overlay?.remove();
+            _overlay = null;
           }
 
           if (state is EditProfileLoadFailure) {
@@ -147,7 +149,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           }
 
           if (state is EditProfileLoadSuccess) {
-            Toast.showSuccessToast(context, "Votre profil a été mis à jour.");
+            Toast.showSuccessToast(context, state.successMessage);
             Navigator.of(context).pop();
           }
         },
@@ -186,7 +188,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           children: [
                             ProfileBannerDecoration(
                               profilePicture: ProfilePicture(
-                                profile: currentProfile,
+                                user: currentProfile.toMinimalUser(),
                                 file: _selectedImage,
                                 size: 100,
                                 editMode: true,
@@ -209,10 +211,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               controller: _usernameController,
                               keyboardType: TextInputType.name,
                               autocorrect: true,
-                              textCapitalization:
-                              TextCapitalization.sentences,
+                              textCapitalization: TextCapitalization.sentences,
                               autovalidateMode:
-                              AutovalidateMode.onUserInteraction,
+                                  AutovalidateMode.onUserInteraction,
                               onChanged: (_) {
                                 if (!_touched) {
                                   setState(() {
@@ -238,20 +239,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                                 labelText: "Nom d'utilisateur",
                                 fillColor:
-                                Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.primary,
                                 filled: true,
                                 suffixIcon:
-                                const Icon(Icons.account_circle_rounded),
+                                    const Icon(Icons.account_circle_rounded),
                               ),
                             ),
                             const SizedBox(height: 32),
                             TextFormField(
                               controller: _descriptionController,
                               autocorrect: true,
-                              textCapitalization:
-                              TextCapitalization.sentences,
+                              textCapitalization: TextCapitalization.sentences,
                               autovalidateMode:
-                              AutovalidateMode.onUserInteraction,
+                                  AutovalidateMode.onUserInteraction,
                               onChanged: (_) {
                                 if (!_touched) {
                                   setState(() {
@@ -273,14 +273,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                                 labelText: "Description (facultatif)",
                                 fillColor:
-                                Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.primary,
                                 filled: true,
                                 suffixIcon: const Icon(Icons.description),
                               ),
                             ),
                             const SizedBox(height: 32),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () => _showUpdatePasswordModal(
+                                context,
+                                currentProfile.email,
+                              ),
                               child: const Text('Changer votre mot de passe'),
                             ),
                           ],
@@ -294,6 +297,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           );
         },
       ),
+    );
+  }
+
+  void _showUpdatePasswordModal(BuildContext context, String email) {
+    showDialog<void>(
+      context: context,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<EditProfileBloc>(),
+          child: UpdatePasswordModal(
+            email: email,
+          ),
+        );
+      },
     );
   }
 

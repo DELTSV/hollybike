@@ -17,3 +17,21 @@ class SaveProfileChanges extends EditProfileEvent {
     this.image,
   });
 }
+
+class ChangeProfilePassword extends EditProfileEvent {
+  final String oldPassword;
+  final String newPassword;
+
+  ChangeProfilePassword({
+    required this.oldPassword,
+    required this.newPassword,
+  });
+}
+
+class ResetPassword extends EditProfileEvent {
+  final String email;
+
+  ResetPassword({
+    required this.email,
+  });
+}
