@@ -19,7 +19,7 @@ class FutureProfilePicture extends StatelessWidget {
     return AsyncRenderer(
       future: profile,
       builder: (profile) => ProfilePicture(
-        profile: profile.toMinimalUser(),
+        user: profile.toMinimalUser(),
         size: size,
       ),
       placeholder: LoadingProfilePicture(size: size),

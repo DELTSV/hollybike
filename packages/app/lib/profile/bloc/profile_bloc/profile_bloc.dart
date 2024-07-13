@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hollybike/auth/services/auth_session_repository.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/profile.dart';
+import 'package:hollybike/profile/types/profile_identifier.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../services/profile_repository.dart';
@@ -94,8 +95,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.authSessionRepository,
   }) : super(InitialProfileState()) {
     on<SubscribeToCurrentSessionChange>(_onSubscribeToCurrentSessionChange);
+    on<SubscribeToInvalidatedProfiles>(_onSubscribeToInvalidatedProfiles);
     on<ProfileLoadEvent>(_onProfileLoadEvent);
     on<UserLoadEvent>(_onUserLoadEvent);
+  }
+
+  void _onSubscribeToInvalidatedProfiles(
+      SubscribeToInvalidatedProfiles event,
+      Emitter<ProfileState> emit,
+      ) async {
+    await emit.forEach<ProfileIdentifier>(
+      profileRepository.profileInvalidationStream,
+      onData: (invalidProfile) {
+        return InvalidateProfileState(
+          oldState: state,
+          profileIdentifier: invalidProfile,
+        );
+      },
+    );
   }
 
   void _onSubscribeToCurrentSessionChange(

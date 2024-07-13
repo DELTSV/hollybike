@@ -41,8 +41,10 @@ class MeScreen extends StatelessWidget {
           if (currentProfile is ProfileLoadSuccessEvent) {
             return ProfilePage(
               profileLoading: false,
+              email: currentProfile.profile.email,
               profile: currentProfile.profile.toMinimalUser(),
               association: currentProfile.profile.association,
+              isMe: true,
             );
           }
 

@@ -27,7 +27,7 @@ class ControlTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return SecuredTextField(
       controller: controller,
-      title: "confirmer le $controlledFieldTitle",
+      title: "Confirmer le $controlledFieldTitle",
       validator: _confirmFieldValidator,
       focusNode: focusNode,
       onEditingDone: onEditingDone,

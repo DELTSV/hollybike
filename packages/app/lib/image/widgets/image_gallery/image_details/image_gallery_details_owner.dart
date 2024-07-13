@@ -28,7 +28,6 @@ class ImageGalleryDetailsOwner extends StatelessWidget {
             UserProfilePicture(
               url: owner.profilePicture,
               radius: 18,
-              userId: owner.id,
             ),
             const SizedBox(width: 20),
             Text(

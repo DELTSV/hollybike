@@ -32,7 +32,6 @@ class EventCandidateCard extends StatelessWidget {
         secondary: UserProfilePicture(
           url: candidate.profilePicture,
           radius: 20,
-          userId: candidate.id,
         ),
         title: Text(
           candidate.username,

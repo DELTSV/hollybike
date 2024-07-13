@@ -15,6 +15,7 @@ class Profile {
   final DateTime lastLogin;
   final Association association;
   final String? profilePicture;
+  final String? role;
 
   const Profile({
     required this.id,
@@ -25,6 +26,7 @@ class Profile {
     required this.lastLogin,
     required this.association,
     this.profilePicture,
+    this.role,
   });
 
   MinimalUser toMinimalUser() => MinimalUser(
@@ -33,12 +35,24 @@ class Profile {
         scope: scope,
         status: status,
         profilePicture: profilePicture,
+        role: role,
       );
 
   static Profile fromResponseJson(List<int> response) {
     final json = jsonDecode(utf8.decode(response));
     return Profile.fromJson(json);
   }
+
+  withProfilePicture(String profilePicture) => Profile(
+        id: id,
+        email: email,
+        username: username,
+        scope: scope,
+        status: status,
+        lastLogin: lastLogin,
+        association: association,
+        profilePicture: profilePicture,
+      );
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     verifyObjectAttributesNotNull(

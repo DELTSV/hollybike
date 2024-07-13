@@ -140,6 +140,10 @@ class _MyAppState extends State<MyApp> {
               ),
               RepositoryProvider(
                 create: (context) => ProfileRepository(
+                  authPersistence: Provider.of<AuthPersistence>(
+                    context,
+                    listen: false,
+                  ),
                   profileApi: ProfileApi(
                     client: RepositoryProvider.of<DioClient>(context),
                   ),
@@ -196,7 +200,9 @@ class _MyAppState extends State<MyApp> {
                         RepositoryProvider.of<AuthSessionRepository>(context),
                     profileRepository:
                         RepositoryProvider.of<ProfileRepository>(context),
-                  )..add(SubscribeToCurrentSessionChange()),
+                  )
+                    ..add(SubscribeToCurrentSessionChange())
+                    ..add(SubscribeToInvalidatedProfiles()),
                 ),
                 BlocProvider<SearchBloc>(
                   create: (context) => SearchBloc(

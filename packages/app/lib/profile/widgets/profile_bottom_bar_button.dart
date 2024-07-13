@@ -46,7 +46,6 @@ class ProfileBottomBarButton extends StatelessWidget {
               url: currentProfile.profile.profilePicture,
               radius: 12,
               isLoading: false,
-              userId: currentProfile.profile.id,
             );
           }
 
@@ -54,7 +53,6 @@ class ProfileBottomBarButton extends StatelessWidget {
             url: null,
             radius: 12,
             isLoading: true,
-            userId: null,
           );
         },
       ),

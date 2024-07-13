@@ -16,10 +16,10 @@ class ProfileState {
 class InitialProfileState extends ProfileState {
   InitialProfileState()
       : super(
-    profilesLoad: <ProfileLoadEvent>[],
-    usersLoad: <UserLoadEvent>[],
-    currentSession: null,
-  );
+          profilesLoad: <ProfileLoadEvent>[],
+          usersLoad: <UserLoadEvent>[],
+          currentSession: null,
+        );
 }
 
 class ChangedSessionProfileState extends ProfileState {
@@ -27,9 +27,9 @@ class ChangedSessionProfileState extends ProfileState {
     required ProfileState oldState,
     required super.currentSession,
   }) : super(
-    profilesLoad: oldState.profilesLoad,
-    usersLoad: oldState.usersLoad,
-  );
+          profilesLoad: oldState.profilesLoad,
+          usersLoad: oldState.usersLoad,
+        );
 }
 
 class UpdateLoadEventProfileState extends ProfileState {
@@ -38,12 +38,30 @@ class UpdateLoadEventProfileState extends ProfileState {
     ProfileLoadEvent? profileLoadEvent,
     UserLoadEvent? userLoadEvent,
   }) : super(
-    profilesLoad: oldState.profilesLoad.copyUpdatedFromNullable(
-      profileLoadEvent,
-    ),
-    usersLoad: oldState.usersLoad.copyUpdatedFromNullable(
-      userLoadEvent,
-    ),
-    currentSession: oldState.currentSession,
-  );
+          profilesLoad: oldState.profilesLoad.copyUpdatedFromNullable(
+            profileLoadEvent,
+          ),
+          usersLoad: oldState.usersLoad.copyUpdatedFromNullable(
+            userLoadEvent,
+          ),
+          currentSession: oldState.currentSession,
+        );
+}
+
+class InvalidateProfileState extends ProfileState {
+  InvalidateProfileState({
+    required ProfileState oldState,
+    required ProfileIdentifier profileIdentifier,
+  }) : super(
+          profilesLoad: oldState.profilesLoad
+              .where((profile) => profile.session != profileIdentifier.session)
+              .toList(),
+          usersLoad: profileIdentifier.id == null ? oldState.usersLoad : oldState.usersLoad
+              .where(
+                (user) => !(user.observerSession == profileIdentifier.session &&
+                    user.id == profileIdentifier.id),
+              )
+              .toList(),
+          currentSession: oldState.currentSession,
+        );
 }
