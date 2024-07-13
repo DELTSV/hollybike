@@ -12,6 +12,7 @@ import 'package:hollybike/profile/bloc/profile_bloc/profile_bloc.dart';
 import 'package:hollybike/profile/services/profile_repository.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner_background.dart';
 import 'package:hollybike/profile/widgets/profile_banner/profile_banner_decoration.dart';
+import 'package:hollybike/profile/widgets/profile_picture_image_picker.dart';
 import 'package:hollybike/shared/widgets/app_toast.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
@@ -153,27 +154,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               file: _selectedImage,
                               size: 100,
                               editMode: true,
-                              onTap: () {
-                                showModalBottomSheet<void>(
-                                  context: context,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (_) {
-                                    return ImagePickerModal(
-                                      mode: ImagePickerMode.single,
-                                      onClose: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      onSubmit: (images) {
-                                        Navigator.of(context).pop();
-
-                                        setState(() {
-                                          _selectedImage = images.first;
-                                        });
-                                      },
-                                    );
-                                  },
-                                );
-                              },
+                              onTap: _showImagePickerModal,
                             ),
                           ),
                         ],
@@ -260,6 +241,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             );
           }),
+        );
+      },
+    );
+  }
+
+  void _showImagePickerModal() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return ProfilePictureImagePickerModal(
+          onImageSelected: (file) {
+            setState(() {
+              _selectedImage = file;
+            });
+          },
         );
       },
     );

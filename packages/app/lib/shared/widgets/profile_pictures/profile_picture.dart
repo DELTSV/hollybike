@@ -27,9 +27,12 @@ class ProfilePicture extends StatelessWidget {
     if (editMode) {
       return Stack(
         children: [
-          Hero(
-            tag: "user-${profile.id}-profile-picture",
-            child: ProfilePictureContainer(size: size, child: profilePicture),
+          HeroMode(
+            enabled: !editMode,
+            child: Hero(
+              tag: "user-${profile.id}-profile-picture",
+              child: ProfilePictureContainer(size: size, child: profilePicture),
+            ),
           ),
           ProfilePictureContainer(
             size: size,
