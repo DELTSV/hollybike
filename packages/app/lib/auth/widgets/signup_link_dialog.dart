@@ -9,7 +9,9 @@ import 'package:native_qr/native_qr.dart';
 import '../../shared/utils/is_valid_signup_link.dart';
 
 class SignupLinkDialog extends StatefulWidget {
-  const SignupLinkDialog({super.key});
+  final bool canPop;
+
+  const SignupLinkDialog({super.key, required this.canPop});
 
   @override
   State<SignupLinkDialog> createState() => _SignupLinkDialogState();
@@ -18,7 +20,6 @@ class SignupLinkDialog extends StatefulWidget {
 class _SignupLinkDialogState extends State<SignupLinkDialog> {
   final _formKey = GlobalKey<FormState>();
   final _linkController = TextEditingController();
-
 
   get isValid => _formKey.currentState?.validate() == true;
 
@@ -112,7 +113,9 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
 
   void _handleSubmit() {
     if (isValid) {
-      context.router.pushNamed(_linkController.text);
+      widget.canPop
+          ? context.router.replaceNamed("${_linkController.text}&canPop=true")
+          : context.router.pushNamed("${_linkController.text}&canPop=false");
     }
   }
 }

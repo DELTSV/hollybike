@@ -11,17 +11,14 @@ import '../types/form_field_config.dart';
 
 @RoutePage()
 class SignupScreen extends StatelessWidget {
-  final Function()? onAuthSuccess;
-  final bool canPop;
-
   const SignupScreen({
     super.key,
-    this.onAuthSuccess,
-    this.canPop = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final canPop = context.routeData.queryParams.getBool("canPop", false);
+
     return Scaffold(
       floatingActionButton: canPop
           ? FloatingActionButton.small(
@@ -50,6 +47,7 @@ class SignupScreen extends StatelessWidget {
                   host: context.routeData.queryParams.getString("host"),
                   signupDto: SignupDto.fromMap(values),
                 ));
+                if (canPop) context.router.maybePop();
               },
               formFields: {
                 "username": FormFieldConfig(
