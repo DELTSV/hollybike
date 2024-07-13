@@ -24,8 +24,6 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         event.description,
         event.image,
       );
-      // delay 3 seconds to simulate a network request
-      await Future.delayed(const Duration(seconds: 3));
 
       emit(EditProfileLoadSuccess(state));
     } catch (e) {

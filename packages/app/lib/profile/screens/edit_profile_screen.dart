@@ -137,140 +137,127 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               return const SizedBox();
             }
 
-            return Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Column(
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Stack(
                     children: [
-                      Stack(
+                      const ProfileBannerBackground(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const ProfileBannerBackground(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              ProfileBannerDecoration(
-                                profilePicture: ProfilePicture(
-                                  profile: currentProfile,
-                                  file: _selectedImage,
-                                  size: 100,
-                                  editMode: true,
-                                  onTap: () {
-                                    showModalBottomSheet<void>(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (_) {
-                                        return ImagePickerModal(
-                                          mode: ImagePickerMode.single,
-                                          onClose: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          onSubmit: (images) {
-                                            Navigator.of(context).pop();
+                          ProfileBannerDecoration(
+                            profilePicture: ProfilePicture(
+                              profile: currentProfile,
+                              file: _selectedImage,
+                              size: 100,
+                              editMode: true,
+                              onTap: () {
+                                showModalBottomSheet<void>(
+                                  context: context,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (_) {
+                                    return ImagePickerModal(
+                                      mode: ImagePickerMode.single,
+                                      onClose: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      onSubmit: (images) {
+                                        Navigator.of(context).pop();
 
-                                            setState(() {
-                                              _selectedImage = images.first;
-                                            });
-                                          },
-                                        );
+                                        setState(() {
+                                          _selectedImage = images.first;
+                                        });
                                       },
                                     );
                                   },
-                                ),
-                              ),
-                            ],
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 32),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TextFormField(
-                                controller: _usernameController,
-                                keyboardType: TextInputType.name,
-                                autocorrect: true,
-                                textCapitalization:
-                                TextCapitalization.sentences,
-                                autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                                validator: (value) {
-                                  if (value!.length > 1000) {
-                                    return "Le nom d'utilisateur ne peut pas dépasser 1000 caractères.";
-                                  }
-
-                                  if (value.isEmpty) {
-                                    return "Le nom d'utilisateur ne peut pas être vide.";
-                                  }
-
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  labelText: "Nom d'utilisateur",
-                                  fillColor:
-                                  Theme.of(context).colorScheme.primary,
-                                  filled: true,
-                                  suffixIcon:
-                                  const Icon(Icons.account_circle_rounded),
-                                ),
-                              ),
-                              const SizedBox(height: 32),
-                              TextFormField(
-                                controller: _descriptionController,
-                                autocorrect: true,
-                                textCapitalization:
-                                TextCapitalization.sentences,
-                                autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                                validator: (value) {
-                                  if (value!.length > 255) {
-                                    return "Votre description ne peut pas dépasser 255 caractères.";
-                                  }
-
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  labelText: "Description (facultatif)",
-                                  fillColor:
-                                  Theme.of(context).colorScheme.primary,
-                                  filled: true,
-                                  suffixIcon: const Icon(Icons.description),
-                                ),
-                              ),
-                              const SizedBox(height: 32),
-                              TextButton(
-                                onPressed: () {},
-                                child: const Text('Changer votre mot de passe'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                ),
-                // if (state is EditProfileLoadInProgress)
-                //   Positioned.fill(
-                //     child: Container(
-                //       color: Colors.black.withOpacity(0.6),
-                //       child: const Center(
-                //         child: CircularProgressIndicator(),
-                //       ),
-                //     ),
-                //   ),
-              ],
+                  const SizedBox(height: 32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _usernameController,
+                            keyboardType: TextInputType.name,
+                            autocorrect: true,
+                            textCapitalization:
+                            TextCapitalization.sentences,
+                            autovalidateMode:
+                            AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value!.length > 1000) {
+                                return "Le nom d'utilisateur ne peut pas dépasser 1000 caractères.";
+                              }
+
+                              if (value.isEmpty) {
+                                return "Le nom d'utilisateur ne peut pas être vide.";
+                              }
+
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              labelText: "Nom d'utilisateur",
+                              fillColor:
+                              Theme.of(context).colorScheme.primary,
+                              filled: true,
+                              suffixIcon:
+                              const Icon(Icons.account_circle_rounded),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          TextFormField(
+                            controller: _descriptionController,
+                            autocorrect: true,
+                            textCapitalization:
+                            TextCapitalization.sentences,
+                            autovalidateMode:
+                            AutovalidateMode.onUserInteraction,
+                            validator: (value) {
+                              if (value!.length > 255) {
+                                return "Votre description ne peut pas dépasser 255 caractères.";
+                              }
+
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              labelText: "Description (facultatif)",
+                              fillColor:
+                              Theme.of(context).colorScheme.primary,
+                              filled: true,
+                              suffixIcon: const Icon(Icons.description),
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('Changer votre mot de passe'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }),
         );
