@@ -14,12 +14,16 @@ class ProfileJourneys extends StatefulWidget {
   final MinimalUser user;
   final bool isMe;
   final ScrollController scrollController;
+  final bool isNested;
+  final void Function(UserJourney)? onJourneySelected;
 
   const ProfileJourneys({
     super.key,
     required this.user,
     required this.isMe,
     required this.scrollController,
+    this.isNested = true,
+    this.onJourneySelected,
   });
 
   @override
@@ -88,6 +92,8 @@ class _ProfileJourneysState extends State<ProfileJourneys> {
       hasMore: hasMore,
       userJourneys: userJourneys,
       user: widget.user,
+      isNested: widget.isNested,
+      onJourneySelected: widget.onJourneySelected,
     );
   }
 
@@ -126,7 +132,7 @@ class _ProfileJourneysState extends State<ProfileJourneys> {
               const SizedBox(height: 16),
               Text(
                 widget.isMe
-                    ? 'Vous n\'avez terminé de trajets'
+                    ? 'Vous n\'avez terminé aucun trajet'
                     : '${widget.user.username} n\'a pas encore terminé de trajets',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,

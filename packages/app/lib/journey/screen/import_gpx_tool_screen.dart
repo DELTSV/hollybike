@@ -6,8 +6,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hollybike/shared/utils/safe_set_state.dart';
 
 import 'package:http/http.dart' as http;
-
-// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
 @RoutePage()
