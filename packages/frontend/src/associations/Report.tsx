@@ -33,7 +33,7 @@ export function Report(props: ReportProps) {
 	const downloadLinkYear = useRef<HTMLAnchorElement>(null);
 	const downloadLinkPeriod = useRef<HTMLAnchorElement>(null);
 	return (
-		<div className={"flex gap-2 items-start"}>
+		<>
 			<a className={"hidden"} ref={downloadLinkYear} title={titleYear}/>
 			<a className={"hidden"} ref={downloadLinkPeriod} title={titlePeriod}/>
 			<Card className={"grid grid-cols-2 gap-4"}>
@@ -60,6 +60,7 @@ export function Report(props: ReportProps) {
 				>Télécharger
 				</Button>
 			</Card>
+			<div/>
 			<Card className={"grid grid-cols-2 gap-4 items-center"}>
 				<h1 className={"text-xl col-span-2"}>Rapport CSV de l'année</h1>
 				<p>Année</p>
@@ -89,6 +90,6 @@ export function Report(props: ReportProps) {
 				>Télécharger
 				</Button>
 			</Card>
-		</div>
+		</>
 	);
 }

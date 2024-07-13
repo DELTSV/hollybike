@@ -44,9 +44,9 @@ export function Association() {
 		}
 	}, [association, setAssociation]);
 	return (
-		<div className={"w-full flex flex-col gap-2"}>
-			<form className={"flex items-start gap-2"} onSubmit={e => e.preventDefault()}>
-				<Card className={"grid grid-cols-2 gap-2 items-center"}>
+		<div className={"w-full grid grid-cols-2 gap-2"}>
+			<Card>
+				<form className={"grid grid-cols-2 gap-2 items-center"} onSubmit={e => e.preventDefault()}>
 					<p>Nom de l'association :</p>
 					<Input
 						value={associationData?.name} onInput={(e) => {
@@ -115,11 +115,11 @@ export function Association() {
 							});
 						}}
 					>
-					Sauvegarder
+						Sauvegarder
 					</Button>
-				</Card>
-				<AssociationData association={association.data}/>
-			</form>
+				</form>
+			</Card>
+			<AssociationData association={association.data}/>
 			<Report association={association.data ?? dummyAssociation}/>
 		</div>
 	);

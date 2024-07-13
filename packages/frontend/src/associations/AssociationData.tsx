@@ -14,11 +14,11 @@ export function AssociationData(props: AssociationDataProps) {
 		{ if: props.association !== undefined },
 	);
 	return (
-		<Card>
-			<p>Nombre d'utilisateurs : { data.data?.total_user }</p>
-			<p>Nombre d'évènements : { data.data?.total_event }</p>
-			<p>Nombre de balades : { data.data?.total_event_with_journey }</p>
-			<p>Nombre de trajets : { data.data?.total_journey }</p>
+		<Card className={"self-start justify-self-start grid grid-cols-[1fr_auto] content-start gap-4"}>
+			<p>Nombre d'utilisateurs : </p><p>{ data.data?.total_user }</p>
+			<p>Nombre d'évènements : </p><p>{ data.data?.total_event }</p>
+			<p>Nombre de balades : </p><p>{ data.data?.total_event_with_journey }</p>
+			<p>Nombre de trajets : </p><p>{ data.data?.total_journey }</p>
 		</Card>
 	);
 }
