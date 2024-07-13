@@ -61,7 +61,7 @@ export function Header(props: HeaderProps) {
 				<Menu/>
 				<p
 					className={clsx(
-						"translate-x-4 translate-y-4 opacity-0",
+						"translate-x-8 translate-y-8 opacity-0",
 						"transition-transform duration-200",
 						"group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100",
 					)}
