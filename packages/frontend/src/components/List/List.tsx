@@ -89,8 +89,6 @@ export function List<T>(props: ListProps<T>) {
 
 	const onPageChange = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
 		const p = parseInt(e.currentTarget.value);
-		console.log(p);
-		console.log(data.data?.total_page);
 		if (!isNaN(p) && p > 0 && p <= (data.data?.total_page ?? 1)) {
 			setPage(parseInt(e.currentTarget.value) - 1);
 		}
@@ -146,7 +144,7 @@ export function List<T>(props: ListProps<T>) {
 					<span className={"w-6 block"}>{ data.data?.total_page }</span>
 				</p>
 				<Button
-					onClick={() => setPage(prev => prev === (data.data?.total_page ?? 1) - 1 ? prev : prev + 1)}
+					onClick={() => setPage(prev => prev > (data.data?.total_page ?? 1) - 1 ? prev : prev + 1)}
 				>
 					Page Suivante
 				</Button>
