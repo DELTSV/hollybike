@@ -529,3 +529,7 @@ ALTER TABLE tokens
 ALTER TABLE tokens
     ADD CONSTRAINT tokens_user_fkey FOREIGN KEY ("user") REFERENCES users(id_user) ON DELETE CASCADE;
 
+--changeset denis:18
+
+ALTER TABLE invitations
+    ADD COLUMN IF NOT EXISTS label VARCHAR(1000) DEFAULT null;

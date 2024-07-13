@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TInvitationCreation(
+	val label: String? = null,
 	val role: EUserScope,
 	val association: Int? = null,
 	val maxUses: Int? = null,

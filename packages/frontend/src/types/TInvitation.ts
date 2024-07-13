@@ -8,6 +8,7 @@ export interface TInvitation {
 	creation: string,
 	uses: number,
 	max_uses: number | null,
+	label?: string,
 	link?: string,
 	association: TAssociation
 }

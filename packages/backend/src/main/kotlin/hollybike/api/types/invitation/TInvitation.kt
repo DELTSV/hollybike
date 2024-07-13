@@ -17,8 +17,9 @@ data class TInvitation(
 	val uses: Int,
 	@SerialName("max_uses")
 	val maxUses: Int?,
+	val label: String? = null,
 	val association: TAssociation,
-	val link: String? = null
+	val link: String? = null,
 ) {
 	constructor(invitation: Invitation, link: String? = null) : this(
 		invitation.id.value,
@@ -28,6 +29,7 @@ data class TInvitation(
 		invitation.creation,
 		invitation.uses,
 		invitation.maxUses,
+		invitation.label,
 		TAssociation(invitation.association),
 		link
 	)

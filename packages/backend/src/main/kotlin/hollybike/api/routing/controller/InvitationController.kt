@@ -89,6 +89,7 @@ class InvitationController(
 			val invitationCreation = call.receive<TInvitationCreation>()
 			invitationService.createInvitation(
 				call.user,
+				invitationCreation.label,
 				invitationCreation.role,
 				invitationCreation.association ?: call.user.association.id.value,
 				invitationCreation.maxUses,

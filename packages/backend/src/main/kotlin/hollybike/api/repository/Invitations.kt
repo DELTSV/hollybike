@@ -19,6 +19,7 @@ object Invitations: IntIdTable("invitations", "id_invitation") {
 	val creation = timestamp("creation").defaultExpression(now())
 	val uses = integer("uses").default(0)
 	val maxUses = integer("max_uses").nullable().default(null)
+	val label = varchar("label", 1_000).nullable().default(null)
 }
 
 class Invitation(id: EntityID<Int>) : IntEntity(id) {
@@ -30,11 +31,13 @@ class Invitation(id: EntityID<Int>) : IntEntity(id) {
 	var creation by Invitations.creation
 	var uses by Invitations.uses
 	var maxUses by Invitations.maxUses
+	var label by Invitations.label
 
 	companion object: IntEntityClass<Invitation>(Invitations)
 }
 
 val invitationMapper: Mapper = mapOf(
+	"label" to Invitations.label,
 	"role" to Invitations.role,
 	"status" to Invitations.status,
 	"association" to Invitations.association,

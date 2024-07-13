@@ -90,6 +90,10 @@ export function ListInvitations() {
 					reload={reload} filter={filter}
 					columns={[
 						{
+							name: "Label",
+							id: "label",
+						},
+						{
 							name: "Rôle",
 							id: "name",
 						},
@@ -123,6 +127,9 @@ export function ListInvitations() {
 					]}
 					if={association !== undefined}
 					baseUrl={url} line={(i: TInvitation) => [
+						<Cell>
+							{ i.label }
+						</Cell>,
 						<Cell>
 							{ i.role }
 						</Cell>,

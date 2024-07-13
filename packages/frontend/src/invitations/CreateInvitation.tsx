@@ -60,7 +60,10 @@ function getDate(hours: number) {
 export function CreateInvitation() {
 	const { user } = useUser();
 
-	const [invitation, setInvitation] = useState<TInvitationCreation>({ role: "User" });
+	const [invitation, setInvitation] = useState<TInvitationCreation>({
+		role: "User",
+		label: "",
+	});
 
 	const navigate = useNavigate();
 
@@ -99,6 +102,14 @@ export function CreateInvitation() {
 	return (
 		<div className={"mx-2"}>
 			<Card className={"grid grid-cols-2 gap-2 items-center"}>
+				<p>Label <RedStar/></p>
+				<Input
+					value={invitation.label}
+					onInput={e => setInvitation(prev => ({
+						...prev,
+						label: e.currentTarget.value,
+					}))}
+				/>
 				<p>Rôle <RedStar/></p>
 				<Select
 					default={invitation.role}

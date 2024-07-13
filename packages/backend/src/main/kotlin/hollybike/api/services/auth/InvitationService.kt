@@ -60,6 +60,7 @@ class InvitationService(
 
 	fun createInvitation(
 		caller: User,
+		label: String?,
 		role: EUserScope,
 		association: Int,
 		maxUses: Int? = null,
@@ -76,6 +77,7 @@ class InvitationService(
 		}
 		val invitation = transaction(db) {
 			Invitation.new {
+				this.label = label
 				this.creator = caller
 				this.role = role
 				this.association = assoc
