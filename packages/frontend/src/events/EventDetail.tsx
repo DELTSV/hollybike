@@ -31,7 +31,7 @@ export function EventDetail() {
 		<div
 			className={clsx(
 				"grid grid-cols-1 gap-2 mx-2 w-full mb-2 overflow-y-auto overflow-x-hidden",
-				"2xl:grid-flow-col 2xl:grid-cols-[700px_1fr] 2xl:grid-rows-2",
+				"2xl:grid-flow-col 2xl:grid-cols-[700px_1fr] 2xl:grid-rows-2 max-h-[calc(100vh_-_88px)]",
 			)}
 		>
 			<EventInfo eventData={eventData} setEventData={setEventData} id={parseInt(id ?? "-1")} doReload={doReload}/>
