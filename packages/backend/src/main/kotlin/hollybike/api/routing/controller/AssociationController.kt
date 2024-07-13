@@ -370,7 +370,7 @@ class AssociationController(
 			call.respondOutputStream(ContentType.Text.CSV) {
 				write("name,id_event,name_event,description,amount,date\n".toByteArray(Charsets.UTF_8))
 				expenses.forEach { e ->
-					write("${e.name},${e.event.id.value},${e.event.name},\"${e.description}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+					write("${e.name},${e.event.id.value},${e.event.name},\"${e.description ?: ""}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
 				}
 			}
 		}
@@ -393,7 +393,7 @@ class AssociationController(
 			call.respondOutputStream(ContentType.Text.CSV) {
 				write("name,id_event,name_event,description,amount,date\n".toByteArray(Charsets.UTF_8))
 				expenses.forEach { e ->
-					write("${e.name},${e.event.id.value},${e.event.name},\"${e.description}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+					write("${e.name},${e.event.id.value},${e.event.name},\"${e.description ?: ""}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
 				}
 			}
 		}

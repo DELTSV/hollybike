@@ -84,7 +84,6 @@ class UserEventPositionService(
 			}.firstOrNull()
 		} ?: return
 		for (message in this) {
-			println(message)
 			if(message is UserSendPosition) {
 				val entity = transaction(db) {
 					transaction(db) {

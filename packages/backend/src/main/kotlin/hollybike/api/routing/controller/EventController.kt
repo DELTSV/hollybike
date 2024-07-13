@@ -162,7 +162,7 @@ class EventController(
 			call.respondOutputStream(ContentType.Text.CSV) {
 				write("name,description,amount,date\n".toByteArray(Charsets.UTF_8))
 				expenses.forEach { e ->
-					write("${e.name},\"${e.description}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
+					write("${e.name},\"${e.description ?: ""}\",${e.amount},${e.date}\n".toByteArray(Charsets.UTF_8))
 				}
 			}
 		}
