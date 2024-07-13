@@ -11,21 +11,26 @@ class UserJourneyList extends StatelessWidget {
   final bool hasMore;
   final List<UserJourney> userJourneys;
   final MinimalUser user;
+  final bool isNested;
+  final void Function(UserJourney)? onJourneySelected;
 
   const UserJourneyList({
     super.key,
     required this.hasMore,
     required this.userJourneys,
     required this.user,
+    this.isNested = true,
+    this.onJourneySelected,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
-        SliverOverlapInjector(
-          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-        ),
+        if (isNested)
+          SliverOverlapInjector(
+            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          ),
         SliverPadding(
           padding: const EdgeInsets.only(top: 16),
           sliver: SliverList.separated(
@@ -46,6 +51,7 @@ class UserJourneyList extends StatelessWidget {
                         journey: journey,
                         color: Theme.of(context).cardColor,
                         user: user,
+                        onJourneySelected: onJourneySelected,
                         onDeleted: () {
                           context.read<ProfileJourneysBloc>().add(
                             RefreshProfileJourneys(),

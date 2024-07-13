@@ -12,6 +12,7 @@ class UserJourneyCard extends StatelessWidget {
   final bool isCurrentEvent;
   final void Function()? onDeleted;
   final bool showDate;
+  final void Function(UserJourney)? onJourneySelected;
 
   const UserJourneyCard({
     super.key,
@@ -21,6 +22,7 @@ class UserJourneyCard extends StatelessWidget {
     this.isCurrentEvent = false,
     this.onDeleted,
     this.showDate = false,
+    this.onJourneySelected,
   });
 
   @override
@@ -42,6 +44,7 @@ class UserJourneyCard extends StatelessWidget {
       isCurrentEvent: isCurrentEvent,
       onDeleted: onDeleted,
       showDate: showDate,
+      onJourneySelected: onJourneySelected,
     );
   }
 }

@@ -4,7 +4,37 @@ import '../../types/event.dart';
 enum NewJourneyType {
   library,
   file,
+  userJourney,
   external,
+}
+
+Future<NewJourneyType?> showUploadJourneyMenu(BuildContext context,
+    {bool includeLibrary = true, required RelativeRect position}) async {
+  final value = await showMenu(
+    context: context,
+    position: position,
+    items: [
+      if (includeLibrary)
+        const PopupMenuItem(
+          value: NewJourneyType.library,
+          child: Text('Depuis un parcours existant'),
+        ),
+      const PopupMenuItem(
+        value: NewJourneyType.userJourney,
+        child: Text('Depuis un trajet précédent'),
+      ),
+      const PopupMenuItem(
+        value: NewJourneyType.external,
+        child: Text('Depuis un outil externe'),
+      ),
+      const PopupMenuItem(
+        value: NewJourneyType.file,
+        child: Text('Depuis un fichier GPX/GEOJSON'),
+      ),
+    ],
+  );
+
+  return value;
 }
 
 class UploadJourneyMenu extends StatelessWidget {
@@ -31,36 +61,20 @@ class UploadJourneyMenu extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTapDown: (details) async {
-                final value = await showMenu(
-                  context: context,
+                final value = await showUploadJourneyMenu(
+                  context,
+                  includeLibrary: includeLibrary,
                   position: RelativeRect.fromLTRB(
                     details.globalPosition.dx,
                     details.globalPosition.dy,
                     details.globalPosition.dx,
                     details.globalPosition.dy,
                   ),
-                  items: [
-                    if (includeLibrary)
-                      const PopupMenuItem(
-                        value: NewJourneyType.library,
-                        child: Text('Depuis un parcours existant'),
-                      ),
-                    const PopupMenuItem(
-                      value: NewJourneyType.file,
-                      child: Text('Importer un fichier GPX/GEOJSON'),
-                    ),
-                    const PopupMenuItem(
-                      value: NewJourneyType.external,
-                      child: Text('Depuis un outil externe'),
-                    ),
-                  ],
                 );
 
-                if (value == null) {
-                  return;
+                if (value != null) {
+                  onSelection?.call(value);
                 }
-
-                onSelection?.call(value);
               },
             ),
           ),

@@ -14,6 +14,7 @@ class UserJourneyContent extends StatelessWidget {
   final bool isCurrentEvent;
   final void Function()? onDeleted;
   final bool showDate;
+  final void Function(UserJourney)? onJourneySelected;
 
   const UserJourneyContent({
     super.key,
@@ -23,6 +24,7 @@ class UserJourneyContent extends StatelessWidget {
     required this.isCurrentEvent,
     this.onDeleted,
     required this.showDate,
+    this.onJourneySelected,
   });
 
   @override
@@ -146,36 +148,70 @@ class UserJourneyContent extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                showModalBottomSheet(
-                  backgroundColor: Colors.transparent,
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (_) {
-                    final eventDetailsBloc = context.readOrNull<EventDetailsBloc>();
-
-                    final modal = UserJourneyModal(
-                      journey: existingJourney,
-                      user: user,
-                      isCurrentEvent: isCurrentEvent,
-                      onDeleted: onDeleted,
-                    );
-
-                    if (eventDetailsBloc == null) {
-                      return modal;
-                    }
-
-                    return BlocProvider<EventDetailsBloc>.value(
-                      value: eventDetailsBloc,
-                      child: modal,
-                    );
-                  },
-                );
-              },
+              onTap:
+                  onJourneySelected == null ? () => showDetails(context) : null,
+              onTapDown: onJourneySelected != null
+                  ? (details) => showJourneyMenu(context, details)
+                  : null,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  void showJourneyMenu(BuildContext context, TapDownDetails details) async {
+    final value = await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        details.globalPosition.dx,
+        details.globalPosition.dy,
+        details.globalPosition.dx,
+        details.globalPosition.dy,
+      ),
+      items: [
+        const PopupMenuItem(
+          value: 'select',
+          child: Text('Sélectionner ce trajet'),
+        ),
+        const PopupMenuItem(
+          value: 'details',
+          child: Text('Détails du trajet'),
+        ),
+      ],
+    );
+
+    if (value == 'select') {
+      onJourneySelected?.call(existingJourney);
+    } else if (value == 'details' && context.mounted) {
+      showDetails(context);
+    }
+  }
+
+  void showDetails(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (_) {
+        final eventDetailsBloc = context.readOrNull<EventDetailsBloc>();
+
+        final modal = UserJourneyModal(
+          journey: existingJourney,
+          user: user,
+          isCurrentEvent: isCurrentEvent,
+          onDeleted: onDeleted,
+        );
+
+        if (eventDetailsBloc == null) {
+          return modal;
+        }
+
+        return BlocProvider<EventDetailsBloc>.value(
+          value: eventDetailsBloc,
+          child: modal,
+        );
+      },
     );
   }
 }
