@@ -98,5 +98,5 @@ variable "backend_smtp_password" {
 
 variable "backend_mapbox_public_token" {
   type        = string
-  description = "The public token for Mapbox"
+  description = "The public token for Mapbox (optional)"
 }
