@@ -24,12 +24,15 @@ import {
 import { QRCodeScanner } from "../icons/QRCodeScanner.tsx";
 import { ContentCopy } from "../icons/ContentCopy.tsx";
 import { Modal } from "../components/Modal/Modal.tsx";
-import { QRCodeSVG } from "qrcode.react";
+import {
+	QRCodeCanvas, QRCodeSVG,
+} from "qrcode.react";
 import { useRef } from "react";
 import { Input } from "../components/Input/Input.tsx";
 import { useUser } from "../user/useUser.tsx";
 import { EUserScope } from "../types/EUserScope.ts";
 import { Card } from "../components/Card/Card.tsx";
+import { Download } from "../icons/Download.tsx";
 
 export function ListInvitations() {
 	const {
@@ -74,6 +77,8 @@ export function ListInvitations() {
 
 	const [mail, setMail] = useState("");
 	const [invitation, setInvitation] = useState(-1);
+	const canvasRef = useRef<HTMLDivElement>(null);
+	const downLoadQrCode = useRef<HTMLAnchorElement>(null);
 
 	const filter = useMemo(() => {
 		if (id !== undefined) {
@@ -196,10 +201,53 @@ export function ListInvitations() {
 				/>
 			</Card>
 			<Modal title={"QR-Code d'invitation"} visible={modalQrCode} setVisible={setModalQrCode} width={"w-auto"}>
-				<div className={"flex flex-col items-center justify-center m-4"}>
-					<div className={"bg-white p-4 rounded"}>
-						<QRCodeSVG bgColor={"transparent"} value={qrCode} height={"50vh"} width={"50vw"}/>
+				<div className={"flex flex-col items-center justify-center m-4 relative"} ref={canvasRef}>
+					<div className={"bg-[#cdd6f5] p-4 rounded"}>
+						<QRCodeSVG
+							bgColor={"#cdd6f5"}
+							fgColor={"#1c1c1a"}
+							value={qrCode}
+							level={"Q"}
+							height={"50vh"}
+							width={"50vw"}
+							imageSettings={{
+								src: "/logo.png",
+								height: 25,
+								width: 25,
+								excavate: true,
+							}}
+						/>
 					</div>
+					<Download
+						className={"absolute right-0 top-0 fill-crust h-12 w-12 cursor-pointer"} onClick={() => {
+							if (canvasRef.current) {
+								const canva = canvasRef.current.querySelector("canvas");
+								if (canva) {
+									const img = canva?.toDataURL("image/png").replace("image/png", "image/octet-stream");
+									if (downLoadQrCode.current) {
+										downLoadQrCode.current.download = "qrcode.png";
+										downLoadQrCode.current.href = img;
+										downLoadQrCode.current.click();
+									}
+								}
+							}
+						}}
+					/>
+					<a className={"hidden"} target={"_blank"} ref={downLoadQrCode}/>
+					<QRCodeCanvas
+						style={{ display: "none" }}
+						bgColor={"#cdd6f5"}
+						fgColor={"#1c1c1a"}
+						value={qrCode}
+						level={"Q"}
+						size={500}
+						imageSettings={{
+							src: "/logo.png",
+							height: 100,
+							width: 100,
+							excavate: true,
+						}}
+					/>
 				</div>
 			</Modal>
 			<Modal title={"Envoyer un mail"} visible={modalMail} setVisible={setModalMail} width={"w-auto"}>
