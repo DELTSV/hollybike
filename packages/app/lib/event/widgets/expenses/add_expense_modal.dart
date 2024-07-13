@@ -46,6 +46,7 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
             CommonTextField(
               controller: _nameController,
               title: 'Nom',
+              textCapitalization: TextCapitalization.sentences,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) {
                 if (value?.isEmpty == true) {
@@ -69,6 +70,7 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
             ),
             const SizedBox(height: 16),
             CommonTextField(
+              textCapitalization: TextCapitalization.sentences,
               controller: _descriptionController,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               title: 'Description (optionnel)',

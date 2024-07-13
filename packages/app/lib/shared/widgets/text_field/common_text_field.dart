@@ -14,6 +14,7 @@ class CommonTextField extends StatelessWidget {
   final TextInputType? textInputType;
   final AutovalidateMode? autovalidateMode;
   final List<TextInputFormatter>? inputFormatters;
+  final TextCapitalization textCapitalization;
 
   const CommonTextField({
     super.key,
@@ -29,6 +30,7 @@ class CommonTextField extends StatelessWidget {
     this.textInputType,
     this.autovalidateMode,
     this.inputFormatters,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   @override
@@ -58,6 +60,7 @@ class CommonTextField extends StatelessWidget {
         focusNode: focusNode,
         inputFormatters: inputFormatters,
         onEditingComplete: onEditingDone,
+        textCapitalization: textCapitalization,
       ),
     );
   }

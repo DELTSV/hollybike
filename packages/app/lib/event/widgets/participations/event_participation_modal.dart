@@ -42,21 +42,24 @@ class EventParticipationModal extends StatelessWidget {
                       radius: 20,
                     ),
                     const SizedBox(width: 16),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          participation.user.username,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        Text(
-                          participation.roleName,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            participation.user.username,
+                            style: Theme.of(context).textTheme.titleSmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            participation.roleName,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 16),
                     ElevatedButton(
                       onPressed: () => _onOpenUserProfile(context),
                       child: const Text("Voir le profil"),
