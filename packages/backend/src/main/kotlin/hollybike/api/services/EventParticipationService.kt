@@ -224,7 +224,7 @@ class EventParticipationService(
 
 		val users = User.find { Users.id inList userIds }
 
-		if(event.status == EEventStatus.Pending) {
+		if(event.status != EEventStatus.Pending) {
 			notificationService.send(users.toList(), AddedToEventNotification(event.id.value, event.name), caller)
 		}
 
