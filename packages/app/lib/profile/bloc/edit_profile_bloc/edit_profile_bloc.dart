@@ -25,6 +25,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         event.image,
       );
 
+      profileRepository.invalidateCurrentProfile();
       emit(EditProfileLoadSuccess(state));
     } catch (e) {
       emit(EditProfileLoadFailure(
