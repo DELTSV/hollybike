@@ -141,7 +141,11 @@ export function List<T>(props: ListProps<T>) {
 					Page Précédente
 				</Button>
 				<p className={"flex gap-1"}>
-					<input className={"bg-transparent w-6 text-right"} value={data.data?.total_page === 0 ? 0 : page + 1} onInput={onPageChange}/>
+					<input
+						className={"bg-transparent w-6 text-right"}
+						value={data.data?.total_page === 0 ? 0 : page + 1}
+						onInput={onPageChange}
+					/>
 					/
 					<span className={"w-6 block"}>{ data.data?.total_page }</span>
 				</p>
