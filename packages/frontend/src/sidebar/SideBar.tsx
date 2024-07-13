@@ -95,25 +95,28 @@ export function SideBar() {
 }
 
 function adminMenu(association: TAssociation | undefined, root: boolean, onPremise: boolean) {
-	const menus = [
+	let menus = [
 		<SideBarMenu to={`/associations/${association?.id}`}>
 			{ root ? association?.name : "Mon association" }
 		</SideBarMenu>,
-		<SideBarMenu to={`/associations/${association?.id}/users`}>
-			{ root ? `Utilisateurs de ${association?.name}` : "Mes utilisateurs" }
+		<SideBarMenu to={`/associations/${association?.id}/invitations`} indent={root}>
+			{ root ? "Invitations" : "Mes invitations" }
 		</SideBarMenu>,
-		<SideBarMenu to={`/associations/${association?.id}/invitations`}>
-			{ root ? `Invitations de ${association?.name}` : "Mes Invitations" }
+		<SideBarMenu to={`/associations/${association?.id}/users`} indent={root}>
+			{ root ? "Utilisateurs" : "Mes utilisateurs" }
 		</SideBarMenu>,
-		<SideBarMenu to={`/associations/${association?.id}/events`}>
-			{ root ? `Événements de ${association?.name}` : "Mes événements" }
+		<SideBarMenu to={`/associations/${association?.id}/events`} indent={root}>
+			{ root ? "Événements" : "Mes événements" }
 		</SideBarMenu>,
-		<SideBarMenu to={`/associations/${association?.id}/journeys`}>
-			{ root ? `Bibliothèque de ${association?.name}` : "Mes trajets" }
+		<SideBarMenu to={`/associations/${association?.id}/journeys`} indent={root}>
+			{ root ? "Bibliothèque de trajet" : "Mes trajets" }
 		</SideBarMenu>,
 	];
 	if (onPremise) {
 		menus.push(<SideBarMenu to={"/conf"}>Configuration</SideBarMenu>);
+	}
+	if (root) {
+		menus = [<div className={"w-3/5 bg-gray-600 h-0.5 my-1"}/>, ...menus];
 	}
 	return menus;
 }
@@ -123,11 +126,11 @@ function rootMenu(association: TAssociation | undefined, onPremise: boolean) {
 		<SideBarMenu to={"/associations"}>
 			Associations
 		</SideBarMenu>,
-		<SideBarMenu to={"/users"}>
-			Utilisateurs
-		</SideBarMenu>,
 		<SideBarMenu to={"/invitations"}>
 			Invitations
+		</SideBarMenu>,
+		<SideBarMenu to={"/users"}>
+			Utilisateurs
 		</SideBarMenu>,
 		<SideBarMenu to={"/events"}>
 			Événements
