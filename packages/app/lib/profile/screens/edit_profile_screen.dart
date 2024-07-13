@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hollybike/image/type/image_picker_mode.dart';
-import 'package:hollybike/image/widgets/image_picker/image_picker_modal.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_event.dart';
 import 'package:hollybike/profile/bloc/edit_profile_bloc/edit_profile_state.dart';
@@ -46,6 +44,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   File? _selectedImage;
   OverlayEntry? _overlay;
+  bool _touched = false;
 
   @override
   void initState() {
@@ -81,168 +80,220 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EditProfileBloc, EditProfileState>(
-      listener: (context, state) {
-        if (_overlay != null) {
-          _overlay!.remove();
-        }
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (canPop) {
+        if (canPop) return;
 
-        if (state is EditProfileLoadFailure) {
-          Toast.showErrorToast(context, state.errorMessage);
-        }
-
-        if (state is EditProfileLoadInProgress) {
-          _overlay = OverlayEntry(
-            builder: (context) {
-              return Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.6),
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
-            },
-          );
-
-          if (_overlay != null) {
-            Overlay.of(context).insert(_overlay!);
-          }
-        }
-
-        if (state is EditProfileLoadSuccess) {
-          Toast.showSuccessToast(context, "Votre profil a été mis à jour.");
+        if (!_touched) {
           Navigator.of(context).pop();
+          return;
         }
-      },
-      builder: (context, state) {
-        return Hud(
-          appBar: TopBar(
-            prefix: TopBarActionIcon(
-              icon: Icons.arrow_back,
-              onPressed: () => context.router.maybePop(),
-            ),
-            title: const TopBarTitle('Modifier mon profil'),
-            suffix: state is EditProfileLoadInProgress
-                ? null
-                : TopBarActionIcon(
-                    icon: Icons.save,
-                    onPressed: _onSubmit,
-                    colorInverted: true,
-                  ),
-          ),
-          body: Builder(builder: (context) {
-            final currentProfile = _currentProfile;
 
-            if (currentProfile == null) {
-              return const SizedBox();
-            }
-
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      const ProfileBannerBackground(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          ProfileBannerDecoration(
-                            profilePicture: ProfilePicture(
-                              profile: currentProfile,
-                              file: _selectedImage,
-                              size: 100,
-                              editMode: true,
-                              onTap: _showImagePickerModal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TextFormField(
-                            controller: _usernameController,
-                            keyboardType: TextInputType.name,
-                            autocorrect: true,
-                            textCapitalization:
-                            TextCapitalization.sentences,
-                            autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              if (value!.length > 1000) {
-                                return "Le nom d'utilisateur ne peut pas dépasser 1000 caractères.";
-                              }
-
-                              if (value.isEmpty) {
-                                return "Le nom d'utilisateur ne peut pas être vide.";
-                              }
-
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              labelText: "Nom d'utilisateur",
-                              fillColor:
-                              Theme.of(context).colorScheme.primary,
-                              filled: true,
-                              suffixIcon:
-                              const Icon(Icons.account_circle_rounded),
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          TextFormField(
-                            controller: _descriptionController,
-                            autocorrect: true,
-                            textCapitalization:
-                            TextCapitalization.sentences,
-                            autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              if (value!.length > 255) {
-                                return "Votre description ne peut pas dépasser 255 caractères.";
-                              }
-
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              labelText: "Description (facultatif)",
-                              fillColor:
-                              Theme.of(context).colorScheme.primary,
-                              filled: true,
-                              suffixIcon: const Icon(Icons.description),
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          TextButton(
-                            onPressed: () {},
-                            child: const Text('Changer votre mot de passe'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Êtes-vous sûr de vouloir quitter ?'),
+              content: const Text(
+                'Vous avez des modifications non sauvegardées.',
               ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Quitter'),
+                ),
+              ],
             );
-          }),
+          },
         );
       },
+      child: BlocConsumer<EditProfileBloc, EditProfileState>(
+        listener: (context, state) {
+          if (_overlay != null) {
+            _overlay!.remove();
+          }
+
+          if (state is EditProfileLoadFailure) {
+            Toast.showErrorToast(context, state.errorMessage);
+          }
+
+          if (state is EditProfileLoadInProgress) {
+            _overlay = OverlayEntry(
+              builder: (context) {
+                return Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.6),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
+              },
+            );
+
+            if (_overlay != null) {
+              Overlay.of(context).insert(_overlay!);
+            }
+          }
+
+          if (state is EditProfileLoadSuccess) {
+            Toast.showSuccessToast(context, "Votre profil a été mis à jour.");
+            Navigator.of(context).pop();
+          }
+        },
+        builder: (context, state) {
+          return Hud(
+            appBar: TopBar(
+              prefix: TopBarActionIcon(
+                icon: Icons.arrow_back,
+                onPressed: () => context.router.maybePop(),
+              ),
+              title: const TopBarTitle('Modifier mon profil'),
+              suffix: state is EditProfileLoadInProgress
+                  ? null
+                  : TopBarActionIcon(
+                      icon: Icons.save,
+                      onPressed: _onSubmit,
+                      colorInverted: true,
+                    ),
+            ),
+            body: Builder(builder: (context) {
+              final currentProfile = _currentProfile;
+
+              if (currentProfile == null) {
+                return const SizedBox();
+              }
+
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        const ProfileBannerBackground(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            ProfileBannerDecoration(
+                              profilePicture: ProfilePicture(
+                                profile: currentProfile,
+                                file: _selectedImage,
+                                size: 100,
+                                editMode: true,
+                                onTap: _showImagePickerModal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextFormField(
+                              controller: _usernameController,
+                              keyboardType: TextInputType.name,
+                              autocorrect: true,
+                              textCapitalization:
+                              TextCapitalization.sentences,
+                              autovalidateMode:
+                              AutovalidateMode.onUserInteraction,
+                              onChanged: (_) {
+                                if (!_touched) {
+                                  setState(() {
+                                    _touched = true;
+                                  });
+                                }
+                              },
+                              validator: (value) {
+                                if (value!.length > 1000) {
+                                  return "Le nom d'utilisateur ne peut pas dépasser 1000 caractères.";
+                                }
+
+                                if (value.isEmpty) {
+                                  return "Le nom d'utilisateur ne peut pas être vide.";
+                                }
+
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                labelText: "Nom d'utilisateur",
+                                fillColor:
+                                Theme.of(context).colorScheme.primary,
+                                filled: true,
+                                suffixIcon:
+                                const Icon(Icons.account_circle_rounded),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            TextFormField(
+                              controller: _descriptionController,
+                              autocorrect: true,
+                              textCapitalization:
+                              TextCapitalization.sentences,
+                              autovalidateMode:
+                              AutovalidateMode.onUserInteraction,
+                              onChanged: (_) {
+                                if (!_touched) {
+                                  setState(() {
+                                    _touched = true;
+                                  });
+                                }
+                              },
+                              validator: (value) {
+                                if (value!.length > 255) {
+                                  return "Votre description ne peut pas dépasser 255 caractères.";
+                                }
+
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                labelText: "Description (facultatif)",
+                                fillColor:
+                                Theme.of(context).colorScheme.primary,
+                                filled: true,
+                                suffixIcon: const Icon(Icons.description),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text('Changer votre mot de passe'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          );
+        },
+      ),
     );
   }
 
@@ -255,6 +306,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onImageSelected: (file) {
             setState(() {
               _selectedImage = file;
+              _touched = true;
             });
           },
         );
