@@ -5,7 +5,7 @@ import { clsx } from "clsx";
 
 export function ButtonDanger(props: ButtonProps) {
 	return (
-		<Button {...props} className={clsx("!border-red !text-red", props.className)}>
+		<Button {...props} className={clsx("!bg-red", props.className)}>
 			{ props.children }
 		</Button>
 	);

@@ -29,8 +29,15 @@ export function SideBar() {
 			className={
 				clsx(
 					"fixed left-0 right-0 top-0 bottom-0 md:bg-transparent p-4",
-					"transition-bg duration-200",
-					visible ? "bg-crust/90" : "bg-transparent pointer-events-none",
+					"transition-backdrop-filter-bg duration-200",
+					"group/background",
+					visible ?
+						clsx(
+							"bg-crust/40 backdrop-blur-sm pointer-events-auto cursor-pointer",
+							"[&:hover:not(:has(aside:hover))]:bg-crust/10 [&:hover:not(:has(aside:hover))]:backdrop-blur-[1px]",
+							"[&:has(aside>button:hover)]:bg-crust/10 [&:has(aside>button:hover)]:backdrop-blur-[1px]",
+						) :
+						"!bg-none backdrop-blur-0 pointer-events-none",
 				)
 			}
 			style={{ zIndex: 8_000 }}
@@ -40,7 +47,7 @@ export function SideBar() {
 				className={clsx(
 					"relative w-48 min-w-48 bg-base h-full rounded-xl shadow-lg shadow-black/50 pointer-events-auto",
 					"flex-col flex md:translate-x-0 gap-2 p-2",
-					"transition-transform duration-200",
+					"transition-transform duration-200 cursor-auto",
 					visible ? "translate-x-0" : "-translate-x-[calc(100%+4rem)]",
 				)}
 			>
@@ -59,18 +66,21 @@ export function SideBar() {
 						"absolute bg-subtext-1 text-base fill-base rounded p-1",
 						"origin-top-left md:scale-0 md:-mb-10",
 						"transition-transform-w duration-200",
-						"flex gap-1 items-center w-8 hover:w-24",
+						"flex gap-1 items-center w-8 hover:w-24 group-[&:hover:not(:has(:hover))]/background:w-24",
 						"outline outline-base outline-8",
-						"group overflow-clip",
+						"group/button overflow-clip",
 					)}
 					onClick={() => setVisible(false)}
 				>
 					<CloseRounded/>
 					<p
 						className={clsx(
-							"translate-x-4 translate-y-4 opacity-0",
+							"translate-x-8 translate-y-8 opacity-0",
 							"transition-transform duration-200",
-							"group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100",
+							"group-hover/button:translate-x-0 group-hover/button:translate-y-0 group-hover/button:opacity-100",
+							"group-[&:hover:not(:has(:hover))]/background:translate-x-0",
+							"group-[&:hover:not(:has(:hover))]/background:translate-y-0",
+							"group-[&:hover:not(:has(:hover))]/background:opacity-100",
 						)}
 					>
 						Fermer
