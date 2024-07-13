@@ -7,11 +7,13 @@ import 'package:hollybike/user/types/minimal_user.dart';
 class ProfileDescription extends StatelessWidget {
   final MinimalUser profile;
   final Association association;
+  final String? email;
 
   const ProfileDescription({
     super.key,
     required this.profile,
     required this.association,
+    this.email,
   });
 
   @override
@@ -33,9 +35,14 @@ class ProfileDescription extends StatelessWidget {
                 ),
               ),
             ),
+            if (email != null)
+              ProfileDescriptionSpec(
+                icon: Icons.email,
+                text: email!,
+              ),
             ProfileDescriptionSpec(
               icon: Icons.groups,
-              text: association.name,
+              text: '${association.name}, ${profile.role ?? "Membre"}',
             ),
           ],
           const SizedBox.square(dimension: 8),

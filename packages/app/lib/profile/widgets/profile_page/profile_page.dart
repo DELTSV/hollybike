@@ -22,6 +22,7 @@ class ProfilePage extends StatefulWidget {
   final int? id;
   final bool profileLoading;
   final MinimalUser? profile;
+  final String? email;
   final Association? association;
   final bool isMe;
 
@@ -30,6 +31,7 @@ class ProfilePage extends StatefulWidget {
     this.id,
     required this.profileLoading,
     required this.profile,
+    this.email,
     required this.association,
     this.isMe = false,
   });
@@ -78,6 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ProfileDescription(
                   profile: widget.profile as MinimalUser,
                   association: widget.association as Association,
+                  email: widget.email,
                 ),
               ],
             ),

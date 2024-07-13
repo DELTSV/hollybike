@@ -75,6 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         id: id,
         profileLoading: false,
         isMe: isMe,
+        email: isMe ? currentProfile.profile.email : null,
         profile: user.user,
         association: currentProfile.profile.association,
       );
