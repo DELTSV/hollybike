@@ -405,7 +405,7 @@ class UserTest : IntegrationSpec({
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.Unauthorized
+					status shouldBe HttpStatusCode.Forbidden
 					bodyAsText() shouldBe "Mauvais old_password"
 				}
 			}
