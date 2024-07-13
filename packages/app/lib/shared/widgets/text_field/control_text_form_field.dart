@@ -3,6 +3,7 @@ import 'package:hollybike/shared/widgets/text_field/secured_text_field.dart';
 
 class ControlTextField extends StatelessWidget {
   final String controlledFieldTitle;
+  final TextEditingController? controlledFieldController;
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final void Function()? onEditingDone;
@@ -12,6 +13,7 @@ class ControlTextField extends StatelessWidget {
 
   const ControlTextField({
     super.key,
+    required this.controlledFieldController,
     required this.controlledFieldTitle,
     required this.controller,
     this.focusNode,
@@ -36,7 +38,7 @@ class ControlTextField extends StatelessWidget {
   }
 
   String? _confirmFieldValidator(String? value) {
-    if (value == null || value.isEmpty || value != controller!.text) {
+    if (value == null || value.isEmpty || value != controlledFieldController!.text) {
       return "Ce champ devrait avoir la même valeur que $controlledFieldTitle";
     }
     return null;
