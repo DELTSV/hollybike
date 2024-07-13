@@ -112,7 +112,7 @@ class LoginScreen extends StatelessWidget {
   Future<void> _signupLinkDialogBuilder(BuildContext context) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => const SignupLinkDialog(),
+      builder: (BuildContext context) => SignupLinkDialog(canPop: canPop),
     );
   }
 }

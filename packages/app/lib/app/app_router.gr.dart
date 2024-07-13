@@ -160,15 +160,9 @@ abstract class $AppRouter extends _i15.RootStackRouter {
       );
     },
     SignupRoute.name: (routeData) {
-      final args = routeData.argsAs<SignupRouteArgs>(
-          orElse: () => const SignupRouteArgs());
       return _i15.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i13.SignupScreen(
-          key: args.key,
-          onAuthSuccess: args.onAuthSuccess,
-          canPop: args.canPop,
-        ),
+        child: const _i13.SignupScreen(),
       );
     },
     UserJourneyMapRoute.name: (routeData) {
@@ -577,45 +571,16 @@ class SearchRoute extends _i15.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i13.SignupScreen]
-class SignupRoute extends _i15.PageRouteInfo<SignupRouteArgs> {
-  SignupRoute({
-    _i16.Key? key,
-    dynamic Function()? onAuthSuccess,
-    bool canPop = false,
-    List<_i15.PageRouteInfo>? children,
-  }) : super(
+class SignupRoute extends _i15.PageRouteInfo<void> {
+  const SignupRoute({List<_i15.PageRouteInfo>? children})
+      : super(
           SignupRoute.name,
-          args: SignupRouteArgs(
-            key: key,
-            onAuthSuccess: onAuthSuccess,
-            canPop: canPop,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'SignupRoute';
 
-  static const _i15.PageInfo<SignupRouteArgs> page =
-      _i15.PageInfo<SignupRouteArgs>(name);
-}
-
-class SignupRouteArgs {
-  const SignupRouteArgs({
-    this.key,
-    this.onAuthSuccess,
-    this.canPop = false,
-  });
-
-  final _i16.Key? key;
-
-  final dynamic Function()? onAuthSuccess;
-
-  final bool canPop;
-
-  @override
-  String toString() {
-    return 'SignupRouteArgs{key: $key, onAuthSuccess: $onAuthSuccess, canPop: $canPop}';
-  }
+  static const _i15.PageInfo<void> page = _i15.PageInfo<void>(name);
 }
 
 /// generated route for

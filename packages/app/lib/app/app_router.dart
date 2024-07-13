@@ -90,6 +90,9 @@ class AppRouter extends $AppRouter {
           page: LoadingRoute.page,
           path: '/load',
         ),
-        RedirectRoute(path: '*', redirectTo: 'events'),
+        RedirectRoute(
+          path: '*',
+          redirectTo: '/events',
+        ),
       ];
 }
