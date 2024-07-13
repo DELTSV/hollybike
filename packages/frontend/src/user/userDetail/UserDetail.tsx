@@ -63,7 +63,7 @@ export function UserDetail() {
 		})), [self]);
 
 	return (
-		<div className={"flex items-start gap-2"}>
+		<div className={"grid gap-2 grid-cols-2"}>
 			<Card>
 				<div className={"grid gap-2 grid-cols-2"}>
 					<p>Nom de l'utilisateur</p>

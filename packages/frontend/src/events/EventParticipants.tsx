@@ -19,6 +19,7 @@ import {
 } from "../utils/useReload.ts";
 import { ModalAddParticipants } from "./ModalAddParticipants.tsx";
 import { Link } from "react-router-dom";
+import {Card} from "../components/Card/Card.tsx";
 
 interface EventParticipantsProps {
 	event: TEvent
@@ -44,7 +45,7 @@ export function EventParticipant(props: EventParticipantsProps) {
 		doReload,
 	]);
 	return (
-		<div>
+		<Card>
 			<List
 				action={<Button onClick={() => setVisible(true)}>Ajouter des participants</Button>}
 				columns={[
@@ -99,7 +100,7 @@ export function EventParticipant(props: EventParticipantsProps) {
 					]}
 			/>
 			<ModalAddParticipants visible={visible} setVisible={setVisible} eventId={props.event.id} doReload={doReload}/>
-		</div>
+		</Card>
 	);
 }
 

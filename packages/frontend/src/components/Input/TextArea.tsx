@@ -12,7 +12,7 @@ interface TextAreaProps {
 export function TextArea(props: TextAreaProps) {
 	return (
 		<textarea
-			className={"rounded border-2 border-lavender bg-surface-1 p-2"}
+			className={"rounded border-2 border-surface-1 bg-mantle p-2"}
 			value={props.value} onInput={props.onInput}
 			placeholder={props.placeHolder}
 		>

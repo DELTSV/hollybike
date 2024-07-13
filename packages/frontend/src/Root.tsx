@@ -11,8 +11,8 @@ export function Root() {
 		<>
 			<div
 				className={clsx(
-					"overflow-hidden min-h-screen m-4",
-					"flex flex-col gap-2 md:ml-56",
+					"bg-crust overflow-hidden min-h-full p-4",
+					"flex flex-col gap-2 md:pl-56",
 					"transition-ml duration-200",
 				)}
 			>
