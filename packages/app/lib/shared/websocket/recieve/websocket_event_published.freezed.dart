@@ -27,7 +27,7 @@ mixin _$WebsocketEventPublished {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
-  DateTime get date => throw _privateConstructorUsedError;
+  DateTime get start => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   @JsonKey(name: 'owner_id')
   int get ownerId => throw _privateConstructorUsedError;
@@ -52,7 +52,7 @@ abstract class $WebsocketEventPublishedCopyWith<$Res> {
       int id,
       String name,
       String? description,
-      DateTime date,
+      DateTime start,
       String? image,
       @JsonKey(name: 'owner_id') int ownerId,
       @JsonKey(name: 'owner_name') String ownerName});
@@ -77,7 +77,7 @@ class _$WebsocketEventPublishedCopyWithImpl<$Res,
     Object? id = null,
     Object? name = null,
     Object? description = freezed,
-    Object? date = null,
+    Object? start = null,
     Object? image = freezed,
     Object? ownerId = null,
     Object? ownerName = null,
@@ -103,9 +103,9 @@ class _$WebsocketEventPublishedCopyWithImpl<$Res,
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
+      start: null == start
+          ? _value.start
+          : start // ignore: cast_nullable_to_non_nullable
               as DateTime,
       image: freezed == image
           ? _value.image
@@ -138,7 +138,7 @@ abstract class _$$WebsocketEventPublishedImplCopyWith<$Res>
       int id,
       String name,
       String? description,
-      DateTime date,
+      DateTime start,
       String? image,
       @JsonKey(name: 'owner_id') int ownerId,
       @JsonKey(name: 'owner_name') String ownerName});
@@ -162,7 +162,7 @@ class __$$WebsocketEventPublishedImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? description = freezed,
-    Object? date = null,
+    Object? start = null,
     Object? image = freezed,
     Object? ownerId = null,
     Object? ownerName = null,
@@ -188,9 +188,9 @@ class __$$WebsocketEventPublishedImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
+      start: null == start
+          ? _value.start
+          : start // ignore: cast_nullable_to_non_nullable
               as DateTime,
       image: freezed == image
           ? _value.image
@@ -217,7 +217,7 @@ class _$WebsocketEventPublishedImpl implements _WebsocketEventPublished {
       required this.id,
       required this.name,
       this.description,
-      required this.date,
+      required this.start,
       this.image,
       @JsonKey(name: 'owner_id') required this.ownerId,
       @JsonKey(name: 'owner_name') required this.ownerName});
@@ -238,7 +238,7 @@ class _$WebsocketEventPublishedImpl implements _WebsocketEventPublished {
   @override
   final String? description;
   @override
-  final DateTime date;
+  final DateTime start;
   @override
   final String? image;
   @override
@@ -250,7 +250,7 @@ class _$WebsocketEventPublishedImpl implements _WebsocketEventPublished {
 
   @override
   String toString() {
-    return 'WebsocketEventPublished(type: $type, notificationId: $notificationId, id: $id, name: $name, description: $description, date: $date, image: $image, ownerId: $ownerId, ownerName: $ownerName)';
+    return 'WebsocketEventPublished(type: $type, notificationId: $notificationId, id: $id, name: $name, description: $description, start: $start, image: $image, ownerId: $ownerId, ownerName: $ownerName)';
   }
 
   @override
@@ -265,7 +265,7 @@ class _$WebsocketEventPublishedImpl implements _WebsocketEventPublished {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.date, date) || other.date == date) &&
+            (identical(other.start, start) || other.start == start) &&
             (identical(other.image, image) || other.image == image) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             (identical(other.ownerName, ownerName) ||
@@ -275,7 +275,7 @@ class _$WebsocketEventPublishedImpl implements _WebsocketEventPublished {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, type, notificationId, id, name,
-      description, date, image, ownerId, ownerName);
+      description, start, image, ownerId, ownerName);
 
   @JsonKey(ignore: true)
   @override
@@ -299,7 +299,7 @@ abstract class _WebsocketEventPublished implements WebsocketEventPublished {
           required final int id,
           required final String name,
           final String? description,
-          required final DateTime date,
+          required final DateTime start,
           final String? image,
           @JsonKey(name: 'owner_id') required final int ownerId,
           @JsonKey(name: 'owner_name') required final String ownerName}) =
@@ -320,7 +320,7 @@ abstract class _WebsocketEventPublished implements WebsocketEventPublished {
   @override
   String? get description;
   @override
-  DateTime get date;
+  DateTime get start;
   @override
   String? get image;
   @override

@@ -14,7 +14,7 @@ class EmptyJourneyPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DottedBorder(
-      strokeWidth: 2,
+      strokeWidth: 4,
       color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.3),
       borderType: BorderType.RRect,
       radius: const Radius.circular(14),

@@ -67,8 +67,8 @@ class GeoJSON with _$GeoJSON {
     double width = bbox[2] - bbox[0];
     double height = bbox[3] - bbox[1];
 
-    final realWidth = width == 0 ? 0.1 : width;
-    final realHeight = height == 0 ? 0.1 : height;
+    final realWidth = width <= 0.1 ? 0.1 : width;
+    final realHeight = height <= 0.1 ? 0.1 : height;
 
     double paddingWidth = realWidth * horizontalPaddingPercentage;
     double paddingHeight = realHeight * verticalPaddingPercentage;

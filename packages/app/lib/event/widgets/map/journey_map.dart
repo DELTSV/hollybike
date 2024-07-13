@@ -284,6 +284,16 @@ class _JourneyMapState extends State<JourneyMap> {
       }
     }
 
+    for (final userId in currentPositions.keys) {
+      if (!userPositionsState.userPositions.any((p) => p.userId == userId)) {
+        final point = currentPositions[userId];
+
+        if (point != null) {
+          await pointManager.delete(point);
+        }
+      }
+    }
+
     final addedPositions = (await Future.wait(
       missingPositions
           .map((position) => _addMapPosition(pointManager, position)),

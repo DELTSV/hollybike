@@ -77,10 +77,12 @@ class EventDetailsStatusBadge extends StatelessWidget {
             status: status,
           ),
           const SizedBox(width: 16),
-          Text(
-            message,
-            style: Theme.of(context).textTheme.bodyMedium,
-            softWrap: true,
+          Flexible(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodyMedium,
+              softWrap: true,
+            ),
           ),
         ],
       );
