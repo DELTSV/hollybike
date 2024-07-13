@@ -8,10 +8,12 @@ import hollybike.api.repository.associationMapper
 import hollybike.api.repository.journeysMapper
 import hollybike.api.repository.userMapper
 import hollybike.api.routing.resources.Journeys
+import hollybike.api.routing.resources.UserJourneys
 import hollybike.api.services.EventParticipationService
 import hollybike.api.services.PositionService
 import hollybike.api.services.UserEventPositionService
 import hollybike.api.services.journey.JourneyService
+import hollybike.api.services.storage.StorageService
 import hollybike.api.types.association.TPartialAssociation
 import hollybike.api.types.journey.*
 import hollybike.api.types.lists.TLists
@@ -47,7 +49,8 @@ import kotlin.time.Duration.Companion.hours
 class JourneyController(
 	application: Application,
 	private val journeyService: JourneyService,
-	private val positionService: PositionService
+	private val positionService: PositionService,
+	private val storageService: StorageService
 ) {
 	private val journeyPositions = mutableMapOf<Int, TJourneyPositions>()
 
@@ -105,6 +108,7 @@ class JourneyController(
 				addFile()
 				deleteJourney()
 				getJourneyPositions()
+				getJourneyFile()
 			}
 		}
 	}
@@ -342,6 +346,32 @@ class JourneyController(
 				)
 			} ?: run {
 				return@get call.respond(HttpStatusCode.Gone, "Les positions ont déjà été récupérées")
+			}
+		}
+	}
+
+	private fun Route.getJourneyFile() {
+		get<Journeys.Id.File> {
+			val journey = journeyService.getById(call.user, it.id.id) ?: run {
+				return@get call.respond(HttpStatusCode.NotFound, "Trajet inconnu")
+			}
+
+			val data = journey.file?.let { file ->
+				storageService.retrieve(file) ?: run {
+					return@get call.respond(HttpStatusCode.NotFound, "Le fichier n'existe pas")
+				}
+			} ?: run {
+				return@get call.respond(HttpStatusCode.NotFound, "Le fichier n'existe pas")
+			}
+
+			val geojson = json.decodeFromString<GeoJson>(data.toString(Charsets.UTF_8))
+
+			if (call.request.accept()?.contains("geo+json") == true) {
+				call.respond(json.encodeToString(geojson))
+			} else if (call.request.accept()?.contains("gpx") == true) {
+				call.respond(xml.encodeToString(geojson.toGpx()))
+			} else {
+				call.respond(HttpStatusCode.BadRequest, "Il manque un format de retour")
 			}
 		}
 	}

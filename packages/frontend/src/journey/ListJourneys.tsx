@@ -7,7 +7,7 @@ import {
 } from "preact/hooks";
 import { useSideBar } from "../sidebar/useSideBar.tsx";
 import {
-	api, apiRaw,
+	api, apiRaw, apiResponseRaw,
 } from "../utils/useApi.ts";
 import { TAssociation } from "../types/TAssociation.ts";
 import { List } from "../components/List/List.tsx";
@@ -24,6 +24,7 @@ import { useReload } from "../utils/useReload.ts";
 import { FileInput } from "../components/Input/FileInput.tsx";
 import { Modal } from "../components/Modal/Modal.tsx";
 import { Card } from "../components/Card/Card.tsx";
+import { useRef } from "react";
 
 export function ListJourneys() {
 	const { id } = useParams();
@@ -122,10 +123,7 @@ export function ListJourneys() {
 						/>
 					</Cell>,
 					<Cell className={"flex justify-center"}>
-						{ j.file &&
-							<a href={j.file} target={"_blank"}>
-								<Download/>
-							</a> }
+						{ j.file && <DownloadJourney journeyId={j.id}/> }
 					</Cell>,
 					<Cell>
 						{ j.file &&
@@ -196,5 +194,29 @@ export function ListJourneys() {
 				</div>
 			</Modal>
 		</Card>
+	);
+}
+
+function DownloadJourney(props: {journeyId: number}) {
+	const downloadLink = useRef<HTMLAnchorElement>(null);
+	return (
+		<div>
+			<Download
+				className={"cursor-pointer"} onClick={async () => {
+					const resp = await apiResponseRaw(
+						`/journeys/${props.journeyId}/file`,
+						"application/gpx+xml",
+						{ headers: { accept: "application/gpx+xml" }},
+					);
+					const data = await resp.blob();
+					const url = URL.createObjectURL(data);
+					if (downloadLink.current) {
+						downloadLink.current.href = url;
+						downloadLink.current.click();
+					}
+				}}
+			/>
+			<a target={"_blank"} className={"hidden"} ref={downloadLink}/>
+		</div>
 	);
 }

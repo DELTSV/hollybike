@@ -9,7 +9,7 @@ interface UseApiOptions {
 	method?: string,
 	body?: any,
 	if?: boolean,
-	retryIfUnauthorized?: boolean,
+	retryIfUnauthorized?: boolean
 }
 
 interface APIResponse<T> {
