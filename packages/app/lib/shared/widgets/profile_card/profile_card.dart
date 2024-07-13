@@ -34,7 +34,6 @@ class ProfileCard extends StatelessWidget {
       profilePicture: UserProfilePicture(
         url: profile.profilePicture,
         radius: 20,
-        userId: profile.id,
       ),
       profileTitle: ProfileTitle(profile: profile),
       endChild: endChild,

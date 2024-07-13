@@ -6,6 +6,7 @@ abstract class ProfileEvent {
 }
 
 class SubscribeToCurrentSessionChange extends ProfileEvent {}
+class SubscribeToInvalidatedProfiles extends ProfileEvent {}
 
 extension ProfileEventOperations<T extends ProfileEvent> on List<T> {
   int? elementIndex(T profileEvent) {

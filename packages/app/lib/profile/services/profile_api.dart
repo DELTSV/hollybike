@@ -1,8 +1,16 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
+import 'package:hollybike/profile/types/image_path_dto.dart';
+import 'package:hollybike/profile/types/update_password.dart';
+import 'package:hollybike/profile/types/update_profile.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
+
+// ignore: depend_on_referenced_packages
+import 'package:http_parser/http_parser.dart';
 
 import '../types/profile.dart';
 
@@ -40,5 +48,58 @@ class ProfileApi {
       },
     );
     return PaginatedList.fromJson(response.data, MinimalUser.fromJson);
+  }
+
+  Future<Profile> updateProfile(
+    String username,
+    String? description,
+    File? image,
+  ) async {
+    final updateMe = UpdateProfile(username: username, role: description);
+
+    final response = await client.dio.patch(
+      "/users/me",
+      data: updateMe.toJson(),
+    );
+
+    final updatedProfile = Profile.fromJson(response.data);
+
+    if (image != null) {
+      final response = await client.dio.post(
+        "/users/me/profile-picture",
+        data: FormData.fromMap({
+          "file": await MultipartFile.fromFile(
+            image.path,
+            filename: image.path.split('/').last,
+            contentType: MediaType.parse('image/png'),
+          ),
+        }),
+      );
+
+      final imagePath = ImagePathDto.fromJson(response.data);
+      updatedProfile.withProfilePicture(imagePath.path);
+    }
+
+    return updatedProfile;
+  }
+
+  Future<void> updatePassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    await client.dio.patch(
+      "/users/me",
+      data: UpdatePassword(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+        newPasswordAgain: newPassword,
+      ).toJson(),
+    );
+  }
+
+  Future<void> resetPassword(String email) async {
+    await client.dio.post(
+      "/users/password/$email/send",
+    );
   }
 }

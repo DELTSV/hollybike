@@ -24,7 +24,6 @@ class JourneyImage extends StatelessWidget {
 
     return CachedNetworkImage(
       imageUrl: imageUrl!,
-      cacheKey: "preview-$journeyId",
       fit: BoxFit.cover,
     );
   }

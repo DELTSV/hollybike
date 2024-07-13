@@ -14,6 +14,7 @@ class MinimalUser with _$MinimalUser {
     required UserScope scope,
     required UserStatus status,
     @JsonKey(name: "profile_picture") String? profilePicture,
+    String? role,
   }) = _MinimalUser;
 
   factory MinimalUser.fromJson(Map<String, dynamic> json) =>
