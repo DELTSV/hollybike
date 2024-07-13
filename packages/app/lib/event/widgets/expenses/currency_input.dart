@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hollybike/shared/widgets/text_field/common_text_field.dart';
 import 'package:intl/intl.dart';
 
 class CurrencyInput extends StatelessWidget {
@@ -16,19 +17,11 @@ class CurrencyInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return CommonTextField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: labelText,
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
-        ),
-      ),
+      title: labelText,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      keyboardType: TextInputType.number,
+      textInputType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
         CurrencyInputFormatter(),
