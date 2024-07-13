@@ -2,10 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/widgets/event_preview_card/event_preview_card.dart';
+import 'package:hollybike/event/widgets/event_preview_card/placeholder_event_preview_card.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
 import 'package:hollybike/search/widgets/search_placeholder/empty_search_placeholder.dart';
 import 'package:hollybike/search/widgets/search_placeholder/initial_search_placeholder.dart';
 import 'package:hollybike/search/widgets/search_placeholder/loading_search_placeholder.dart';
+import 'package:hollybike/search/widgets/search_profile_card/placeholder_search_profile_card.dart';
 import 'package:hollybike/search/widgets/search_profile_card/search_profile_card.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar.dart';
@@ -52,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 focusNode.requestFocus();
               },
             );
-          } else if (state.status == SearchStatus.loading) {
+          } else if (state.status == SearchStatus.fullLoading) {
             return const LoadingSearchPlaceholder();
           } else if (state.events.isEmpty && state.profiles.isEmpty) {
             return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
@@ -60,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
           return CustomScrollView(
             controller: _verticalScrollController,
-            slivers: _renderProfilesList(state.profiles) +
+            slivers: _renderProfilesList(state.profiles, state) +
                 [
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -89,19 +91,26 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                         SliverList.list(
                           children: state.events
-                              .map(
-                                (event) => EventPreviewCard(
-                                  event: event,
-                                  onTap: (uniqueKey) {
-                                    _navigateToEventDetails(
-                                      context,
-                                      event,
-                                      uniqueKey,
-                                    );
-                                  },
-                                ),
-                              )
-                              .toList(),
+                                  .map<Widget>(
+                                    (event) => EventPreviewCard(
+                                      event: event,
+                                      onTap: (uniqueKey) {
+                                        _navigateToEventDetails(
+                                          context,
+                                          event,
+                                          uniqueKey,
+                                        );
+                                      },
+                                    ),
+                                  )
+                                  .toList() +
+                              (state.status == SearchStatus.loadingEvents
+                                  ? [
+                                      const PlaceholderEventPreviewCard(),
+                                      const PlaceholderEventPreviewCard(),
+                                      const PlaceholderEventPreviewCard(),
+                                    ]
+                                  : []),
                         ),
                       ],
                     ),
@@ -153,7 +162,8 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  List<Widget> _renderProfilesList(List<MinimalUser> profiles) {
+  List<Widget> _renderProfilesList(
+      List<MinimalUser> profiles, SearchState state) {
     if (profiles.isEmpty) return <Widget>[];
     return <Widget>[
       SliverMainAxisGroup(
@@ -190,10 +200,18 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: <Widget>[const SizedBox.square(dimension: 16)] +
                     addSeparators(
                       profiles
-                          .map(
-                            (profile) => SearchProfileCard(profile: profile),
-                          )
-                          .toList(),
+                              .map<Widget>(
+                                (profile) =>
+                                    SearchProfileCard(profile: profile),
+                              )
+                              .toList() +
+                          (state.status == SearchStatus.loadingProfiles
+                              ? [
+                                  const PlaceholderSearchProfileCard(),
+                                  const PlaceholderSearchProfileCard(),
+                                  const PlaceholderSearchProfileCard()
+                                ]
+                              : []),
                       const SizedBox.square(dimension: 8),
                     ) +
                     <Widget>[const SizedBox.square(dimension: 16)],

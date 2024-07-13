@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
 
-enum SearchStatus { loading, success, error, initial }
+enum SearchStatus { fullLoading, loadingEvents, loadingProfiles, success, error, initial }
 
 @immutable
 class SearchState {
@@ -55,7 +55,7 @@ class SearchState {
 class SearchInitial extends SearchState {}
 
 class SearchLoadInProgress extends SearchState {
-  SearchLoadInProgress(SearchState state)
+  SearchLoadInProgress(SearchState state, SearchStatus status)
       : super(
           lastSearchQuery: state.lastSearchQuery,
           events: state.events,
@@ -64,7 +64,7 @@ class SearchLoadInProgress extends SearchState {
           profiles: state.profiles,
           hasMoreProfiles: state.hasMoreProfiles,
           profilesNextPage: state.profilesNextPage,
-          status: SearchStatus.loading,
+          status: status,
         );
 }
 

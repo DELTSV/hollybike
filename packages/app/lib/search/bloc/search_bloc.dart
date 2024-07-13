@@ -56,12 +56,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     if (state.hasMoreEvents == false ||
-        state.status == SearchStatus.loading ||
+        state.status == SearchStatus.loadingEvents ||
         state.lastSearchQuery == null) {
       return;
     }
 
-    emit(SearchLoadInProgress(state));
+    emit(SearchLoadInProgress(state, SearchStatus.loadingEvents));
 
     try {
       final page = await eventRepository.fetchEvents(
@@ -89,12 +89,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     if (state.hasMoreProfiles == false ||
-        state.status == SearchStatus.loading ||
+        state.status == SearchStatus.loadingProfiles ||
         state.lastSearchQuery == null) {
       return;
     }
 
-    emit(SearchLoadInProgress(state));
+    emit(SearchLoadInProgress(state, SearchStatus.loadingProfiles));
 
     try {
       final page = await profileRepository.searchProfiles(
@@ -122,7 +122,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     RefreshSearch event,
     Emitter<SearchState> emit,
   ) async {
-    emit(SearchLoadInProgress(const SearchState()));
+    emit(SearchLoadInProgress(const SearchState(), SearchStatus.fullLoading));
 
     try {
       await eventRepository.refreshEvents(
