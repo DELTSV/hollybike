@@ -5,7 +5,6 @@ import de.nycode.bcrypt.hash
 import de.nycode.bcrypt.verify
 import hollybike.api.exceptions.*
 import hollybike.api.repository.*
-import hollybike.api.services.image.EventImageService
 import hollybike.api.services.storage.StorageService
 import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
