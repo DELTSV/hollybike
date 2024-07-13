@@ -15,6 +15,7 @@ import hollybike.api.types.user.EUserScope
 import hollybike.api.types.user.EUserStatus
 import hollybike.api.utils.MailSender
 import hollybike.api.utils.isValidMail
+import hollybike.api.utils.validPassword
 import io.ktor.util.*
 import kotlinx.datetime.*
 import org.jetbrains.exposed.dao.load
@@ -204,6 +205,9 @@ class AuthService(
 
 	@OptIn(ExperimentalEncodingApi::class)
 	fun resetPassword(mail: String, password: TResetPassword): Result<Unit> {
+		password.newPassword.validPassword().onFailure {
+			return Result.failure(it)
+		}
 		val user = transaction(db) { User.find { Users.email eq mail }.firstOrNull() } ?: run {
 			return Result.failure(UserNotFoundException())
 		}

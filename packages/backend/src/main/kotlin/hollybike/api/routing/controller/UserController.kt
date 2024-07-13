@@ -244,6 +244,7 @@ class UserController(
 				call.respond("Mot de passe modifié")
 			}.onFailure { e ->
 				when(e) {
+					is PasswordInvalid -> call.respond(HttpStatusCode.BadRequest, e.message ?: "Mot de passe invalide")
 					is UserDifferentNewPassword -> call.respond(HttpStatusCode.BadRequest, "Les mots de passe ne correspondent pas")
 					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
 					is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "Le mail ${it.mail} n'existe pas")

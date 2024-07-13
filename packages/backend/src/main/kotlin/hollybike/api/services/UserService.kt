@@ -14,6 +14,7 @@ import hollybike.api.utils.search.Filter
 import hollybike.api.utils.search.FilterMode
 import hollybike.api.utils.search.SearchParam
 import hollybike.api.utils.search.applyParam
+import hollybike.api.utils.validPassword
 import io.ktor.util.*
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.dao.load
@@ -91,6 +92,10 @@ class UserService(
 			return Result.failure(AssociationNotFound())
 		}
 
+		password.validPassword().onFailure {
+			return Result.failure(it)
+		}
+
 		return try {
 			transaction(db) {
 				Result.success(
@@ -135,6 +140,9 @@ class UserService(
 	fun updateMe(user: User, update: TUserUpdateSelf): Result<User> = transaction(db) {
 		user.apply {
 			update.newPassword?.let {
+				it.validPassword().onFailure {  e ->
+					return@transaction Result.failure(e)
+				}
 				if ((update.newPasswordAgain == null || update.oldPassword == null)) {
 					return@transaction Result.failure(BadRequestException())
 				}
@@ -158,6 +166,9 @@ class UserService(
 		}
 		if(getUserByEmailAndAssociation(caller, user.email, caller.association.id.value) == null) {
 			return Result.failure(UserNotFoundException())
+		}
+		update.password?.validPassword()?.onFailure {
+			return Result.failure(it)
 		}
 		val targetAssociation = update.association?.let {
 			associationService.getById(caller, it)
