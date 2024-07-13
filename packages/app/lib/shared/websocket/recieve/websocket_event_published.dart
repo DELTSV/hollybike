@@ -16,7 +16,7 @@ class WebsocketEventPublished
     required int id,
     required String name,
     String? description,
-    required DateTime date,
+    required DateTime start,
     String? image,
     @JsonKey(name: 'owner_id') required int ownerId,
     @JsonKey(name: 'owner_name') required String ownerName,
