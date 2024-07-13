@@ -20,8 +20,11 @@ UpdatePassword _$UpdatePasswordFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UpdatePassword {
+  @JsonKey(name: 'old_password')
   String get oldPassword => throw _privateConstructorUsedError;
+  @JsonKey(name: 'new_password')
   String get newPassword => throw _privateConstructorUsedError;
+  @JsonKey(name: 'new_password_again')
   String get newPasswordAgain => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +39,10 @@ abstract class $UpdatePasswordCopyWith<$Res> {
           UpdatePassword value, $Res Function(UpdatePassword) then) =
       _$UpdatePasswordCopyWithImpl<$Res, UpdatePassword>;
   @useResult
-  $Res call({String oldPassword, String newPassword, String newPasswordAgain});
+  $Res call(
+      {@JsonKey(name: 'old_password') String oldPassword,
+      @JsonKey(name: 'new_password') String newPassword,
+      @JsonKey(name: 'new_password_again') String newPasswordAgain});
 }
 
 /// @nodoc
@@ -81,7 +87,10 @@ abstract class _$$UpdatePasswordImplCopyWith<$Res>
       __$$UpdatePasswordImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String oldPassword, String newPassword, String newPasswordAgain});
+  $Res call(
+      {@JsonKey(name: 'old_password') String oldPassword,
+      @JsonKey(name: 'new_password') String newPassword,
+      @JsonKey(name: 'new_password_again') String newPasswordAgain});
 }
 
 /// @nodoc
@@ -120,18 +129,21 @@ class __$$UpdatePasswordImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UpdatePasswordImpl implements _UpdatePassword {
   const _$UpdatePasswordImpl(
-      {required this.oldPassword,
-      required this.newPassword,
-      required this.newPasswordAgain});
+      {@JsonKey(name: 'old_password') required this.oldPassword,
+      @JsonKey(name: 'new_password') required this.newPassword,
+      @JsonKey(name: 'new_password_again') required this.newPasswordAgain});
 
   factory _$UpdatePasswordImpl.fromJson(Map<String, dynamic> json) =>
       _$$UpdatePasswordImplFromJson(json);
 
   @override
+  @JsonKey(name: 'old_password')
   final String oldPassword;
   @override
+  @JsonKey(name: 'new_password')
   final String newPassword;
   @override
+  @JsonKey(name: 'new_password_again')
   final String newPasswordAgain;
 
   @override
@@ -174,18 +186,22 @@ class _$UpdatePasswordImpl implements _UpdatePassword {
 
 abstract class _UpdatePassword implements UpdatePassword {
   const factory _UpdatePassword(
-      {required final String oldPassword,
-      required final String newPassword,
+      {@JsonKey(name: 'old_password') required final String oldPassword,
+      @JsonKey(name: 'new_password') required final String newPassword,
+      @JsonKey(name: 'new_password_again')
       required final String newPasswordAgain}) = _$UpdatePasswordImpl;
 
   factory _UpdatePassword.fromJson(Map<String, dynamic> json) =
       _$UpdatePasswordImpl.fromJson;
 
   @override
+  @JsonKey(name: 'old_password')
   String get oldPassword;
   @override
+  @JsonKey(name: 'new_password')
   String get newPassword;
   @override
+  @JsonKey(name: 'new_password_again')
   String get newPasswordAgain;
   @override
   @JsonKey(ignore: true)

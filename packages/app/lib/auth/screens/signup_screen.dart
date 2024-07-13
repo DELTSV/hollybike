@@ -65,7 +65,7 @@ class SignupScreen extends StatelessWidget {
                 ),
                 "password": FormFieldConfig(
                   label: "Mot de passe",
-                  validator: _inputValidator,
+                  validator: _passwordInputValidator,
                   isSecured: true,
                   hasControlField: true,
                   autofillHints: [AutofillHints.newPassword],
@@ -82,6 +82,29 @@ class SignupScreen extends StatelessWidget {
     if (inputText == null || inputText.isEmpty) {
       return "Ce champ ne peut pas être vide.";
     }
+    return null;
+  }
+
+  String? _passwordInputValidator(String? inputText) {
+    if (inputText == null || inputText.isEmpty) {
+      return "Ce champ ne peut pas être vide.";
+    }
+    if (inputText.length < 8) {
+      return "Le mot de passe doit contenir au moins 8 caractères.";
+    }
+
+    if (inputText == inputText.toLowerCase()) {
+      return "Le mot de passe doit contenir au moins une lettre majuscule.";
+    }
+
+    if (inputText == inputText.toUpperCase()) {
+      return "Le mot de passe doit contenir au moins une lettre minuscule.";
+    }
+
+    if (!inputText.contains(RegExp(r'\d'))) {
+      return "Le mot de passe doit contenir au moins un chiffre.";
+    }
+
     return null;
   }
 }

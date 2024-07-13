@@ -52,7 +52,7 @@ class _EventImagesVisibilityDialogState extends State<UpdatePasswordModal> {
           ),
           "newPassword": FormFieldConfig(
             label: "Nouveau mot de passe",
-            validator: _inputValidator,
+            validator: _passwordInputValidator,
             isSecured: true,
             hasControlField: true,
             autofillHints: [AutofillHints.newPassword],
@@ -63,6 +63,29 @@ class _EventImagesVisibilityDialogState extends State<UpdatePasswordModal> {
         Navigator.of(context).pop();
       },
     );
+  }
+
+  String? _passwordInputValidator(String? inputText) {
+    if (inputText == null || inputText.isEmpty) {
+      return "Ce champ ne peut pas être vide.";
+    }
+    if (inputText.length < 8) {
+      return "Le mot de passe doit contenir au moins 8 caractères.";
+    }
+
+    if (inputText == inputText.toLowerCase()) {
+      return "Le mot de passe doit contenir au moins une lettre majuscule.";
+    }
+
+    if (inputText == inputText.toUpperCase()) {
+      return "Le mot de passe doit contenir au moins une lettre minuscule.";
+    }
+
+    if (!inputText.contains(RegExp(r'\d'))) {
+      return "Le mot de passe doit contenir au moins un chiffre.";
+    }
+
+    return null;
   }
 
   void _onResetPassword(BuildContext context) {
