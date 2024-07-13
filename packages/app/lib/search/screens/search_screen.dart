@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/auth/bloc/auth_bloc.dart';
+import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/event/widgets/event_preview_card/event_preview_card.dart';
 import 'package:hollybike/event/widgets/event_preview_card/placeholder_event_preview_card.dart';
 import 'package:hollybike/search/bloc/search_event.dart';
@@ -46,78 +48,84 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         noPadding: true,
       ),
-      body: BlocBuilder<SearchBloc, SearchState>(
-        builder: (context, state) {
-          if (state.status == SearchStatus.initial) {
-            return InitialSearchPlaceholder(
-              onButtonTap: () {
-                focusNode.requestFocus();
-              },
-            );
-          } else if (state.status == SearchStatus.fullLoading) {
-            return const LoadingSearchPlaceholder();
-          } else if (state.events.isEmpty && state.profiles.isEmpty) {
-            return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
-          }
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          _refreshSearch(context, _lastSearch ?? "");
+        },
+        child: BlocBuilder<SearchBloc, SearchState>(
+          builder: (context, state) {
+            if (state.status == SearchStatus.initial) {
+              return InitialSearchPlaceholder(
+                onButtonTap: () {
+                  focusNode.requestFocus();
+                },
+              );
+            } else if (state.status == SearchStatus.fullLoading) {
+              return const LoadingSearchPlaceholder();
+            } else if (state.events.isEmpty && state.profiles.isEmpty) {
+              return EmptySearchPlaceholder(lastSearch: _lastSearch as String);
+            }
 
-          return CustomScrollView(
-            controller: _verticalScrollController,
-            slivers: _renderProfilesList(state.profiles, state) +
-                [
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    sliver: SliverMainAxisGroup(
-                      slivers: [
-                        SliverPersistentHeader(
-                          pinned: true,
-                          delegate: PinnedHeaderDelegate(
-                            height: 50,
-                            animationDuration: 300,
-                            child: Container(
-                              width: double.infinity,
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                child: Text(
-                                  "Évènements",
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+            return CustomScrollView(
+              controller: _verticalScrollController,
+              slivers: _renderProfilesList(state.profiles, state) +
+                  [
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      sliver: SliverMainAxisGroup(
+                        slivers: [
+                          SliverPersistentHeader(
+                            pinned: true,
+                            delegate: PinnedHeaderDelegate(
+                              height: 50,
+                              animationDuration: 300,
+                              child: Container(
+                                width: double.infinity,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  child: Text(
+                                    "Évènements",
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SliverList.list(
-                          children: state.events
-                                  .map<Widget>(
-                                    (event) => EventPreviewCard(
-                                      event: event,
-                                      onTap: (uniqueKey) {
-                                        _navigateToEventDetails(
-                                          context,
-                                          event,
-                                          uniqueKey,
-                                        );
-                                      },
-                                    ),
-                                  )
-                                  .toList() +
-                              (state.status == SearchStatus.loadingEvents
-                                  ? [
-                                      const PlaceholderEventPreviewCard(),
-                                      const PlaceholderEventPreviewCard(),
-                                      const PlaceholderEventPreviewCard(),
-                                    ]
-                                  : []),
-                        ),
-                      ],
+                          SliverList.list(
+                            children: state.events
+                                    .map<Widget>(
+                                      (event) => EventPreviewCard(
+                                        event: event,
+                                        onTap: (uniqueKey) {
+                                          _navigateToEventDetails(
+                                            context,
+                                            event,
+                                            uniqueKey,
+                                          );
+                                        },
+                                      ),
+                                    )
+                                    .toList() +
+                                (state.status == SearchStatus.loadingEvents
+                                    ? [
+                                        const PlaceholderEventPreviewCard(),
+                                        const PlaceholderEventPreviewCard(),
+                                        const PlaceholderEventPreviewCard(),
+                                      ]
+                                    : []),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-          );
-        },
+                  ],
+            );
+          },
+        ),
       ),
       displayNavBar: true,
     );
