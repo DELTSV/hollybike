@@ -54,7 +54,9 @@ export function Modal(props: ModalProps) {
 							className={clsx(
 								"translate-y-4 -translate-x-4 opacity-0",
 								"transition-transform-opacity duration-200",
-								"group-[&:has(svg:hover)]:translate-y-0 group-[&:has(svg:hover)]:translate-x-0 group-[&:has(svg:hover)]:opacity-100",
+								"group-[&:has(svg:hover)]:translate-y-0",
+								"group-[&:has(svg:hover)]:translate-x-0",
+								"group-[&:has(svg:hover)]:opacity-100",
 							)}
 						>
 							Fermer
