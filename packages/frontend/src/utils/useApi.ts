@@ -99,28 +99,27 @@ export async function apiRaw<T>(url: string, type?: string, options?: ApiRawOpti
 						message: responseText,
 					};
 				}
-				api<TAuthInfo>("/auth/refresh", {
+				const res = await api<TAuthInfo>("/auth/refresh", {
 					method: "PATCH",
 					body: {
 						device: deviceId,
 						token: refreshToken,
 					},
-				}).then((res) => {
-					if (res.status === 200 && res.data) {
-						localStorage.setItem("refreshToken", res.data.refresh_token);
-						localStorage.setItem("deviceId", res.data.deviceId);
-						localStorage.setItem("token", res.data.token);
-						localStorage.removeItem("refreshing");
-						return apiRaw<T>(url, type, options);
-					} else if (res.status === 403) {
-						externalDisconnect();
-					} else {
-						return {
-							status: response.status,
-							message: responseText,
-						};
-					}
 				});
+				if (res.status === 200 && res.data) {
+					localStorage.setItem("refreshToken", res.data.refresh_token);
+					localStorage.setItem("deviceId", res.data.deviceId);
+					localStorage.setItem("token", res.data.token);
+					localStorage.removeItem("refreshing");
+					return await apiRaw<T>(url, type, options);
+				} else if (res.status === 403) {
+					externalDisconnect();
+				} else {
+					return {
+						status: response.status,
+						message: responseText,
+					};
+				}
 			} else {
 				setTimeout(() => {
 					apiRaw(url, type, options);

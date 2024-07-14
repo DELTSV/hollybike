@@ -43,7 +43,7 @@ export function UserProvider(props: UserProviderProps) {
 				setUser(res.data!);
 			}
 		});
-	}, []);
+	}, [setUser]);
 
 	const setPassword = useCallback((passwordChange: TUpdatePassword) => {
 		api<TUser>("/users/me", {
@@ -54,7 +54,7 @@ export function UserProvider(props: UserProviderProps) {
 				setUser(res.data!);
 			}
 		});
-	}, []);
+	}, [setUser]);
 
 	const fetchUser = useCallback(async () => {
 		const res = await api<TUser>("/users/me");
@@ -67,7 +67,7 @@ export function UserProvider(props: UserProviderProps) {
 
 	const clean = useCallback(() => {
 		setUser(null);
-	}, []);
+	}, [setUser]);
 
 	return (
 		<User.Provider

@@ -65,6 +65,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 				localStorage.setItem("token", res.data.token);
 				localStorage.setItem("refreshToken", res.data.refresh_token);
 				localStorage.setItem("deviceId", res.data.deviceId);
+				localStorage.setItem("refreshing", "false");
 				setToken(res.data!.token);
 				user.fetchUser();
 			} else if (res.status === 404) {
