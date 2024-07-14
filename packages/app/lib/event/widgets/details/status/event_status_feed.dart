@@ -22,11 +22,16 @@ class EventStatusFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canEdit = eventDetails.isOrganizer;
+
     switch (eventDetails.event.status) {
       case EventStatusState.pending:
         return EventPendingStatus(eventId: eventDetails.event.id);
       case EventStatusState.canceled:
-        return EventCancelledStatus(eventId: eventDetails.event.id);
+        return EventCancelledStatus(
+          eventId: eventDetails.event.id,
+          canCancel: canEdit,
+        );
       case EventStatusState.scheduled:
         return EventScheduledStatus(
           eventDetails: eventDetails,

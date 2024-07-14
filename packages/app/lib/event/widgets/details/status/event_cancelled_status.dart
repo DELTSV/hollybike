@@ -8,10 +8,12 @@ import '../../../types/event_status_state.dart';
 
 class EventCancelledStatus extends StatelessWidget {
   final int eventId;
+  final bool canCancel;
 
   const EventCancelledStatus({
     super.key,
     required this.eventId,
+    required this.canCancel,
   });
 
   @override
@@ -20,9 +22,9 @@ class EventCancelledStatus extends StatelessWidget {
       status: EventStatusState.canceled,
       message: 'Evénement annulé',
       actionText: 'Publier',
-      onAction: () {
+      onAction: canCancel ? () {
         _onPublish(context);
-      },
+      } : null,
     );
   }
 
