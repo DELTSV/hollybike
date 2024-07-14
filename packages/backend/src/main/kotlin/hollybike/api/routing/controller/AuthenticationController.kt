@@ -52,7 +52,7 @@ class AuthenticationController(
 				when (it) {
 					is PasswordInvalid -> call.respond(HttpStatusCode.BadRequest, it.message ?: "Mot de passe invalide")
 					is InvalidMailException -> call.respond(HttpStatusCode.BadRequest, "Email invalide")
-					is NotAllowedException -> call.respond(HttpStatusCode.Forbidden)
+					is NotAllowedException -> call.respond(HttpStatusCode.Unauthorized, "Lien invalide")
 					is InvitationNotFoundException -> call.respond(HttpStatusCode.NotFound, "Aucune invitation valide")
 					is UserAlreadyExists -> call.respond(HttpStatusCode.Conflict, "L'utilisateur existe déjà")
 					else -> {
