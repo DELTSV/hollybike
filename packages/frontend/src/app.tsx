@@ -180,13 +180,14 @@ export function App() {
 		<main
 			className={clsx(themeDark && "dark", "absolute top-0 bottom-0 left-0 right-0 w-full h-screen text-text")}
 		>
+			<RouterProvider router={ router } />
 			<ToastContainer
+				style={{ zIndex: 100000 }}
 				pauseOnHover={false}
 				pauseOnFocusLoss={false}
 				position={"top-right"}
 				theme={themeDark ? "dark" : "light"}
 			/>
-			<RouterProvider router={ router } />
 		</main>
 	);
 }
