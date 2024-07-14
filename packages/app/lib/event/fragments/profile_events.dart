@@ -7,7 +7,6 @@ import 'package:hollybike/event/widgets/events_list/events_sections_list.dart';
 import 'package:hollybike/shared/widgets/loaders/themed_refresh_indicator.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/events_bloc/events_event.dart';
 import '../bloc/events_bloc/events_state.dart';
 
@@ -45,32 +44,21 @@ class _ProfileEventsState extends State<ProfileEvents> {
   Widget build(BuildContext context) {
     return ThemedRefreshIndicator(
       onRefresh: () => _refreshEvents(),
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthConnected) {
-                _refreshEvents();
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<UserEventsBloc, EventsState>(
-          builder: (context, state) {
-            if (state.events.isEmpty) {
-              return _buildPlaceholder(context, state.status);
-            }
+      child: BlocBuilder<UserEventsBloc, EventsState>(
+        builder: (context, state) {
+          if (state.events.isEmpty) {
+            return _buildPlaceholder(context, state.status);
+          }
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: EventsSectionsList(
-                events: state.events,
-                hasMore: state.hasMore,
-                physics: const ClampingScrollPhysics(),
-              ),
-            );
-          },
-        ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: EventsSectionsList(
+              events: state.events,
+              hasMore: state.hasMore,
+              physics: const ClampingScrollPhysics(),
+            ),
+          );
+        },
       ),
     );
   }

@@ -196,7 +196,7 @@ class _JourneyMapState extends State<JourneyMap> {
       await map.easeTo(
         CameraOptions(
           center: cameraOptions.center,
-          zoom: (cameraOptions.zoom ?? 0) + 0.3,
+          zoom: (cameraOptions.zoom ?? 0) + 0.9,
           bearing: cameraOptions.bearing,
           pitch: cameraOptions.pitch,
         ),
@@ -247,10 +247,10 @@ class _JourneyMapState extends State<JourneyMap> {
     final cameraOptions = await map.cameraForCoordinateBounds(
       bounds,
       MbxEdgeInsets(
-        top: 25,
-        left: 50,
-        right: 50,
-        bottom: 75,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
       ),
       null,
       30,

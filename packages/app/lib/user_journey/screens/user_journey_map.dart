@@ -208,7 +208,7 @@ class _UserJourneyMapScreenState extends State<UserJourneyMapScreen> {
       await map.easeTo(
           CameraOptions(
             center: cameraOptions.center,
-            zoom: cameraOptions.zoom! + 0.3,
+            zoom: (cameraOptions.zoom ?? 0) + 0.9,
             bearing: cameraOptions.bearing,
             pitch: cameraOptions.pitch,
           ),
