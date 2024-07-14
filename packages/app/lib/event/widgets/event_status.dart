@@ -106,7 +106,9 @@ class _EventStatusIndicatorState extends State<EventStatusIndicator> {
           size: 13,
         ),
         SizedBox(width: widget.separatorWidth),
-        _statusText,
+        Flexible(
+          child: _statusText,
+        ),
       ],
     );
   }

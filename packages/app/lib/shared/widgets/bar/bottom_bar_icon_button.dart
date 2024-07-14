@@ -13,7 +13,7 @@ class BottomBarIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationDestination(
-      selectedIcon: Icon(icon),
+      selectedIcon: Icon(icon, color: Theme.of(context).colorScheme.secondary),
       icon: Icon(
         icon,
         color: Theme.of(context).colorScheme.onPrimary.withAlpha(100),

@@ -19,20 +19,16 @@ class Hud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: appBar == null
           ? null
           : PreferredSize(
               preferredSize: const Size.fromHeight(60),
-              child: appBar as Widget,
+              child: Center(child: appBar as Widget),
             ),
       floatingActionButton: floatingActionButton,
       body: Stack(
         children: [
           Column(children: <Widget>[
-            const SizedBox.square(
-              dimension: 110,
-            ),
             Expanded(
               child: SafeArea(
                 top: false,
