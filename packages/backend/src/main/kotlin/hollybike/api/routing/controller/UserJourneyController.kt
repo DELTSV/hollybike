@@ -53,7 +53,7 @@ class UserJourneyController(
 		get<UserJourneys.User> { data ->
 			val searchParam = call.request.queryParameters.getSearchParam(userJourneyMapper)
 
-			val userJourneys = userEventPositionService.getUserJourneys(data.id, searchParam)
+			val userJourneys = userEventPositionService.getUserJourneys(call.user, data.id, searchParam)
 			val totalUserJourneys = userEventPositionService.countUserJourneys(data.id, searchParam)
 
 			call.respond(

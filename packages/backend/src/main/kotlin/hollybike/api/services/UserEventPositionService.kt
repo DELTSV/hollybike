@@ -148,9 +148,10 @@ class UserEventPositionService(
 		} getIfAllowed caller
 	}
 
-	fun getUserJourneys(userId: Int, searchParams: SearchParam): List<UserJourney> = transaction(db) {
+	fun getUserJourneys(caller: User, userId: Int, searchParams: SearchParam): List<UserJourney> = transaction(db) {
 		UserJourney.wrapRows(
 			UsersJourneys
+				.innerJoin(Users, { Users.id }, { UsersJourneys.user }, { Users.association eq caller.association.id })
 				.selectAll()
 				.where(UsersJourneys.user eq userId)
 				.applyParam(searchParams)

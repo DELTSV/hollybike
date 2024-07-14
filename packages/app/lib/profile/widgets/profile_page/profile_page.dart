@@ -113,15 +113,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _tabBarContent() {
+    final currentSession = context.read<ProfileBloc>().state.currentSession;
+
+    final key = currentSession == null
+        ? UniqueKey()
+        : ValueKey('${widget.profile!.id}_${currentSession.host}');
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<UserEventsBloc>(
+          key: key,
           create: (context) => UserEventsBloc(
             userId: widget.profile!.id,
             eventRepository: RepositoryProvider.of<EventRepository>(context),
           )..add(SubscribeToEvents()),
         ),
         BlocProvider<ProfileImagesBloc>(
+          key: key,
           create: (context) => ProfileImagesBloc(
             userId: widget.profile!.id,
             imageRepository: RepositoryProvider.of<ImageRepository>(
@@ -130,6 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         BlocProvider(
+          key: key,
           create: (context) => ProfileJourneysBloc(
             userId: widget.profile!.id,
             userJourneyRepository: RepositoryProvider.of<UserJourneyRepository>(
