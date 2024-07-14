@@ -279,6 +279,8 @@ class _JourneyMapState extends State<JourneyMap> {
     final alreadyAddedPositions = <WebsocketReceivePosition>[];
 
     for (final position in userPositionsState.userPositions) {
+      print(
+          "${position.userId} ${position.longitude}  ${position.longitude} $currentPositions");
       if (currentPositions.containsKey(position.userId)) {
         alreadyAddedPositions.add(position);
       } else {
@@ -327,6 +329,9 @@ class _JourneyMapState extends State<JourneyMap> {
     final profilePicture =
         BlocProvider.of<UserPositionsBloc>(context).getUserPicture(user);
 
+    if (user.user.profilePicture != null &&
+        profilePicture is! UserPictureLoadSuccessEvent) return null;
+
     final options = PointAnnotationOptions(
       geometry: Point(
         coordinates: Position(
@@ -337,6 +342,7 @@ class _JourneyMapState extends State<JourneyMap> {
       image: (profilePicture is UserPictureLoadSuccessEvent
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List,
+      iconSize: profilePicture is UserPictureLoadSuccessEvent ? /*0.390625*/ 1 : 1,
       iconAnchor: IconAnchor.BOTTOM,
       textField:
           '${user.user.username}\n${(missingPosition.speed * 3.6).round()} km/h',
@@ -375,9 +381,8 @@ class _JourneyMapState extends State<JourneyMap> {
       point.image = (profilePicture is UserPictureLoadSuccessEvent
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List;
-      point.iconSize = profilePicture is UserPictureLoadSuccessEvent
-          ? 0.390625
-          : 1;
+      point.iconSize =
+          profilePicture is UserPictureLoadSuccessEvent ? /*0.390625*/ 1 : 1;
 
       point.textField =
           '${user.user.username}\n${(positionToUpdate.speed * 3.6).round()} km/h';
