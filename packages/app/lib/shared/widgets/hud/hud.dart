@@ -26,17 +26,16 @@ class Hud extends StatelessWidget {
               child: Center(child: appBar as Widget),
             ),
       floatingActionButton: floatingActionButton,
-      body: Stack(
-        children: [
-          Column(children: <Widget>[
-            Expanded(
-              child: SafeArea(
-                top: false,
-                bottom: true,
-                child: body ?? Container(),
-              ),
-            )
-          ]),
+      body: Column(
+        children: <Widget>[
+          const SizedBox(height: 2),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              bottom: true,
+              child: body ?? Container(),
+            ),
+          )
         ],
       ),
       bottomNavigationBar: displayNavBar ? const BottomBar() : null,

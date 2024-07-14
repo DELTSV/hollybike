@@ -7,7 +7,7 @@ import 'package:hollybike/positions/bloc/my_position/my_position_event.dart';
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
 
-enum EventDetailsAction { leave, delete, cancel }
+enum EventDetailsAction { leave, delete, cancel, uploadImage }
 
 class EventDetailsActionsMenu extends StatelessWidget {
   final int eventId;
@@ -105,6 +105,8 @@ class EventDetailsActionsMenu extends StatelessWidget {
       case EventDetailsAction.cancel:
         _onCancel(context);
         break;
+      case EventDetailsAction.uploadImage:
+        _onUploadImage(context);
     }
   }
 
@@ -178,5 +180,9 @@ class EventDetailsActionsMenu extends StatelessWidget {
     context.read<MyPositionBloc>().add(
       DisableSendPositions(),
     );
+  }
+
+  void _onUploadImage(BuildContext context) {
+
   }
 }
