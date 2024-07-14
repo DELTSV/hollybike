@@ -780,4 +780,40 @@ class EventRepository {
       }
     }
   }
+
+  Future<void> uploadEventImage(
+    int eventId,
+    File image,
+  ) async {
+    final updatedEvent = await eventApi.uploadEventImage(
+      eventId,
+      image,
+    );
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        event: updatedEvent,
+      ),
+    );
+
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
+        ] +
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId ? updatedEvent.toMinimalEvent() : e)
+            .toList(),
+      );
+    }
+  }
 }

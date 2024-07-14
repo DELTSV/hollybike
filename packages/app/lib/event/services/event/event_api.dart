@@ -208,4 +208,30 @@ class EventApi {
       authenticate: true,
     );
   }
+
+  Future<Event> uploadEventImage(int eventId, File imageFile) async {
+    final compressedImage = await FlutterImageCompress.compressWithFile(
+      imageFile.path,
+      quality: 50,
+    );
+
+    if (compressedImage == null) {
+      throw Exception("Failed to compress image");
+    }
+
+    final formData = FormData.fromMap({
+      'image': MultipartFile.fromBytes(
+        compressedImage,
+        filename: imageFile.path.split('/').last,
+        contentType: MediaType.parse('image/jpeg'),
+      ),
+    });
+
+    final response = await client.dio.patch(
+      '/events/$eventId/image',
+      data: formData,
+    );
+
+    return Event.fromJson(response.data);
+  }
 }

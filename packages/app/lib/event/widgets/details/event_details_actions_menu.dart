@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/event/widgets/details/event_upload_image_modal.dart';
 import 'package:hollybike/positions/bloc/my_position/my_position_bloc.dart';
 import 'package:hollybike/positions/bloc/my_position/my_position_event.dart';
 
@@ -15,6 +16,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
   final bool isOwner;
   final bool isJoined;
   final bool isOrganizer;
+  final bool hasImage;
 
   const EventDetailsActionsMenu({
     super.key,
@@ -23,6 +25,7 @@ class EventDetailsActionsMenu extends StatelessWidget {
     required this.isOwner,
     required this.isJoined,
     required this.isOrganizer,
+    required this.hasImage,
   });
 
   @override
@@ -55,6 +58,25 @@ class EventDetailsActionsMenu extends StatelessWidget {
               Icon(Icons.exit_to_app),
               SizedBox(width: 10),
               Text("Quitter l'événement"),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (isOrganizer) {
+      actions.add(
+        PopupMenuItem(
+          value: EventDetailsAction.uploadImage,
+          child: Row(
+            children: [
+              const Icon(Icons.image),
+              const SizedBox(width: 10),
+              Text(
+                hasImage
+                    ? "Modifier l'image"
+                    : "Ajouter une image",
+              ),
             ],
           ),
         ),
@@ -178,11 +200,20 @@ class EventDetailsActionsMenu extends StatelessWidget {
         );
 
     context.read<MyPositionBloc>().add(
-      DisableSendPositions(),
-    );
+          DisableSendPositions(),
+        );
   }
 
   void _onUploadImage(BuildContext context) {
-
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<EventDetailsBloc>(),
+          child: const EventUploadImageModal(),
+        );
+      },
+    );
   }
 }

@@ -436,6 +436,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         isOwner: event.isOwner,
         isJoined: event.isParticipating,
         isOrganizer: event.isOrganizer,
+        hasImage: event.event.image != null,
       ),
     );
   }
