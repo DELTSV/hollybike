@@ -294,7 +294,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     await notificationPlugin.show(
       Random().nextInt(100),
       data.name,
-      'Nouvel événement ${data.name} publié, prévu pour ${formatTimeDate(data.start)}',
+      'Nouvel événement ${data.name} publié, prévu pour ${formatTimeDate(data.start.toLocal())}',
       const NotificationDetails(
         android: notificationDetails,
       ),

@@ -43,8 +43,8 @@ class GeoJSON with _$GeoJSON {
 
   static List<double> calculateBbox(
     List<Coordinate> coordinates, {
-    double verticalPaddingPercentage = 0.1,
-    double horizontalPaddingPercentage = 0.1,
+    double verticalPaddingPercentage = 0.5,
+    double horizontalPaddingPercentage = 0.5,
   }) {
     double min(double a, double b) => (a < b) ? a : b;
     double max(double a, double b) => (a > b) ? a : b;
