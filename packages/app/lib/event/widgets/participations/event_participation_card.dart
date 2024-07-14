@@ -41,6 +41,7 @@ class EventParticipationCard extends StatelessWidget {
           tag: "profile_picture_participation_${participation.user.id}",
           child: UserProfilePicture(
             url: participation.user.profilePicture,
+            profilePictureKey: participation.user.profilePictureKey,
             radius: 20,
           ),
         ),

@@ -22,6 +22,7 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 class ExpenseService(
 	private val db: Database,
@@ -157,8 +158,17 @@ class ExpenseService(
 		if(!authorizeGetOrUpdateOrDelete(caller, expense)) {
 			return Result.failure(NotAllowedException())
 		}
-		val path = "e/${expense.event.id}/e/${expense.id}/p"
+
+		try {
+			expense.proof?.let { storageService.delete(it) }
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+
+		val uuid = UUID.randomUUID().toString()
+		val path = "e/${expense.event.id}/e/${expense.id}/p-$uuid"
 		storageService.store(data, path, contentType.contentType)
+
 		transaction(db) {
 			expense.proof = path
 		}

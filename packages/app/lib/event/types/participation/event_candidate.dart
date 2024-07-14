@@ -12,6 +12,7 @@ class EventCandidate with _$EventCandidate {
     required String username,
     @JsonKey(name: "is_owner") required bool isOwner,
     @JsonKey(name: "profile_picture") String? profilePicture,
+    @JsonKey(name: "profile_picture_key") String? profilePictureKey,
     @JsonKey(name: "event_role") EventRole? eventRole,
   }) = _EventCandidate;
 

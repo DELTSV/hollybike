@@ -21,6 +21,7 @@ ImagePathDto _$ImagePathDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ImagePathDto {
   String get path => throw _privateConstructorUsedError;
+  String get key => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +35,7 @@ abstract class $ImagePathDtoCopyWith<$Res> {
           ImagePathDto value, $Res Function(ImagePathDto) then) =
       _$ImagePathDtoCopyWithImpl<$Res, ImagePathDto>;
   @useResult
-  $Res call({String path});
+  $Res call({String path, String key});
 }
 
 /// @nodoc
@@ -51,11 +52,16 @@ class _$ImagePathDtoCopyWithImpl<$Res, $Val extends ImagePathDto>
   @override
   $Res call({
     Object? path = null,
+    Object? key = null,
   }) {
     return _then(_value.copyWith(
       path: null == path
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -69,7 +75,7 @@ abstract class _$$ImagePathDtoImplCopyWith<$Res>
       __$$ImagePathDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String path});
+  $Res call({String path, String key});
 }
 
 /// @nodoc
@@ -84,11 +90,16 @@ class __$$ImagePathDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? path = null,
+    Object? key = null,
   }) {
     return _then(_$ImagePathDtoImpl(
       path: null == path
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -97,17 +108,19 @@ class __$$ImagePathDtoImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ImagePathDtoImpl implements _ImagePathDto {
-  const _$ImagePathDtoImpl({required this.path});
+  const _$ImagePathDtoImpl({required this.path, required this.key});
 
   factory _$ImagePathDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$ImagePathDtoImplFromJson(json);
 
   @override
   final String path;
+  @override
+  final String key;
 
   @override
   String toString() {
-    return 'ImagePathDto(path: $path)';
+    return 'ImagePathDto(path: $path, key: $key)';
   }
 
   @override
@@ -115,12 +128,13 @@ class _$ImagePathDtoImpl implements _ImagePathDto {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ImagePathDtoImpl &&
-            (identical(other.path, path) || other.path == path));
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.key, key) || other.key == key));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, path);
+  int get hashCode => Object.hash(runtimeType, path, key);
 
   @JsonKey(ignore: true)
   @override
@@ -137,14 +151,17 @@ class _$ImagePathDtoImpl implements _ImagePathDto {
 }
 
 abstract class _ImagePathDto implements ImagePathDto {
-  const factory _ImagePathDto({required final String path}) =
-      _$ImagePathDtoImpl;
+  const factory _ImagePathDto(
+      {required final String path,
+      required final String key}) = _$ImagePathDtoImpl;
 
   factory _ImagePathDto.fromJson(Map<String, dynamic> json) =
       _$ImagePathDtoImpl.fromJson;
 
   @override
   String get path;
+  @override
+  String get key;
   @override
   @JsonKey(ignore: true)
   _$$ImagePathDtoImplCopyWith<_$ImagePathDtoImpl> get copyWith =>

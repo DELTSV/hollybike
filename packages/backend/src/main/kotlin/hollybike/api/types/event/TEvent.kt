@@ -13,6 +13,8 @@ data class TEvent(
 	val name: String,
 	val description: String?,
 	val image: String?,
+	@SerialName("image_key")
+	val imageKey: String?,
 	val status: EEventStatus,
 	val owner: TUserPartial,
 	@SerialName("start_date_time")
@@ -33,6 +35,7 @@ data class TEvent(
 		name = entity.name,
 		description = entity.description,
 		image = entity.signedImage,
+		imageKey = entity.image,
 		status = EEventStatus.fromEvent(entity),
 		owner = TUserPartial(entity.owner),
 		startDateTime = entity.startDateTime,

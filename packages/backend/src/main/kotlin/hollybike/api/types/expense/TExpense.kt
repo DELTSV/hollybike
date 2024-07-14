@@ -11,7 +11,8 @@ data class TExpense(
 	val description: String? = null,
 	val date: Instant,
 	val amount: Int,
-	val proof: String? = null
+	val proof: String? = null,
+	val proofKey: String? = null
 ) {
 	constructor(entity: Expense): this(
 		entity.id.value,
@@ -19,6 +20,7 @@ data class TExpense(
 		entity.description,
 		entity.date,
 		entity.amount,
-		entity.proofSigned
+		entity.proofSigned,
+		entity.proof
 	)
 }

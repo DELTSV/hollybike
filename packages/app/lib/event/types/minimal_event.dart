@@ -24,6 +24,7 @@ class MinimalEvent with _$MinimalEvent {
     @JsonKey(name: "update_date_time") required DateTime updatedAt,
     String? description,
     String? image,
+    @JsonKey(name: "image_key") String? imageKey,
   }) = _MinimalEvent;
 
   get color => Event.getStatusColor(status);
@@ -43,5 +44,6 @@ class MinimalEvent with _$MinimalEvent {
   ImageProvider get imageProvider => Event.imageProviderFromDateTimeAndImage(
         startDate,
         image: image,
+        cacheKey: imageKey,
       );
 }

@@ -121,7 +121,7 @@ class _ImageGalleryPageViewState extends State<ImageGalleryPageView> {
               disableGestures: modalOpened,
               imageProvider: CachedNetworkImageProvider(
                 image.url,
-                cacheKey: 'image_${image.id}',
+                cacheKey: image.key,
               ),
               gestureDetectorBehavior: HitTestBehavior.translucent,
               scaleStateChangedCallback: (scaleState) {

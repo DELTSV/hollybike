@@ -13,6 +13,7 @@ _$MinimalUserImpl _$$MinimalUserImplFromJson(Map<String, dynamic> json) =>
       scope: $enumDecode(_$UserScopeEnumMap, json['scope']),
       status: $enumDecode(_$UserStatusEnumMap, json['status']),
       profilePicture: json['profile_picture'] as String?,
+      profilePictureKey: json['profile_picture_key'] as String?,
       role: json['role'] as String?,
     );
 
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$MinimalUserImplToJson(_$MinimalUserImpl instance) =>
       'scope': _$UserScopeEnumMap[instance.scope]!,
       'status': _$UserStatusEnumMap[instance.status]!,
       'profile_picture': instance.profilePicture,
+      'profile_picture_key': instance.profilePictureKey,
       'role': instance.role,
     };
 

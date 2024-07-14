@@ -12,6 +12,8 @@ data class TJourneyPartial(
 	val file: String? = null,
 	@SerialName("preview_image")
 	val previewImage: String? = null,
+	@SerialName("preview_image_key")
+	val previewImageKey: String? = null,
 	val start: TPosition? = null,
 	val end: TPosition? = null,
 	val destination: TPosition? = null,
@@ -26,6 +28,7 @@ data class TJourneyPartial(
 		journey.name,
 		journey.signedFile,
 		journey.signedPreviewImage,
+		journey.previewImage,
 		journey.start?.let { TPosition(it) },
 		journey.end?.let { TPosition(it) },
 		journey.destination?.let { TPosition(it) },

@@ -63,7 +63,7 @@ class JourneyLibraryCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: JourneyImage(
-                          journeyId: journey.id,
+                          imageKey: journey.previewImageKey,
                           imageUrl: journey.previewImage,
                         ),
                       ),

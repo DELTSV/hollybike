@@ -21,6 +21,7 @@ EventImage _$EventImageFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$EventImage {
   int get id => throw _privateConstructorUsedError;
+  String get key => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   int get size => throw _privateConstructorUsedError;
   int get width => throw _privateConstructorUsedError;
@@ -38,7 +39,7 @@ abstract class $EventImageCopyWith<$Res> {
           EventImage value, $Res Function(EventImage) then) =
       _$EventImageCopyWithImpl<$Res, EventImage>;
   @useResult
-  $Res call({int id, String url, int size, int width, int height});
+  $Res call({int id, String key, String url, int size, int width, int height});
 }
 
 /// @nodoc
@@ -55,6 +56,7 @@ class _$EventImageCopyWithImpl<$Res, $Val extends EventImage>
   @override
   $Res call({
     Object? id = null,
+    Object? key = null,
     Object? url = null,
     Object? size = null,
     Object? width = null,
@@ -65,6 +67,10 @@ class _$EventImageCopyWithImpl<$Res, $Val extends EventImage>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
       url: null == url
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
@@ -93,7 +99,7 @@ abstract class _$$EventImageImplCopyWith<$Res>
       __$$EventImageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String url, int size, int width, int height});
+  $Res call({int id, String key, String url, int size, int width, int height});
 }
 
 /// @nodoc
@@ -108,6 +114,7 @@ class __$$EventImageImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? key = null,
     Object? url = null,
     Object? size = null,
     Object? width = null,
@@ -118,6 +125,10 @@ class __$$EventImageImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
       url: null == url
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
@@ -143,6 +154,7 @@ class __$$EventImageImplCopyWithImpl<$Res>
 class _$EventImageImpl implements _EventImage {
   const _$EventImageImpl(
       {required this.id,
+      required this.key,
       required this.url,
       required this.size,
       required this.width,
@@ -154,6 +166,8 @@ class _$EventImageImpl implements _EventImage {
   @override
   final int id;
   @override
+  final String key;
+  @override
   final String url;
   @override
   final int size;
@@ -164,7 +178,7 @@ class _$EventImageImpl implements _EventImage {
 
   @override
   String toString() {
-    return 'EventImage(id: $id, url: $url, size: $size, width: $width, height: $height)';
+    return 'EventImage(id: $id, key: $key, url: $url, size: $size, width: $width, height: $height)';
   }
 
   @override
@@ -173,6 +187,7 @@ class _$EventImageImpl implements _EventImage {
         (other.runtimeType == runtimeType &&
             other is _$EventImageImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.key, key) || other.key == key) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.size, size) || other.size == size) &&
             (identical(other.width, width) || other.width == width) &&
@@ -181,7 +196,8 @@ class _$EventImageImpl implements _EventImage {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, url, size, width, height);
+  int get hashCode =>
+      Object.hash(runtimeType, id, key, url, size, width, height);
 
   @JsonKey(ignore: true)
   @override
@@ -200,6 +216,7 @@ class _$EventImageImpl implements _EventImage {
 abstract class _EventImage implements EventImage {
   const factory _EventImage(
       {required final int id,
+      required final String key,
       required final String url,
       required final int size,
       required final int width,
@@ -210,6 +227,8 @@ abstract class _EventImage implements EventImage {
 
   @override
   int get id;
+  @override
+  String get key;
   @override
   String get url;
   @override

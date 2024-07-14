@@ -9,6 +9,7 @@ part 'image_path_dto.g.dart';
 class ImagePathDto with _$ImagePathDto {
   const factory ImagePathDto({
     required String path,
+    required String key,
   }) = _ImagePathDto;
 
   factory ImagePathDto.fromJson(JsonMap json) => _$ImagePathDtoFromJson(json);

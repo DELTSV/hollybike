@@ -34,6 +34,8 @@ mixin _$MinimalEvent {
   DateTime get updatedAt => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
+  @JsonKey(name: "image_key")
+  String? get imageKey => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -57,7 +59,8 @@ abstract class $MinimalEventCopyWith<$Res> {
       @JsonKey(name: "create_date_time") DateTime createdAt,
       @JsonKey(name: "update_date_time") DateTime updatedAt,
       String? description,
-      String? image});
+      String? image,
+      @JsonKey(name: "image_key") String? imageKey});
 
   $MinimalUserCopyWith<$Res> get owner;
 }
@@ -85,6 +88,7 @@ class _$MinimalEventCopyWithImpl<$Res, $Val extends MinimalEvent>
     Object? updatedAt = null,
     Object? description = freezed,
     Object? image = freezed,
+    Object? imageKey = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -127,6 +131,10 @@ class _$MinimalEventCopyWithImpl<$Res, $Val extends MinimalEvent>
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageKey: freezed == imageKey
+          ? _value.imageKey
+          : imageKey // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -157,7 +165,8 @@ abstract class _$$MinimalEventImplCopyWith<$Res>
       @JsonKey(name: "create_date_time") DateTime createdAt,
       @JsonKey(name: "update_date_time") DateTime updatedAt,
       String? description,
-      String? image});
+      String? image,
+      @JsonKey(name: "image_key") String? imageKey});
 
   @override
   $MinimalUserCopyWith<$Res> get owner;
@@ -184,6 +193,7 @@ class __$$MinimalEventImplCopyWithImpl<$Res>
     Object? updatedAt = null,
     Object? description = freezed,
     Object? image = freezed,
+    Object? imageKey = freezed,
   }) {
     return _then(_$MinimalEventImpl(
       id: null == id
@@ -226,6 +236,10 @@ class __$$MinimalEventImplCopyWithImpl<$Res>
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageKey: freezed == imageKey
+          ? _value.imageKey
+          : imageKey // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -243,7 +257,8 @@ class _$MinimalEventImpl extends _MinimalEvent {
       @JsonKey(name: "create_date_time") required this.createdAt,
       @JsonKey(name: "update_date_time") required this.updatedAt,
       this.description,
-      this.image})
+      this.image,
+      @JsonKey(name: "image_key") this.imageKey})
       : super._();
 
   factory _$MinimalEventImpl.fromJson(Map<String, dynamic> json) =>
@@ -273,10 +288,13 @@ class _$MinimalEventImpl extends _MinimalEvent {
   final String? description;
   @override
   final String? image;
+  @override
+  @JsonKey(name: "image_key")
+  final String? imageKey;
 
   @override
   String toString() {
-    return 'MinimalEvent(id: $id, name: $name, owner: $owner, status: $status, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, image: $image)';
+    return 'MinimalEvent(id: $id, name: $name, owner: $owner, status: $status, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, image: $image, imageKey: $imageKey)';
   }
 
   @override
@@ -297,13 +315,15 @@ class _$MinimalEventImpl extends _MinimalEvent {
                 other.updatedAt == updatedAt) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.image, image) || other.image == image));
+            (identical(other.image, image) || other.image == image) &&
+            (identical(other.imageKey, imageKey) ||
+                other.imageKey == imageKey));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, owner, status,
-      startDate, endDate, createdAt, updatedAt, description, image);
+      startDate, endDate, createdAt, updatedAt, description, image, imageKey);
 
   @JsonKey(ignore: true)
   @override
@@ -330,7 +350,8 @@ abstract class _MinimalEvent extends MinimalEvent {
       @JsonKey(name: "create_date_time") required final DateTime createdAt,
       @JsonKey(name: "update_date_time") required final DateTime updatedAt,
       final String? description,
-      final String? image}) = _$MinimalEventImpl;
+      final String? image,
+      @JsonKey(name: "image_key") final String? imageKey}) = _$MinimalEventImpl;
   const _MinimalEvent._() : super._();
 
   factory _MinimalEvent.fromJson(Map<String, dynamic> json) =
@@ -360,6 +381,9 @@ abstract class _MinimalEvent extends MinimalEvent {
   String? get description;
   @override
   String? get image;
+  @override
+  @JsonKey(name: "image_key")
+  String? get imageKey;
   @override
   @JsonKey(ignore: true)
   _$$MinimalEventImplCopyWith<_$MinimalEventImpl> get copyWith =>

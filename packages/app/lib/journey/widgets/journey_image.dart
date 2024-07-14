@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 
 class JourneyImage extends StatelessWidget {
-  final int journeyId;
+  final String? imageKey;
   final String? imageUrl;
 
   const JourneyImage({
     super.key,
-    required this.journeyId,
+    this.imageKey,
     this.imageUrl,
   });
 
@@ -23,6 +23,7 @@ class JourneyImage extends StatelessWidget {
     }
 
     return CachedNetworkImage(
+      cacheKey: imageKey,
       imageUrl: imageUrl!,
       fit: BoxFit.cover,
     );

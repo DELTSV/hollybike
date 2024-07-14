@@ -9,6 +9,7 @@ part 'event_image.g.dart';
 class EventImage with _$EventImage {
   const factory EventImage({
     required int id,
+    required String key,
     required String url,
     required int size,
     required int width,

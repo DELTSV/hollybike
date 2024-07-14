@@ -18,6 +18,8 @@ data class TUser(
 	val association: TAssociation,
 	@SerialName("profile_picture")
 	val profilePicture: String? = null,
+	@SerialName("profile_picture_key")
+	val profilePictureKey: String? = null,
 	val role: String? = null
 ) {
 	constructor(entity: User) : this(
@@ -29,6 +31,7 @@ data class TUser(
 		lastLogin = entity.lastLogin,
 		association = TAssociation(entity.association),
 		profilePicture = entity.signedProfilePicture,
+		profilePictureKey = entity.profilePicture,
 		role = entity.role
 	)
 }

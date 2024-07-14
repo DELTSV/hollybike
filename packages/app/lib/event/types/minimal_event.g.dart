@@ -20,6 +20,7 @@ _$MinimalEventImpl _$$MinimalEventImplFromJson(Map<String, dynamic> json) =>
       updatedAt: DateTime.parse(json['update_date_time'] as String),
       description: json['description'] as String?,
       image: json['image'] as String?,
+      imageKey: json['image_key'] as String?,
     );
 
 Map<String, dynamic> _$$MinimalEventImplToJson(_$MinimalEventImpl instance) =>
@@ -34,6 +35,7 @@ Map<String, dynamic> _$$MinimalEventImplToJson(_$MinimalEventImpl instance) =>
       'update_date_time': instance.updatedAt.toIso8601String(),
       'description': instance.description,
       'image': instance.image,
+      'image_key': instance.imageKey,
     };
 
 const _$EventStatusStateEnumMap = {

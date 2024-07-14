@@ -15,6 +15,7 @@ class Profile {
   final DateTime lastLogin;
   final Association association;
   final String? profilePicture;
+  final String? profilePictureKey;
   final String? role;
 
   const Profile({
@@ -26,6 +27,7 @@ class Profile {
     required this.lastLogin,
     required this.association,
     this.profilePicture,
+    this.profilePictureKey,
     this.role,
   });
 
@@ -76,6 +78,7 @@ class Profile {
       lastLogin: DateTime.parse(json["last_login"]),
       association: Association.fromJsonObject(json["association"]),
       profilePicture: json["profile_picture"],
+      profilePictureKey: json["profile_picture_key"],
     );
   }
 }

@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class TEventImage(
 	val id: Int,
 	val url: String,
+	val key: String,
 	val size: Int,
 	val width: Int,
 	val height: Int,
@@ -14,6 +15,7 @@ data class TEventImage(
 	constructor(entity: EventImage) : this(
 		id = entity.id.value,
 		url = entity.signedPath,
+		key = entity.path,
 		size = entity.size,
 		width = entity.width,
 		height = entity.height,

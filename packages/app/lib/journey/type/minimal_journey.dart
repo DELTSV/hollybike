@@ -22,6 +22,7 @@ class MinimalJourney with _$MinimalJourney {
     required int? totalElevationGain,
     required int? totalElevationLoss,
     @JsonKey(name: 'preview_image') String? previewImage,
+    @JsonKey(name: 'preview_image_key') String? previewImageKey,
   }) = _MinimalJourney;
 
   factory MinimalJourney.fromJson(JsonMap json) =>

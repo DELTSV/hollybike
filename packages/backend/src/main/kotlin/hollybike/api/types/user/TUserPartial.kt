@@ -13,6 +13,8 @@ data class TUserPartial(
 	val status: EUserStatus,
 	@SerialName("profile_picture")
 	val profilePicture: String? = null,
+	@SerialName("profile_picture_key")
+	val profilePictureKey: String? = null,
 	@SerialName("event_role")
 	val eventRole: EEventRole? = null,
 	@SerialName("is_owner")
@@ -25,6 +27,7 @@ data class TUserPartial(
 		scope = entity.scope,
 		status = entity.status,
 		profilePicture = entity.signedProfilePicture,
+		profilePictureKey = entity.profilePicture,
 		role = entity.role
 	)
 
@@ -34,6 +37,7 @@ data class TUserPartial(
 		scope = entity.scope,
 		status = entity.status,
 		profilePicture = entity.signedProfilePicture,
+		profilePictureKey = entity.profilePicture,
 		eventRole = eventRole,
 		isOwner = isOwner,
 		role = entity.role

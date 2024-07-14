@@ -26,6 +26,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.util.PSQLException
 import java.sql.BatchUpdateException
+import java.util.*
 
 
 class UserService(
@@ -75,8 +76,16 @@ class UserService(
 			return null
 		}
 
-		val path = "u/${user.id}/p"
+		try {
+			user.profilePicture?.let { storageService.delete(it) }
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
+
+		val uuid = UUID.randomUUID().toString()
+		val path = "u/${user.id}/p-$uuid"
 		storageService.store(image, path, imageContentType)
+
 		transaction(db) { user.profilePicture = path }
 		return path
 	}

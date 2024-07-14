@@ -34,6 +34,8 @@ mixin _$Event {
   DateTime get updatedAt => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
+  @JsonKey(name: "image_key")
+  String? get imageKey => throw _privateConstructorUsedError;
   int? get budget => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -57,6 +59,7 @@ abstract class $EventCopyWith<$Res> {
       @JsonKey(name: "update_date_time") DateTime updatedAt,
       String? description,
       String? image,
+      @JsonKey(name: "image_key") String? imageKey,
       int? budget});
 
   $MinimalUserCopyWith<$Res> get owner;
@@ -85,6 +88,7 @@ class _$EventCopyWithImpl<$Res, $Val extends Event>
     Object? updatedAt = null,
     Object? description = freezed,
     Object? image = freezed,
+    Object? imageKey = freezed,
     Object? budget = freezed,
   }) {
     return _then(_value.copyWith(
@@ -128,6 +132,10 @@ class _$EventCopyWithImpl<$Res, $Val extends Event>
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageKey: freezed == imageKey
+          ? _value.imageKey
+          : imageKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       budget: freezed == budget
           ? _value.budget
           : budget // ignore: cast_nullable_to_non_nullable
@@ -162,6 +170,7 @@ abstract class _$$EventImplCopyWith<$Res> implements $EventCopyWith<$Res> {
       @JsonKey(name: "update_date_time") DateTime updatedAt,
       String? description,
       String? image,
+      @JsonKey(name: "image_key") String? imageKey,
       int? budget});
 
   @override
@@ -189,6 +198,7 @@ class __$$EventImplCopyWithImpl<$Res>
     Object? updatedAt = null,
     Object? description = freezed,
     Object? image = freezed,
+    Object? imageKey = freezed,
     Object? budget = freezed,
   }) {
     return _then(_$EventImpl(
@@ -232,6 +242,10 @@ class __$$EventImplCopyWithImpl<$Res>
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
               as String?,
+      imageKey: freezed == imageKey
+          ? _value.imageKey
+          : imageKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       budget: freezed == budget
           ? _value.budget
           : budget // ignore: cast_nullable_to_non_nullable
@@ -254,6 +268,7 @@ class _$EventImpl extends _Event {
       @JsonKey(name: "update_date_time") required this.updatedAt,
       this.description,
       this.image,
+      @JsonKey(name: "image_key") this.imageKey,
       this.budget})
       : super._();
 
@@ -285,11 +300,14 @@ class _$EventImpl extends _Event {
   @override
   final String? image;
   @override
+  @JsonKey(name: "image_key")
+  final String? imageKey;
+  @override
   final int? budget;
 
   @override
   String toString() {
-    return 'Event(id: $id, name: $name, owner: $owner, status: $status, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, image: $image, budget: $budget)';
+    return 'Event(id: $id, name: $name, owner: $owner, status: $status, startDate: $startDate, endDate: $endDate, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, image: $image, imageKey: $imageKey, budget: $budget)';
   }
 
   @override
@@ -311,13 +329,27 @@ class _$EventImpl extends _Event {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.image, image) || other.image == image) &&
+            (identical(other.imageKey, imageKey) ||
+                other.imageKey == imageKey) &&
             (identical(other.budget, budget) || other.budget == budget));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, owner, status,
-      startDate, endDate, createdAt, updatedAt, description, image, budget);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      name,
+      owner,
+      status,
+      startDate,
+      endDate,
+      createdAt,
+      updatedAt,
+      description,
+      image,
+      imageKey,
+      budget);
 
   @JsonKey(ignore: true)
   @override
@@ -345,6 +377,7 @@ abstract class _Event extends Event {
       @JsonKey(name: "update_date_time") required final DateTime updatedAt,
       final String? description,
       final String? image,
+      @JsonKey(name: "image_key") final String? imageKey,
       final int? budget}) = _$EventImpl;
   const _Event._() : super._();
 
@@ -374,6 +407,9 @@ abstract class _Event extends Event {
   String? get description;
   @override
   String? get image;
+  @override
+  @JsonKey(name: "image_key")
+  String? get imageKey;
   @override
   int? get budget;
   @override

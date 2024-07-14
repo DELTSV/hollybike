@@ -27,6 +27,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.innerJoin
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 class JourneyService(
 	private val db: Database,
@@ -157,14 +158,23 @@ class JourneyService(
 				return Result.failure(it)
 			}
 
-			val path = "j/${journey.id}/p"
+			val uuid = UUID.randomUUID().toString()
+			val path = "j/${journey.id}/p-$uuid"
+
+			try {
+				journey.previewImage?.let {
+					runBlocking { storageService.delete(it) }
+				}
+			} catch (e: Exception) {
+				e.printStackTrace()
+			}
+
+			runBlocking {
+				storageService.store(imageBytes, path, "image/png")
+			}
 
 			transaction(db) {
 				journey.previewImage = path
-
-				runBlocking {
-					storageService.store(imageBytes, path, "image/png")
-				}
 			}
 
 			return Result.success(Unit)
