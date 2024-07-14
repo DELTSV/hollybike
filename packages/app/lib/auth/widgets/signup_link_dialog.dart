@@ -45,7 +45,7 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: isValid ? _handleSubmit : null,
+                      onPressed: _handleSubmit,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(18),
                         shape: const RoundedRectangleBorder(
