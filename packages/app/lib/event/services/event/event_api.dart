@@ -6,20 +6,24 @@ import 'package:hollybike/event/types/event_expense.dart';
 import 'package:hollybike/event/types/event_form_data.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
+import 'package:hollybike/shared/http/downloader.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
+// ignore: depend_on_referenced_packages
+import 'package:http_parser/http_parser.dart';
 
 import '../../../user_journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/event_details.dart';
 import '../../types/participation/event_participation.dart';
 
-// ignore: depend_on_referenced_packages
-import 'package:http_parser/http_parser.dart';
-
 class EventApi {
   final DioClient client;
+  final Downloader downloader;
 
-  EventApi({required this.client});
+  EventApi({
+    required this.client,
+    required this.downloader,
+  });
 
   Future<PaginatedList<MinimalEvent>> getEvents(
     String? requestType,
@@ -195,5 +199,39 @@ class EventApi {
     );
 
     return EventExpense.fromJson(response.data);
+  }
+
+  Future<void> downloadExpensesReport(String fileName, int eventId) async {
+    await downloader.downloadFile(
+      "/events/$eventId/expenses/report",
+      fileName,
+      authenticate: true,
+    );
+  }
+
+  Future<Event> uploadEventImage(int eventId, File imageFile) async {
+    final compressedImage = await FlutterImageCompress.compressWithFile(
+      imageFile.path,
+      quality: 50,
+    );
+
+    if (compressedImage == null) {
+      throw Exception("Failed to compress image");
+    }
+
+    final formData = FormData.fromMap({
+      'image': MultipartFile.fromBytes(
+        compressedImage,
+        filename: imageFile.path.split('/').last,
+        contentType: MediaType.parse('image/jpeg'),
+      ),
+    });
+
+    final response = await client.dio.patch(
+      '/events/$eventId/image',
+      data: formData,
+    );
+
+    return Event.fromJson(response.data);
   }
 }

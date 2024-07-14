@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/event/types/event_details.dart';
 import 'package:hollybike/event/types/event_expense.dart';
@@ -12,8 +11,8 @@ import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/shared/utils/streams/stream_counter.dart';
 import 'package:hollybike/shared/utils/streams/stream_value.dart';
 
-import '../../../user_journey/type/user_journey.dart';
 import '../../../shared/utils/streams/stream_mapper.dart';
+import '../../../user_journey/type/user_journey.dart';
 import '../../types/event.dart';
 import '../../types/minimal_event.dart';
 import '../../types/participation/event_participation.dart';
@@ -75,7 +74,9 @@ class EventRepository {
 
   String _lastQuery = "";
 
-  EventRepository({required this.eventApi});
+  EventRepository({
+    required this.eventApi
+  });
 
   Future<PaginatedList<MinimalEvent>> fetchEvents(
     String? requestType,
@@ -686,16 +687,11 @@ class EventRepository {
     }
 
     final eventName = details.event.name.replaceAll(" ", "_").toLowerCase();
+    final uniqueKey = DateTime.now().microsecondsSinceEpoch.toString();
 
-    await FlutterDownloader.enqueue(
-      url: '${session.host}/api/events/$eventId/expenses/report',
-      headers: {
-        'Authorization': 'Bearer ${session.token}',
-      },
-      savedDir: "/storage/emulated/0/Download",
-      fileName: "depenses_$eventName.csv",
-      showNotification: true,
-      openFileFromNotification: true,
+    await eventApi.downloadExpensesReport(
+      "depenses_${eventName}_$uniqueKey.csv",
+      eventId,
     );
   }
 
@@ -753,9 +749,8 @@ class EventRepository {
         _userStreamMapper.counters) {
       counter.add(
         counter.value
-            .map((e) => e.id == eventId
-                ? e.copyWith(status: EventStatusState.now)
-                : e)
+            .map((e) =>
+                e.id == eventId ? e.copyWith(status: EventStatusState.now) : e)
             .toList(),
       );
     }
@@ -783,6 +778,42 @@ class EventRepository {
           ),
         );
       }
+    }
+  }
+
+  Future<void> uploadEventImage(
+    int eventId,
+    File image,
+  ) async {
+    final updatedEvent = await eventApi.uploadEventImage(
+      eventId,
+      image,
+    );
+
+    final details = _eventDetailsStreamMapper.get(eventId);
+
+    if (details == null) {
+      return;
+    }
+
+    _eventDetailsStreamMapper.add(
+      eventId,
+      details.copyWith(
+        event: updatedEvent,
+      ),
+    );
+
+    for (var counter in [
+          _futureEventsStreamCounter,
+          _archivedEventsStreamCounter,
+          _searchEventsStreamCounter,
+        ] +
+        _userStreamMapper.counters) {
+      counter.add(
+        counter.value
+            .map((e) => e.id == eventId ? updatedEvent.toMinimalEvent() : e)
+            .toList(),
+      );
     }
   }
 }

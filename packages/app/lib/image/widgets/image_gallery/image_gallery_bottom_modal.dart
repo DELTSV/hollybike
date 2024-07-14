@@ -10,8 +10,6 @@ import 'package:hollybike/shared/widgets/app_toast.dart';
 import 'package:http/http.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
-// ignore: depend_on_referenced_packages
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../type/event_image.dart';
@@ -58,6 +56,10 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
           setState(() {
             _isImageOwner = state.imageDetails?.isOwner ?? false;
           });
+        }
+
+        if (state is DownloadImageSuccess) {
+          Toast.showSuccessToast(context, "Image téléchargée");
         }
 
         if (state is EventImageDetailsLoadFailure) {
@@ -155,14 +157,14 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
       imagePath,
       'hollybike-${widget.image.id}.jpg',
     );
-    File file2 = File(filePathAndName);
-    file2.writeAsBytesSync(response.bodyBytes);
+    File file = File(filePathAndName);
+    file.writeAsBytesSync(response.bodyBytes);
 
     return filePathAndName;
   }
 
   void _onShareImage() async {
-    Directory directory = await getApplicationDocumentsDirectory();
+    final directory = Directory.systemTemp;
     final imagePath = await _downloadImageToPath(directory.path);
 
     Share.shareXFiles(
@@ -171,19 +173,13 @@ class _ImageGalleryBottomModalState extends State<ImageGalleryBottomModal> {
     );
   }
 
-  void _onDownloadImage() async {
-    try {
-      await _downloadImageToPath("/storage/emulated/0/Download/");
-
-      if (mounted) {
-        Toast.showSuccessToast(context, "Image téléchargée avec succès");
-      }
-    } catch (e) {
-      if (mounted) {
-        Toast.showErrorToast(
-            context, "Erreur lors du téléchargement de l'image");
-      }
-    }
+  void _onDownloadImage() {
+    context.read<EventImageDetailsBloc>().add(
+          DownloadImage(
+            imageUrl: widget.image.url,
+            imgId: widget.image.id,
+          ),
+        );
   }
 
   void _onDeleteImage() {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:hollybike/image/type/event_image_details.dart';
+import 'package:hollybike/shared/http/downloader.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
@@ -12,8 +13,12 @@ import '../type/event_image.dart';
 
 class ImageApi {
   final DioClient client;
+  final Downloader downloader;
 
-  ImageApi({required this.client});
+  ImageApi({
+    required this.client,
+    required this.downloader,
+  });
 
   Future<PaginatedList<EventImage>> getEventImages(
     int eventId,
@@ -139,5 +144,14 @@ class ImageApi {
     if (response.statusCode != 204) {
       throw Exception("Failed to delete event image");
     }
+  }
+
+  Future<void> downloadImage(String url, int imgId) {
+    final uniqueKey = DateTime.now().millisecondsSinceEpoch;
+
+    return downloader.downloadFile(
+      url,
+      'hollybike_${imgId}_$uniqueKey.jpg',
+    );
   }
 }
