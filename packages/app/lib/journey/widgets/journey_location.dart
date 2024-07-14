@@ -17,8 +17,9 @@ class JourneyLocation extends StatelessWidget {
   Widget build(BuildContext context) {
     final locations = <Widget>[];
 
-    final start = JourneyPosition(pos: journey.start, isLarge: sizeFactor > 1);
-    if (start is! SizedBox) {
+    if (journey.start != null) {
+      final start = JourneyPosition(pos: journey.start!, isLarge: sizeFactor > 1);
+
       locations.add(Row(
         children: [
           Icon(
@@ -35,8 +36,8 @@ class JourneyLocation extends StatelessWidget {
       locations.add(SizedBox(height: 8 * sizeFactor));
     }
 
-    final end = JourneyPosition(pos: journey.end, isLarge: sizeFactor > 1);
-    if (start is! SizedBox) {
+    if (journey.end != null) {
+      final end = JourneyPosition(pos: journey.end!, isLarge: sizeFactor > 1);
       locations.add(Row(
         children: [
           Icon(
