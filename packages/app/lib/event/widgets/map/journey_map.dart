@@ -375,6 +375,9 @@ class _JourneyMapState extends State<JourneyMap> {
       point.image = (profilePicture is UserPictureLoadSuccessEvent
           ? profilePicture.image
           : placeholderProfilePicture) as Uint8List;
+      point.iconSize = profilePicture is UserPictureLoadSuccessEvent
+          ? 0.390625
+          : 1;
 
       point.textField =
           '${user.user.username}\n${(positionToUpdate.speed * 3.6).round()} km/h';
