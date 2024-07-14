@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
@@ -17,10 +18,10 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canPop = context.routeData.queryParams.getBool("canPop", false);
+    final popContext = context.routeData.queryParams.getString("popContext", "");
 
     return Scaffold(
-      floatingActionButton: canPop
+      floatingActionButton: popContext == "connected"
           ? FloatingActionButton.small(
               onPressed: () => context.router.maybePop(),
               child: const Icon(Icons.arrow_back),
@@ -47,7 +48,11 @@ class SignupScreen extends StatelessWidget {
                   host: context.routeData.queryParams.getString("host"),
                   signupDto: SignupDto.fromMap(values),
                 ));
-                if (canPop) context.router.maybePop();
+                if (popContext == "connected") {
+                  context.router.maybePop();
+                } else if (popContext.isEmpty) {
+                  context.router.replaceAll([const EventsRoute()]);
+                }
               },
               formFields: {
                 "username": FormFieldConfig(
