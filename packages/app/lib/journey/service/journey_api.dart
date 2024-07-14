@@ -50,7 +50,9 @@ class JourneyApi {
   }
 
   Future<Journey> getPositions(int journeyId) async {
-    final response = await client.dio.get('/journeys/$journeyId/positions');
+    final response = await client.dio.get(
+      '/journeys/$journeyId/positions'
+    );
 
     return Journey.fromJson(response.data);
   }

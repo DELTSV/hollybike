@@ -4,7 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/shared/types/json_map.dart';
 
 part 'geojson.freezed.dart';
-
 part 'geojson.g.dart';
 
 @freezed
@@ -44,8 +43,8 @@ class GeoJSON with _$GeoJSON {
 
   static List<double> calculateBbox(
     List<Coordinate> coordinates, {
-    double verticalPaddingPercentage = 0.2,
-    double horizontalPaddingPercentage = 0.5,
+    double verticalPaddingPercentage = 0.1,
+    double horizontalPaddingPercentage = 0.1,
   }) {
     double min(double a, double b) => (a < b) ? a : b;
     double max(double a, double b) => (a > b) ? a : b;
@@ -73,10 +72,15 @@ class GeoJSON with _$GeoJSON {
     double paddingWidth = realWidth * horizontalPaddingPercentage;
     double paddingHeight = realHeight * verticalPaddingPercentage;
 
-    bbox[0] -= paddingWidth;
-    bbox[1] -= paddingHeight;
-    bbox[2] += paddingWidth;
-    bbox[3] += paddingHeight;
+    final adjustedHeight =
+        realHeight > realWidth ? realHeight : (realWidth - realHeight);
+    final adjustedWidth =
+        realWidth > realHeight ? realWidth : (realHeight - realWidth);
+
+    bbox[0] -= (adjustedWidth + paddingWidth);
+    bbox[1] -= (adjustedHeight + paddingHeight);
+    bbox[2] += (adjustedWidth + paddingWidth);
+    bbox[3] += (adjustedHeight + paddingHeight);
 
     return bbox;
   }

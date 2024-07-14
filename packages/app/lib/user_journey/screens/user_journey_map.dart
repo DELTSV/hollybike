@@ -12,9 +12,8 @@ import 'package:hollybike/shared/widgets/bar/top_bar_action_icon.dart';
 import 'package:hollybike/shared/widgets/bar/top_bar_title.dart';
 import 'package:hollybike/shared/widgets/hud/hud.dart';
 import 'package:hollybike/theme/bloc/theme_bloc.dart';
-import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-
 import 'package:http/http.dart' as http;
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 @RoutePage()
 class UserJourneyMapScreen extends StatefulWidget {
@@ -46,52 +45,51 @@ class _UserJourneyMapScreenState extends State<UserJourneyMapScreen> {
         title: TopBarTitle(widget.title),
       ),
       body: SizedBox(
-        child: Builder(
-          builder: (context) {
-            if (_mapError) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Erreur lors du chargement de la carte"),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => context.router.maybePop(),
-                      child: const Text("Retour"),
-                    ),
-                  ],
-                ),
-              );
-            }
+        child: Builder(builder: (context) {
+          if (_mapError) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Erreur lors du chargement de la carte"),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => context.router.maybePop(),
+                    child: const Text("Retour"),
+                  ),
+                ],
+              ),
+            );
+          }
 
-            return Stack(
-              children: <Widget>[
-                MapWidget(
-                  gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                    Factory<OneSequenceGestureRecognizer>(
-                          () => EagerGestureRecognizer(),
-                    ),
-                  },
-                  key: const ValueKey("mapWidget"),
-                  onMapCreated: _onMapCreated,
-                ),
-                AnimatedOpacity(
-                  opacity: _mapLoading ? 1 : 0,
-                  duration: const Duration(milliseconds: 500),
-                  child: IgnorePointer(
-                    child: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+          return Stack(
+            children: <Widget>[
+              MapWidget(
+                gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                  Factory<OneSequenceGestureRecognizer>(
+                    () => EagerGestureRecognizer(),
+                  ),
+                },
+                key: const ValueKey("mapWidget"),
+                onMapCreated: _onMapCreated,
+              ),
+              AnimatedOpacity(
+                opacity: _mapLoading ? 1 : 0,
+                duration: const Duration(milliseconds: 500),
+                child: IgnorePointer(
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
                   ),
                 ),
-              ],
-            );
-          }),
-        ),
-      );
+              ),
+            ],
+          );
+        }),
+      ),
+    );
   }
 
   void _onMapCreated(MapboxMap map) {

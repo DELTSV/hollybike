@@ -330,6 +330,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
           profileRepository: RepositoryProvider.of<ProfileRepository>(
             context,
           ),
+          canSeeUserPositions: eventDetails.isParticipating,
         ),
         child: EventDetailsMap(
           eventId: eventDetails.event.id,
