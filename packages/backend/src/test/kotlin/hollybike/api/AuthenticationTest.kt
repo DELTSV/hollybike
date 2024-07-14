@@ -191,7 +191,7 @@ class AuthenticationTest : IntegrationSpec({
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.Forbidden
+					status shouldBe HttpStatusCode.Unauthorized
 				}
 			}
 		}
@@ -214,7 +214,7 @@ class AuthenticationTest : IntegrationSpec({
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.Forbidden
+					status shouldBe HttpStatusCode.Unauthorized
 				}
 			}
 		}
@@ -237,7 +237,7 @@ class AuthenticationTest : IntegrationSpec({
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.Forbidden
+					status shouldBe HttpStatusCode.Unauthorized
 				}
 			}
 		}
@@ -260,7 +260,7 @@ class AuthenticationTest : IntegrationSpec({
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.Forbidden
+					status shouldBe HttpStatusCode.Unauthorized
 				}
 			}
 		}
