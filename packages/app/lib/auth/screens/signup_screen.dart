@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
@@ -17,63 +18,74 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canPop = context.routeData.queryParams.getBool("canPop", false);
+    final popContext = context.routeData.queryParams.getString(
+        "popContext", "");
 
     return Scaffold(
-      floatingActionButton: canPop
+      floatingActionButton: popContext == "connected"
           ? FloatingActionButton.small(
-              onPressed: () => context.router.maybePop(),
-              child: const Icon(Icons.arrow_back),
-            )
+        onPressed: () => context.router.maybePop(),
+        child: const Icon(Icons.arrow_back),
+      )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          final error = state is AuthFailure ? state.message : null;
-
-          return BannerDialog(
-            body: FormBuilder(
-              title: "Inscrivez-vous!",
-              description: "Saisissez les informations de votre nouveau compte.",
-              errorText: error,
-              formTexts: const FormTexts(
-                submit: "S'inscrire",
-              ),
-              onFormSubmit: (formValue) {
-                final values = Map.from(context.routeData.queryParams.rawMap);
-                values.addAll(formValue);
-
-                BlocProvider.of<AuthBloc>(context).add(AuthSignup(
-                  host: context.routeData.queryParams.getString("host"),
-                  signupDto: SignupDto.fromMap(values),
-                ));
-                if (canPop) context.router.maybePop();
-              },
-              formFields: {
-                "username": FormFieldConfig(
-                  label: "Nom utilisateur",
-                  validator: _inputValidator,
-                  autofocus: true,
-                  autofillHints: [AutofillHints.newUsername],
-                  textInputType: TextInputType.name,
-                ),
-                "email": FormFieldConfig(
-                  label: "Adresse mail",
-                  validator: _inputValidator,
-                  autofillHints: [AutofillHints.email],
-                  textInputType: TextInputType.emailAddress,
-                ),
-                "password": FormFieldConfig(
-                  label: "Mot de passe",
-                  validator: _passwordInputValidator,
-                  isSecured: true,
-                  hasControlField: true,
-                  autofillHints: [AutofillHints.newPassword],
-                ),
-              },
-            ),
-          );
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is! AuthFailure) {
+            if (popContext == "connected") {
+              context.router.maybePop();
+            } else if (popContext.isEmpty) {
+              context.router.replaceAll([const EventsRoute()]);
+            }
+          }
         },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            final error = state is AuthFailure ? state.message : null;
+
+            return BannerDialog(
+              body: FormBuilder(
+                title: "Inscrivez-vous!",
+                description: "Saisissez les informations de votre nouveau compte.",
+                errorText: error,
+                formTexts: const FormTexts(
+                  submit: "S'inscrire",
+                ),
+                onFormSubmit: (formValue) {
+                  final values = Map.from(context.routeData.queryParams.rawMap);
+                  values.addAll(formValue);
+
+                  BlocProvider.of<AuthBloc>(context).add(AuthSignup(
+                    host: context.routeData.queryParams.getString("host"),
+                    signupDto: SignupDto.fromMap(values),
+                  ));
+                },
+                formFields: {
+                  "username": FormFieldConfig(
+                    label: "Nom utilisateur",
+                    validator: _inputValidator,
+                    autofocus: true,
+                    autofillHints: [AutofillHints.newUsername],
+                    textInputType: TextInputType.name,
+                  ),
+                  "email": FormFieldConfig(
+                    label: "Adresse mail",
+                    validator: _inputValidator,
+                    autofillHints: [AutofillHints.email],
+                    textInputType: TextInputType.emailAddress,
+                  ),
+                  "password": FormFieldConfig(
+                    label: "Mot de passe",
+                    validator: _passwordInputValidator,
+                    isSecured: true,
+                    hasControlField: true,
+                    autofillHints: [AutofillHints.newPassword],
+                  ),
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

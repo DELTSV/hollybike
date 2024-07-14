@@ -45,7 +45,7 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: isValid ? _handleSubmit : null,
+                      onPressed: _handleSubmit,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(18),
                         shape: const RoundedRectangleBorder(
@@ -114,8 +114,8 @@ class _SignupLinkDialogState extends State<SignupLinkDialog> {
   void _handleSubmit() {
     if (isValid) {
       widget.canPop
-          ? context.router.replaceNamed("${_linkController.text}&canPop=true")
-          : context.router.pushNamed("${_linkController.text}&canPop=false");
+          ? context.router.replaceNamed("${_linkController.text}&popContext=connected")
+          : context.router.pushNamed("${_linkController.text}&popContext=guard");
     }
   }
 }
