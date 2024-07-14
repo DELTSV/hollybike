@@ -240,6 +240,7 @@ export function ListInvitations() {
 						value={qrCode}
 						level={"Q"}
 						size={500}
+						includeMargin={true}
 						imageSettings={{
 							src: "/logo.png",
 							height: 100,

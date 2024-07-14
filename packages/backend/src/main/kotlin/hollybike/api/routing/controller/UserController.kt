@@ -137,7 +137,7 @@ class UserController(
 						"Changer de mot de passe nécessite new_password, new_password_again et old_password"
 					)
 					is PasswordInvalid -> call.respond(HttpStatusCode.BadRequest, it.message ?: "Mot de passe invalide")
-					is UserWrongPassword -> call.respond(HttpStatusCode.Forbidden, "Mauvais ancien mot de passe")
+					is UserWrongPassword -> call.respond(HttpStatusCode.Unauthorized, "Mauvais ancien mot de passe")
 					is UserDifferentNewPassword -> call.respond(
 						HttpStatusCode.BadRequest,
 						"new_password et _new_password_again sont différent"
