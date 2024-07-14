@@ -73,9 +73,9 @@ class GeoJSON with _$GeoJSON {
     double paddingHeight = realHeight * verticalPaddingPercentage;
 
     final adjustedHeight =
-        realHeight > realWidth ? realHeight : (realWidth - realHeight);
+        realHeight > realWidth ? 0 : (realWidth - realHeight);
     final adjustedWidth =
-        realWidth > realHeight ? realWidth : (realHeight - realWidth);
+        realWidth > realHeight ? 0 : (realHeight - realWidth);
 
     bbox[0] -= (adjustedWidth + paddingWidth);
     bbox[1] -= (adjustedHeight + paddingHeight);
