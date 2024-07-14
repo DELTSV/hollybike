@@ -75,9 +75,7 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EXECUTABLES: 'hollybike-Android-${{ env.version }}.apk \
-                        hollybike-Windows-${{ env.version }}-x86_64.exe \
-                        hollybike-Linux-${{ env.version }}-x86_64'
+          EXECUTABLES: 'hollybike-Android-${{ env.version }}.apk hollybike-Windows-${{ env.version }}-x86_64.exe hollybike-Linux-${{ env.version }}-x86_64'
         run: |
           gh release create "$version" \
               --repo="$GITHUB_REPOSITORY" \
