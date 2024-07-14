@@ -1,7 +1,7 @@
 export function Invite() {
 	return (
 		<div className={"flex items-center gap-8 justify-center flex-col p-12"}>
-			<h1 className={"text-4xl md:text-9xl"}>HollyBike</h1>
+			<img src={"/cropped-logo.png"} alt={"logo"}/>
 			<a
 				className={"w-full sm:w-3/4 lg:w-1/2 flex justify-center"}
 				href="https://play.google.com/store/apps/details?id=com.hollybike.hollybike&pcampaignid=pcampaignidMKT-
