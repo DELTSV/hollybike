@@ -23,9 +23,12 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
   final AuthPersistence authPersistence;
   final ProfileRepository profileRepository;
 
+  final bool canSeeUserPositions ;
+
   UserPositionsBloc({
     required this.authPersistence,
     required this.profileRepository,
+    required this.canSeeUserPositions,
     AuthSession? currentSession,
   }) : super(UserPositionsInitial()) {
     on<SubscribeToUserPositions>(_onSubscribeToUserPositions);
@@ -59,6 +62,8 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
     SubscribeToUserPositions event,
     Emitter<UserPositionsState> emit,
   ) async {
+    if (!canSeeUserPositions) return;
+
     emit(UserPositionsLoading(state));
 
     final currentSession = await authPersistence.currentSession;

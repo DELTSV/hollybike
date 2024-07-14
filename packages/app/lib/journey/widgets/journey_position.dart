@@ -4,7 +4,7 @@ import '../../shared/types/position.dart';
 
 class JourneyPosition extends StatelessWidget {
   final bool isLarge;
-  final Position? pos;
+  final Position pos;
 
   const JourneyPosition({
     super.key,
@@ -14,10 +14,6 @@ class JourneyPosition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (pos == null) {
-      return const SizedBox();
-    }
-
     final textStyle = getTextStyle(context);
 
     final texts = <TextSpan>[];
@@ -35,9 +31,9 @@ class JourneyPosition extends StatelessWidget {
       texts.add(span);
     }
 
-    final countyName = pos?.countyName;
-    final cityName = pos?.cityName;
-    final countryName = pos?.countryName;
+    final countyName = pos.countyName;
+    final cityName = pos.cityName;
+    final countryName = pos.countryName;
 
     if (cityName != null) {
       addSpan(TextSpan(

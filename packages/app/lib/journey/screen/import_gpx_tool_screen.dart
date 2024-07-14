@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hollybike/shared/utils/safe_set_state.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 
@@ -54,94 +53,103 @@ class _ImportGpxToolScreenState extends State<ImportGpxToolScreen> {
       },
       child: Scaffold(
         body: SafeArea(
-          child: InAppWebView(
-            initialUrlRequest: URLRequest(
-              url: Uri.parse(widget.url),
-            ),
-            initialOptions: InAppWebViewGroupOptions(
-              crossPlatform: InAppWebViewOptions(
-                useOnDownloadStart: true,
-                useShouldInterceptFetchRequest: true,
+          child: Builder(builder: (context) {
+            return InAppWebView(
+              initialUrlRequest: URLRequest(
+                url: Uri.parse(widget.url),
               ),
-            ),
-            onWebViewCreated: (controller) {
-              _controller = controller;
-            },
-            onLoadStart: (controller, url) {},
-            onLoadStop: (controller, url) {},
-            shouldInterceptFetchRequest: (controller, request) async {
-              final url = request.url.toString();
+              initialOptions: InAppWebViewGroupOptions(
+                crossPlatform: InAppWebViewOptions(
+                  useOnDownloadStart: true,
+                  useShouldInterceptFetchRequest: true,
+                ),
+              ),
+              onWebViewCreated: (controller) {
+                _controller = controller;
+              },
+              onLoadStart: (controller, url) {},
+              onLoadStop: (controller, url) {},
+              shouldInterceptFetchRequest: (controller, request) async {
+                final url = request.url.toString();
 
-              final isKurvigerFile =
-                  url.startsWith("https://api.kurviger.de/route");
-              final isOpenrunnerFile =
-                  url.startsWith("https://api.openrunner.com/api/v2/routes/") &&
-                      url.endsWith("/export/gpx-track");
+                final isKurvigerFile =
+                    url.startsWith("https://api.kurviger.de/route");
+                final isOpenrunnerFile = url.startsWith(
+                        "https://api.openrunner.com/api/v2/routes/") &&
+                    url.endsWith("/export/gpx-track");
 
-              if (isKurvigerFile || isOpenrunnerFile) {
-                final response = await http.get(
-                  Uri.parse(url),
-                  headers: {
-                    'User-Agent': request.headers?['User-Agent'] ?? '',
-                    'Accept': request.headers?['Accept'] ?? '',
-                  },
-                );
+                if (isKurvigerFile || isOpenrunnerFile) {
+                  final response = await http.get(
+                    Uri.parse(url),
+                    headers: {
+                      'User-Agent': request.headers?['User-Agent'] ?? '',
+                      'Accept': request.headers?['Accept'] ?? '',
+                    },
+                  );
 
-                if (response.body.contains('<gpx') == false) {
-                  return Future.value(request);
+                  if (response.body.contains('<gpx') == false) {
+                    return Future.value(request);
+                  }
+
+                  if (context.mounted) {
+                    _onGpxDownloaded(
+                      context,
+                      writeTempFile(response.bodyBytes),
+                    );
+                  }
+
+                  return Future.value(null);
                 }
 
-                widget.onGpxDownloaded(
-                  writeTempFile(response.bodyBytes),
-                );
-
-                return Future.value(null);
-              }
-
-              return Future.value(request);
-            },
-            onDownloadStartRequest: (controller, data) async {
-              if (widget.url.contains('kurviger')) {
-                return;
-              }
-
-              final requestUrl = data.url.toString();
-
-              if (requestUrl.startsWith('data:text')) {
-                final cleanUrl = requestUrl.replaceAll(
-                  RegExp(r'data:text.*?,'),
-                  '',
-                );
-
-                final decoded = Uri.decodeFull(cleanUrl);
-
-                if (decoded.contains('<gpx') == false) {
+                return Future.value(request);
+              },
+              onDownloadStartRequest: (controller, data) async {
+                if (widget.url.contains('kurviger')) {
                   return;
                 }
 
-                widget.onGpxDownloaded(
-                  writeTempFile(decoded.codeUnits),
-                );
+                final requestUrl = data.url.toString();
 
-                return;
-              }
+                if (requestUrl.startsWith('data:text')) {
+                  final cleanUrl = requestUrl.replaceAll(
+                    RegExp(r'data:text.*?,'),
+                    '',
+                  );
 
-              final uri = Uri.parse(requestUrl.replaceAll('blob:', ''));
+                  final decoded = Uri.decodeFull(cleanUrl);
 
-              final response = await http.get(uri, headers: {
-                'User-Agent': data.userAgent ?? '',
-                'Accept': data.mimeType ?? '',
-              });
+                  if (decoded.contains('<gpx') == false) {
+                    return;
+                  }
 
-              if (response.body.contains('<gpx') == false) {
-                return;
-              }
+                  _onGpxDownloaded(
+                    context,
+                    writeTempFile(decoded.codeUnits),
+                  );
 
-              widget.onGpxDownloaded(
-                writeTempFile(response.bodyBytes),
-              );
-            },
-          ),
+                  return;
+                }
+
+                final uri = Uri.parse(requestUrl.replaceAll('blob:', ''));
+
+                final response = await http.get(uri, headers: {
+                  'User-Agent': data.userAgent ?? '',
+                  'Accept': data.mimeType ?? '',
+                });
+
+                if (response.body.contains('<gpx') == false) {
+                  return;
+                }
+
+                if (context.mounted) {
+                  _onGpxDownloaded(
+                    context,
+                    writeTempFile(response.bodyBytes),
+                  );
+                }
+              },
+            );
+          }),
         ),
       ),
     );
@@ -162,5 +170,11 @@ class _ImportGpxToolScreenState extends State<ImportGpxToolScreen> {
     file.writeAsBytesSync(bytes);
 
     return file;
+  }
+
+  void _onGpxDownloaded(BuildContext context, File file) async {
+    await context.router.maybePop();
+
+    widget.onGpxDownloaded(file);
   }
 }

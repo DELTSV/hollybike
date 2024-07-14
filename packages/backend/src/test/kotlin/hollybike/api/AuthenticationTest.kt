@@ -283,8 +283,8 @@ class AuthenticationTest : IntegrationSpec({
 						)
 					)
 				}.apply {
-					status shouldBe HttpStatusCode.NotFound
-					bodyAsText() shouldBe "Aucune invitation valide"
+					status shouldBe HttpStatusCode.BadRequest
+					bodyAsText() shouldBe "Le mot de passe doit faire 8 caractère minimum"
 				}
 			}
 		}

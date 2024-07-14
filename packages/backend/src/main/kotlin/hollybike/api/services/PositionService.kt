@@ -143,6 +143,7 @@ class PositionService(
 			url {
 				protocol = URLProtocol.HTTPS
 				host = "nominatim.openstreetmap.org"
+				headers.append("User-Agent", "HollyBike/1.0")
 				path("reverse")
 				parameters.append("lat", positionRequest.latitude.toString())
 				parameters.append("lon", positionRequest.longitude.toString())

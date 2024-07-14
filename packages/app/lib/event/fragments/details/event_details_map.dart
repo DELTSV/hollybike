@@ -53,29 +53,7 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
                   .of(context)
                   .size
                   .width * 0.1,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 100,
-                    child: Lottie.asset(
-                      fit: BoxFit.cover,
-                      'assets/lottie/lottie_journey.json',
-                      repeat: false,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Aucun trajet lié à cet évènement ou aucun utilisateur ne partage sa position.',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+              child: _buildPlaceholder(),
             ),
           );
         }
@@ -89,6 +67,32 @@ class _EventDetailsMapState extends State<EventDetailsMap> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 100,
+          child: Lottie.asset(
+            fit: BoxFit.cover,
+            'assets/lottie/lottie_journey.json',
+            repeat: false,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Aucun trajet lié à cet évènement ou aucun utilisateur ne partage sa position.',
+          style: Theme
+              .of(context)
+              .textTheme
+              .bodyMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 

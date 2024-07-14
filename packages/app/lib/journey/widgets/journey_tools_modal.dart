@@ -99,11 +99,7 @@ class JourneyToolsModal extends StatelessWidget {
                           context.router.push(
                             ImportGpxToolRoute(
                               url: tool.url,
-                              onGpxDownloaded: (file) {
-                                Navigator.of(context).pop();
-
-                                onGpxDownloaded(file);
-                              },
+                              onGpxDownloaded: onGpxDownloaded,
                               onClose: () => Navigator.of(context).pop(),
                             ),
                           );
