@@ -63,7 +63,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       );
     } catch (e) {
       if (e is DioException) {
-        if (e.response?.statusCode == 403) {
+        if (e.response?.statusCode == 401) {
           emit(EditProfileLoadFailure(
             state,
             errorMessage: 'Mot de passe incorrect.',
