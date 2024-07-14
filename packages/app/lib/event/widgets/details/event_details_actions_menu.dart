@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/event_status_state.dart';
+import 'package:hollybike/positions/bloc/my_position/my_position_bloc.dart';
+import 'package:hollybike/positions/bloc/my_position/my_position_event.dart';
 
 import '../../bloc/event_details_bloc/event_details_bloc.dart';
 import '../../bloc/event_details_bloc/event_details_event.dart';
@@ -172,5 +174,9 @@ class EventDetailsActionsMenu extends StatelessWidget {
     context.read<EventDetailsBloc>().add(
           LeaveEvent(),
         );
+
+    context.read<MyPositionBloc>().add(
+      DisableSendPositions(),
+    );
   }
 }
