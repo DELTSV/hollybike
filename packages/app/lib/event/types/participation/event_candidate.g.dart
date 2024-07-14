@@ -12,6 +12,7 @@ _$EventCandidateImpl _$$EventCandidateImplFromJson(Map<String, dynamic> json) =>
       username: json['username'] as String,
       isOwner: json['is_owner'] as bool,
       profilePicture: json['profile_picture'] as String?,
+      profilePictureKey: json['profile_picture_key'] as String?,
       eventRole: $enumDecodeNullable(_$EventRoleEnumMap, json['event_role']),
     );
 
@@ -22,6 +23,7 @@ Map<String, dynamic> _$$EventCandidateImplToJson(
       'username': instance.username,
       'is_owner': instance.isOwner,
       'profile_picture': instance.profilePicture,
+      'profile_picture_key': instance.profilePictureKey,
       'event_role': _$EventRoleEnumMap[instance.eventRole],
     };
 

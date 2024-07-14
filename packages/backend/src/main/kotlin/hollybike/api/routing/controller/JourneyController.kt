@@ -333,6 +333,7 @@ class JourneyController(
 						journey.name,
 						journey.signedFile,
 						journey.signedPreviewImage,
+						journey.previewImage,
 						journey.createdAt,
 						TUserPartial(journey.creator),
 						TPartialAssociation(journey.association),

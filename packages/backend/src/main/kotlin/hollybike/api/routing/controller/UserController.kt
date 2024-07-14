@@ -165,7 +165,7 @@ class UserController(
 			)
 
 			path?.let { imagePath ->
-				call.respond(HttpStatusCode.OK, ImagePath(storageService.signer.sign(imagePath)))
+				call.respond(HttpStatusCode.OK, ImagePath(storageService.signer.sign(imagePath), imagePath))
 			} ?: run {
 				call.respond(HttpStatusCode.Forbidden)
 			}
@@ -195,7 +195,7 @@ class UserController(
 			)
 
 			path?.let { imagePath ->
-				call.respond(HttpStatusCode.OK, ImagePath(storageService.signer.sign(imagePath)))
+				call.respond(HttpStatusCode.OK, ImagePath(storageService.signer.sign(imagePath), imagePath))
 			} ?: run {
 				call.respond(HttpStatusCode.Forbidden)
 			}

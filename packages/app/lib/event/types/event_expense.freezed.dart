@@ -26,6 +26,8 @@ mixin _$EventExpense {
   DateTime get date => throw _privateConstructorUsedError;
   int get amount => throw _privateConstructorUsedError;
   String? get proof => throw _privateConstructorUsedError;
+  @JsonKey(name: 'proof_key')
+  String? get proofKey => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +47,8 @@ abstract class $EventExpenseCopyWith<$Res> {
       String? description,
       DateTime date,
       int amount,
-      String? proof});
+      String? proof,
+      @JsonKey(name: 'proof_key') String? proofKey});
 }
 
 /// @nodoc
@@ -67,6 +70,7 @@ class _$EventExpenseCopyWithImpl<$Res, $Val extends EventExpense>
     Object? date = null,
     Object? amount = null,
     Object? proof = freezed,
+    Object? proofKey = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -93,6 +97,10 @@ class _$EventExpenseCopyWithImpl<$Res, $Val extends EventExpense>
           ? _value.proof
           : proof // ignore: cast_nullable_to_non_nullable
               as String?,
+      proofKey: freezed == proofKey
+          ? _value.proofKey
+          : proofKey // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -111,7 +119,8 @@ abstract class _$$EventExpenseImplCopyWith<$Res>
       String? description,
       DateTime date,
       int amount,
-      String? proof});
+      String? proof,
+      @JsonKey(name: 'proof_key') String? proofKey});
 }
 
 /// @nodoc
@@ -131,6 +140,7 @@ class __$$EventExpenseImplCopyWithImpl<$Res>
     Object? date = null,
     Object? amount = null,
     Object? proof = freezed,
+    Object? proofKey = freezed,
   }) {
     return _then(_$EventExpenseImpl(
       id: null == id
@@ -157,6 +167,10 @@ class __$$EventExpenseImplCopyWithImpl<$Res>
           ? _value.proof
           : proof // ignore: cast_nullable_to_non_nullable
               as String?,
+      proofKey: freezed == proofKey
+          ? _value.proofKey
+          : proofKey // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -170,7 +184,8 @@ class _$EventExpenseImpl implements _EventExpense {
       this.description,
       required this.date,
       required this.amount,
-      this.proof});
+      this.proof,
+      @JsonKey(name: 'proof_key') this.proofKey});
 
   factory _$EventExpenseImpl.fromJson(Map<String, dynamic> json) =>
       _$$EventExpenseImplFromJson(json);
@@ -187,10 +202,13 @@ class _$EventExpenseImpl implements _EventExpense {
   final int amount;
   @override
   final String? proof;
+  @override
+  @JsonKey(name: 'proof_key')
+  final String? proofKey;
 
   @override
   String toString() {
-    return 'EventExpense(id: $id, name: $name, description: $description, date: $date, amount: $amount, proof: $proof)';
+    return 'EventExpense(id: $id, name: $name, description: $description, date: $date, amount: $amount, proof: $proof, proofKey: $proofKey)';
   }
 
   @override
@@ -204,13 +222,15 @@ class _$EventExpenseImpl implements _EventExpense {
                 other.description == description) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.amount, amount) || other.amount == amount) &&
-            (identical(other.proof, proof) || other.proof == proof));
+            (identical(other.proof, proof) || other.proof == proof) &&
+            (identical(other.proofKey, proofKey) ||
+                other.proofKey == proofKey));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, description, date, amount, proof);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, description, date, amount, proof, proofKey);
 
   @JsonKey(ignore: true)
   @override
@@ -233,7 +253,8 @@ abstract class _EventExpense implements EventExpense {
       final String? description,
       required final DateTime date,
       required final int amount,
-      final String? proof}) = _$EventExpenseImpl;
+      final String? proof,
+      @JsonKey(name: 'proof_key') final String? proofKey}) = _$EventExpenseImpl;
 
   factory _EventExpense.fromJson(Map<String, dynamic> json) =
       _$EventExpenseImpl.fromJson;
@@ -250,6 +271,9 @@ abstract class _EventExpense implements EventExpense {
   int get amount;
   @override
   String? get proof;
+  @override
+  @JsonKey(name: 'proof_key')
+  String? get proofKey;
   @override
   @JsonKey(ignore: true)
   _$$EventExpenseImplCopyWith<_$EventExpenseImpl> get copyWith =>

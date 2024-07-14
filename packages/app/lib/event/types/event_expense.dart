@@ -13,6 +13,7 @@ class EventExpense with _$EventExpense {
     required DateTime date,
     required int amount,
     String? proof,
+    @JsonKey(name: 'proof_key') String? proofKey,
   }) = _EventExpense;
 
   factory EventExpense.fromJson(JsonMap json) =>

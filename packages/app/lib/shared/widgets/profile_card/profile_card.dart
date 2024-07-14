@@ -33,6 +33,7 @@ class ProfileCard extends StatelessWidget {
       onTap: onTap == null ? null : () => _handleCardTap(context),
       profilePicture: UserProfilePicture(
         url: profile.profilePicture,
+        profilePictureKey: profile.profilePictureKey,
         radius: 20,
       ),
       profileTitle: ProfileTitle(profile: profile),

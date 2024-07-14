@@ -19,6 +19,7 @@ _$EventImpl _$$EventImplFromJson(Map<String, dynamic> json) => _$EventImpl(
       updatedAt: DateTime.parse(json['update_date_time'] as String),
       description: json['description'] as String?,
       image: json['image'] as String?,
+      imageKey: json['image_key'] as String?,
       budget: (json['budget'] as num?)?.toInt(),
     );
 
@@ -34,6 +35,7 @@ Map<String, dynamic> _$$EventImplToJson(_$EventImpl instance) =>
       'update_date_time': instance.updatedAt.toIso8601String(),
       'description': instance.description,
       'image': instance.image,
+      'image_key': instance.imageKey,
       'budget': instance.budget,
     };
 

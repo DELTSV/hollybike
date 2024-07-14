@@ -25,6 +25,7 @@ _$MinimalJourneyImpl _$$MinimalJourneyImplFromJson(Map<String, dynamic> json) =>
       totalElevationGain: (json['totalElevationGain'] as num?)?.toInt(),
       totalElevationLoss: (json['totalElevationLoss'] as num?)?.toInt(),
       previewImage: json['preview_image'] as String?,
+      previewImageKey: json['preview_image_key'] as String?,
     );
 
 Map<String, dynamic> _$$MinimalJourneyImplToJson(
@@ -41,4 +42,5 @@ Map<String, dynamic> _$$MinimalJourneyImplToJson(
       'totalElevationGain': instance.totalElevationGain,
       'totalElevationLoss': instance.totalElevationLoss,
       'preview_image': instance.previewImage,
+      'preview_image_key': instance.previewImageKey,
     };

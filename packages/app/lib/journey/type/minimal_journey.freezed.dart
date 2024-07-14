@@ -32,6 +32,8 @@ mixin _$MinimalJourney {
   int? get totalElevationLoss => throw _privateConstructorUsedError;
   @JsonKey(name: 'preview_image')
   String? get previewImage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'preview_image_key')
+  String? get previewImageKey => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -56,7 +58,8 @@ abstract class $MinimalJourneyCopyWith<$Res> {
       int? maxElevation,
       int? totalElevationGain,
       int? totalElevationLoss,
-      @JsonKey(name: 'preview_image') String? previewImage});
+      @JsonKey(name: 'preview_image') String? previewImage,
+      @JsonKey(name: 'preview_image_key') String? previewImageKey});
 
   $PositionCopyWith<$Res>? get start;
   $PositionCopyWith<$Res>? get end;
@@ -87,6 +90,7 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
     Object? totalElevationGain = freezed,
     Object? totalElevationLoss = freezed,
     Object? previewImage = freezed,
+    Object? previewImageKey = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -132,6 +136,10 @@ class _$MinimalJourneyCopyWithImpl<$Res, $Val extends MinimalJourney>
       previewImage: freezed == previewImage
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      previewImageKey: freezed == previewImageKey
+          ? _value.previewImageKey
+          : previewImageKey // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -192,7 +200,8 @@ abstract class _$$MinimalJourneyImplCopyWith<$Res>
       int? maxElevation,
       int? totalElevationGain,
       int? totalElevationLoss,
-      @JsonKey(name: 'preview_image') String? previewImage});
+      @JsonKey(name: 'preview_image') String? previewImage,
+      @JsonKey(name: 'preview_image_key') String? previewImageKey});
 
   @override
   $PositionCopyWith<$Res>? get start;
@@ -224,6 +233,7 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
     Object? totalElevationGain = freezed,
     Object? totalElevationLoss = freezed,
     Object? previewImage = freezed,
+    Object? previewImageKey = freezed,
   }) {
     return _then(_$MinimalJourneyImpl(
       id: null == id
@@ -270,6 +280,10 @@ class __$$MinimalJourneyImplCopyWithImpl<$Res>
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
               as String?,
+      previewImageKey: freezed == previewImageKey
+          ? _value.previewImageKey
+          : previewImageKey // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -288,7 +302,8 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
       required this.maxElevation,
       required this.totalElevationGain,
       required this.totalElevationLoss,
-      @JsonKey(name: 'preview_image') this.previewImage})
+      @JsonKey(name: 'preview_image') this.previewImage,
+      @JsonKey(name: 'preview_image_key') this.previewImageKey})
       : super._();
 
   factory _$MinimalJourneyImpl.fromJson(Map<String, dynamic> json) =>
@@ -317,10 +332,13 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
   @override
   @JsonKey(name: 'preview_image')
   final String? previewImage;
+  @override
+  @JsonKey(name: 'preview_image_key')
+  final String? previewImageKey;
 
   @override
   String toString() {
-    return 'MinimalJourney(id: $id, file: $file, start: $start, end: $end, destination: $destination, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss, previewImage: $previewImage)';
+    return 'MinimalJourney(id: $id, file: $file, start: $start, end: $end, destination: $destination, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss, previewImage: $previewImage, previewImageKey: $previewImageKey)';
   }
 
   @override
@@ -345,7 +363,9 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
             (identical(other.totalElevationLoss, totalElevationLoss) ||
                 other.totalElevationLoss == totalElevationLoss) &&
             (identical(other.previewImage, previewImage) ||
-                other.previewImage == previewImage));
+                other.previewImage == previewImage) &&
+            (identical(other.previewImageKey, previewImageKey) ||
+                other.previewImageKey == previewImageKey));
   }
 
   @JsonKey(ignore: true)
@@ -362,7 +382,8 @@ class _$MinimalJourneyImpl extends _MinimalJourney {
       maxElevation,
       totalElevationGain,
       totalElevationLoss,
-      previewImage);
+      previewImage,
+      previewImageKey);
 
   @JsonKey(ignore: true)
   @override
@@ -391,7 +412,8 @@ abstract class _MinimalJourney extends MinimalJourney {
           required final int? maxElevation,
           required final int? totalElevationGain,
           required final int? totalElevationLoss,
-          @JsonKey(name: 'preview_image') final String? previewImage}) =
+          @JsonKey(name: 'preview_image') final String? previewImage,
+          @JsonKey(name: 'preview_image_key') final String? previewImageKey}) =
       _$MinimalJourneyImpl;
   const _MinimalJourney._() : super._();
 
@@ -421,6 +443,9 @@ abstract class _MinimalJourney extends MinimalJourney {
   @override
   @JsonKey(name: 'preview_image')
   String? get previewImage;
+  @override
+  @JsonKey(name: 'preview_image_key')
+  String? get previewImageKey;
   @override
   @JsonKey(ignore: true)
   _$$MinimalJourneyImplCopyWith<_$MinimalJourneyImpl> get copyWith =>

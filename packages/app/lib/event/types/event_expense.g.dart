@@ -14,6 +14,7 @@ _$EventExpenseImpl _$$EventExpenseImplFromJson(Map<String, dynamic> json) =>
       date: DateTime.parse(json['date'] as String),
       amount: (json['amount'] as num).toInt(),
       proof: json['proof'] as String?,
+      proofKey: json['proof_key'] as String?,
     );
 
 Map<String, dynamic> _$$EventExpenseImplToJson(_$EventExpenseImpl instance) =>
@@ -24,4 +25,5 @@ Map<String, dynamic> _$$EventExpenseImplToJson(_$EventExpenseImpl instance) =>
       'date': instance.date.toIso8601String(),
       'amount': instance.amount,
       'proof': instance.proof,
+      'proof_key': instance.proofKey,
     };

@@ -31,6 +31,7 @@ class EventCandidateCard extends StatelessWidget {
         onChanged: (_) => onTap(),
         secondary: UserProfilePicture(
           url: candidate.profilePicture,
+          profilePictureKey: candidate.profilePictureKey,
           radius: 20,
         ),
         title: Text(

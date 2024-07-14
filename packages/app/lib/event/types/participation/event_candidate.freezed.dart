@@ -26,6 +26,8 @@ mixin _$EventCandidate {
   bool get isOwner => throw _privateConstructorUsedError;
   @JsonKey(name: "profile_picture")
   String? get profilePicture => throw _privateConstructorUsedError;
+  @JsonKey(name: "profile_picture_key")
+  String? get profilePictureKey => throw _privateConstructorUsedError;
   @JsonKey(name: "event_role")
   EventRole? get eventRole => throw _privateConstructorUsedError;
 
@@ -46,6 +48,7 @@ abstract class $EventCandidateCopyWith<$Res> {
       String username,
       @JsonKey(name: "is_owner") bool isOwner,
       @JsonKey(name: "profile_picture") String? profilePicture,
+      @JsonKey(name: "profile_picture_key") String? profilePictureKey,
       @JsonKey(name: "event_role") EventRole? eventRole});
 }
 
@@ -66,6 +69,7 @@ class _$EventCandidateCopyWithImpl<$Res, $Val extends EventCandidate>
     Object? username = null,
     Object? isOwner = null,
     Object? profilePicture = freezed,
+    Object? profilePictureKey = freezed,
     Object? eventRole = freezed,
   }) {
     return _then(_value.copyWith(
@@ -84,6 +88,10 @@ class _$EventCandidateCopyWithImpl<$Res, $Val extends EventCandidate>
       profilePicture: freezed == profilePicture
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
+              as String?,
+      profilePictureKey: freezed == profilePictureKey
+          ? _value.profilePictureKey
+          : profilePictureKey // ignore: cast_nullable_to_non_nullable
               as String?,
       eventRole: freezed == eventRole
           ? _value.eventRole
@@ -106,6 +114,7 @@ abstract class _$$EventCandidateImplCopyWith<$Res>
       String username,
       @JsonKey(name: "is_owner") bool isOwner,
       @JsonKey(name: "profile_picture") String? profilePicture,
+      @JsonKey(name: "profile_picture_key") String? profilePictureKey,
       @JsonKey(name: "event_role") EventRole? eventRole});
 }
 
@@ -124,6 +133,7 @@ class __$$EventCandidateImplCopyWithImpl<$Res>
     Object? username = null,
     Object? isOwner = null,
     Object? profilePicture = freezed,
+    Object? profilePictureKey = freezed,
     Object? eventRole = freezed,
   }) {
     return _then(_$EventCandidateImpl(
@@ -143,6 +153,10 @@ class __$$EventCandidateImplCopyWithImpl<$Res>
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
               as String?,
+      profilePictureKey: freezed == profilePictureKey
+          ? _value.profilePictureKey
+          : profilePictureKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       eventRole: freezed == eventRole
           ? _value.eventRole
           : eventRole // ignore: cast_nullable_to_non_nullable
@@ -159,6 +173,7 @@ class _$EventCandidateImpl implements _EventCandidate {
       required this.username,
       @JsonKey(name: "is_owner") required this.isOwner,
       @JsonKey(name: "profile_picture") this.profilePicture,
+      @JsonKey(name: "profile_picture_key") this.profilePictureKey,
       @JsonKey(name: "event_role") this.eventRole});
 
   factory _$EventCandidateImpl.fromJson(Map<String, dynamic> json) =>
@@ -175,12 +190,15 @@ class _$EventCandidateImpl implements _EventCandidate {
   @JsonKey(name: "profile_picture")
   final String? profilePicture;
   @override
+  @JsonKey(name: "profile_picture_key")
+  final String? profilePictureKey;
+  @override
   @JsonKey(name: "event_role")
   final EventRole? eventRole;
 
   @override
   String toString() {
-    return 'EventCandidate(id: $id, username: $username, isOwner: $isOwner, profilePicture: $profilePicture, eventRole: $eventRole)';
+    return 'EventCandidate(id: $id, username: $username, isOwner: $isOwner, profilePicture: $profilePicture, profilePictureKey: $profilePictureKey, eventRole: $eventRole)';
   }
 
   @override
@@ -194,14 +212,16 @@ class _$EventCandidateImpl implements _EventCandidate {
             (identical(other.isOwner, isOwner) || other.isOwner == isOwner) &&
             (identical(other.profilePicture, profilePicture) ||
                 other.profilePicture == profilePicture) &&
+            (identical(other.profilePictureKey, profilePictureKey) ||
+                other.profilePictureKey == profilePictureKey) &&
             (identical(other.eventRole, eventRole) ||
                 other.eventRole == eventRole));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, username, isOwner, profilePicture, eventRole);
+  int get hashCode => Object.hash(runtimeType, id, username, isOwner,
+      profilePicture, profilePictureKey, eventRole);
 
   @JsonKey(ignore: true)
   @override
@@ -224,6 +244,7 @@ abstract class _EventCandidate implements EventCandidate {
           required final String username,
           @JsonKey(name: "is_owner") required final bool isOwner,
           @JsonKey(name: "profile_picture") final String? profilePicture,
+          @JsonKey(name: "profile_picture_key") final String? profilePictureKey,
           @JsonKey(name: "event_role") final EventRole? eventRole}) =
       _$EventCandidateImpl;
 
@@ -240,6 +261,9 @@ abstract class _EventCandidate implements EventCandidate {
   @override
   @JsonKey(name: "profile_picture")
   String? get profilePicture;
+  @override
+  @JsonKey(name: "profile_picture_key")
+  String? get profilePictureKey;
   @override
   @JsonKey(name: "event_role")
   EventRole? get eventRole;

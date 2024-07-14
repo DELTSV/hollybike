@@ -57,7 +57,7 @@ class JourneyPreviewCardContent extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: JourneyImage(
-              journeyId: existingJourney.id,
+              imageKey: existingJourney.previewImageKey,
               imageUrl: existingJourney.previewImage,
             ),
           ),

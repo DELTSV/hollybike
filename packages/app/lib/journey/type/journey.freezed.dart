@@ -27,6 +27,8 @@ mixin _$Journey {
   DateTime get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'preview_image')
   String? get previewImage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'preview_image_key')
+  String? get previewImageKey => throw _privateConstructorUsedError;
   MinimalUser get creator => throw _privateConstructorUsedError;
   Position? get start => throw _privateConstructorUsedError;
   Position? get end => throw _privateConstructorUsedError;
@@ -53,6 +55,7 @@ abstract class $JourneyCopyWith<$Res> {
       String? file,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'preview_image') String? previewImage,
+      @JsonKey(name: 'preview_image_key') String? previewImageKey,
       MinimalUser creator,
       Position? start,
       Position? end,
@@ -87,6 +90,7 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
     Object? file = freezed,
     Object? createdAt = null,
     Object? previewImage = freezed,
+    Object? previewImageKey = freezed,
     Object? creator = null,
     Object? start = freezed,
     Object? end = freezed,
@@ -117,6 +121,10 @@ class _$JourneyCopyWithImpl<$Res, $Val extends Journey>
       previewImage: freezed == previewImage
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      previewImageKey: freezed == previewImageKey
+          ? _value.previewImageKey
+          : previewImageKey // ignore: cast_nullable_to_non_nullable
               as String?,
       creator: null == creator
           ? _value.creator
@@ -215,6 +223,7 @@ abstract class _$$JourneyImplCopyWith<$Res> implements $JourneyCopyWith<$Res> {
       String? file,
       @JsonKey(name: 'created_at') DateTime createdAt,
       @JsonKey(name: 'preview_image') String? previewImage,
+      @JsonKey(name: 'preview_image_key') String? previewImageKey,
       MinimalUser creator,
       Position? start,
       Position? end,
@@ -251,6 +260,7 @@ class __$$JourneyImplCopyWithImpl<$Res>
     Object? file = freezed,
     Object? createdAt = null,
     Object? previewImage = freezed,
+    Object? previewImageKey = freezed,
     Object? creator = null,
     Object? start = freezed,
     Object? end = freezed,
@@ -281,6 +291,10 @@ class __$$JourneyImplCopyWithImpl<$Res>
       previewImage: freezed == previewImage
           ? _value.previewImage
           : previewImage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      previewImageKey: freezed == previewImageKey
+          ? _value.previewImageKey
+          : previewImageKey // ignore: cast_nullable_to_non_nullable
               as String?,
       creator: null == creator
           ? _value.creator
@@ -331,6 +345,7 @@ class _$JourneyImpl extends _Journey {
       required this.file,
       @JsonKey(name: 'created_at') required this.createdAt,
       @JsonKey(name: 'preview_image') this.previewImage,
+      @JsonKey(name: 'preview_image_key') this.previewImageKey,
       required this.creator,
       required this.start,
       required this.end,
@@ -358,6 +373,9 @@ class _$JourneyImpl extends _Journey {
   @JsonKey(name: 'preview_image')
   final String? previewImage;
   @override
+  @JsonKey(name: 'preview_image_key')
+  final String? previewImageKey;
+  @override
   final MinimalUser creator;
   @override
   final Position? start;
@@ -378,7 +396,7 @@ class _$JourneyImpl extends _Journey {
 
   @override
   String toString() {
-    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, creator: $creator, start: $start, end: $end, destination: $destination, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss)';
+    return 'Journey(id: $id, name: $name, file: $file, createdAt: $createdAt, previewImage: $previewImage, previewImageKey: $previewImageKey, creator: $creator, start: $start, end: $end, destination: $destination, totalDistance: $totalDistance, minElevation: $minElevation, maxElevation: $maxElevation, totalElevationGain: $totalElevationGain, totalElevationLoss: $totalElevationLoss)';
   }
 
   @override
@@ -393,6 +411,8 @@ class _$JourneyImpl extends _Journey {
                 other.createdAt == createdAt) &&
             (identical(other.previewImage, previewImage) ||
                 other.previewImage == previewImage) &&
+            (identical(other.previewImageKey, previewImageKey) ||
+                other.previewImageKey == previewImageKey) &&
             (identical(other.creator, creator) || other.creator == creator) &&
             (identical(other.start, start) || other.start == start) &&
             (identical(other.end, end) || other.end == end) &&
@@ -419,6 +439,7 @@ class _$JourneyImpl extends _Journey {
       file,
       createdAt,
       previewImage,
+      previewImageKey,
       creator,
       start,
       end,
@@ -450,6 +471,7 @@ abstract class _Journey extends Journey {
       required final String? file,
       @JsonKey(name: 'created_at') required final DateTime createdAt,
       @JsonKey(name: 'preview_image') final String? previewImage,
+      @JsonKey(name: 'preview_image_key') final String? previewImageKey,
       required final MinimalUser creator,
       required final Position? start,
       required final Position? end,
@@ -475,6 +497,9 @@ abstract class _Journey extends Journey {
   @override
   @JsonKey(name: 'preview_image')
   String? get previewImage;
+  @override
+  @JsonKey(name: 'preview_image_key')
+  String? get previewImageKey;
   @override
   MinimalUser get creator;
   @override

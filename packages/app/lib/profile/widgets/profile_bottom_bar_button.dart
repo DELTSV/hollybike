@@ -44,6 +44,7 @@ class ProfileBottomBarButton extends StatelessWidget {
           if (currentProfile is ProfileLoadSuccessEvent) {
             return UserProfilePicture(
               url: currentProfile.profile.profilePicture,
+              profilePictureKey: currentProfile.profile.profilePictureKey,
               radius: 12,
               isLoading: false,
             );
@@ -51,6 +52,7 @@ class ProfileBottomBarButton extends StatelessWidget {
 
           return const UserProfilePicture(
             url: null,
+            profilePictureKey: null,
             radius: 12,
             isLoading: true,
           );

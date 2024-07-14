@@ -19,6 +19,7 @@ class Journey with _$Journey {
     required String? file,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'preview_image') String? previewImage,
+    @JsonKey(name: 'preview_image_key') String? previewImageKey,
     required MinimalUser creator,
     required Position? start,
     required Position? end,

@@ -14,6 +14,7 @@ class MinimalUser with _$MinimalUser {
     required UserScope scope,
     required UserStatus status,
     @JsonKey(name: "profile_picture") String? profilePicture,
+    @JsonKey(name: "profile_picture_key") String? profilePictureKey,
     String? role,
   }) = _MinimalUser;
 

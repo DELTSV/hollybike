@@ -54,7 +54,7 @@ class JourneyModal extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: JourneyImage(
-                  journeyId: journey.id,
+                  imageKey: journey.previewImageKey,
                   imageUrl: journey.previewImage,
                 ),
               ),

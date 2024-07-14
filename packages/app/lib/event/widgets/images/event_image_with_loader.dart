@@ -24,7 +24,7 @@ class EventImageWithLoader extends StatelessWidget {
           Hero(
             tag: 'event_image_${image.id}',
             child: CachedNetworkImage(
-              cacheKey: 'image_${image.id}',
+              cacheKey: image.key,
               imageUrl: image.url,
               fit: BoxFit.cover,
               progressIndicatorBuilder: (context, url, downloadProgress) {

@@ -31,6 +31,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 import kotlin.time.Duration.Companion.hours
 
 class EventService(
@@ -431,7 +432,16 @@ class EventService(
 	fun uploadEventImage(caller: User, eventId: Int, image: ByteArray, imageContentType: String): Result<Event> =
 		transaction(db) {
 			findEventIfOrganizer(eventId, caller).onFailure { return@transaction Result.failure(it) }.onSuccess {
-				val path = "e/$eventId/i"
+				try {
+					it.image?.let {
+						runBlocking { storageService.delete(it) }
+					}
+				} catch (e: Exception) {
+					e.printStackTrace()
+				}
+
+				val uuid = UUID.randomUUID().toString()
+				val path = "e/$eventId/i-$uuid"
 
 				runBlocking {
 					storageService.store(image, path, imageContentType)

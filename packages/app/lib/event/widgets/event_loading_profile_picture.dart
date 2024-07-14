@@ -5,12 +5,14 @@ import '../../shared/widgets/loading_placeholders/gradient_loading_placeholder.d
 
 class UserProfilePicture extends StatelessWidget {
   final String? url;
+  final String? profilePictureKey;
   final double radius;
   final bool isLoading;
 
   const UserProfilePicture({
     super.key,
     this.url,
+    this.profilePictureKey,
     required this.radius,
     this.isLoading = false,
   });
@@ -41,6 +43,7 @@ class UserProfilePicture extends StatelessWidget {
     }
 
     return CachedNetworkImage(
+      cacheKey: profilePictureKey,
       imageUrl: url!,
       imageBuilder: (context, imageProvider) => CircleAvatar(
         radius: radius,

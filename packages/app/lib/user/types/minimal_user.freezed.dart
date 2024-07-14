@@ -26,6 +26,8 @@ mixin _$MinimalUser {
   UserStatus get status => throw _privateConstructorUsedError;
   @JsonKey(name: "profile_picture")
   String? get profilePicture => throw _privateConstructorUsedError;
+  @JsonKey(name: "profile_picture_key")
+  String? get profilePictureKey => throw _privateConstructorUsedError;
   String? get role => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,6 +48,7 @@ abstract class $MinimalUserCopyWith<$Res> {
       UserScope scope,
       UserStatus status,
       @JsonKey(name: "profile_picture") String? profilePicture,
+      @JsonKey(name: "profile_picture_key") String? profilePictureKey,
       String? role});
 }
 
@@ -67,6 +70,7 @@ class _$MinimalUserCopyWithImpl<$Res, $Val extends MinimalUser>
     Object? scope = null,
     Object? status = null,
     Object? profilePicture = freezed,
+    Object? profilePictureKey = freezed,
     Object? role = freezed,
   }) {
     return _then(_value.copyWith(
@@ -90,6 +94,10 @@ class _$MinimalUserCopyWithImpl<$Res, $Val extends MinimalUser>
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
               as String?,
+      profilePictureKey: freezed == profilePictureKey
+          ? _value.profilePictureKey
+          : profilePictureKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       role: freezed == role
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
@@ -112,6 +120,7 @@ abstract class _$$MinimalUserImplCopyWith<$Res>
       UserScope scope,
       UserStatus status,
       @JsonKey(name: "profile_picture") String? profilePicture,
+      @JsonKey(name: "profile_picture_key") String? profilePictureKey,
       String? role});
 }
 
@@ -131,6 +140,7 @@ class __$$MinimalUserImplCopyWithImpl<$Res>
     Object? scope = null,
     Object? status = null,
     Object? profilePicture = freezed,
+    Object? profilePictureKey = freezed,
     Object? role = freezed,
   }) {
     return _then(_$MinimalUserImpl(
@@ -154,6 +164,10 @@ class __$$MinimalUserImplCopyWithImpl<$Res>
           ? _value.profilePicture
           : profilePicture // ignore: cast_nullable_to_non_nullable
               as String?,
+      profilePictureKey: freezed == profilePictureKey
+          ? _value.profilePictureKey
+          : profilePictureKey // ignore: cast_nullable_to_non_nullable
+              as String?,
       role: freezed == role
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
@@ -171,6 +185,7 @@ class _$MinimalUserImpl with DiagnosticableTreeMixin implements _MinimalUser {
       required this.scope,
       required this.status,
       @JsonKey(name: "profile_picture") this.profilePicture,
+      @JsonKey(name: "profile_picture_key") this.profilePictureKey,
       this.role});
 
   factory _$MinimalUserImpl.fromJson(Map<String, dynamic> json) =>
@@ -188,11 +203,14 @@ class _$MinimalUserImpl with DiagnosticableTreeMixin implements _MinimalUser {
   @JsonKey(name: "profile_picture")
   final String? profilePicture;
   @override
+  @JsonKey(name: "profile_picture_key")
+  final String? profilePictureKey;
+  @override
   final String? role;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MinimalUser(id: $id, username: $username, scope: $scope, status: $status, profilePicture: $profilePicture, role: $role)';
+    return 'MinimalUser(id: $id, username: $username, scope: $scope, status: $status, profilePicture: $profilePicture, profilePictureKey: $profilePictureKey, role: $role)';
   }
 
   @override
@@ -205,6 +223,7 @@ class _$MinimalUserImpl with DiagnosticableTreeMixin implements _MinimalUser {
       ..add(DiagnosticsProperty('scope', scope))
       ..add(DiagnosticsProperty('status', status))
       ..add(DiagnosticsProperty('profilePicture', profilePicture))
+      ..add(DiagnosticsProperty('profilePictureKey', profilePictureKey))
       ..add(DiagnosticsProperty('role', role));
   }
 
@@ -220,13 +239,15 @@ class _$MinimalUserImpl with DiagnosticableTreeMixin implements _MinimalUser {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.profilePicture, profilePicture) ||
                 other.profilePicture == profilePicture) &&
+            (identical(other.profilePictureKey, profilePictureKey) ||
+                other.profilePictureKey == profilePictureKey) &&
             (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, username, scope, status, profilePicture, role);
+  int get hashCode => Object.hash(runtimeType, id, username, scope, status,
+      profilePicture, profilePictureKey, role);
 
   @JsonKey(ignore: true)
   @override
@@ -249,6 +270,7 @@ abstract class _MinimalUser implements MinimalUser {
       required final UserScope scope,
       required final UserStatus status,
       @JsonKey(name: "profile_picture") final String? profilePicture,
+      @JsonKey(name: "profile_picture_key") final String? profilePictureKey,
       final String? role}) = _$MinimalUserImpl;
 
   factory _MinimalUser.fromJson(Map<String, dynamic> json) =
@@ -265,6 +287,9 @@ abstract class _MinimalUser implements MinimalUser {
   @override
   @JsonKey(name: "profile_picture")
   String? get profilePicture;
+  @override
+  @JsonKey(name: "profile_picture_key")
+  String? get profilePictureKey;
   @override
   String? get role;
   @override

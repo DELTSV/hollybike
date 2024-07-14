@@ -25,6 +25,7 @@ class Event with _$Event {
     @JsonKey(name: "update_date_time") required DateTime updatedAt,
     String? description,
     String? image,
+    @JsonKey(name: "image_key") String? imageKey,
     int? budget,
   }) = _Event;
 
@@ -45,6 +46,7 @@ class Event with _$Event {
   ImageProvider get imageProvider => imageProviderFromDateTimeAndImage(
         startDate,
         image: image,
+        cacheKey: imageKey,
       );
 
   MinimalEvent toMinimalEvent() {
@@ -58,6 +60,7 @@ class Event with _$Event {
       createdAt: createdAt,
       updatedAt: updatedAt,
       image: image,
+      imageKey: imageKey,
     );
   }
 
@@ -88,10 +91,13 @@ class Event with _$Event {
     }
   }
 
-  static ImageProvider imageProviderFromDateTimeAndImage(DateTime startDate,
-      {String? image}) {
+  static ImageProvider imageProviderFromDateTimeAndImage(
+    DateTime startDate, {
+    String? image,
+    String? cacheKey,
+  }) {
     if (image != null) {
-      return CachedNetworkImageProvider(image);
+      return CachedNetworkImageProvider(image, cacheKey: cacheKey);
     }
 
     return AssetImage(placeholderImageFromDateTime(startDate));
