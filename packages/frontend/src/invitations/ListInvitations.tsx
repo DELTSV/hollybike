@@ -130,7 +130,6 @@ export function ListInvitations() {
 							width: "150px",
 						},
 					]}
-					if={association !== undefined}
 					baseUrl={url} line={(i: TInvitation) => [
 						<Cell>
 							{ i.label }
