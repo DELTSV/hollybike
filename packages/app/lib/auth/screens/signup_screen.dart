@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/app/app_router.gr.dart';
 import 'package:hollybike/auth/bloc/auth_bloc.dart';
-import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/auth/types/form_texts.dart';
 import 'package:hollybike/auth/types/signup_dto.dart';
 import 'package:hollybike/auth/widgets/form_builder.dart';
