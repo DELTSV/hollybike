@@ -150,7 +150,7 @@ export function List<T>(props: ListProps<T>) {
 					<span className={"w-6 block"}>{ data.data?.total_page }</span>
 				</p>
 				<Button
-					onClick={() => setPage(prev => prev > (data.data?.total_page ?? 1) - 1 ? prev : prev + 1)}
+					onClick={() => setPage(prev => prev >= (data.data?.total_page ?? 1) - 1 ? prev : prev + 1)}
 				>
 					Page Suivante
 				</Button>
