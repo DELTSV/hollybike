@@ -125,6 +125,7 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => EventRepository(
                   eventApi: EventApi(
                     client: RepositoryProvider.of<DioClient>(context),
+                    downloader: RepositoryProvider.of<Downloader>(context),
                   ),
                 ),
               ),
@@ -153,6 +154,7 @@ class _MyAppState extends State<MyApp> {
                 create: (context) => ImageRepository(
                   imageApi: ImageApi(
                     client: RepositoryProvider.of<DioClient>(context),
+                    downloader: RepositoryProvider.of<Downloader>(context),
                   ),
                 ),
               ),

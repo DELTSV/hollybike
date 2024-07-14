@@ -15,6 +15,7 @@ class EventImageDetailsBloc
   }) : super(EventImageDetailsInitial()) {
     on<GetEventImageDetails>(_onGetEventImageDetails);
     on<DeleteImage>(_onDeleteImage);
+    on<DownloadImage>(_onDownloadImage);
   }
 
   Future<void> _onGetEventImageDetails(
@@ -55,6 +56,27 @@ class EventImageDetailsBloc
       emit(DeleteImageSuccess(state));
     } catch (e) {
       log('Error while deleting image: $e');
+      emit(EventImageDetailsLoadFailure(
+        state,
+        errorMessage: 'Une erreur est survenue',
+      ));
+      return;
+    }
+  }
+
+  Future<void> _onDownloadImage(
+    DownloadImage event,
+    Emitter<EventImageDetailsState> emit,
+  ) async {
+    try {
+      await imageRepository.downloadImage(
+        event.imageUrl,
+        event.imgId,
+      );
+
+      emit(DownloadImageSuccess(state));
+    } catch (e) {
+      log('Error while downloading image: $e');
       emit(EventImageDetailsLoadFailure(
         state,
         errorMessage: 'Une erreur est survenue',

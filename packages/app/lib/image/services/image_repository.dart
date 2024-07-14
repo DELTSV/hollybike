@@ -123,4 +123,14 @@ class ImageRepository {
       imageId,
     );
   }
+
+  Future<void> downloadImage(
+    String imageUrl,
+    int imgId,
+  ) async {
+    await imageApi.downloadImage(
+      imageUrl,
+      imgId,
+    );
+  }
 }
