@@ -1,0 +1,8 @@
+{
+  "label": "Installation - On premise",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Installer HollyBike en version on-premise"
+  }
+}
