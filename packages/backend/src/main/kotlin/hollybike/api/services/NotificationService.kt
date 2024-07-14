@@ -24,7 +24,7 @@ class NotificationService(
 	private val notificationChannels: MutableMap<Int, MutableSharedFlow<TNotification>> = mutableMapOf()
 
 	fun getUserChannel(userId: Int): MutableSharedFlow<TNotification> = notificationChannels.getOrElse(userId) {
-		val new = MutableSharedFlow<TNotification>(15, 15)
+		val new = MutableSharedFlow<TNotification>()
 		notificationChannels[userId] = new
 		return new
 	}
