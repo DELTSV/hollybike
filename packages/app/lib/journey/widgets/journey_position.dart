@@ -31,9 +31,9 @@ class JourneyPosition extends StatelessWidget {
       texts.add(span);
     }
 
-    final countyName = pos?.countyName;
-    final cityName = pos?.cityName;
-    final countryName = pos?.countryName;
+    final countyName = pos.countyName;
+    final cityName = pos.cityName;
+    final countryName = pos.countryName;
 
     if (cityName != null) {
       addSpan(TextSpan(

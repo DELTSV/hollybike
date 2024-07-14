@@ -173,7 +173,6 @@ class _ImportGpxToolScreenState extends State<ImportGpxToolScreen> {
   }
 
   void _onGpxDownloaded(BuildContext context, File file) async {
-    print('GPX downloaded: ${file.path}');
     await context.router.maybePop();
 
     widget.onGpxDownloaded(file);
