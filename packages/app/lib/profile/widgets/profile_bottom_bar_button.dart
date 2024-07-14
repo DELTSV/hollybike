@@ -7,22 +7,20 @@ import '../../event/widgets/event_loading_profile_picture.dart';
 import '../bloc/profile_bloc/profile_bloc.dart';
 
 class ProfileBottomBarButton extends StatelessWidget {
-  const ProfileBottomBarButton({super.key});
+  final bool isSelected;
+  final Color color;
+  final double size;
+
+  const ProfileBottomBarButton({
+    super.key,
+    this.isSelected = false,
+    required this.color,
+    required this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return NavigationDestination(
-      selectedIcon: Container(
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onPrimary,
-          shape: BoxShape.circle,
-        ),
-        child: _renderProfilePicture(context),
-      ),
-      icon: _renderProfilePicture(context),
-      label: 'Profile',
-    );
+    return _renderProfilePicture(context);
   }
 
   void _handleLongPress(context) {
@@ -42,21 +40,47 @@ class ProfileBottomBarButton extends StatelessWidget {
           final currentProfile = bloc.currentProfile;
 
           if (currentProfile is ProfileLoadSuccessEvent) {
-            return UserProfilePicture(
-              url: currentProfile.profile.profilePicture,
-              profilePictureKey: currentProfile.profile.profilePictureKey,
-              radius: 12,
-              isLoading: false,
+            return _profilePictureContainer(
+              context,
+              UserProfilePicture(
+                url: currentProfile.profile.profilePicture,
+                profilePictureKey: currentProfile.profile.profilePictureKey,
+                radius: size * 0.5,
+                isLoading: false,
+              ),
             );
           }
 
-          return const UserProfilePicture(
-            url: null,
-            profilePictureKey: null,
-            radius: 12,
-            isLoading: true,
+          return _profilePictureContainer(
+            context,
+            UserProfilePicture(
+              url: null,
+              profilePictureKey: null,
+              radius: size * 0.5,
+              isLoading: true,
+            ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _profilePictureContainer(
+    BuildContext context,
+    Widget child,
+  ) {
+    return Center(
+      child: Container(
+        height: size,
+        width: size,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? color : Colors.transparent,
+            width: 2,
+          ),
+          shape: BoxShape.circle,
+        ),
+        child: child,
       ),
     );
   }
