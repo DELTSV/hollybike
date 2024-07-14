@@ -138,13 +138,6 @@ class AuthService(
 		if (!verifyLinkSignature(signup.verify, host, signup.role, signup.association, signup.invitation)) {
 			return Result.failure(NotAllowedException())
 		}
-		transaction(db) {
-			invitationService.getValidInvitation(signup.invitation)?.let {
-				it.uses += 1
-			}
-		} ?: run {
-			return Result.failure(InvitationNotFoundException())
-		}
 
 		return userService.createUser(
 			signup.email,
@@ -153,6 +146,14 @@ class AuthService(
 			signup.association,
 			signup.role
 		).map {
+			transaction(db) {
+				invitationService.getValidInvitation(signup.invitation)?.let { i ->
+					i.uses += 1
+				}
+			} ?: run {
+				return Result.failure(InvitationNotFoundException())
+			}
+
 			val refresh = randomString(35)
 			val deviceId = UUID.randomUUID().toString()
 			transaction(db) {
