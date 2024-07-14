@@ -129,6 +129,7 @@ fun Application.setupFailover() {
 		configureSerialization()
 		confMode()
 		configureRestart(true)
+		frontend()
 	} else {
 		println("Cannot start API")
 	}
