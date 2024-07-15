@@ -22,42 +22,54 @@ class EventStatusFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<MyPositionBloc, MyPositionState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            _buildFeed(
+              state is MyPositionLoading,
+              state.eventId == eventDetails.event.id,
+            ),
+            EventPositionSwitch(
+              eventDetails: eventDetails,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFeed(bool isLoading, bool isCurrentEvent) {
     final canEdit = eventDetails.isOrganizer;
 
     switch (eventDetails.event.status) {
       case EventStatusState.pending:
-        return EventPendingStatus(eventId: eventDetails.event.id);
+        return EventPendingStatus(
+          eventId: eventDetails.event.id,
+          isLoading: isLoading,
+        );
       case EventStatusState.canceled:
         return EventCancelledStatus(
           eventId: eventDetails.event.id,
           canCancel: canEdit,
+          isLoading: isLoading,
         );
       case EventStatusState.scheduled:
         return EventScheduledStatus(
           eventDetails: eventDetails,
+          isLoading: isLoading,
         );
       case EventStatusState.finished:
         return EventFinishedStatus(
-          endDate: eventDetails.event.endDate ??
-              eventDetails.event.startDate.add(const Duration(hours: 4)),
+          isLoading: isLoading,
+          eventDetails: eventDetails,
+          isCurrentEvent: isCurrentEvent,
         );
       case EventStatusState.now:
-        return BlocBuilder<MyPositionBloc, MyPositionState>(
-          builder: (context, state) {
-            return Column(
-              children: [
-                EventNowStatus(
-                  isLoading: state is MyPositionLoading,
-                  eventDetails: eventDetails,
-                  isShared:
-                      state.isRunning && state.eventId == eventDetails.event.id,
-                ),
-                EventPositionSwitch(
-                  eventDetails: eventDetails,
-                ),
-              ],
-            );
-          },
+        return EventNowStatus(
+          isLoading: isLoading,
+          eventDetails: eventDetails,
+          isCurrentEvent: isCurrentEvent,
         );
     }
   }
