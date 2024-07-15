@@ -28,7 +28,7 @@ class UserLoadSuccessEvent extends UserLoadEvent {
     required super.observerSession,
     required super.id,
     required this.user,
-  }) : expiredAt = DateTime.now().add(const Duration(seconds: 5));
+  }) : expiredAt = DateTime.now().add(const Duration(minutes: 59));
 }
 
 class UserLoadErrorEvent extends UserLoadEvent {
