@@ -22,12 +22,13 @@ class UserLoadingEvent extends UserLoadEvent {
 
 class UserLoadSuccessEvent extends UserLoadEvent {
   final MinimalUser user;
+  final DateTime expiredAt;
 
-  const UserLoadSuccessEvent({
+  UserLoadSuccessEvent({
     required super.observerSession,
     required super.id,
     required this.user,
-  });
+  }) : expiredAt = DateTime.now().add(const Duration(minutes: 59));
 }
 
 class UserLoadErrorEvent extends UserLoadEvent {

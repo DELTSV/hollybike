@@ -54,7 +54,23 @@ class InvalidateProfileState extends ProfileState {
     required ProfileIdentifier profileIdentifier,
   }) : super(
           profilesLoad: oldState.profilesLoad
-              .where((profile) => profile.session != profileIdentifier.session)
+              .where((profile) {
+                final isSuccess = profile is ProfileLoadSuccessEvent;
+
+                final isSession = profile.session == profileIdentifier.session;
+
+                if (isSession && profileIdentifier.id == null) {
+                  return false;
+                }
+
+                final isUser = isSuccess && profile.profile.id == profileIdentifier.id;
+
+                if (isUser && isSession) {
+                  return false;
+                }
+
+                return true;
+          })
               .toList(),
           usersLoad: profileIdentifier.id == null ? oldState.usersLoad : oldState.usersLoad
               .where(

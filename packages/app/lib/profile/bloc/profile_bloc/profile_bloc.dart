@@ -8,10 +8,14 @@ import 'package:hollybike/user/types/minimal_user.dart';
 
 import '../../services/profile_repository.dart';
 
-part 'profile_state.dart';
 part './events/profile_event.dart';
 part './events/profile_load_event.dart';
 part './events/user_load_event.dart';
+part 'profile_state.dart';
+
+class ExpiredProfileException implements Exception {}
+
+class ExpiredUserException implements Exception {}
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository profileRepository;
@@ -24,10 +28,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   ProfileLoadEvent? getProfile(AuthSession session) {
     try {
+      final profile = state.profilesLoad
+          .firstWhere((loadEvent) => loadEvent.session == session);
+
+      if (profile is ProfileLoadSuccessEvent) {
+        if (profile.expiredAt.isBefore(DateTime.now())) {
+          throw ExpiredProfileException();
+        }
+      }
+
       return state.profilesLoad
           .firstWhere((loadEvent) => loadEvent.session == session);
-    } catch (_) {
-      final futureOrProfile = profileRepository.getProfile(session);
+    } catch (e) {
+      final futureOrProfile = profileRepository.getProfile(
+        session,
+        isForce: e is ExpiredProfileException,
+      );
 
       if (futureOrProfile is Future<Profile>) {
         futureOrProfile.then((profile) {
@@ -53,10 +69,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (currentSession == null) return null;
 
     try {
-      return state.usersLoad.firstWhere((loadEvent) =>
-          loadEvent.id == id && loadEvent.observerSession == currentSession);
-    } catch (_) {
-      final futureOrUser = profileRepository.getUserById(id, currentSession);
+      final profile = state.usersLoad.firstWhere(
+        (loadEvent) =>
+            loadEvent.id == id && loadEvent.observerSession == currentSession,
+      );
+
+      if (profile is UserLoadSuccessEvent) {
+        if (profile.expiredAt.isBefore(DateTime.now())) {
+          throw ExpiredUserException();
+        }
+      }
+
+      return profile;
+    } catch (e) {
+      final futureOrUser = profileRepository.getUserById(
+        id,
+        currentSession,
+        isForce: e is ExpiredUserException,
+      );
 
       if (futureOrUser is Future<MinimalUser>) {
         futureOrUser.then((user) {
@@ -101,9 +131,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onSubscribeToInvalidatedProfiles(
-      SubscribeToInvalidatedProfiles event,
-      Emitter<ProfileState> emit,
-      ) async {
+    SubscribeToInvalidatedProfiles event,
+    Emitter<ProfileState> emit,
+  ) async {
     await emit.forEach<ProfileIdentifier>(
       profileRepository.profileInvalidationStream,
       onData: (invalidProfile) {
