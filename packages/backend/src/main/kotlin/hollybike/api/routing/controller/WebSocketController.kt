@@ -70,9 +70,12 @@ class WebSocketController(
 			onUnsubscribe {
 				user = null
 			}
+			logger.debug("Receive message")
 			when(this.body) {
 				is UserSendPosition -> {
+					logger.debug("Receive user position")
 					user?.let {
+						logger.debug("Send position to service")
 						userEventPositionService.getReceiveChannel(parameters["id"]!!.toInt(), it.id.value).send(this.body)
 					}
 				}

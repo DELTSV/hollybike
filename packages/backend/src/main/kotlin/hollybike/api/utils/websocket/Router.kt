@@ -64,7 +64,7 @@ typealias RouteElement = MutableMap<PathElement, WebSocketRoute>
 
 class WebSocketRouter(
 	private val authVerifier: AuthVerifier,
-	private val logger: Logger
+	val logger: Logger
 ) {
 
 	private val routes: RouteElement = mutableMapOf()
