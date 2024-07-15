@@ -32,6 +32,7 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
     on<TerminateUserJourney>(_onTerminateUserJourney);
     on<ResetUserJourney>(_onResetUserJourney);
     on<EventStarted>(_onEventStarted);
+    on<UploadEventImage>(_onUploadEventImage);
   }
 
   Future<void> _onSubscribeToEvent(
@@ -256,6 +257,31 @@ class EventDetailsBloc extends Bloc<EventDetailsEvent, EventDetailsState> {
       _eventRepository.eventStarted(eventId);
     } catch (e) {
       log('Error while starting event', error: e);
+    }
+  }
+
+  Future<void> _onUploadEventImage(
+    UploadEventImage event,
+    Emitter<EventDetailsState> emit,
+      ) async {
+    emit(EventOperationInProgress(state));
+
+    try {
+      await _eventRepository.uploadEventImage(
+        eventId,
+        event.imageFile,
+      );
+
+      emit(EventOperationSuccess(
+        state,
+        successMessage: 'Image mise à jour',
+      ));
+    } catch (e) {
+      log('Error while uploading event image', error: e);
+      emit(EventOperationFailure(
+        state,
+        errorMessage: 'Impossible d\'ajouter l\'image',
+      ));
     }
   }
 }

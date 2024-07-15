@@ -18,3 +18,13 @@ class DeleteImage extends EventImageDetailsEvent {
     required this.imageId,
   });
 }
+
+class DownloadImage extends EventImageDetailsEvent {
+  final String imageUrl;
+  final int imgId;
+
+  DownloadImage({
+    required this.imageUrl,
+    required this.imgId,
+  });
+}

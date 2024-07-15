@@ -60,9 +60,7 @@ class DeleteImageSuccess extends EventImageDetailsState {
       : super.state(state.copyWith(status: EventImageDetailsStatus.success));
 }
 
-class DeleteImageFailure extends EventImageDetailsState {
-  final String errorMessage;
-
-  DeleteImageFailure(EventImageDetailsState state, {required this.errorMessage})
-      : super.state(state.copyWith(status: EventImageDetailsStatus.error));
+class DownloadImageSuccess extends EventImageDetailsState {
+  DownloadImageSuccess(EventImageDetailsState state)
+      : super.state(state.copyWith(status: EventImageDetailsStatus.success));
 }

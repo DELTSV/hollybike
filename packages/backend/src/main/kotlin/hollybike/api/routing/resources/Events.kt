@@ -1,6 +1,5 @@
 package hollybike.api.routing.resources
 
-import hollybike.api.routing.resources.Events.Id.Participations.User.Journey
 import io.ktor.resources.*
 
 @Resource("/events")

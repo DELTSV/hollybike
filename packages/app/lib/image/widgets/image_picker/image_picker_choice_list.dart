@@ -58,6 +58,9 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
   @override
   Widget build(BuildContext context) {
     final list = [
+      ImagePickerCameraButton(
+        onImageSelected: (image) => widget.onImagesSelected([image]),
+      ),
       ...mediumIdList.map((mediumId) {
         return ImagePickerThumbnail(
           mediumId: mediumId,
@@ -65,9 +68,6 @@ class _ImagePickerChoiceListState extends State<ImagePickerChoiceList> {
           onImageSelected: (image) => widget.onImagesSelected([image]),
         );
       }),
-      ImagePickerCameraButton(
-        onImageSelected: (image) => widget.onImagesSelected([image]),
-      ),
       ImagePickerGalleryButton(
         mode: widget.mode,
         onImagesSelected: widget.onImagesSelected,

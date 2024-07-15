@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../types/event_form_data.dart';
@@ -55,4 +57,12 @@ class ResetUserJourney extends EventDetailsEvent {
 
 class EventStarted extends EventDetailsEvent {
   EventStarted();
+}
+
+class UploadEventImage extends EventDetailsEvent {
+  final File imageFile;
+
+  UploadEventImage({
+    required this.imageFile,
+  });
 }
