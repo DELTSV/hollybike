@@ -7,7 +7,7 @@ import kotlinx.datetime.toJavaInstant
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest
 import java.nio.file.Path
-import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.days
 
 class CloudFrontStorageSignatureService(
 	private val conf: ConfSecurity,
@@ -29,7 +29,7 @@ class CloudFrontStorageSignatureService(
 	}
 
 	private fun getSignedPath(path: String): String {
-		val expirationDate: Instant = Clock.System.now() + 1.hours
+		val expirationDate: Instant = Clock.System.now() + 2.days
 		val resourceUrl = "${conf.domain}/storage/$path"
 		val keyPairId = conf.cfKeyPairId!!
 		val cannedRequest = CannedSignerRequest.builder()
