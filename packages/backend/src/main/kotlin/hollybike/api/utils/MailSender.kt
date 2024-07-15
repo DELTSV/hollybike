@@ -37,7 +37,7 @@ class MailSender(
 		EmailBuilder.startingBlank()
 			.from(sender)
 			.to(dest)
-			.withSubject("Lien d'inscription a hollybike")
+			.withSubject("Demande de changement de mot de passe")
 			.withHTMLText(htmlChange(link, username))
 			.buildEmail()
 			.let {
