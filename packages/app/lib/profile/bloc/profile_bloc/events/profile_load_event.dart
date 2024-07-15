@@ -3,7 +3,9 @@ part of '../profile_bloc.dart';
 abstract class ProfileLoadEvent extends ProfileEvent {
   final AuthSession session;
 
-  const ProfileLoadEvent({required this.session}) : super();
+  const ProfileLoadEvent({
+    required this.session,
+  }) : super();
 
   @override
   bool operator ==(covariant ProfileLoadEvent other) {
@@ -15,16 +17,19 @@ abstract class ProfileLoadEvent extends ProfileEvent {
 }
 
 class ProfileLoadingEvent extends ProfileLoadEvent {
-  const ProfileLoadingEvent({required super.session});
+  const ProfileLoadingEvent({
+    required super.session,
+  });
 }
 
 class ProfileLoadSuccessEvent extends ProfileLoadEvent {
   final Profile profile;
+  final DateTime expiredAt;
 
-  const ProfileLoadSuccessEvent({
+  ProfileLoadSuccessEvent({
     required super.session,
     required this.profile,
-  });
+  }) : expiredAt = DateTime.now().add(const Duration(seconds: 5));
 }
 
 class ProfileLoadErrorEvent extends ProfileLoadEvent {

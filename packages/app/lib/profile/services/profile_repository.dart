@@ -46,16 +46,31 @@ class ProfileRepository {
   })  : profiles = {},
         users = {};
 
-  FutureOr<Profile> getProfile(AuthSession session) async {
-    final cachedProfile = profiles[session];
-    if (cachedProfile is Profile) return cachedProfile;
+  FutureOr<Profile> getProfile(
+    AuthSession session, {
+    bool isForce = false,
+  }) async {
+    if (!isForce) {
+      final cachedProfile = profiles[session];
+      if (cachedProfile is Profile) return cachedProfile;
+    }
+
     final profile = await profileApi.getProfile(session);
+
     profiles[session] = profile;
     return profile;
   }
 
-  FutureOr<MinimalUser> getUserById(int id, AuthSession currentSession) async {
+  FutureOr<MinimalUser> getUserById(
+    int id,
+    AuthSession currentSession, {
+    bool isForce = false,
+  }) async {
     try {
+      if (isForce) {
+        throw Exception('Force');
+      }
+
       bool isSearchedProfile(MinimalUser profile) => profile.id == id;
       return profiles.values
           .map((sessionProfile) => sessionProfile.toMinimalUser())
@@ -65,6 +80,7 @@ class ProfileRepository {
           );
     } catch (_) {
       final user = await profileApi.getUserById(id);
+
       users[currentSession] = [...?users[currentSession], user];
       return user;
     }
