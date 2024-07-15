@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hollybike/event/types/minimal_event.dart';
 import 'package:hollybike/event/widgets/event_status.dart';
+import 'package:hollybike/positions/bloc/my_position/my_position_bloc.dart';
+import 'package:hollybike/positions/bloc/my_position/my_position_state.dart';
 import 'package:hollybike/shared/utils/safe_set_state.dart';
 
 import '../../../shared/utils/dates.dart';
@@ -145,37 +148,52 @@ class _EventPreviewCardState extends State<EventPreviewCard> {
   }
 
   Widget _buildImage() {
-    return Stack(
-      children: [
-        SizedBox(
-          height: double.infinity,
-          child: Container(
-            foregroundDecoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Theme.of(context).cardColor.withOpacity(0.5),
-                  Theme.of(context).cardColor,
-                ],
+    return BlocBuilder<MyPositionBloc, MyPositionState>(
+      builder: (context, state) {
+        return Stack(
+          children: [
+            SizedBox(
+              height: double.infinity,
+              width: double.infinity,
+              child: Container(
+                foregroundDecoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Theme.of(context).cardColor.withOpacity(0.5),
+                      Theme.of(context).cardColor,
+                    ],
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.horizontal(
+                    left: Radius.circular(10),
+                  ),
+                  child: Image(
+                    image: widget.event.imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.horizontal(
-                left: Radius.circular(10),
-              ),
-              child: Image(
-                image: widget.event.imageProvider,
-                fit: BoxFit.cover,
-              ),
+            Align(
+              alignment: Alignment.center,
+              child: EventDate(date: widget.event.startDate),
             ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: EventDate(date: widget.event.startDate),
-        ),
-      ],
+            if (widget.event.id == state.eventId)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Icon(
+                  Icons.location_on,
+                  color: Colors.lightBlueAccent.shade200,
+                  size: 18,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 

@@ -11,14 +11,14 @@ import '../../../types/event_status_state.dart';
 
 class EventNowStatus extends StatelessWidget {
   final EventDetails eventDetails;
-  final bool isShared;
   final bool isLoading;
+  final bool isCurrentEvent;
 
   const EventNowStatus({
     super.key,
     required this.eventDetails,
-    required this.isShared,
     this.isLoading = false,
+    this.isCurrentEvent = false,
   });
 
   get canTerminateJourney =>
@@ -48,7 +48,7 @@ class EventNowStatus extends StatelessWidget {
     return () => {
           showDialog(
             context: context,
-            builder: (contextDialog) {
+            builder: (_) {
               return AlertDialog(
                 title: const Text("Terminer le parcours"),
                 content: const Text(
@@ -69,9 +69,11 @@ class EventNowStatus extends StatelessWidget {
                             TerminateUserJourney(),
                           );
 
-                      context.read<MyPositionBloc>().add(
-                            DisableSendPositions(),
-                          );
+                      if (isCurrentEvent) {
+                        context.read<MyPositionBloc>().add(
+                          DisableSendPositions(),
+                        );
+                      }
                     },
                     child: const Text("Terminer"),
                   ),

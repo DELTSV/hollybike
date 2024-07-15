@@ -346,9 +346,9 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
 
   String _getIsBetterThanCountText(bool isCurrentUser) {
     if (isCurrentUser) {
-      return 'Vous êtes le meilleur dans $_betterThanCount catégories !';
+      return 'Vous êtes le/la meilleur·e dans $_betterThanCount catégories !';
     } else {
-      return '${widget.user?.username} est le meilleur dans $_betterThanCount catégories !';
+      return '${widget.user?.username} est le/la meilleur·e dans $_betterThanCount catégories !';
     }
   }
 
@@ -459,7 +459,7 @@ class _UserJourneyModalState extends State<UserJourneyModal> {
             return AlertDialog(
               title: const Text('Êtes-vous sûr de réinitialiser le parcours ?'),
               content: const Text(
-                'Le parcours sera discoscié de l\'événement mais restera disponible dans votre historique.',
+                'Le parcours sera dissocié de l\'événement, mais restera disponible dans votre historique.',
               ),
               actions: <Widget>[
                 TextButton(
