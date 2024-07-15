@@ -149,6 +149,7 @@ class _EventPreviewCardState extends State<EventPreviewCard> {
       children: [
         SizedBox(
           height: double.infinity,
+          width: double.infinity,
           child: Container(
             foregroundDecoration: BoxDecoration(
               gradient: LinearGradient(
