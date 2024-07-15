@@ -13,6 +13,8 @@ import {
 import { OpenInNew } from "@material-ui/icons";
 import { equals } from "../../utils/equals.ts";
 import { Card } from "../../components/Card/Card.tsx";
+import { EUserStatusToString } from "../../types/EUserStatus.ts";
+import { EUserScopeToString } from "../../types/EUserScope.ts";
 
 export function ListUser() {
 	const {
@@ -51,8 +53,8 @@ export function ListUser() {
 				line={(u: TUser) => [
 					<Cell>{ u.email }</Cell>,
 					<Cell>{ u.username }</Cell>,
-					<Cell>{ u.scope }</Cell>,
-					<Cell>{ u.status }</Cell>,
+					<Cell>{ EUserScopeToString(u.scope) }</Cell>,
+					<Cell>{ EUserStatusToString(u.status) }</Cell>,
 					<Cell>{ new Date(u.last_login).toLocaleString() }</Cell>,
 					<Cell><Link to={`/associations/${u.association.id}`}>{ u.association.name }</Link></Cell>,
 					<Cell><Link to={`/users/${u.id}`}><OpenInNew/></Link></Cell>,

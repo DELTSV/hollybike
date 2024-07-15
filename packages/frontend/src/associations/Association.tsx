@@ -24,6 +24,9 @@ import { Report } from "./Report.tsx";
 import { ButtonDanger } from "../components/Button/ButtonDanger.tsx";
 import { Modal } from "../components/Modal/Modal.tsx";
 import { EUserScope } from "../types/EUserScope.ts";
+import {
+	EAssociationStatus, EAssociationStatusOptions,
+} from "../types/EAssociationStatus.ts";
 
 export function Association() {
 	const { user } = useUser();
@@ -67,19 +70,14 @@ export function Association() {
 					/>
 					<p>Statut :</p>
 					<Select
-						disabled={user?.scope === "Admin"}
+						disabled={user?.scope !== EUserScope.Root}
 						value={associationData?.status}
-						options={[
-							{
-								name: "Active",
-								value: "Enabled",
-							},
-							{
-								name: "Inactive",
-								value: "Disabled",
-							},
-						]}
+						options={EAssociationStatusOptions}
 						default={associationData?.status}
+						onChange={v => setAssociationData(prev => ({
+							...prev,
+							status: v as EAssociationStatus,
+						}))}
 					/>
 					<p>Nouvelle image:</p>
 					<FileInput value={file} setValue={setFile} placeholder={"Nouvelle image"}/>
@@ -91,7 +89,7 @@ export function Association() {
 						type={"submit"}
 						className={"justify-self-center col-span-2"}
 						onClick={() => {
-							const url = user?.scope === "Admin" ? "/associations/me" : `/associations/${associationData.id}`;
+							const url = user?.scope !== EUserScope.Root ? "/associations/me" : `/associations/${associationData.id}`;
 							api<TAssociation>(url, {
 								method: "PATCH",
 								body: associationData,

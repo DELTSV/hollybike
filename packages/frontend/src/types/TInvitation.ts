@@ -1,8 +1,9 @@
 import { TAssociation } from "./TAssociation.ts";
+import { EUserScope } from "./EUserScope.ts";
 
 export interface TInvitation {
 	id: number,
-	role: string,
+	role: EUserScope,
 	status: string,
 	expiration: string,
 	creation: string,

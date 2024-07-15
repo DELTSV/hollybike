@@ -9,7 +9,7 @@ import { Card } from "../../components/Card/Card.tsx";
 import { useReload } from "../../utils/useReload.ts";
 import { Input } from "../../components/Input/Input.tsx";
 import {
-	useEffect, useMemo, useState,
+	useEffect, useState,
 } from "preact/hooks";
 import { dummyAssociation } from "../../types/TAssociation.ts";
 import { Button } from "../../components/Button/Button.tsx";
@@ -17,13 +17,13 @@ import {
 	Visibility, VisibilityOff,
 } from "@material-ui/icons";
 import { TUserUpdate } from "../../types/TUserUpdate.ts";
-import {
-	Option, Select,
-} from "../../components/Select/Select.tsx";
+import { Select } from "../../components/Select/Select.tsx";
 import { toast } from "react-toastify";
-import { EUserStatus } from "../../types/EUserStatus.ts";
 import {
-	EUserScope, scopes, scopesName,
+	EUserStatus, EUserStatusOptions,
+} from "../../types/EUserStatus.ts";
+import {
+	EUserScope, EUserScopeOptions,
 } from "../../types/EUserScope.ts";
 import { useUser } from "../useUser.tsx";
 import { ListUserJourney } from "./ListUserJourney.tsx";
@@ -60,12 +60,6 @@ export function UserDetail() {
 	useEffect(() => {
 		if (user.data !== undefined) { setUserData(user.data); }
 	}, [user]);
-
-	const scopeOptions: Option[] = useMemo(() =>
-		scopes.filter(s => self?.scope === EUserScope.Root || s !== "Root").map(s => ({
-			name: scopesName[s],
-			value: s,
-		})), [self]);
 
 	const navigate = useNavigate();
 
@@ -112,7 +106,7 @@ export function UserDetail() {
 							...prev,
 							scope: (v ?? "User") as EUserScope,
 						}))}
-						options={scopeOptions}
+						options={EUserScopeOptions.filter(o => self?.scope === EUserScope.Root || o.value !== EUserScope.Root)}
 						default={userData.scope}
 					/>
 					<p>Statut</p>
@@ -122,16 +116,7 @@ export function UserDetail() {
 							...prev,
 							status: (v ?? "Enabled") as EUserStatus,
 						}))}
-						options={[
-							{
-								name: "Activé",
-								value: EUserStatus.Enabled,
-							},
-							{
-								name: "Désactivé",
-								value: EUserStatus.Disabled,
-							},
-						]}
+						options={EUserStatusOptions}
 						default={userData.status}
 					/>
 				</div>
@@ -147,7 +132,7 @@ export function UserDetail() {
 								association: userData.association.id,
 								role: userData.role,
 							};
-							api(`/users/${ userData.id}`, {
+							api(`/users/${userData.id}`, {
 								method: "PATCH",
 								body: data,
 							}).then((res) => {

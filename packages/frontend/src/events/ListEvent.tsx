@@ -16,6 +16,7 @@ import { TAssociation } from "../types/TAssociation.ts";
 import { useUser } from "../user/useUser.tsx";
 import { EUserScope } from "../types/EUserScope.ts";
 import { Card } from "../components/Card/Card.tsx";
+import { EEventStatusToString } from "../types/EEventStatus.ts";
 
 export function ListEvent() {
 	const { id } = useParams();
@@ -103,7 +104,7 @@ export function ListEvent() {
 						{ e.end_date_time ? dateTimeToFrenchString(e.end_date_time, false) : "Jamais" }
 					</Cell>,
 					<Cell>
-						{ e.status }
+						{ EEventStatusToString(e.status) }
 					</Cell>,
 					<Cell>
 						<Link to={`/users/${e.owner.id}`}>

@@ -10,6 +10,7 @@ import { Button } from "../components/Button/Button.tsx";
 import { api } from "../utils/useApi.ts";
 import { DoReload } from "../utils/useReload.ts";
 import { toast } from "react-toastify";
+import { EUserScopeToString } from "../types/EUserScope.ts";
 
 interface ModalAddParticipantsProps {
 	visible: boolean,
@@ -45,43 +46,45 @@ export function ModalAddParticipants(props: ModalAddParticipantsProps) {
 
 	return (
 		<Modal visible={props.visible} setVisible={props.setVisible}>
-			<List
-				action={<Button onClick={addCandidates}>Ajouter</Button>}
-				if={props.eventId !== -1}
-				columns={[
-					{
-						name: "Nom d'utlisateur",
-						id: "username",
-					},
-					{
-						name: "Rôle",
-						id: "scope",
-					},
-					{
-						name: "Fonction",
-						id: "role",
-					},
-				]}
-				baseUrl={`/events/${props.eventId}/participations/candidates`}
-				line={(u: TUserPartial) => [
-					<Cell>{ u.username }</Cell>,
-					<Cell>{ u.scope }</Cell>,
-					<Cell>{ u.role }</Cell>,
-					<Cell>{ u.event_role === undefined ? <CheckBox
-						checked={userIds.includes(u.id)}
-						toggle={() => {
-							let tmp = [...userIds];
-							if (userIds.includes(u.id)) {
-								tmp = tmp.filter(id => u.id !== id);
-							} else {
-								tmp.push(u.id);
-							}
-							setUserIds(tmp);
-						}}
-					/> : undefined }
-					</Cell>,
-				]}
-			/>
+			<div className={"mt-4"}>
+				<List
+					action={<Button onClick={addCandidates}>Ajouter</Button>}
+					if={props.eventId !== -1}
+					columns={[
+						{
+							name: "Nom d'utlisateur",
+							id: "username",
+						},
+						{
+							name: "Rôle",
+							id: "scope",
+						},
+						{
+							name: "Fonction",
+							id: "role",
+						},
+					]}
+					baseUrl={`/events/${props.eventId}/participations/candidates`}
+					line={(u: TUserPartial) => [
+						<Cell>{ u.username }</Cell>,
+						<Cell>{ EUserScopeToString(u.scope) }</Cell>,
+						<Cell>{ u.role }</Cell>,
+						<Cell>{ u.event_role === undefined ? <CheckBox
+							checked={userIds.includes(u.id)}
+							toggle={() => {
+								let tmp = [...userIds];
+								if (userIds.includes(u.id)) {
+									tmp = tmp.filter(id => u.id !== id);
+								} else {
+									tmp.push(u.id);
+								}
+								setUserIds(tmp);
+							}}
+						/> : undefined }
+						</Cell>,
+					]}
+				/>
+			</div>
 		</Modal>
 	);
 }

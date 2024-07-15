@@ -8,6 +8,7 @@ import { OpenInNew } from "@material-ui/icons";
 import { Button } from "../../components/Button/Button.tsx";
 import { useSideBar } from "../../sidebar/useSideBar.tsx";
 import { Card } from "../../components/Card/Card.tsx";
+import { EAssociationStatusToString } from "../../types/EAssociationStatus.ts";
 
 export function ListAssociations() {
 	const { user } = useUser();
@@ -52,7 +53,7 @@ export function ListAssociations() {
 				]}
 				line={(d: TAssociation) => [
 					<Cell>{ d.name }</Cell>,
-					<Cell>{ d.status }</Cell>,
+					<Cell>{ EAssociationStatusToString(d.status) }</Cell>,
 					<Cell>
 						{ d.picture !== undefined ?
 							<img className={"max-h-10"} src={d.picture} alt={`Image de l'association ${d.name}`}/> :

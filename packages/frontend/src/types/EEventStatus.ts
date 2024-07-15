@@ -38,3 +38,13 @@ export const eventStatusOptions: Option[] = [
 		value: EEventStatus.Now,
 	},
 ];
+
+export function EEventStatusToString(v: EEventStatus) {
+	switch (v) {
+	case EEventStatus.Pending: return "En attente";
+	case EEventStatus.Scheduled: return "Prévu";
+	case EEventStatus.Cancelled: return "Annuler";
+	case EEventStatus.Finished: return "Terminer";
+	case EEventStatus.Now: return "En cours";
+	}
+}

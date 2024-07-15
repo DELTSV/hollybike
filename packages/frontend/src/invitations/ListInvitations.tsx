@@ -30,7 +30,9 @@ import {
 import { useRef } from "react";
 import { Input } from "../components/Input/Input.tsx";
 import { useUser } from "../user/useUser.tsx";
-import { EUserScope } from "../types/EUserScope.ts";
+import {
+	EUserScope, EUserScopeToString,
+} from "../types/EUserScope.ts";
 import { Card } from "../components/Card/Card.tsx";
 import { Download } from "../icons/Download.tsx";
 
@@ -135,7 +137,7 @@ export function ListInvitations() {
 							{ i.label }
 						</Cell>,
 						<Cell>
-							{ i.role }
+							{ EUserScopeToString(i.role) }
 						</Cell>,
 						<Cell>
 							{ i.uses }

@@ -71,10 +71,11 @@ export function ListJourneys() {
 						name: "Createur",
 						id: "username",
 					},
-					{
-						name: "Association",
-						id: "name",
-					},
+					id === undefined ?
+						{
+							name: "Association",
+							id: "name",
+						} : null,
 					{
 						name: "Importer un fichier",
 						id: "",
@@ -108,11 +109,12 @@ export function ListJourneys() {
 							{ j.creator.username }
 						</Link>
 					</Cell>,
-					<Cell>
-						<Link to={`/associations/${j.association.id}`}>
-							{ j.association.name }
-						</Link>
-					</Cell>,
+					id === undefined ?
+						<Cell>
+							<Link to={`/associations/${j.association.id}`}>
+								{ j.association.name }
+							</Link>
+						</Cell> : null,
 					<Cell>
 						<CloudUploadOutlined
 							className={"cursor-pointer"}

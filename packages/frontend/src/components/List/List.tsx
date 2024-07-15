@@ -16,7 +16,7 @@ import { Button } from "../Button/Button.tsx";
 import { Reload } from "../../utils/useReload.ts";
 
 interface ListProps<T> {
-	columns: Columns[],
+	columns: (Columns | null)[],
 	baseUrl: string,
 	line: (data: T) => ComponentChildren[]
 	perPage?: number,
@@ -110,6 +110,9 @@ export function List<T>(props: ListProps<T>) {
 					<thead>
 						<tr className={"border-b-2 border-surface-2"}>
 							{ props.columns.map((c) => {
+								if (c === null) {
+									return null;
+								}
 								const sortColumn = sort[c.id];
 								if (c.visible !== false) {
 									return (
