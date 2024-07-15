@@ -64,7 +64,7 @@ class UserJourneyList extends StatelessWidget {
               );
             },
             separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemCount: userJourneys.length + (hasMore ? 1 : 0),
+            itemCount: userJourneys.length,
           ),
         ),
         if (hasMore)
