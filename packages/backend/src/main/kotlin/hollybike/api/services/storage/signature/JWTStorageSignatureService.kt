@@ -14,7 +14,7 @@ class JWTStorageSignatureService(
 		.withAudience(conf.audience)
 		.withIssuer(conf.domain)
 		.withClaim("objectPath", objectPath)
-		.withExpiresAt(Date(System.currentTimeMillis() + 60000 * 60))
+		.withExpiresAt(Date((System.currentTimeMillis() + 60000 * 60) * 48))
 		.sign(Algorithm.HMAC256(conf.secret + "image-signer"))
 
 	private fun getSignedPath(path: String): String =
