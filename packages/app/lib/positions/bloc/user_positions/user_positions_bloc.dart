@@ -174,6 +174,7 @@ class UserPositionsBloc extends Bloc<UserPositionsEvent, UserPositionsState> {
       final futureOrUser = profileRepository.getUserById(
         position.userId,
         currentSession,
+        isForce: true,
       );
 
       if (futureOrUser is Future<MinimalUser>) {

@@ -29,7 +29,7 @@ class ProfileLoadSuccessEvent extends ProfileLoadEvent {
   ProfileLoadSuccessEvent({
     required super.session,
     required this.profile,
-  }) : expiredAt = DateTime.now().add(const Duration(seconds: 5));
+  }) : expiredAt = DateTime.now().add(const Duration(minutes: 59));
 }
 
 class ProfileLoadErrorEvent extends ProfileLoadEvent {
