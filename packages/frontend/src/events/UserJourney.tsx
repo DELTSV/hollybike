@@ -4,7 +4,7 @@ import { Card } from "../components/Card/Card.tsx";
 import { distanceToHumanReadable } from "../utils/distanceToHumanReadable.ts";
 import { TUserJourney } from "../types/TUserJourney.ts";
 import Map, {
-	Layer, LineLayer, MapGeoJSONFeature, MapRef, Source,
+	Layer, LineLayer, LngLatBoundsLike, MapGeoJSONFeature, MapRef, Source,
 } from "react-map-gl";
 import {
 	useCallback, useEffect, useState,
@@ -41,7 +41,15 @@ export function UserJourney() {
 	useEffect(() => {
 		if (journey.data && journey.data.file) {
 			fetch(journey.data.file).then( async (res) => {
-				const data = await res.json();
+				const data: MapGeoJSONFeature = await res.json();
+				if (data.bbox?.length === 6) {
+					data.bbox = [
+						data.bbox[0],
+						data.bbox[1],
+						data.bbox[3],
+						data.bbox[4],
+					];
+				}
 				setData(data);
 			});
 		}
@@ -58,17 +66,7 @@ export function UserJourney() {
 
 	useEffect(() => {
 		if (data && data.bbox && mapRef.current) {
-			if (data.bbox.length == 4) {
-				mapRef.current.fitBounds(data.bbox, { padding: 40 });
-			} else if (data.bbox.length === 6) {
-				const bounds: [number, number, number, number] = [
-					data.bbox[0],
-					data.bbox[1],
-					data.bbox[3],
-					data.bbox[4],
-				];
-				mapRef.current.fitBounds(bounds, { padding: 40 });
-			}
+			mapRef.current.fitBounds(data.bbox as LngLatBoundsLike, { padding: 40 });
 		}
 	}, [data, mapRef]);
 
