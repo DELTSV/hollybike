@@ -79,6 +79,7 @@ class Profile {
       association: Association.fromJsonObject(json["association"]),
       profilePicture: json["profile_picture"],
       profilePictureKey: json["profile_picture_key"],
+      role: json["role"],
     );
   }
 }

@@ -187,7 +187,7 @@ class _EventPreviewCardState extends State<EventPreviewCard> {
                 left: 8,
                 child: Icon(
                   Icons.location_on,
-                  color: Colors.lightBlueAccent.shade200,
+                  color: Theme.of(context).colorScheme.secondary,
                   size: 18,
                 ),
               ),

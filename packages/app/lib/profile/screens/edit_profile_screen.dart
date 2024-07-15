@@ -59,6 +59,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (currentProfileEvent is ProfileLoadSuccessEvent) {
       _usernameController.text = currentProfileEvent.profile.username;
+      _descriptionController.text = currentProfileEvent.profile.role ?? '';
       _currentProfile = currentProfileEvent.profile;
     }
   }
