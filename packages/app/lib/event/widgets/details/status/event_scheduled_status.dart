@@ -12,10 +12,12 @@ import '../../../types/event_status_state.dart';
 
 class EventScheduledStatus extends StatefulWidget {
   final EventDetails eventDetails;
+  final bool isLoading;
 
   const EventScheduledStatus({
     super.key,
     required this.eventDetails,
+    required this.isLoading,
   });
 
   @override
@@ -30,7 +32,7 @@ class _EventScheduledStatusState extends State<EventScheduledStatus> {
   @override
   Widget build(BuildContext context) {
     return EventDetailsStatusBadge(
-      loading: _loading,
+      loading: _loading || widget.isLoading,
       event: widget.eventDetails.event,
       status: EventStatusState.scheduled,
       message: fromDateToDuration(widget.eventDetails.event.startDate),

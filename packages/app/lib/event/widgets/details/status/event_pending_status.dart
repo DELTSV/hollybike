@@ -8,10 +8,12 @@ import '../../../types/event_status_state.dart';
 
 class EventPendingStatus extends StatelessWidget {
   final int eventId;
+  final bool isLoading;
 
   const EventPendingStatus({
     super.key,
     required this.eventId,
+    required this.isLoading,
   });
 
   @override
@@ -23,6 +25,7 @@ class EventPendingStatus extends StatelessWidget {
       onAction: () {
         _onPublish(context);
       },
+      loading: isLoading,
     );
   }
 
