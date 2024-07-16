@@ -147,6 +147,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   profileApi: ProfileApi(
                     client: RepositoryProvider.of<DioClient>(context),
+                    authPersistence: Provider.of<AuthPersistence>(context, listen: false),
                   ),
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/auth/types/auth_session.dart';
 import 'package:hollybike/profile/types/image_path_dto.dart';
 import 'package:hollybike/profile/types/update_password.dart';
@@ -8,7 +9,7 @@ import 'package:hollybike/profile/types/update_profile.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
-
+import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
@@ -16,8 +17,9 @@ import '../types/profile.dart';
 
 class ProfileApi {
   final DioClient client;
+  final AuthPersistence authPersistence;
 
-  ProfileApi({required this.client});
+  ProfileApi({required this.client, required this.authPersistence});
 
   Future<Profile> getProfile(AuthSession profileSession) async {
     final AuthSession(:host, :token) = profileSession;
@@ -87,7 +89,20 @@ class ProfileApi {
     String oldPassword,
     String newPassword,
   ) async {
-    await client.dio.patch(
+    final currentSession = await authPersistence.currentSession;
+
+    if (currentSession == null) {
+      throw Exception("No session found");
+    }
+
+    await Dio(
+      BaseOptions(
+        baseUrl: "${currentSession.host}/api",
+        headers: {
+          'Authorization': "Bearer ${currentSession.token}",
+        },
+      ),
+    ).patch(
       "/users/me",
       data: UpdatePassword(
         oldPassword: oldPassword,
@@ -97,9 +112,17 @@ class ProfileApi {
     );
   }
 
-  Future<void> resetPassword(String email) async {
-    await client.dio.post(
-      "/users/password/$email/send",
+  Future<void> resetPassword(String email, {String? host}) async {
+    final currentSession = await authPersistence.currentSession;
+
+    final apiHost = host ?? currentSession?.host;
+
+    if (apiHost == null) {
+      throw Exception("No session found");
+    }
+
+    await http.post(
+      Uri.parse("$apiHost/api/users/password/$email/send"),
     );
   }
 }
