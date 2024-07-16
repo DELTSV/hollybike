@@ -1,6 +1,6 @@
 /*
   Hollybike Back-office web application
-  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+  Made by Loïc Vanden Bossche
 */
 export interface NamedEntry {
 	name: string;

@@ -1,6 +1,6 @@
 /*
   Hollybike Back-office web application
-  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+  Made by Loïc Vanden Bossche
 */
 import {createReflectEntryMap, mergeReflectEntries, readJSONFile, writeDiffOutput} from "./json-compare";
 import {writeFileSync} from "node:fs";

@@ -1,6 +1,6 @@
 /*
   Hollybike Back-office web application
-  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+  Made by Loïc Vanden Bossche
 */
 import {readFileSync} from 'fs';
 import {writeFileSync} from "node:fs";
