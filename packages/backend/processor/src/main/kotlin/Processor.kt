@@ -1,3 +1,7 @@
+/*
+  Hollybike API Kotlin KTor Graalvm application
+  Made by MacaronFR (Denis TURBIEZ) and Loïc Vanden Bossche
+*/
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated

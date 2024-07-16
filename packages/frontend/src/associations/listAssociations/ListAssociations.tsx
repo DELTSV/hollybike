@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { useUser } from "../../user/useUser.tsx";
 import { useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";

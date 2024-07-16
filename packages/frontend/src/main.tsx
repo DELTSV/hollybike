@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { render } from "preact";
 import { App } from "./app.tsx";
 import "./index.css";

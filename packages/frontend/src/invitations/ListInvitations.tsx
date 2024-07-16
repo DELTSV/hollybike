@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { useSideBar } from "../sidebar/useSideBar.tsx";
 import { TInvitation } from "../types/TInvitation.ts";
 import { List } from "../components/List/List.tsx";

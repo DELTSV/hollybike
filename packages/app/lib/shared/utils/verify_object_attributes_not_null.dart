@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 void verifyObjectAttributesNotNull(
   Map<String, dynamic> object,
   List<String> requiredAttributes,

@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:json_annotation/json_annotation.dart';
 
 enum EventStatusState {

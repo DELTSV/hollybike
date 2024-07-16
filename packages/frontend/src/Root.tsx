@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { Header } from "./header/Header.tsx";
 import { useTheme } from "./theme/context.tsx";
 import { Outlet } from "react-router-dom";

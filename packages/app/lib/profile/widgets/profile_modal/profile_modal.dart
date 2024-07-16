@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:flutter/material.dart';
 import 'package:hollybike/profile/widgets/profile_add_session_button.dart';
 import 'package:hollybike/profile/widgets/profile_modal/profile_modal_list.dart';

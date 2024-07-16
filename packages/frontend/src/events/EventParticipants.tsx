@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { List } from "../components/List/List.tsx";
 import { TEventParticipation } from "../types/TEventParticipation.ts";
 import { Cell } from "../components/List/Cell.tsx";

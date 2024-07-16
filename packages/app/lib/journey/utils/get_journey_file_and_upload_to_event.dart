@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../event/types/event.dart';

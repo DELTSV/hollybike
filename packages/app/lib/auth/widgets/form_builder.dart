@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:flutter/material.dart';
 import 'package:hollybike/auth/widgets/error_box.dart';
 import 'package:hollybike/shared/utils/add_separators.dart';

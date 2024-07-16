@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { SideBarMenu } from "./SideBarMenu.tsx";
 import { useUser } from "../user/useUser.tsx";
 import { useMemo } from "preact/hooks";

@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { useParams } from "react-router-dom";
 import { useApi } from "../utils/useApi.ts";
 import { Card } from "../components/Card/Card.tsx";

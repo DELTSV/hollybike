@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../user_journey/type/user_journey.dart';

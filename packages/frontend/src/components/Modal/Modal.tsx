@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { clsx } from "clsx";
 import { ComponentChildren } from "preact";
 import { Card } from "../Card/Card.tsx";

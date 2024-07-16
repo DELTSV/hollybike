@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 const isAnObject = (v: unknown): v is Record<string | number, unknown> => v === null || typeof v !== "object";
 
 export function equals<T>(a: T, b: unknown): b is T {

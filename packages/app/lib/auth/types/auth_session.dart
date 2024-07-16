@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'dart:convert';
 
 import 'package:hollybike/shared/utils/verify_object_attributes_not_null.dart';

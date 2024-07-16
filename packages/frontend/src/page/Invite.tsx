@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 export function Invite() {
 	return (
 		<div className={"flex items-center gap-8 justify-center flex-col p-12"}>

@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hollybike/weather/types/weather_condition.dart';
 import 'package:hollybike/weather/types/weather_forecast_response.dart';

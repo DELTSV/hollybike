@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { TExpense } from "../types/TExpense.ts";
 import {
 	Dispatch, StateUpdater, useCallback, useEffect, useState,

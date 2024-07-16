@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:hollybike/shared/utils/strings.dart';
 import 'package:intl/intl.dart';
 

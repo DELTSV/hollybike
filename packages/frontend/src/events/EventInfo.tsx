@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { Input } from "../components/Input/Input.tsx";
 import { TextArea } from "../components/Input/TextArea.tsx";
 import { InputCalendar } from "../components/Calendar/InputCalendar.tsx";

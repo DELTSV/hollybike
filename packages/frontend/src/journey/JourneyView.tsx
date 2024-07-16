@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import Map, {
 	Layer, LineLayer, LngLatBoundsLike, MapGeoJSONFeature, MapRef, Source,
 } from "react-map-gl";

@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import { ConfProps } from "./Conf.tsx";
 import { DeleteOutlined } from "@material-ui/icons";
 import { Card } from "../components/Card/Card.tsx";

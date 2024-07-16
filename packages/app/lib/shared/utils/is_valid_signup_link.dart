@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 bool isValidSignupLink(String? link) {
   if (link == null || link.isEmpty) return false;
 

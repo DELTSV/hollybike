@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'event_details.dart';

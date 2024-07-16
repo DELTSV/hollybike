@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 import {readFileSync} from 'fs';
 import {writeFileSync} from "node:fs";
 import {NamedEntry, ReflectDiffResult, ReflectDiffValueResult, ReflectEntry, ReflectMethod} from "./types";

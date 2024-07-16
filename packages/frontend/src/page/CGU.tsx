@@ -1,3 +1,7 @@
+/*
+  Hollybike Back-office web application
+  Made by MacaronFR (Denis TURBIEZ) and enzoSoa (Enzo SOARES)
+*/
 export function CGU() {
 	return (
 		<div className={"p-4 overflow-x-hidden w-9/10 h-full"}>

@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:hollybike/user_journey/services/user_journey_api.dart';
 
 import '../../shared/types/paginated_list.dart';

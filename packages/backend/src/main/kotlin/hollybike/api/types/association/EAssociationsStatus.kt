@@ -1,3 +1,7 @@
+/*
+  Hollybike API Kotlin KTor Graalvm application
+  Made by MacaronFR (Denis TURBIEZ) and Loïc Vanden Bossche
+*/
 package hollybike.api.types.association
 
 enum class EAssociationsStatus(val value: Int) {

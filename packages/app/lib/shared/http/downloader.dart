@@ -1,3 +1,7 @@
+/*
+  Hollybike Mobile Flutter application
+  Made by enzoSoa (Enzo SOARES) and Loïc Vanden Bossche
+*/
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hollybike/auth/services/auth_persistence.dart';
 import 'package:hollybike/shared/utils/dowload_folder.dart';
