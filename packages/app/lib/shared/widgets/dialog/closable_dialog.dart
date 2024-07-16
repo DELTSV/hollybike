@@ -33,6 +33,7 @@ class ClosableDialog extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(width: 8),
             IconButton(
               onPressed: onClose,
               style: IconButton.styleFrom(

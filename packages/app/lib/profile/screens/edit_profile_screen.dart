@@ -130,7 +130,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Toast.showErrorToast(context, state.errorMessage);
           }
 
-          if (state is EditProfileLoadInProgress) {
+          if (state is ResetPasswordFailure) {
+            Toast.showErrorToast(context, state.errorMessage);
+          }
+
+          if (state is EditProfileLoadInProgress || state is ResetPasswordInProgress) {
             _overlay = OverlayEntry(
               builder: (context) {
                 return Positioned.fill(
@@ -151,6 +155,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
           if (state is EditProfileLoadSuccess) {
             Toast.showSuccessToast(context, state.successMessage);
+            Navigator.of(context).pop();
+          }
+
+          if (state is ResetPasswordSuccess) {
+            Toast.showSuccessToast(context, 'Email de réinitialisation envoyé.');
             Navigator.of(context).pop();
           }
 

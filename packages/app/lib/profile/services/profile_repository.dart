@@ -124,9 +124,11 @@ class ProfileRepository {
 
   Future<void> resetPassword(
     String email,
+  {String? host}
   ) {
     return profileApi.resetPassword(
       email,
+      host: host,
     );
   }
 }

@@ -70,7 +70,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   "email": FormFieldConfig(
                     label: "Adresse mail",
-                    validator: _inputValidator,
+                    validator: _emailValidator,
                     autofillHints: [AutofillHints.email],
                     textInputType: TextInputType.emailAddress,
                   ),
@@ -117,6 +117,17 @@ class SignupScreen extends StatelessWidget {
       return "Le mot de passe doit contenir au moins un chiffre.";
     }
 
+    return null;
+  }
+
+  String? _emailValidator(String? inputText) {
+    if (inputText == null || inputText.isEmpty) {
+      return "Ce champ ne peut pas être vide.";
+    }
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+        .hasMatch(inputText)) {
+      return "Adresse email invalide.";
+    }
     return null;
   }
 }

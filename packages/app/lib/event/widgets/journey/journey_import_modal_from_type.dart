@@ -150,6 +150,11 @@ void journeyImportModalFromType(
             onGpxDownloaded: (file) async {
               Navigator.of(context).pop();
               await uploadJourneyFile(file, true);
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+
               selected?.call();
             },
           );
