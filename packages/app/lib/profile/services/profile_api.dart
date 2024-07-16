@@ -111,10 +111,10 @@ class ProfileApi {
     );
   }
 
-  Future<void> resetPassword(String email) async {
+  Future<void> resetPassword(String email, {String? host}) async {
     final currentSession = await authPersistence.currentSession;
 
-    final apiHost = currentSession?.host;
+    final apiHost = host ?? currentSession?.host;
 
     if (apiHost == null) {
       throw Exception("No session found");

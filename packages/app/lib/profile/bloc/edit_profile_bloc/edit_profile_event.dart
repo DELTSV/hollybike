@@ -30,8 +30,10 @@ class ChangeProfilePassword extends EditProfileEvent {
 
 class ResetPassword extends EditProfileEvent {
   final String email;
+  final String? host;
 
   ResetPassword({
     required this.email,
+    this.host,
   });
 }

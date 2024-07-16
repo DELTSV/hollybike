@@ -83,17 +83,17 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     ResetPassword event,
     Emitter<EditProfileState> emit,
   ) async {
-    emit(EditProfileLoadInProgress(state));
+    emit(ResetPasswordInProgress(state));
 
     try {
       await profileRepository.resetPassword(
         event.email,
+        host: event.host,
       );
 
       emit(
-        EditProfileLoadSuccess(
+        ResetPasswordSuccess(
           state,
-          successMessage: 'Email envoyé.',
         ),
       );
     } catch (e) {
@@ -105,7 +105,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         }
       }
 
-      emit(EditProfileLoadFailure(
+      emit(ResetPasswordFailure(
         state,
         errorMessage: 'Une erreur est survenue.',
       ));
