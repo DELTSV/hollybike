@@ -9,7 +9,6 @@ import 'package:hollybike/profile/types/update_profile.dart';
 import 'package:hollybike/shared/http/dio_client.dart';
 import 'package:hollybike/shared/types/paginated_list.dart';
 import 'package:hollybike/user/types/minimal_user.dart';
-import 'package:http/http.dart' as http;
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
@@ -112,17 +111,21 @@ class ProfileApi {
     );
   }
 
-  Future<void> resetPassword(String email, {String? host}) async {
+  Future<void> resetPassword(String email) async {
     final currentSession = await authPersistence.currentSession;
 
-    final apiHost = host ?? currentSession?.host;
+    final apiHost = currentSession?.host;
 
     if (apiHost == null) {
       throw Exception("No session found");
     }
 
-    await http.post(
-      Uri.parse("$apiHost/api/users/password/$email/send"),
+    await Dio(
+      BaseOptions(
+        baseUrl: "$apiHost/api",
+      ),
+    ).post(
+      "/users/password/$email/send",
     );
   }
 }

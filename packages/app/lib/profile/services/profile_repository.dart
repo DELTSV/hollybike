@@ -122,9 +122,7 @@ class ProfileRepository {
     );
   }
 
-  Future<void> resetPassword(
-    String email,
-  ) {
+  Future<void> resetPassword(String email) {
     return profileApi.resetPassword(
       email,
     );
