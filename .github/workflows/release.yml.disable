@@ -23,7 +23,7 @@ permissions:
 jobs:
   build-frontend-backend:
     name: Frontend & Backend
-    uses: ./.github/workflows/backend.yml
+    uses: backend.yml.disable
     with:
       version: ${{ github.event.inputs.version }}
       create-executables: ${{ github.event.inputs.create-executables == 'true' }}
@@ -35,7 +35,7 @@ jobs:
 
   build-app:
     name: App
-    uses: ./.github/workflows/app.yml
+    uses: app.yml.disable
     with:
       version: ${{ github.event.inputs.version }}
       create-executables: ${{ github.event.inputs.create-executables == 'true' }}
